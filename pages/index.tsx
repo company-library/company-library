@@ -2,6 +2,8 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { signIn } from "next-auth/react"
+import Link from 'next/link'
 
 const Home: NextPage = () => {
   return (
@@ -18,8 +20,16 @@ const Home: NextPage = () => {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
+          <button onClick={() => signIn()}>Sign in</button>
+
+          <div>
+            <Link href="/private">
+              <a>
+                private page
+              </a>
+            </Link>
+          </div>
+
         </p>
 
         <div className={styles.grid}>
