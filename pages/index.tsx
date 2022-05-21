@@ -19,7 +19,7 @@ const Home: NextPage = () => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
-        <p className={styles.description}>
+        <div className={styles.description}>
           <button onClick={() => signIn()}>Sign in</button>
 
           <div>
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
             </Link>
           </div>
 
-        </p>
+        </div>
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
