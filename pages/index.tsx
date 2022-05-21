@@ -25,7 +25,7 @@ const Home: NextPage = () => {
           <div>
             <Link href="/private">
               <a>
-                private page (SignIn User)
+                private page
               </a>
             </Link>
           </div>
