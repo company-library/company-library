@@ -2,8 +2,13 @@ import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { getSession } from 'next-auth/react'
+import { Session } from 'next-auth'
 
-const Private: NextPage = () => {
+type PrivateProps = {
+  session: Session | null
+}
+
+const Private: NextPage<PrivateProps> = ({ session }) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -16,6 +21,9 @@ const Private: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to Private Page
         </h1>
+        <p>
+          Hello! {session?.user?.name}
+        </p>
       </main>
     </div>
   )
