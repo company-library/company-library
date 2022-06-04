@@ -10,7 +10,7 @@ const Layout: FC<LayoutProps> = ({ title, children }) => {
     <>
       <Head>
         <title>{title}</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/Users/mongol/dev/company-library/public/favicon.ico" />
       </Head>
       <main>{children}</main>
     </>
