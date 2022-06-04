@@ -6,7 +6,7 @@ const Home: NextPage = () => {
   return (
     <Layout title="トップページ | company-library">
       <div>
-        <Link href="/Users/mongol/dev/company-library/src/pages/private">
+        <Link href="/private">
           <a>private page</a>
         </Link>
       </div>
