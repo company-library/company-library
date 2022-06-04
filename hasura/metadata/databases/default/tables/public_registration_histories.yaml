@@ -1,0 +1,24 @@
+table:
+  schema: public
+  name: registration_histories
+configuration:
+  custom_root_fields: {}
+  custom_name: registrationHistories
+  column_config:
+    created_at:
+      custom_name: createdAt
+    user_id:
+      custom_name: userId
+    book_id:
+      custom_name: bookId
+  custom_column_names:
+    created_at: createdAt
+    user_id: userId
+    book_id: bookId
+object_relationships:
+  - name: book
+    using:
+      foreign_key_constraint_on: book_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
