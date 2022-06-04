@@ -21,9 +21,4 @@ export default NextAuth({
       authorization: { params: { scope: 'offline_access openid' } },
     }),
   ],
-  callbacks: {
-    session({ session, token, user }) {
-      return session
-    },
-  },
 })
