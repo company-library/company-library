@@ -1,0 +1,26 @@
+table:
+  schema: public
+  name: reservations
+configuration:
+  custom_root_fields: {}
+  column_config:
+    reservation_date:
+      custom_name: reservationDate
+    created_at:
+      custom_name: createdAt
+    user_id:
+      custom_name: userId
+    book_id:
+      custom_name: bookId
+  custom_column_names:
+    reservation_date: reservationDate
+    created_at: createdAt
+    user_id: userId
+    book_id: bookId
+object_relationships:
+  - name: book
+    using:
+      foreign_key_constraint_on: book_id
+  - name: user
+    using:
+      foreign_key_constraint_on: user_id
