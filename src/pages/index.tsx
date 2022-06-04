@@ -15,7 +15,7 @@ const Home: NextPage = () => {
         <button onClick={() => signIn()}>Sign in</button>
 
         <div>
-          <Link href="/Users/mongol/dev/company-library/src/pages/private">
+          <Link href="/private">
             <a>private page</a>
           </Link>
         </div>
