@@ -8,14 +8,6 @@ type LayoutProps = {
 }
 
 const Layout: FC<LayoutProps> = ({ title, children }) => {
-
-
-
-
-
-
-
-
   return (
     <>
       <Head>
