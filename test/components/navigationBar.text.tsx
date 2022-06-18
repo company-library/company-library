@@ -4,6 +4,13 @@ import NavigationBar from '@/components/navigationBar'
 describe('navigationBar component', () => {
   jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({ push: jest.fn() })
 
+
+
+
+
+
+
+
   it('ナビゲーション項目が表示される', () => {
     const { getByText } = render(<NavigationBar />)
 
