@@ -17,8 +17,8 @@ const Private: NextPage<PrivateProps> = ({ session }) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getSession({ req: ctx.req })
-  console.log(session)
+  const session = await getSession({ req: ctx.req });
+  console.log(session);
   return { props: { session } }
 }
 

@@ -5,6 +5,8 @@ describe('navigationBar component', () => {
   jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({ push: jest.fn() })
 
 
+    
+
 
 
 
