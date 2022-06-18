@@ -1,9 +1,10 @@
 import Head from 'next/head'
-import { FC } from 'react'
+import React, { FC } from 'react'
 import NavigationBar from '@/components/navigationBar'
 
 type LayoutProps = {
   title: string
+  children: React.ReactNode
 }
 
 const Layout: FC<LayoutProps> = ({ title, children }) => {

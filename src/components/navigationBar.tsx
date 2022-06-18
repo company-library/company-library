@@ -1,8 +1,8 @@
-import { VFC } from 'react'
+import { FC } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-const NavigationBar: VFC = () => {
+const NavigationBar: FC = () => {
   const router = useRouter()
 
   return (
