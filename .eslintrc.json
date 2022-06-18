@@ -1,10 +1,10 @@
 {
   "extends": ["next/core-web-vitals", "prettier"],
   "rules": {
-    "comma-dangle": ["error", "always"],
+    "comma-dangle": ["error", "always-multiline"],
     "indent": ["error", 2],
     "semi": ["error", "never", {"beforeStatementContinuationChars": "never"}],
     "quotes": ["error", "single"],
-    "jsx-quotes": ["error", "double"]
+    "jsx-quotes": ["error", "prefer-double"]
   }
 }
