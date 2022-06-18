@@ -1,7 +1,7 @@
 import type { GetServerSideProps, NextPage } from 'next'
 import { getSession } from 'next-auth/react'
 import { Session } from 'next-auth'
-import Layout from '../components/layout'
+import Layout from '@/components/layout'
 
 type PrivateProps = {
   session: Session | null
