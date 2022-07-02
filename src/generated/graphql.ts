@@ -1,3 +1,6 @@
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3381,3 +3384,28 @@ export type MyFirstQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MyFirstQueryQuery = { __typename?: 'query_root', __schema: { __typename?: '__Schema', types: Array<{ __typename?: '__Type', name?: string | null }> } };
+
+
+export const MyFirstQueryDocument = gql`
+    query MyFirstQuery {
+  __schema {
+    types {
+      name
+    }
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    MyFirstQuery(variables?: MyFirstQueryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MyFirstQueryQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<MyFirstQueryQuery>(MyFirstQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'MyFirstQuery', 'query');
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;

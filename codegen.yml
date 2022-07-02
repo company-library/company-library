@@ -11,6 +11,7 @@ generates:
     plugins:
       - "typescript"
       - "typescript-operations"
+      - "typescript-graphql-request"
   src/generated/schema.graphql:
     plugins:
       - "schema-ast"
