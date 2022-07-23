@@ -3405,7 +3405,7 @@ type users {
   createdAt: timestamptz!
   email: String!
   id: Int!
-  imageUrl: String!
+  imageUrl: String
 
   """An array relationship"""
   impressions(
@@ -3551,6 +3551,7 @@ type users {
     """filter the rows returned"""
     where: reservations_bool_exp
   ): reservations_aggregate!
+  sub: String!
 }
 
 """
@@ -3599,6 +3600,7 @@ input users_bool_exp {
   name: String_comparison_exp
   registration_histories: registrationHistories_bool_exp
   reservations: reservations_bool_exp
+  sub: String_comparison_exp
 }
 
 """
@@ -3610,6 +3612,9 @@ enum users_constraint {
 
   """unique or primary key constraint"""
   users_pkey
+
+  """unique or primary key constraint"""
+  users_sub_key
 }
 
 """
@@ -3632,6 +3637,7 @@ input users_insert_input {
   name: String
   registration_histories: registrationHistories_arr_rel_insert_input
   reservations: reservations_arr_rel_insert_input
+  sub: String
 }
 
 """aggregate max on columns"""
@@ -3641,6 +3647,7 @@ type users_max_fields {
   id: Int
   imageUrl: String
   name: String
+  sub: String
 }
 
 """aggregate min on columns"""
@@ -3650,6 +3657,7 @@ type users_min_fields {
   id: Int
   imageUrl: String
   name: String
+  sub: String
 }
 
 """
@@ -3693,6 +3701,7 @@ input users_order_by {
   name: order_by
   registration_histories_aggregate: registrationHistories_aggregate_order_by
   reservations_aggregate: reservations_aggregate_order_by
+  sub: order_by
 }
 
 """primary key columns input for table: users"""
@@ -3718,6 +3727,9 @@ enum users_select_column {
 
   """column name"""
   name
+
+  """column name"""
+  sub
 }
 
 """
@@ -3729,6 +3741,7 @@ input users_set_input {
   id: Int
   imageUrl: String
   name: String
+  sub: String
 }
 
 """aggregate stddev on columns"""
@@ -3769,6 +3782,9 @@ enum users_update_column {
 
   """column name"""
   name
+
+  """column name"""
+  sub
 }
 
 """aggregate var_pop on columns"""

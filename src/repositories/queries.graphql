@@ -1,7 +1,20 @@
-query MyFirstQuery {
-  __schema {
-    types {
-      name
-    }
+query getUserQuery($sub: String!) {
+  users(where: {sub: {_eq: $sub}}) {
+    id
+    name
+    email
+    sub
+    imageUrl
   }
 }
+
+mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageUrl: String) {
+  insert_users(objects: {name: $name, email: $email, sub: $sub, imageUrl: $imageUrl}) {
+    returning {
+      id
+      name
+      email
+      sub
+      imageUrl
+    }
+  }}
