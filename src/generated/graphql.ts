@@ -3221,6 +3221,11 @@ export type InsertUserQueryMutationVariables = Exact<{
 
 export type InsertUserQueryMutation = { __typename?: 'mutation_root', insert_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> } | null };
 
+export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl: string, createdAt: any }> };
+
 
 export const GetUserQueryDocument = gql`
     query getUserQuery($sub: String!) {
@@ -3248,6 +3253,17 @@ export const InsertUserQueryDocument = gql`
   }
 }
     `;
+export const GetBooksDocument = gql`
+    query getBooks {
+  books {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -3261,6 +3277,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     insertUserQuery(variables: InsertUserQueryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertUserQueryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<InsertUserQueryMutation>(InsertUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertUserQuery', 'mutation');
+    },
+    getBooks(variables?: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
     }
   };
 }
