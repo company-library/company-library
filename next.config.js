@@ -1,13 +1,9 @@
-const { withSuperjson } = require('next-superjson')
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    outputStandalone: true
-  }
+    outputStandalone: true,
+  },
 }
 
-module.exports = withSuperjson()({
-  ...nextConfig
-})
+module.exports = nextConfig
