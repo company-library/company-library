@@ -12,6 +12,11 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-graphql-request"
+  src/generated/graphql.client.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-urql"
   src/generated/schema.graphql:
     plugins:
       - "schema-ast"
