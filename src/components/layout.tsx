@@ -17,7 +17,7 @@ const Layout: FC<LayoutProps> = ({ title, children }) => {
       <header>
         <NavigationBar />
       </header>
-      <main>{children}</main>
+      <main className="px-20">{children}</main>
     </>
   )
 }
