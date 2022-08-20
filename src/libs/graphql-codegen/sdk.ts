@@ -1,7 +1,7 @@
 import { GraphQLClient } from 'graphql-request'
 import { getSdk } from '@/generated/graphql'
 
-const graphqlEndpoint = process.env.HASURA_GRAPHQL_ENDPOINT ?? ''
+const graphqlEndpoint = process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT ?? ''
 const adminSecret = process.env.HASURA_GRAPHQL_ADMIN_SECRET ?? ''
 
 export const sdk = () => {
