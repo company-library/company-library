@@ -1,3 +1,9 @@
+## Run local Hasura
+
+```bash
+docker-compose --env-file .env.local up -d  
+```
+
 ## Run on local
 
 ```bash
