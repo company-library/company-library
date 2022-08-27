@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import { useGetBooksQuery } from '@/generated/graphql.client'
 import Layout from '@/components/layout'
 import { bookWithImage } from '../__utils__/data/book'
 

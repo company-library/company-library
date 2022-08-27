@@ -1,4 +1,4 @@
-import { getByText, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import Book from '@/components/book'
 import Image from 'next/image'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
