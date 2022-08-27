@@ -22,7 +22,7 @@ const Home: NextPage = () => {
       <div className="flex flex-wrap">
         {result.fetching ? (
           <div>Loading...</div>
-        ) : result.error || result.data == null ? (
+        ) : result.error || !result.data ? (
           <div>Error!</div>
         ) : (
           result.data.books.map((book) => {
