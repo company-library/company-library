@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import ClientProvider from '@/libs/urql/clientProvider'
 import { createClient } from 'urql'
+import { randomToken } from '../../__utils__/data/randomToken'
 
 jest.mock('urql')
 
@@ -8,7 +9,7 @@ describe('ClientProvider component', () => {
   const graphqlEndpoint = 'https://endpoint'
   process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT = graphqlEndpoint
 
-  const expectedIdToken = 'idToken'
+  const expectedIdToken = randomToken
   jest
     .spyOn(require('next-auth/react'), 'useSession')
     .mockReturnValue({ data: { idToken: expectedIdToken } })
