@@ -87,7 +87,7 @@ columns and relationships of "books"
 type books {
   createdAt: timestamptz!
   id: Int!
-  imageUrl: String!
+  imageUrl: String
 
   """An array relationship"""
   impressions(

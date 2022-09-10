@@ -68,7 +68,7 @@ export type Books = {
   __typename?: 'books';
   createdAt: Scalars['timestamptz'];
   id: Scalars['Int'];
-  imageUrl: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
   /** An array relationship */
   impressions: Array<Impressions>;
   /** An aggregate relationship */
@@ -3224,7 +3224,23 @@ export type InsertUserQueryMutation = { __typename?: 'mutation_root', insert_use
 export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl: string, createdAt: any }> };
+export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
+
+export type GetBookQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null }> };
+
+export type PostLendingHistoryMutationVariables = Exact<{
+  userId: Scalars['Int'];
+  bookId: Scalars['Int'];
+  dueDate: Scalars['date'];
+}>;
+
+
+export type PostLendingHistoryMutation = { __typename?: 'mutation_root', insert_lendingHistories_one?: { __typename?: 'lendingHistories', userId: number, bookId: number, dueDate: any } | null };
 
 
 export const GetUserQueryDocument = gql`
@@ -3264,6 +3280,27 @@ export const GetBooksDocument = gql`
   }
 }
     `;
+export const GetBookDocument = gql`
+    query getBook($id: Int!) {
+  books(where: {id: {_eq: $id}}) {
+    id
+    title
+    isbn
+    imageUrl
+  }
+}
+    `;
+export const PostLendingHistoryDocument = gql`
+    mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
+  insert_lendingHistories_one(
+    object: {userId: $userId, bookId: $bookId, dueDate: $dueDate}
+  ) {
+    userId
+    bookId
+    dueDate
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -3280,6 +3317,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getBooks(variables?: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
+    },
+    getBook(variables: GetBookQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBookQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBookQuery>(GetBookDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBook', 'query');
+    },
+    postLendingHistory(variables: PostLendingHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostLendingHistoryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PostLendingHistoryMutation>(PostLendingHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postLendingHistory', 'mutation');
     }
   };
 }

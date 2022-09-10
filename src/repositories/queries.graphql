@@ -28,3 +28,20 @@ query getBooks {
     createdAt
   }
 }
+
+query getBook($id: Int!) {
+  books(where: {id: {_eq: $id}}) {
+    id
+    title
+    isbn
+    imageUrl
+  }
+}
+
+mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
+  insert_lendingHistories_one(object: {userId: $userId, bookId: $bookId, dueDate: $dueDate}) {
+    userId
+    bookId
+    dueDate
+  }
+}
