@@ -1,11 +1,11 @@
-import { GraphQLClient } from 'graphql-request';
-import * as Dom from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
+import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -3238,6 +3238,10 @@ export const GetUserQueryDocument = gql`
   }
 }
     `;
+
+export function useGetUserQueryQuery(options: Omit<Urql.UseQueryArgs<GetUserQueryQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserQueryQuery>({ query: GetUserQueryDocument, ...options });
+};
 export const InsertUserQueryDocument = gql`
     mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageUrl: String) {
   insert_users(
@@ -3253,6 +3257,10 @@ export const InsertUserQueryDocument = gql`
   }
 }
     `;
+
+export function useInsertUserQueryMutation() {
+  return Urql.useMutation<InsertUserQueryMutation, InsertUserQueryMutationVariables>(InsertUserQueryDocument);
+};
 export const GetBooksDocument = gql`
     query getBooks {
   books {
@@ -3265,22 +3273,6 @@ export const GetBooksDocument = gql`
 }
     `;
 
-export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
-
-
-const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType) => action();
-
-export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
-  return {
-    getUserQuery(variables: GetUserQueryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserQueryQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetUserQueryQuery>(GetUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserQuery', 'query');
-    },
-    insertUserQuery(variables: InsertUserQueryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertUserQueryMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<InsertUserQueryMutation>(InsertUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertUserQuery', 'mutation');
-    },
-    getBooks(variables?: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
-    }
-  };
-}
-export type Sdk = ReturnType<typeof getSdk>;
+export function useGetBooksQuery(options?: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBooksQuery>({ query: GetBooksDocument, ...options });
+};

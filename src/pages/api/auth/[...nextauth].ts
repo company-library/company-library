@@ -23,6 +23,13 @@ export default NextAuth({
     }),
   ],
   callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.idToken = account.id_token
+      }
+
+      return token
+    },
     async session({ session, token }) {
       if (token.name == null || token.email == null || token.sub == null) {
         return session
@@ -38,6 +45,8 @@ export default NextAuth({
               sub: token.sub,
               imageUrl: token.picture,
             })
+
+      session.idToken = token.idToken
 
       return session
     },

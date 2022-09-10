@@ -18,3 +18,13 @@ mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageU
       imageUrl
     }
   }}
+
+query getBooks {
+  books {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
