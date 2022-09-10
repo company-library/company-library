@@ -5,11 +5,12 @@ import { DateTime } from 'luxon'
 
 type LendButtonProps = {
   bookId: number
+  disabled: boolean
 }
 
 const dateFormat = 'yyyy-MM-dd'
 
-const LendButton: FC<LendButtonProps> = ({ bookId }) => {
+const LendButton: FC<LendButtonProps> = ({ bookId, disabled }) => {
   const today = DateTime.local().setZone('Asia/Tokyo')
   const initialDuDate = today.plus({ days: 7 })
   const { lend, dueDate, handleDueDate } = useLend(bookId, initialDuDate.toFormat(dateFormat))
@@ -27,7 +28,8 @@ const LendButton: FC<LendButtonProps> = ({ bookId }) => {
   return (
     <>
       <button
-        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2"
+        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2 disabled:bg-gray-100"
+        disabled={disabled}
         onClick={() => openModal()}
       >
         借りる

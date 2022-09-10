@@ -2,10 +2,9 @@ import { NextPage } from 'next'
 import Layout from '@/components/layout'
 import { useGetBookQuery } from '@/generated/graphql.client'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
-import LendButton from '@/components/lendButton'
+import BookDetail from '@/components/bookDetail'
 
-const BookDetail: NextPage = () => {
+const BookDetailPage: NextPage = () => {
   const router = useRouter()
   const bookId = Number(router.query.id)
 
@@ -23,26 +22,9 @@ const BookDetail: NextPage = () => {
 
   return (
     <Layout title={`${book.title} | company-library`}>
-      <div>
-        <div>
-          <Image
-            src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-            alt={book.title}
-            width={128}
-            height={200}
-          />
-        </div>
-        <div>{book.title}</div>
-        <div>貸し出し状況</div>
-        <LendButton bookId={bookId} />
-        <button className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2">
-          返却する
-        </button>
-        <div>借りた人</div>
-        <div>感想</div>
-      </div>
+      <BookDetail book={book} />
     </Layout>
   )
 }
 
-export default BookDetail
+export default BookDetailPage

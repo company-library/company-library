@@ -35,6 +35,34 @@ query getBook($id: Int!) {
     title
     isbn
     imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
+        impressions(where: {bookId: {_eq: $id}}) {
+          impression
+          createdAt
+          updatedAt
+        }
+      }
+      returnHistories {
+        
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
   }
 }
 
