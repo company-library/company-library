@@ -1,6 +1,5 @@
 import LendButton from '@/components/lendButton'
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import { useLend } from '@/hooks/useLend'
 import { DateTime } from 'luxon'
 
 // TransitionとDialogを使用するコンポーネントの場合に必要なモック
