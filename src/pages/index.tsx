@@ -6,6 +6,9 @@ import { useGetBooksQuery } from '@/generated/graphql.client'
 
 const Home: NextPage = () => {
   const [result] = useGetBooksQuery()
+  if (result.error) {
+    console.error(result.error)
+  }
 
   return (
     <Layout title="トップページ | company-library">

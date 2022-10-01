@@ -21,10 +21,10 @@ const NavigationBar: FC = () => {
               書籍一覧
             </a>
           </Link>
-          <Link href="#">
+          <Link href="/books/register">
             <a
               className={`rounded-md my-auto px-3 py-2 ${
-                router.pathname === '#'
+                router.pathname === '/books/register'
                   ? 'bg-gray-600'
                   : 'text-gray-200 hover:text-white hover:bg-gray-500'
               }`}
