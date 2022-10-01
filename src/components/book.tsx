@@ -10,13 +10,14 @@ type BookProps = {
 
 const Book: FC<BookProps> = ({ book }) => {
   return (
-    <div className="max-w-sm rounded-lg shadow-lg overflow-hidden">
-      <Image
-        src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-        alt={book.title}
-        width={128}
-        height={200}
-      />
+    <div className="w-48 rounded-lg shadow-lg overflow-hidden">
+      <div className="w-48 h-64 relative">
+        <Image
+          src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+          layout="fill"
+          alt={book.title}
+        />
+      </div>
       <p className="text-sm font-medium p-2">{book.title}</p>
     </div>
   )

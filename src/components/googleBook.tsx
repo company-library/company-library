@@ -9,7 +9,7 @@ type GoogleBookProps = {
 }
 
 type GoogleBook = {
-  items: [
+  items?: [
     {
       volumeInfo?: {
         title?: string
@@ -24,9 +24,9 @@ type GoogleBook = {
 
 const GoogleBook: FC<GoogleBookProps> = ({ isbn }) => {
   const { data } = useSWR(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`, fetcher)
-  const googleBook: GoogleBook = data
-  const title = googleBook.items[0].volumeInfo?.title
-  const thumbnailUrl = googleBook.items[0].volumeInfo?.imageLinks?.thumbnail
+  const googleBook: GoogleBook | undefined = data
+  const title = googleBook?.items?.[0].volumeInfo?.title
+  const thumbnailUrl = googleBook?.items?.[0].volumeInfo?.imageLinks?.thumbnail
 
   if (!title || !thumbnailUrl) {
     return (
@@ -37,15 +37,19 @@ const GoogleBook: FC<GoogleBookProps> = ({ isbn }) => {
   }
 
   const book = {
-    title: googleBook.items[0].volumeInfo?.title ?? '',
-    imageUrl: googleBook.items[0].volumeInfo?.imageLinks?.thumbnail ?? '',
+    title: title,
+    imageUrl: thumbnailUrl,
   }
 
   return (
     <>
       <p>こちらの本でしょうか？</p>
-      <Book book={book} />
-      <button>登録する</button>
+      <div className="my-2">
+        <Book book={book} />
+      </div>
+      <button className="rounded-md my-auto px-3 py-2 bg-gray-400 text-white hover:bg-gray-500">
+        登録する
+      </button>
     </>
   )
 }

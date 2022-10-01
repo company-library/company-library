@@ -8,7 +8,7 @@ const NavigationBar: FC = () => {
   return (
     <nav className="bg-gray-400 text-white">
       <div className="max-w-7xl mx-auto flex">
-        <div className="w-1/5 p-4 text-2xl">company-library</div>
+        <div className="w-1/5 py-4 text-2xl">company-library</div>
         <div className="space-x-6 flex justify-end w-4/5">
           <Link href="/">
             <a
