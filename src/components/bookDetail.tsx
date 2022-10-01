@@ -42,6 +42,7 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
   const holdings = book.registrationHistories.length
   const reservations = book.reservations.length
   const lendHistories = book.lendingHistories.length
+
   // 貸し出し可能数 = 所蔵数 - 貸し出し数 - 予約数
   const lendables = holdings - lendHistories - reservations
 
@@ -65,17 +66,20 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
       </div>
 
       <div>{book.title}</div>
-      <div>{`${lendables}冊貸し出し可能 (所蔵数: ${holdings}冊, 予約数: ${reservations}冊)`}</div>
+      <div>
+        <span>{`${lendables}冊貸し出し可能`}</span> (<span>{`所蔵数: ${holdings}冊`}</span>,{' '}
+        <span>{`予約数: ${reservations}件`}</span>)
+      </div>
 
       <LendButton bookId={book.id} disabled={!isLendable} />
       <button
-        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2 disabled:bg-gray-900"
-        disabled={false}
+        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2 disabled:bg-gray-100"
+        disabled={!isLending}
       >
         返却する
       </button>
-      <div>借りた人</div>
 
+      <div>借りた人</div>
       <table>
         <thead>
           <tr>

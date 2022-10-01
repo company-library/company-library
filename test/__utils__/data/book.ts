@@ -10,3 +10,16 @@ export const bookWithoutImage = {
   title: '画像無しのタイトル',
   imageUrl: '',
 }
+
+const now = new Date()
+
+export const lendableBook = {
+  ...bookWithImage,
+  isbn: '1111111111111',
+  registrationHistories: [
+    { userId: 1, createdAt: now },
+    { userId: 2, createdAt: now },
+  ],
+  lendingHistories: [],
+  reservations: [{ userId: 1, reservationDate: now, createdAt: now }],
+}
