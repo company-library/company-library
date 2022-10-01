@@ -1,6 +1,6 @@
 export const formatForSearch = (str: string): string => {
   const zenkaku2hankaku = (str: string) => {
-    return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (s) => {
+    return str.replace(/[０-９Ａ-Ｚ]/g, (s) => {
       return String.fromCharCode(s.charCodeAt(0) - 0xfee0)
     })
   }
