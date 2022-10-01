@@ -42,4 +42,10 @@ describe('book component', () => {
       {},
     )
   })
+
+  it('クリックすると詳細画面へ遷移する', () => {
+    const { getByRole } = render(<Book book={bookWithImage} />)
+
+    expect(getByRole('link')).toHaveAttribute('href', '/books/1')
+  })
 })
