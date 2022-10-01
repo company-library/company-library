@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import useSWR from 'swr'
 import { GOOGLE_BOOK_SEARCH_QUERY } from '@/constants'
-import BookTile from '@/components/book'
+import BookTile from '@/components/bookTile'
 import fetcher from '@/libs/swr/fetcher'
 
 type GoogleBookProps = {

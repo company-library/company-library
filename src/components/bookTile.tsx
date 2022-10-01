@@ -10,14 +10,13 @@ type BookProps = {
 
 const BookTile: FC<BookProps> = ({ book }) => {
   return (
-    <div className="max-w-xs rounded-lg shadow-lg overflow-hidden">
-      <div>
-        <Image
-          src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-          layout="fill"
-          alt={book.title}
-        />
-      </div>
+    <div className="max-w-sm rounded-lg shadow-lg overflow-hidden">
+      <Image
+        src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+        alt={book.title}
+        width={300}
+        height={400}
+      />
       <p className="text-sm font-medium p-2">{book.title}</p>
     </div>
   )

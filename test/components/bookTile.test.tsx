@@ -18,8 +18,8 @@ describe('book component', () => {
       {
         src: bookWithImage.imageUrl,
         alt: bookWithImage.title,
-        width: 128,
-        height: 200,
+        width: 300,
+        height: 400,
       },
       {},
     )
@@ -36,8 +36,8 @@ describe('book component', () => {
       {
         src: '/no_image.jpg',
         alt: bookWithoutImage.title,
-        width: 128,
-        height: 200,
+        width: 300,
+        height: 400,
       },
       {},
     )
