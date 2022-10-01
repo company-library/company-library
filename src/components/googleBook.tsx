@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import useSWR from 'swr'
 import { GOOGLE_BOOK_SEARCH_QUERY } from '@/constants'
-import Book from '@/components/book'
+import BookTile from '@/components/book'
 import fetcher from '@/libs/swr/fetcher'
 
 type GoogleBookProps = {
@@ -44,8 +44,8 @@ const GoogleBook: FC<GoogleBookProps> = ({ isbn }) => {
   return (
     <>
       <p>こちらの本でしょうか？</p>
-      <div className="my-2">
-        <Book book={book} />
+      <div className="my-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
+        <BookTile book={book} />
       </div>
       <button className="rounded-md my-auto px-3 py-2 bg-gray-400 text-white hover:bg-gray-500">
         登録する

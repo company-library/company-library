@@ -8,10 +8,10 @@ type BookProps = {
   }
 }
 
-const Book: FC<BookProps> = ({ book }) => {
+const BookTile: FC<BookProps> = ({ book }) => {
   return (
-    <div className="w-48 rounded-lg shadow-lg overflow-hidden">
-      <div className="w-48 h-64 relative">
+    <div className="max-w-xs rounded-lg shadow-lg overflow-hidden">
+      <div>
         <Image
           src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
           layout="fill"
@@ -23,4 +23,4 @@ const Book: FC<BookProps> = ({ book }) => {
   )
 }
 
-export default Book
+export default BookTile

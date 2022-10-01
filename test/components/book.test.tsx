@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import Book from '@/components/book'
+import BookTile from '@/components/bookTile'
 import Image from 'next/image'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
@@ -11,7 +11,7 @@ describe('book component', () => {
   })
 
   it('本のタイトルと画像が表示される', () => {
-    const { getByText } = render(<Book book={bookWithImage} />)
+    const { getByText } = render(<BookTile book={bookWithImage} />)
 
     expect(getByText(bookWithImage.title)).toBeInTheDocument()
     expect(ImageMock).toBeCalledWith(
@@ -26,7 +26,7 @@ describe('book component', () => {
   })
 
   it('画像が無い場合はNoImageが表示される', () => {
-    const { getByText } = render(<Book book={bookWithoutImage} />)
+    const { getByText } = render(<BookTile book={bookWithoutImage} />)
 
     expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
     const args = ImageMock.mock.calls[0][0]
