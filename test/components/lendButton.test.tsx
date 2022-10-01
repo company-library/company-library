@@ -27,12 +27,12 @@ describe('LendButton component', () => {
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
     const { getByRole, rerender } = render(<LendButton bookId={bookId} disabled={true} />)
 
-    expect(getByRole('button', { name: '借りる' })).toHaveAttribute('disabled')
+    expect(getByRole('button', { name: '借りる' })).toBeDisabled()
     expect(useLendMock).toBeCalledWith(bookId, expectedInitialDuDate)
 
     rerender(<LendButton bookId={bookId} disabled={false} />)
 
-    expect(getByRole('button', { name: '借りる' })).not.toHaveAttribute('disabled')
+    expect(getByRole('button', { name: '借りる' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、返却予定日の初期値を表示したダイアログが表示される', async () => {
