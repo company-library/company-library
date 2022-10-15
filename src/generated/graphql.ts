@@ -3242,6 +3242,13 @@ export type PostLendingHistoryMutationVariables = Exact<{
 
 export type PostLendingHistoryMutation = { __typename?: 'mutation_root', insert_lendingHistories_one?: { __typename?: 'lendingHistories', userId: number, bookId: number, dueDate: any } | null };
 
+export type PostReturnHistoryMutationVariables = Exact<{
+  lendingHistoryId: Scalars['Int'];
+}>;
+
+
+export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number } | null };
+
 
 export const GetUserQueryDocument = gql`
     query getUserQuery($sub: String!) {
@@ -3328,6 +3335,13 @@ export const PostLendingHistoryDocument = gql`
   }
 }
     `;
+export const PostReturnHistoryDocument = gql`
+    mutation postReturnHistory($lendingHistoryId: Int!) {
+  insert_returnHistories_one(object: {lendingHistoryId: $lendingHistoryId}) {
+    id
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -3350,6 +3364,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     postLendingHistory(variables: PostLendingHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostLendingHistoryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostLendingHistoryMutation>(PostLendingHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postLendingHistory', 'mutation');
+    },
+    postReturnHistory(variables: PostReturnHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostReturnHistoryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PostReturnHistoryMutation>(PostReturnHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postReturnHistory', 'mutation');
     }
   };
 }
