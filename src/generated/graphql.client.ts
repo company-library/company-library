@@ -68,20 +68,20 @@ export type Books = {
   __typename?: 'books';
   createdAt: Scalars['timestamptz'];
   id: Scalars['Int'];
-  imageUrl: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
   /** An array relationship */
   impressions: Array<Impressions>;
   /** An aggregate relationship */
   impressions_aggregate: Impressions_Aggregate;
   isbn: Scalars['String'];
   /** An array relationship */
-  lending_histories: Array<LendingHistories>;
+  lendingHistories: Array<LendingHistories>;
   /** An aggregate relationship */
-  lending_histories_aggregate: LendingHistories_Aggregate;
+  lendingHistories_aggregate: LendingHistories_Aggregate;
   /** An array relationship */
-  registration_histories: Array<RegistrationHistories>;
+  registrationHistories: Array<RegistrationHistories>;
   /** An aggregate relationship */
-  registration_histories_aggregate: RegistrationHistories_Aggregate;
+  registrationHistories_aggregate: RegistrationHistories_Aggregate;
   /** An array relationship */
   reservations: Array<Reservations>;
   /** An aggregate relationship */
@@ -111,7 +111,7 @@ export type BooksImpressions_AggregateArgs = {
 
 
 /** columns and relationships of "books" */
-export type BooksLending_HistoriesArgs = {
+export type BooksLendingHistoriesArgs = {
   distinct_on?: InputMaybe<Array<LendingHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -121,7 +121,7 @@ export type BooksLending_HistoriesArgs = {
 
 
 /** columns and relationships of "books" */
-export type BooksLending_Histories_AggregateArgs = {
+export type BooksLendingHistories_AggregateArgs = {
   distinct_on?: InputMaybe<Array<LendingHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -131,7 +131,7 @@ export type BooksLending_Histories_AggregateArgs = {
 
 
 /** columns and relationships of "books" */
-export type BooksRegistration_HistoriesArgs = {
+export type BooksRegistrationHistoriesArgs = {
   distinct_on?: InputMaybe<Array<RegistrationHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -141,7 +141,7 @@ export type BooksRegistration_HistoriesArgs = {
 
 
 /** columns and relationships of "books" */
-export type BooksRegistration_Histories_AggregateArgs = {
+export type BooksRegistrationHistories_AggregateArgs = {
   distinct_on?: InputMaybe<Array<RegistrationHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -215,8 +215,8 @@ export type Books_Bool_Exp = {
   imageUrl?: InputMaybe<String_Comparison_Exp>;
   impressions?: InputMaybe<Impressions_Bool_Exp>;
   isbn?: InputMaybe<String_Comparison_Exp>;
-  lending_histories?: InputMaybe<LendingHistories_Bool_Exp>;
-  registration_histories?: InputMaybe<RegistrationHistories_Bool_Exp>;
+  lendingHistories?: InputMaybe<LendingHistories_Bool_Exp>;
+  registrationHistories?: InputMaybe<RegistrationHistories_Bool_Exp>;
   reservations?: InputMaybe<Reservations_Bool_Exp>;
   title?: InputMaybe<String_Comparison_Exp>;
 };
@@ -241,8 +241,8 @@ export type Books_Insert_Input = {
   imageUrl?: InputMaybe<Scalars['String']>;
   impressions?: InputMaybe<Impressions_Arr_Rel_Insert_Input>;
   isbn?: InputMaybe<Scalars['String']>;
-  lending_histories?: InputMaybe<LendingHistories_Arr_Rel_Insert_Input>;
-  registration_histories?: InputMaybe<RegistrationHistories_Arr_Rel_Insert_Input>;
+  lendingHistories?: InputMaybe<LendingHistories_Arr_Rel_Insert_Input>;
+  registrationHistories?: InputMaybe<RegistrationHistories_Arr_Rel_Insert_Input>;
   reservations?: InputMaybe<Reservations_Arr_Rel_Insert_Input>;
   title?: InputMaybe<Scalars['String']>;
 };
@@ -297,8 +297,8 @@ export type Books_Order_By = {
   imageUrl?: InputMaybe<Order_By>;
   impressions_aggregate?: InputMaybe<Impressions_Aggregate_Order_By>;
   isbn?: InputMaybe<Order_By>;
-  lending_histories_aggregate?: InputMaybe<LendingHistories_Aggregate_Order_By>;
-  registration_histories_aggregate?: InputMaybe<RegistrationHistories_Aggregate_Order_By>;
+  lendingHistories_aggregate?: InputMaybe<LendingHistories_Aggregate_Order_By>;
+  registrationHistories_aggregate?: InputMaybe<RegistrationHistories_Aggregate_Order_By>;
   reservations_aggregate?: InputMaybe<Reservations_Aggregate_Order_By>;
   title?: InputMaybe<Order_By>;
 };
@@ -754,9 +754,9 @@ export type LendingHistories = {
   dueDate: Scalars['date'];
   id: Scalars['Int'];
   /** An array relationship */
-  return_histories: Array<ReturnHistories>;
+  returnHistories: Array<ReturnHistories>;
   /** An aggregate relationship */
-  return_histories_aggregate: ReturnHistories_Aggregate;
+  returnHistories_aggregate: ReturnHistories_Aggregate;
   /** An object relationship */
   user: Users;
   userId: Scalars['Int'];
@@ -764,7 +764,7 @@ export type LendingHistories = {
 
 
 /** columns and relationships of "lending_histories" */
-export type LendingHistoriesReturn_HistoriesArgs = {
+export type LendingHistoriesReturnHistoriesArgs = {
   distinct_on?: InputMaybe<Array<ReturnHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -774,7 +774,7 @@ export type LendingHistoriesReturn_HistoriesArgs = {
 
 
 /** columns and relationships of "lending_histories" */
-export type LendingHistoriesReturn_Histories_AggregateArgs = {
+export type LendingHistoriesReturnHistories_AggregateArgs = {
   distinct_on?: InputMaybe<Array<ReturnHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -859,7 +859,7 @@ export type LendingHistories_Bool_Exp = {
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   dueDate?: InputMaybe<Date_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
-  return_histories?: InputMaybe<ReturnHistories_Bool_Exp>;
+  returnHistories?: InputMaybe<ReturnHistories_Bool_Exp>;
   user?: InputMaybe<Users_Bool_Exp>;
   userId?: InputMaybe<Int_Comparison_Exp>;
 };
@@ -884,7 +884,7 @@ export type LendingHistories_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']>;
   dueDate?: InputMaybe<Scalars['date']>;
   id?: InputMaybe<Scalars['Int']>;
-  return_histories?: InputMaybe<ReturnHistories_Arr_Rel_Insert_Input>;
+  returnHistories?: InputMaybe<ReturnHistories_Arr_Rel_Insert_Input>;
   user?: InputMaybe<Users_Obj_Rel_Insert_Input>;
   userId?: InputMaybe<Scalars['Int']>;
 };
@@ -957,7 +957,7 @@ export type LendingHistories_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   dueDate?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
-  return_histories_aggregate?: InputMaybe<ReturnHistories_Aggregate_Order_By>;
+  returnHistories_aggregate?: InputMaybe<ReturnHistories_Aggregate_Order_By>;
   user?: InputMaybe<Users_Order_By>;
   userId?: InputMaybe<Order_By>;
 };
@@ -1522,15 +1522,15 @@ export type Query_Root = {
   impressions_aggregate: Impressions_Aggregate;
   /** fetch data from the table: "impressions" using primary key columns */
   impressions_by_pk?: Maybe<Impressions>;
-  /** fetch data from the table: "lending_histories" */
+  /** An array relationship */
   lendingHistories: Array<LendingHistories>;
-  /** fetch aggregated fields from the table: "lending_histories" */
+  /** An aggregate relationship */
   lendingHistories_aggregate: LendingHistories_Aggregate;
   /** fetch data from the table: "lending_histories" using primary key columns */
   lendingHistories_by_pk?: Maybe<LendingHistories>;
-  /** fetch data from the table: "registration_histories" */
+  /** An array relationship */
   registrationHistories: Array<RegistrationHistories>;
-  /** fetch aggregated fields from the table: "registration_histories" */
+  /** An aggregate relationship */
   registrationHistories_aggregate: RegistrationHistories_Aggregate;
   /** fetch data from the table: "registration_histories" using primary key columns */
   registrationHistories_by_pk?: Maybe<RegistrationHistories>;
@@ -1540,9 +1540,9 @@ export type Query_Root = {
   reservations_aggregate: Reservations_Aggregate;
   /** fetch data from the table: "reservations" using primary key columns */
   reservations_by_pk?: Maybe<Reservations>;
-  /** fetch data from the table: "return_histories" */
+  /** An array relationship */
   returnHistories: Array<ReturnHistories>;
-  /** fetch aggregated fields from the table: "return_histories" */
+  /** An aggregate relationship */
   returnHistories_aggregate: ReturnHistories_Aggregate;
   /** fetch data from the table: "return_histories" using primary key columns */
   returnHistories_by_pk?: Maybe<ReturnHistories>;
@@ -2369,9 +2369,9 @@ export type ReturnHistories = {
   __typename?: 'returnHistories';
   createdAt: Scalars['timestamptz'];
   id: Scalars['Int'];
-  lendingHistoryId: Scalars['Int'];
   /** An object relationship */
-  lending_history: LendingHistories;
+  lendingHistory: LendingHistories;
+  lendingHistoryId: Scalars['Int'];
 };
 
 /** aggregated selection of "return_histories" */
@@ -2446,8 +2446,8 @@ export type ReturnHistories_Bool_Exp = {
   _or?: InputMaybe<Array<ReturnHistories_Bool_Exp>>;
   createdAt?: InputMaybe<Timestamptz_Comparison_Exp>;
   id?: InputMaybe<Int_Comparison_Exp>;
+  lendingHistory?: InputMaybe<LendingHistories_Bool_Exp>;
   lendingHistoryId?: InputMaybe<Int_Comparison_Exp>;
-  lending_history?: InputMaybe<LendingHistories_Bool_Exp>;
 };
 
 /** unique or primary key constraints on table "return_histories" */
@@ -2466,8 +2466,8 @@ export type ReturnHistories_Inc_Input = {
 export type ReturnHistories_Insert_Input = {
   createdAt?: InputMaybe<Scalars['timestamptz']>;
   id?: InputMaybe<Scalars['Int']>;
+  lendingHistory?: InputMaybe<LendingHistories_Obj_Rel_Insert_Input>;
   lendingHistoryId?: InputMaybe<Scalars['Int']>;
-  lending_history?: InputMaybe<LendingHistories_Obj_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -2520,8 +2520,8 @@ export type ReturnHistories_On_Conflict = {
 export type ReturnHistories_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
+  lendingHistory?: InputMaybe<LendingHistories_Order_By>;
   lendingHistoryId?: InputMaybe<Order_By>;
-  lending_history?: InputMaybe<LendingHistories_Order_By>;
 };
 
 /** primary key columns input for table: returnHistories */
@@ -2661,15 +2661,15 @@ export type Subscription_Root = {
   impressions_aggregate: Impressions_Aggregate;
   /** fetch data from the table: "impressions" using primary key columns */
   impressions_by_pk?: Maybe<Impressions>;
-  /** fetch data from the table: "lending_histories" */
+  /** An array relationship */
   lendingHistories: Array<LendingHistories>;
-  /** fetch aggregated fields from the table: "lending_histories" */
+  /** An aggregate relationship */
   lendingHistories_aggregate: LendingHistories_Aggregate;
   /** fetch data from the table: "lending_histories" using primary key columns */
   lendingHistories_by_pk?: Maybe<LendingHistories>;
-  /** fetch data from the table: "registration_histories" */
+  /** An array relationship */
   registrationHistories: Array<RegistrationHistories>;
-  /** fetch aggregated fields from the table: "registration_histories" */
+  /** An aggregate relationship */
   registrationHistories_aggregate: RegistrationHistories_Aggregate;
   /** fetch data from the table: "registration_histories" using primary key columns */
   registrationHistories_by_pk?: Maybe<RegistrationHistories>;
@@ -2679,9 +2679,9 @@ export type Subscription_Root = {
   reservations_aggregate: Reservations_Aggregate;
   /** fetch data from the table: "reservations" using primary key columns */
   reservations_by_pk?: Maybe<Reservations>;
-  /** fetch data from the table: "return_histories" */
+  /** An array relationship */
   returnHistories: Array<ReturnHistories>;
-  /** fetch aggregated fields from the table: "return_histories" */
+  /** An aggregate relationship */
   returnHistories_aggregate: ReturnHistories_Aggregate;
   /** fetch data from the table: "return_histories" using primary key columns */
   returnHistories_by_pk?: Maybe<ReturnHistories>;
@@ -2879,14 +2879,14 @@ export type Users = {
   /** An aggregate relationship */
   impressions_aggregate: Impressions_Aggregate;
   /** An array relationship */
-  lending_histories: Array<LendingHistories>;
+  lendingHistories: Array<LendingHistories>;
   /** An aggregate relationship */
-  lending_histories_aggregate: LendingHistories_Aggregate;
+  lendingHistories_aggregate: LendingHistories_Aggregate;
   name: Scalars['String'];
   /** An array relationship */
-  registration_histories: Array<RegistrationHistories>;
+  registrationHistories: Array<RegistrationHistories>;
   /** An aggregate relationship */
-  registration_histories_aggregate: RegistrationHistories_Aggregate;
+  registrationHistories_aggregate: RegistrationHistories_Aggregate;
   /** An array relationship */
   reservations: Array<Reservations>;
   /** An aggregate relationship */
@@ -2916,7 +2916,7 @@ export type UsersImpressions_AggregateArgs = {
 
 
 /** columns and relationships of "users" */
-export type UsersLending_HistoriesArgs = {
+export type UsersLendingHistoriesArgs = {
   distinct_on?: InputMaybe<Array<LendingHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -2926,7 +2926,7 @@ export type UsersLending_HistoriesArgs = {
 
 
 /** columns and relationships of "users" */
-export type UsersLending_Histories_AggregateArgs = {
+export type UsersLendingHistories_AggregateArgs = {
   distinct_on?: InputMaybe<Array<LendingHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -2936,7 +2936,7 @@ export type UsersLending_Histories_AggregateArgs = {
 
 
 /** columns and relationships of "users" */
-export type UsersRegistration_HistoriesArgs = {
+export type UsersRegistrationHistoriesArgs = {
   distinct_on?: InputMaybe<Array<RegistrationHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -2946,7 +2946,7 @@ export type UsersRegistration_HistoriesArgs = {
 
 
 /** columns and relationships of "users" */
-export type UsersRegistration_Histories_AggregateArgs = {
+export type UsersRegistrationHistories_AggregateArgs = {
   distinct_on?: InputMaybe<Array<RegistrationHistories_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']>;
   offset?: InputMaybe<Scalars['Int']>;
@@ -3020,9 +3020,9 @@ export type Users_Bool_Exp = {
   id?: InputMaybe<Int_Comparison_Exp>;
   imageUrl?: InputMaybe<String_Comparison_Exp>;
   impressions?: InputMaybe<Impressions_Bool_Exp>;
-  lending_histories?: InputMaybe<LendingHistories_Bool_Exp>;
+  lendingHistories?: InputMaybe<LendingHistories_Bool_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
-  registration_histories?: InputMaybe<RegistrationHistories_Bool_Exp>;
+  registrationHistories?: InputMaybe<RegistrationHistories_Bool_Exp>;
   reservations?: InputMaybe<Reservations_Bool_Exp>;
   sub?: InputMaybe<String_Comparison_Exp>;
 };
@@ -3049,9 +3049,9 @@ export type Users_Insert_Input = {
   id?: InputMaybe<Scalars['Int']>;
   imageUrl?: InputMaybe<Scalars['String']>;
   impressions?: InputMaybe<Impressions_Arr_Rel_Insert_Input>;
-  lending_histories?: InputMaybe<LendingHistories_Arr_Rel_Insert_Input>;
+  lendingHistories?: InputMaybe<LendingHistories_Arr_Rel_Insert_Input>;
   name?: InputMaybe<Scalars['String']>;
-  registration_histories?: InputMaybe<RegistrationHistories_Arr_Rel_Insert_Input>;
+  registrationHistories?: InputMaybe<RegistrationHistories_Arr_Rel_Insert_Input>;
   reservations?: InputMaybe<Reservations_Arr_Rel_Insert_Input>;
   sub?: InputMaybe<Scalars['String']>;
 };
@@ -3108,9 +3108,9 @@ export type Users_Order_By = {
   id?: InputMaybe<Order_By>;
   imageUrl?: InputMaybe<Order_By>;
   impressions_aggregate?: InputMaybe<Impressions_Aggregate_Order_By>;
-  lending_histories_aggregate?: InputMaybe<LendingHistories_Aggregate_Order_By>;
+  lendingHistories_aggregate?: InputMaybe<LendingHistories_Aggregate_Order_By>;
   name?: InputMaybe<Order_By>;
-  registration_histories_aggregate?: InputMaybe<RegistrationHistories_Aggregate_Order_By>;
+  registrationHistories_aggregate?: InputMaybe<RegistrationHistories_Aggregate_Order_By>;
   reservations_aggregate?: InputMaybe<Reservations_Aggregate_Order_By>;
   sub?: InputMaybe<Order_By>;
 };
@@ -3224,7 +3224,23 @@ export type InsertUserQueryMutation = { __typename?: 'mutation_root', insert_use
 export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl: string, createdAt: any }> };
+export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
+
+export type GetBookQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null, impressions: Array<{ __typename?: 'impressions', impression: string, createdAt: any, updatedAt: any }> }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
+
+export type PostLendingHistoryMutationVariables = Exact<{
+  userId: Scalars['Int'];
+  bookId: Scalars['Int'];
+  dueDate: Scalars['date'];
+}>;
+
+
+export type PostLendingHistoryMutation = { __typename?: 'mutation_root', insert_lendingHistories_one?: { __typename?: 'lendingHistories', userId: number, bookId: number, dueDate: any } | null };
 
 
 export const GetUserQueryDocument = gql`
@@ -3275,4 +3291,60 @@ export const GetBooksDocument = gql`
 
 export function useGetBooksQuery(options?: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBooksQuery>({ query: GetBooksDocument, ...options });
+};
+export const GetBookDocument = gql`
+    query getBook($id: Int!) {
+  books(where: {id: {_eq: $id}}) {
+    id
+    title
+    isbn
+    imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
+        impressions(where: {bookId: {_eq: $id}}) {
+          impression
+          createdAt
+          updatedAt
+        }
+      }
+      returnHistories {
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
+  }
+}
+    `;
+
+export function useGetBookQuery(options: Omit<Urql.UseQueryArgs<GetBookQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBookQuery>({ query: GetBookDocument, ...options });
+};
+export const PostLendingHistoryDocument = gql`
+    mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
+  insert_lendingHistories_one(
+    object: {userId: $userId, bookId: $bookId, dueDate: $dueDate}
+  ) {
+    userId
+    bookId
+    dueDate
+  }
+}
+    `;
+
+export function usePostLendingHistoryMutation() {
+  return Urql.useMutation<PostLendingHistoryMutation, PostLendingHistoryMutationVariables>(PostLendingHistoryDocument);
 };

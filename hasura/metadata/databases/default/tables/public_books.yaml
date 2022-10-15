@@ -19,14 +19,14 @@ array_relationships:
         table:
           schema: public
           name: impressions
-  - name: lending_histories
+  - name: lendingHistories
     using:
       foreign_key_constraint_on:
         column: book_id
         table:
           schema: public
           name: lending_histories
-  - name: registration_histories
+  - name: registrationHistories
     using:
       foreign_key_constraint_on:
         column: book_id

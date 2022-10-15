@@ -87,7 +87,7 @@ columns and relationships of "books"
 type books {
   createdAt: timestamptz!
   id: Int!
-  imageUrl: String!
+  imageUrl: String
 
   """An array relationship"""
   impressions(
@@ -127,7 +127,7 @@ type books {
   isbn: String!
 
   """An array relationship"""
-  lending_histories(
+  lendingHistories(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
 
@@ -145,7 +145,7 @@ type books {
   ): [lendingHistories!]!
 
   """An aggregate relationship"""
-  lending_histories_aggregate(
+  lendingHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
 
@@ -163,7 +163,7 @@ type books {
   ): lendingHistories_aggregate!
 
   """An array relationship"""
-  registration_histories(
+  registrationHistories(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
 
@@ -181,7 +181,7 @@ type books {
   ): [registrationHistories!]!
 
   """An aggregate relationship"""
-  registration_histories_aggregate(
+  registrationHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
 
@@ -278,8 +278,8 @@ input books_bool_exp {
   imageUrl: String_comparison_exp
   impressions: impressions_bool_exp
   isbn: String_comparison_exp
-  lending_histories: lendingHistories_bool_exp
-  registration_histories: registrationHistories_bool_exp
+  lendingHistories: lendingHistories_bool_exp
+  registrationHistories: registrationHistories_bool_exp
   reservations: reservations_bool_exp
   title: String_comparison_exp
 }
@@ -311,8 +311,8 @@ input books_insert_input {
   imageUrl: String
   impressions: impressions_arr_rel_insert_input
   isbn: String
-  lending_histories: lendingHistories_arr_rel_insert_input
-  registration_histories: registrationHistories_arr_rel_insert_input
+  lendingHistories: lendingHistories_arr_rel_insert_input
+  registrationHistories: registrationHistories_arr_rel_insert_input
   reservations: reservations_arr_rel_insert_input
   title: String
 }
@@ -372,8 +372,8 @@ input books_order_by {
   imageUrl: order_by
   impressions_aggregate: impressions_aggregate_order_by
   isbn: order_by
-  lending_histories_aggregate: lendingHistories_aggregate_order_by
-  registration_histories_aggregate: registrationHistories_aggregate_order_by
+  lendingHistories_aggregate: lendingHistories_aggregate_order_by
+  registrationHistories_aggregate: registrationHistories_aggregate_order_by
   reservations_aggregate: reservations_aggregate_order_by
   title: order_by
 }
@@ -882,7 +882,7 @@ type lendingHistories {
   id: Int!
 
   """An array relationship"""
-  return_histories(
+  returnHistories(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
 
@@ -900,7 +900,7 @@ type lendingHistories {
   ): [returnHistories!]!
 
   """An aggregate relationship"""
-  return_histories_aggregate(
+  returnHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
 
@@ -1002,7 +1002,7 @@ input lendingHistories_bool_exp {
   createdAt: timestamptz_comparison_exp
   dueDate: date_comparison_exp
   id: Int_comparison_exp
-  return_histories: returnHistories_bool_exp
+  returnHistories: returnHistories_bool_exp
   user: users_bool_exp
   userId: Int_comparison_exp
 }
@@ -1033,7 +1033,7 @@ input lendingHistories_insert_input {
   createdAt: timestamptz
   dueDate: date
   id: Int
-  return_histories: returnHistories_arr_rel_insert_input
+  returnHistories: returnHistories_arr_rel_insert_input
   user: users_obj_rel_insert_input
   userId: Int
 }
@@ -1115,7 +1115,7 @@ input lendingHistories_order_by {
   createdAt: order_by
   dueDate: order_by
   id: order_by
-  return_histories_aggregate: returnHistories_aggregate_order_by
+  returnHistories_aggregate: returnHistories_aggregate_order_by
   user: users_order_by
   userId: order_by
 }
@@ -1822,9 +1822,7 @@ type query_root {
   """fetch data from the table: "impressions" using primary key columns"""
   impressions_by_pk(id: Int!): impressions
 
-  """
-  fetch data from the table: "lending_histories"
-  """
+  """An array relationship"""
   lendingHistories(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
@@ -1842,9 +1840,7 @@ type query_root {
     where: lendingHistories_bool_exp
   ): [lendingHistories!]!
 
-  """
-  fetch aggregated fields from the table: "lending_histories"
-  """
+  """An aggregate relationship"""
   lendingHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
@@ -1867,9 +1863,7 @@ type query_root {
   """
   lendingHistories_by_pk(id: Int!): lendingHistories
 
-  """
-  fetch data from the table: "registration_histories"
-  """
+  """An array relationship"""
   registrationHistories(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
@@ -1887,9 +1881,7 @@ type query_root {
     where: registrationHistories_bool_exp
   ): [registrationHistories!]!
 
-  """
-  fetch aggregated fields from the table: "registration_histories"
-  """
+  """An aggregate relationship"""
   registrationHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
@@ -1951,9 +1943,7 @@ type query_root {
   """fetch data from the table: "reservations" using primary key columns"""
   reservations_by_pk(id: Int!): reservations
 
-  """
-  fetch data from the table: "return_histories"
-  """
+  """An array relationship"""
   returnHistories(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
@@ -1971,9 +1961,7 @@ type query_root {
     where: returnHistories_bool_exp
   ): [returnHistories!]!
 
-  """
-  fetch aggregated fields from the table: "return_histories"
-  """
+  """An aggregate relationship"""
   returnHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
@@ -2769,10 +2757,10 @@ columns and relationships of "return_histories"
 type returnHistories {
   createdAt: timestamptz!
   id: Int!
-  lendingHistoryId: Int!
 
   """An object relationship"""
-  lending_history: lendingHistories!
+  lendingHistory: lendingHistories!
+  lendingHistoryId: Int!
 }
 
 """
@@ -2850,8 +2838,8 @@ input returnHistories_bool_exp {
   _or: [returnHistories_bool_exp!]
   createdAt: timestamptz_comparison_exp
   id: Int_comparison_exp
+  lendingHistory: lendingHistories_bool_exp
   lendingHistoryId: Int_comparison_exp
-  lending_history: lendingHistories_bool_exp
 }
 
 """
@@ -2876,8 +2864,8 @@ input type for inserting data into table "return_histories"
 input returnHistories_insert_input {
   createdAt: timestamptz
   id: Int
+  lendingHistory: lendingHistories_obj_rel_insert_input
   lendingHistoryId: Int
-  lending_history: lendingHistories_obj_rel_insert_input
 }
 
 """aggregate max on columns"""
@@ -2936,8 +2924,8 @@ input returnHistories_on_conflict {
 input returnHistories_order_by {
   createdAt: order_by
   id: order_by
+  lendingHistory: lendingHistories_order_by
   lendingHistoryId: order_by
-  lending_history: lendingHistories_order_by
 }
 
 """primary key columns input for table: returnHistories"""
@@ -3163,9 +3151,7 @@ type subscription_root {
   """fetch data from the table: "impressions" using primary key columns"""
   impressions_by_pk(id: Int!): impressions
 
-  """
-  fetch data from the table: "lending_histories"
-  """
+  """An array relationship"""
   lendingHistories(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
@@ -3183,9 +3169,7 @@ type subscription_root {
     where: lendingHistories_bool_exp
   ): [lendingHistories!]!
 
-  """
-  fetch aggregated fields from the table: "lending_histories"
-  """
+  """An aggregate relationship"""
   lendingHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
@@ -3208,9 +3192,7 @@ type subscription_root {
   """
   lendingHistories_by_pk(id: Int!): lendingHistories
 
-  """
-  fetch data from the table: "registration_histories"
-  """
+  """An array relationship"""
   registrationHistories(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
@@ -3228,9 +3210,7 @@ type subscription_root {
     where: registrationHistories_bool_exp
   ): [registrationHistories!]!
 
-  """
-  fetch aggregated fields from the table: "registration_histories"
-  """
+  """An aggregate relationship"""
   registrationHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
@@ -3292,9 +3272,7 @@ type subscription_root {
   """fetch data from the table: "reservations" using primary key columns"""
   reservations_by_pk(id: Int!): reservations
 
-  """
-  fetch data from the table: "return_histories"
-  """
+  """An array relationship"""
   returnHistories(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
@@ -3312,9 +3290,7 @@ type subscription_root {
     where: returnHistories_bool_exp
   ): [returnHistories!]!
 
-  """
-  fetch aggregated fields from the table: "return_histories"
-  """
+  """An aggregate relationship"""
   returnHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [returnHistories_select_column!]
@@ -3444,7 +3420,7 @@ type users {
   ): impressions_aggregate!
 
   """An array relationship"""
-  lending_histories(
+  lendingHistories(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
 
@@ -3462,7 +3438,7 @@ type users {
   ): [lendingHistories!]!
 
   """An aggregate relationship"""
-  lending_histories_aggregate(
+  lendingHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [lendingHistories_select_column!]
 
@@ -3481,7 +3457,7 @@ type users {
   name: String!
 
   """An array relationship"""
-  registration_histories(
+  registrationHistories(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
 
@@ -3499,7 +3475,7 @@ type users {
   ): [registrationHistories!]!
 
   """An aggregate relationship"""
-  registration_histories_aggregate(
+  registrationHistories_aggregate(
     """distinct select on columns"""
     distinct_on: [registrationHistories_select_column!]
 
@@ -3596,9 +3572,9 @@ input users_bool_exp {
   id: Int_comparison_exp
   imageUrl: String_comparison_exp
   impressions: impressions_bool_exp
-  lending_histories: lendingHistories_bool_exp
+  lendingHistories: lendingHistories_bool_exp
   name: String_comparison_exp
-  registration_histories: registrationHistories_bool_exp
+  registrationHistories: registrationHistories_bool_exp
   reservations: reservations_bool_exp
   sub: String_comparison_exp
 }
@@ -3633,9 +3609,9 @@ input users_insert_input {
   id: Int
   imageUrl: String
   impressions: impressions_arr_rel_insert_input
-  lending_histories: lendingHistories_arr_rel_insert_input
+  lendingHistories: lendingHistories_arr_rel_insert_input
   name: String
-  registration_histories: registrationHistories_arr_rel_insert_input
+  registrationHistories: registrationHistories_arr_rel_insert_input
   reservations: reservations_arr_rel_insert_input
   sub: String
 }
@@ -3697,9 +3673,9 @@ input users_order_by {
   id: order_by
   imageUrl: order_by
   impressions_aggregate: impressions_aggregate_order_by
-  lending_histories_aggregate: lendingHistories_aggregate_order_by
+  lendingHistories_aggregate: lendingHistories_aggregate_order_by
   name: order_by
-  registration_histories_aggregate: registrationHistories_aggregate_order_by
+  registrationHistories_aggregate: registrationHistories_aggregate_order_by
   reservations_aggregate: reservations_aggregate_order_by
   sub: order_by
 }

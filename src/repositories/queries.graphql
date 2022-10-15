@@ -28,3 +28,48 @@ query getBooks {
     createdAt
   }
 }
+
+query getBook($id: Int!) {
+  books(where: {id: {_eq: $id}}) {
+    id
+    title
+    isbn
+    imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
+        impressions(where: {bookId: {_eq: $id}}) {
+          impression
+          createdAt
+          updatedAt
+        }
+      }
+      returnHistories {
+        
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
+  }
+}
+
+mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
+  insert_lendingHistories_one(object: {userId: $userId, bookId: $bookId, dueDate: $dueDate}) {
+    userId
+    bookId
+    dueDate
+  }
+}

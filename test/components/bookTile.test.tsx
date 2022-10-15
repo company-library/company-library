@@ -42,4 +42,10 @@ describe('book component', () => {
       {},
     )
   })
+
+  it('idが設定されている場合、クリックすると詳細画面へ遷移する', () => {
+    const { getByRole } = render(<BookTile book={bookWithImage} />)
+
+    expect(getByRole('link')).toHaveAttribute('href', `/books/${bookWithImage.id}`)
+  })
 })

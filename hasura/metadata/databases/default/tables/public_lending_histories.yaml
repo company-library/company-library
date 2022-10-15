@@ -26,7 +26,7 @@ object_relationships:
     using:
       foreign_key_constraint_on: user_id
 array_relationships:
-  - name: return_histories
+  - name: returnHistories
     using:
       foreign_key_constraint_on:
         column: lending_history_id

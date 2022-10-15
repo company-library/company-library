@@ -13,6 +13,6 @@ configuration:
     lending_history_id: lendingHistoryId
     created_at: createdAt
 object_relationships:
-  - name: lending_history
+  - name: lendingHistory
     using:
       foreign_key_constraint_on: lending_history_id
