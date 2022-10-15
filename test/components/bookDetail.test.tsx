@@ -15,6 +15,10 @@ describe('BookDetail component', () => {
   jest.spyOn(require('@/components/lendButton'), 'default').mockImplementation(() => {
     return <button>借りる</button>
   })
+  const expectedUserId = 1
+  jest
+    .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
+    .mockReturnValue({ user: { id: expectedUserId } })
 
   it('本の情報が表示される', async () => {
     const book = lendableBook
