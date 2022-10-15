@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import Image from 'next/image'
 import LendButton from '@/components/lendButton'
+import { useCustomUser } from '@/hooks/useCustomUser'
 
 type BookDetailProps = {
   book: {
@@ -39,19 +40,20 @@ type BookDetailProps = {
 }
 
 const BookDetail: FC<BookDetailProps> = ({ book }) => {
+  const { user } = useCustomUser()
+  const userId = user ? user.id : 0
+
   const holdings = book.registrationHistories.length
   const reservations = book.reservations.length
   const lendHistories = book.lendingHistories.length
 
-  // 貸し出し可能数 = 所蔵数 - 貸し出し数 - 予約数
   const lendables = holdings - lendHistories - reservations
 
   // 借りているか = 返却履歴のない貸出履歴がある
   const isLending = book.lendingHistories.some(
-    (h) => h.user.id === 1 && h.returnHistories.length === 0,
+    (h) => h.user.id === userId && h.returnHistories.length === 0,
   )
 
-  // 借りていない かつ 貸し出し可能なら、有効化
   const isLendable = !isLending && lendables > 0
 
   return (
