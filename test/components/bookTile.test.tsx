@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import Book from '@/components/book'
+import BookTile from '@/components/bookTile'
 import Image from 'next/image'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
@@ -11,22 +11,22 @@ describe('book component', () => {
   })
 
   it('本のタイトルと画像が表示される', () => {
-    const { getByText } = render(<Book book={bookWithImage} />)
+    const { getByText } = render(<BookTile book={bookWithImage} />)
 
     expect(getByText(bookWithImage.title)).toBeInTheDocument()
     expect(ImageMock).toBeCalledWith(
       {
         src: bookWithImage.imageUrl,
         alt: bookWithImage.title,
-        width: 128,
-        height: 200,
+        width: 300,
+        height: 400,
       },
       {},
     )
   })
 
   it('画像が無い場合はNoImageが表示される', () => {
-    const { getByText } = render(<Book book={bookWithoutImage} />)
+    const { getByText } = render(<BookTile book={bookWithoutImage} />)
 
     expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
     const args = ImageMock.mock.calls[0][0]
@@ -36,15 +36,15 @@ describe('book component', () => {
       {
         src: '/no_image.jpg',
         alt: bookWithoutImage.title,
-        width: 128,
-        height: 200,
+        width: 300,
+        height: 400,
       },
       {},
     )
   })
 
-  it('クリックすると詳細画面へ遷移する', () => {
-    const { getByRole } = render(<Book book={bookWithImage} />)
+  it('idが設定されている場合、クリックすると詳細画面へ遷移する', () => {
+    const { getByRole } = render(<BookTile book={bookWithImage} />)
 
     expect(getByRole('link')).toHaveAttribute('href', `/books/${bookWithImage.id}`)
   })

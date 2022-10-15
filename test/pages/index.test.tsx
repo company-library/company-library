@@ -40,12 +40,17 @@ describe('index page', () => {
   })
 
   it('本の一覧の読み込みに失敗した場合、「Error!」と表示される', () => {
-    useGetBooksQueryMock.mockReturnValueOnce([{ fetching: false, error: true }])
+    const expectErrorMsg = 'query has errored!'
+    console.error = jest.fn()
+    useGetBooksQueryMock.mockReturnValueOnce([{ fetching: false, error: expectErrorMsg }])
     const { getByText, rerender } = render(<TopPage />)
     expect(getByText('Error!')).toBeInTheDocument()
+    expect(console.error).toBeCalledWith(expectErrorMsg)
 
     useGetBooksQueryMock.mockReturnValueOnce([{ fetching: false, error: false, data: undefined }])
     rerender(<TopPage />)
     expect(getByText('Error!')).toBeInTheDocument()
+    // errorがfalseの場合は、console.errorが呼び出されない
+    expect(console.error).toBeCalledTimes(1)
   })
 })

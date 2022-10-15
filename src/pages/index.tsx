@@ -1,11 +1,14 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import Layout from '@/components/layout'
-import Book from '@/components/book'
+import BookTile from '@/components/bookTile'
 import { useGetBooksQuery } from '@/generated/graphql.client'
 
 const Home: NextPage = () => {
   const [result] = useGetBooksQuery()
+  if (result.error) {
+    console.error(result.error)
+  }
 
   return (
     <Layout title="トップページ | company-library">
@@ -29,7 +32,7 @@ const Home: NextPage = () => {
             return (
               <div key={book.id}>
                 <div className="m-10">
-                  <Book book={book} />
+                  <BookTile book={book} />
                 </div>
               </div>
             )
