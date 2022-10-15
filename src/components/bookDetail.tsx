@@ -1,7 +1,11 @@
 import { FC } from 'react'
 import Image from 'next/image'
 import LendButton from '@/components/lendButton'
+import ReturnButton from '@/components/returnButton'
 import { useCustomUser } from '@/hooks/useCustomUser'
+import { DateTime } from 'luxon'
+
+const dateFormat = 'yyyy-MM-dd'
 
 type BookDetailProps = {
   book: {
@@ -45,14 +49,13 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
 
   const holdings = book.registrationHistories.length
   const reservations = book.reservations.length
-  const lendHistories = book.lendingHistories.length
+  const lendHistories = book.lendingHistories.filter((h) => h.returnHistories.length === 0)
 
-  const lendables = holdings - lendHistories - reservations
+  const lendables = holdings - lendHistories.length - reservations
 
-  // 借りているか = 返却履歴のない貸出履歴がある
-  const isLending = book.lendingHistories.some(
-    (h) => h.user.id === userId && h.returnHistories.length === 0,
-  )
+  // 借りているか = 返却履歴のない自分の貸出履歴がある
+  const lendingHistory = lendHistories.find((h) => h.user.id === userId)
+  const isLending = !!lendingHistory
 
   const isLendable = !isLending && lendables > 0
 
@@ -62,8 +65,8 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
         <Image
           src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
           alt={book.title}
-          width={128}
-          height={200}
+          width={300}
+          height={400}
         />
       </div>
 
@@ -74,12 +77,10 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
       </div>
 
       <LendButton bookId={book.id} disabled={!isLendable} />
-      <button
-        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2 disabled:bg-gray-100"
+      <ReturnButton
+        lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
         disabled={!isLending}
-      >
-        返却する
-      </button>
+      />
 
       <div>借りた人</div>
       <table>
@@ -94,7 +95,13 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
           {book.lendingHistories.map((lendingHistory) => {
             return (
               <tr key={lendingHistory.id}>
-                <td>{lendingHistory.returnHistories[0]?.createdAt || lendingHistory.dueDate}</td>
+                <td>
+                  {DateTime.fromISO(
+                    lendingHistory.returnHistories[0]?.createdAt || lendingHistory.dueDate,
+                  )
+                    .setZone('Asia/Tokyo')
+                    .toFormat(dateFormat)}
+                </td>
                 <td>{lendingHistory.user.name}</td>
                 <td>{lendingHistory.user.impressions[0]?.impression}</td>
               </tr>
