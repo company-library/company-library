@@ -1,7 +1,9 @@
 import { formatForSearch } from '@/utils/stringUtils'
 
 describe('stringUtils', () => {
-  it('formatForSearch function', () => {
-    expect(formatForSearch('０Ａａ')).toBe('0AA')
+  describe('formatForSearch function', () => {
+    it('半角の大文字に変換されること', () => {
+      expect(formatForSearch('０Ａａ')).toBe('0AA')
+    })
   })
 })
