@@ -7,13 +7,12 @@ jest.mock('@/components/layout')
 jest.mock('@/components/googleBook')
 
 describe('register page', () => {
-  const layoutMock = (Layout as jest.Mock)
-    .mockImplementation(({ children }) => {
-      return <div>{children}</div>
-    })(GoogleBook as jest.Mock)
-    .mockImplementation(() => {
-      return <>google book component</>
-    })
+  ;(GoogleBook as jest.Mock).mockImplementation(() => {
+    return <>google book component</>
+  })
+  const layoutMock = (Layout as jest.Mock).mockImplementation(({ children }) => {
+    return <div>{children}</div>
+  })
 
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
     const { getByText, queryByText, getByLabelText } = render(<Register />)
