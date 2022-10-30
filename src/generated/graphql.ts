@@ -3226,12 +3226,36 @@ export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
 
+export type InsertBookMutationVariables = Exact<{
+  title: Scalars['String'];
+  isbn: Scalars['String'];
+  imageUrl?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type InsertBookMutation = { __typename?: 'mutation_root', insert_books_one?: { __typename?: 'books', id: number } | null };
+
+export type InsertRegistrationHistoryMutationVariables = Exact<{
+  bookId: Scalars['Int'];
+  userId: Scalars['Int'];
+}>;
+
+
+export type InsertRegistrationHistoryMutation = { __typename?: 'mutation_root', insert_registrationHistories_one?: { __typename?: 'registrationHistories', id: number } | null };
+
 export type GetBookQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
 export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null, impressions: Array<{ __typename?: 'impressions', impression: string, createdAt: any, updatedAt: any }> }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
+
+export type GetBookByIsbnQueryVariables = Exact<{
+  isbn: Scalars['String'];
+}>;
+
+
+export type GetBookByIsbnQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
 
 export type PostLendingHistoryMutationVariables = Exact<{
   userId: Scalars['Int'];
@@ -3280,6 +3304,20 @@ export const GetBooksDocument = gql`
   }
 }
     `;
+export const InsertBookDocument = gql`
+    mutation insertBook($title: String!, $isbn: String!, $imageUrl: String) {
+  insert_books_one(object: {title: $title, isbn: $isbn, imageUrl: $imageUrl}) {
+    id
+  }
+}
+    `;
+export const InsertRegistrationHistoryDocument = gql`
+    mutation insertRegistrationHistory($bookId: Int!, $userId: Int!) {
+  insert_registrationHistories_one(object: {bookId: $bookId, userId: $userId}) {
+    id
+  }
+}
+    `;
 export const GetBookDocument = gql`
     query getBook($id: Int!) {
   books(where: {id: {_eq: $id}}) {
@@ -3304,6 +3342,38 @@ export const GetBookDocument = gql`
           createdAt
           updatedAt
         }
+      }
+      returnHistories {
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
+  }
+}
+    `;
+export const GetBookByIsbnDocument = gql`
+    query getBookByIsbn($isbn: String!) {
+  books(where: {isbn: {_eq: $isbn}}) {
+    id
+    title
+    isbn
+    imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
       }
       returnHistories {
         createdAt
@@ -3345,8 +3415,17 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getBooks(variables?: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
     },
+    insertBook(variables: InsertBookMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertBookMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<InsertBookMutation>(InsertBookDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertBook', 'mutation');
+    },
+    insertRegistrationHistory(variables: InsertRegistrationHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertRegistrationHistoryMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<InsertRegistrationHistoryMutation>(InsertRegistrationHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertRegistrationHistory', 'mutation');
+    },
     getBook(variables: GetBookQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBookQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetBookQuery>(GetBookDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBook', 'query');
+    },
+    getBookByIsbn(variables: GetBookByIsbnQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBookByIsbnQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBookByIsbnQuery>(GetBookByIsbnDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBookByIsbn', 'query');
     },
     postLendingHistory(variables: PostLendingHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostLendingHistoryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostLendingHistoryMutation>(PostLendingHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postLendingHistory', 'mutation');

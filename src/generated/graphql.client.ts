@@ -3226,12 +3226,36 @@ export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
 
+export type InsertBookMutationVariables = Exact<{
+  title: Scalars['String'];
+  isbn: Scalars['String'];
+  imageUrl?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type InsertBookMutation = { __typename?: 'mutation_root', insert_books_one?: { __typename?: 'books', id: number } | null };
+
+export type InsertRegistrationHistoryMutationVariables = Exact<{
+  bookId: Scalars['Int'];
+  userId: Scalars['Int'];
+}>;
+
+
+export type InsertRegistrationHistoryMutation = { __typename?: 'mutation_root', insert_registrationHistories_one?: { __typename?: 'registrationHistories', id: number } | null };
+
 export type GetBookQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
 
 
 export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null, impressions: Array<{ __typename?: 'impressions', impression: string, createdAt: any, updatedAt: any }> }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
+
+export type GetBookByIsbnQueryVariables = Exact<{
+  isbn: Scalars['String'];
+}>;
+
+
+export type GetBookByIsbnQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
 
 export type PostLendingHistoryMutationVariables = Exact<{
   userId: Scalars['Int'];
@@ -3292,6 +3316,28 @@ export const GetBooksDocument = gql`
 export function useGetBooksQuery(options?: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBooksQuery>({ query: GetBooksDocument, ...options });
 };
+export const InsertBookDocument = gql`
+    mutation insertBook($title: String!, $isbn: String!, $imageUrl: String) {
+  insert_books_one(object: {title: $title, isbn: $isbn, imageUrl: $imageUrl}) {
+    id
+  }
+}
+    `;
+
+export function useInsertBookMutation() {
+  return Urql.useMutation<InsertBookMutation, InsertBookMutationVariables>(InsertBookDocument);
+};
+export const InsertRegistrationHistoryDocument = gql`
+    mutation insertRegistrationHistory($bookId: Int!, $userId: Int!) {
+  insert_registrationHistories_one(object: {bookId: $bookId, userId: $userId}) {
+    id
+  }
+}
+    `;
+
+export function useInsertRegistrationHistoryMutation() {
+  return Urql.useMutation<InsertRegistrationHistoryMutation, InsertRegistrationHistoryMutationVariables>(InsertRegistrationHistoryDocument);
+};
 export const GetBookDocument = gql`
     query getBook($id: Int!) {
   books(where: {id: {_eq: $id}}) {
@@ -3332,6 +3378,42 @@ export const GetBookDocument = gql`
 
 export function useGetBookQuery(options: Omit<Urql.UseQueryArgs<GetBookQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBookQuery>({ query: GetBookDocument, ...options });
+};
+export const GetBookByIsbnDocument = gql`
+    query getBookByIsbn($isbn: String!) {
+  books(where: {isbn: {_eq: $isbn}}) {
+    id
+    title
+    isbn
+    imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
+      }
+      returnHistories {
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
+  }
+}
+    `;
+
+export function useGetBookByIsbnQuery(options: Omit<Urql.UseQueryArgs<GetBookByIsbnQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBookByIsbnQuery>({ query: GetBookByIsbnDocument, ...options });
 };
 export const PostLendingHistoryDocument = gql`
     mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
