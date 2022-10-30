@@ -1,6 +1,7 @@
 import BookDetail from '@/components/bookDetail'
 import { render } from '@testing-library/react'
 import { lendableBook } from '../__utils__/data/book'
+import { DateTime, Settings } from 'luxon'
 
 // next/imageのモック
 jest.mock('next/image', () => ({
@@ -12,6 +13,9 @@ jest.mock('next/image', () => ({
 }))
 
 describe('BookDetail component', () => {
+  const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
+  Settings.now = () => expectedNow.toMillis()
+
   jest.spyOn(require('@/components/lendButton'), 'default').mockImplementation(() => {
     return <button>借りる</button>
   })
@@ -38,44 +42,57 @@ describe('BookDetail component', () => {
   })
 
   describe('借りている人', () => {
-    it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', () => {
-      const lendingBook = {
-        ...lendableBook,
-        reservations: [],
-        lendingHistories: [
-          {
-            id: 1,
-            createdAt: '2022-10-01',
-            user: { id: 1, name: 'user01', impressions: [] },
-            dueDate: '2022-10-24',
-            returnHistories: [],
-          },
-          {
-            id: 2,
-            createdAt: '2022-10-01',
-            user: { id: 2, name: 'user02', impressions: [] },
-            dueDate: '2022-10-08',
-            returnHistories: [],
-          },
-          {
-            id: 3,
-            createdAt: '2022-10-01',
-            user: { id: 3, name: 'user03', impressions: [] },
-            dueDate: '2022-10-15',
-            returnHistories: [],
-          },
-        ],
-      }
+    const lendingBook = {
+      ...lendableBook,
+      reservations: [],
+      lendingHistories: [
+        {
+          id: 1,
+          createdAt: '2022-10-01',
+          user: { id: 1, name: 'user01', impressions: [] },
+          dueDate: '2022-11-01',
+          returnHistories: [],
+        },
+        {
+          id: 2,
+          createdAt: '2022-10-01',
+          user: { id: 2, name: 'user02', impressions: [] },
+          dueDate: '2022-10-30',
+          returnHistories: [],
+        },
+        {
+          id: 3,
+          createdAt: '2022-10-01',
+          user: { id: 3, name: 'user03', impressions: [] },
+          dueDate: '2022-10-31',
+          returnHistories: [],
+        },
+      ],
+    }
 
+    it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', () => {
       const { getByText, getByTestId } = render(<BookDetail book={lendingBook} />)
 
       expect(getByText('借りている人')).toBeInTheDocument()
-      expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/08')
+      expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
       expect(getByTestId(`lendingUser-${0}`).textContent).toBe('user02')
-      expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/15')
+      expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
       expect(getByTestId(`lendingUser-${1}`).textContent).toBe('user03')
-      expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/10/24')
+      expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
       expect(getByTestId(`lendingUser-${2}`).textContent).toBe('user01')
+    })
+
+    it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', () => {
+      const { getByTestId } = render(<BookDetail book={lendingBook} />)
+
+      expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
+      expect(getByTestId(`dueDate-${0}`)).toHaveClass('text-red-400', 'font-bold')
+      expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
+      expect(getByTestId(`dueDate-${1}`)).not.toHaveClass('text-red-400')
+      expect(getByTestId(`dueDate-${1}`)).not.toHaveClass('font-bold')
+      expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
+      expect(getByTestId(`dueDate-${2}`)).not.toHaveClass('text-red-400')
+      expect(getByTestId(`dueDate-${2}`)).not.toHaveClass('font-bold')
     })
 
     it('貸出中のユーザーがいない場合、項目ごと表示されない', () => {

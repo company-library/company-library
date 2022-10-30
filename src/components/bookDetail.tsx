@@ -102,12 +102,16 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
             </thead>
             <tbody>
               {lendingHistories.map((lendingHistory, index) => {
+                const dueDate = DateTime.fromISO(lendingHistory.dueDate)
+                const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
+
                 return (
                   <tr key={lendingHistory.id}>
-                    <td data-testid={`dueDate-${index}`}>
-                      {DateTime.fromISO(lendingHistory.dueDate)
-                        .setZone('Asia/Tokyo')
-                        .toFormat(dateFormat)}
+                    <td
+                      className={isOver ? 'text-red-400 font-bold' : ''}
+                      data-testid={`dueDate-${index}`}
+                    >
+                      {dueDate.setZone('Asia/Tokyo').toFormat(dateFormat)}
                     </td>
                     <td data-testid={`lendingUser-${index}`}>{lendingHistory.user.name}</td>
                   </tr>
