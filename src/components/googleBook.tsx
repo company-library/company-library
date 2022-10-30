@@ -38,9 +38,8 @@ const GoogleBook: FC<GoogleBookProps> = ({ isbn }) => {
   const [companyBookResult] = useGetBookByIsbnQuery({ variables: { isbn: isbn } })
   const companyBook = companyBookResult.data?.books?.[0]
 
-  const [_insertBookResult, insertBook] = useInsertBookMutation()
-  const [_insertRegistrationHistoryResult, insertRegistrationHistory] =
-    useInsertRegistrationHistoryMutation()
+  const [, insertBook] = useInsertBookMutation()
+  const [, insertRegistrationHistory] = useInsertRegistrationHistoryMutation()
   const registerBook = () => {
     if (title) {
       insertBook({ title: title, isbn: isbn, imageUrl: thumbnailUrl }).then((bookResult) => {
