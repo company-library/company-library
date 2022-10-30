@@ -29,6 +29,18 @@ query getBooks {
   }
 }
 
+mutation insertBook($title: String!, $isbn: String!, $imageUrl: String) {
+  insert_books_one(object: {title: $title, isbn: $isbn, imageUrl: $imageUrl}) {
+    id
+  }
+}
+
+mutation insertRegistrationHistory($bookId: Int!, $userId: Int!) {
+  insert_registrationHistories_one(object: {bookId: $bookId, userId: $userId}) {
+    id
+  }
+}
+
 query getBook($id: Int!) {
   books(where: {id: {_eq: $id}}) {
     id
@@ -54,7 +66,39 @@ query getBook($id: Int!) {
         }
       }
       returnHistories {
-        
+
+        createdAt
+      }
+    }
+    reservations {
+      userId
+      reservationDate
+      createdAt
+    }
+  }
+}
+
+query getBookByIsbn($isbn: String!) {
+  books(where: {isbn: {_eq: $isbn}}) {
+    id
+    title
+    isbn
+    imageUrl
+    registrationHistories {
+      userId
+      createdAt
+    }
+    lendingHistories {
+      id
+      createdAt
+      dueDate
+      user {
+        id
+        name
+        imageUrl
+      }
+      returnHistories {
+
         createdAt
       }
     }
