@@ -1,7 +1,7 @@
 import { usePostReturnHistoryMutation } from '@/generated/graphql.client'
 
 export const useReturn = (lendingHistoryId: number) => {
-  const [postReturnHistoryResult, postReturnHistory] = usePostReturnHistoryMutation()
+  const [, postReturnHistory] = usePostReturnHistoryMutation()
 
   const returnBook = async () => {
     return await postReturnHistory({
@@ -23,6 +23,5 @@ export const useReturn = (lendingHistoryId: number) => {
 
   return {
     returnBook,
-    postReturnHistoryResult,
   }
 }

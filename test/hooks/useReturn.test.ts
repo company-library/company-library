@@ -62,12 +62,4 @@ describe('useReturn hook', () => {
       expect(result).toStrictEqual(new Error(expectedError))
     })
   })
-
-  describe('postReturnHistoryResult object', () => {
-    it('返却処理の状態をUIで表示するためのコンポーネントを返す', () => {
-      const { result } = renderHook(() => useReturn(lendingHistoryId))
-
-      expect(result.current.postReturnHistoryResult).toBe(expectedMutationResult)
-    })
-  })
 })
