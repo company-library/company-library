@@ -1,19 +1,32 @@
-import { usePostReturnHistoryMutation } from '@/generated/graphql.client'
+import { usePostImpressionMutation, usePostReturnHistoryMutation } from '@/generated/graphql.client'
 
-export const useReturn = (lendingHistoryId: number) => {
+export const useReturn = (lendingHistoryId: number, impression: string) => {
   const [, postReturnHistory] = usePostReturnHistoryMutation()
+  const [, postImpression] = usePostImpressionMutation()
 
   const returnBook = async () => {
     return await postReturnHistory({
       lendingHistoryId: lendingHistoryId,
     })
-      .then((result) => {
-        if (result.error) {
-          console.error(result.error)
-          return result.error
+      .then(async (lendingHistoryResult) => {
+        if (lendingHistoryResult.error) {
+          console.error(lendingHistoryResult.error)
+          return lendingHistoryResult.error
         }
 
-        return result
+        const lendingHistory = lendingHistoryResult.data?.insert_returnHistories_one?.lendingHistory
+        if (!impression || !lendingHistory) {
+          return lendingHistoryResult
+        }
+
+        const { userId, bookId } = lendingHistory
+        const impressionResult = await postImpression({ userId, bookId, impression })
+        if (impressionResult.error) {
+          console.error(impressionResult.error)
+          return impressionResult.error
+        }
+
+        return lendingHistoryResult
       })
       .catch((err) => {
         console.error(err)

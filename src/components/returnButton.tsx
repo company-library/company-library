@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { FC, Fragment, useState } from 'react'
+import React, { FC, Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useReturn } from '@/hooks/useReturn'
 
@@ -9,8 +9,13 @@ type ReturnButtonProps = {
 }
 
 const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => {
+  const [impression, setImpression] = useState('')
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setImpression(e.target.value)
+  }
+
   const router = useRouter()
-  const { returnBook } = useReturn(lendingHistoryId)
+  const { returnBook } = useReturn(lendingHistoryId, impression)
 
   const [isOpen, setIsOpen] = useState(false)
   const closeModal = () => setIsOpen(false)
@@ -55,6 +60,14 @@ const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => 
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                     返却しますか？
                   </Dialog.Title>
+
+                  <div className="mt-2">
+                    <textarea
+                      placeholder="感想を書いてください"
+                      value={impression}
+                      onChange={handleChange}
+                    />
+                  </div>
 
                   <div className="mt-4">
                     <button
