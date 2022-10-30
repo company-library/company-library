@@ -3278,7 +3278,16 @@ export type PostReturnHistoryMutationVariables = Exact<{
 }>;
 
 
-export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number } | null };
+export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number, lendingHistory: { __typename?: 'lendingHistories', userId: number, bookId: number } } | null };
+
+export type PostImpressionMutationVariables = Exact<{
+  userId: Scalars['Int'];
+  bookId: Scalars['Int'];
+  impression: Scalars['String'];
+}>;
+
+
+export type PostImpressionMutation = { __typename?: 'mutation_root', insert_impressions_one?: { __typename?: 'impressions', id: number } | null };
 
 
 export const GetUserQueryDocument = gql`
@@ -3470,10 +3479,27 @@ export const PostReturnHistoryDocument = gql`
     mutation postReturnHistory($lendingHistoryId: Int!) {
   insert_returnHistories_one(object: {lendingHistoryId: $lendingHistoryId}) {
     id
+    lendingHistory {
+      userId
+      bookId
+    }
   }
 }
     `;
 
 export function usePostReturnHistoryMutation() {
   return Urql.useMutation<PostReturnHistoryMutation, PostReturnHistoryMutationVariables>(PostReturnHistoryDocument);
+};
+export const PostImpressionDocument = gql`
+    mutation postImpression($userId: Int!, $bookId: Int!, $impression: String!) {
+  insert_impressions_one(
+    object: {userId: $userId, bookId: $bookId, impression: $impression}
+  ) {
+    id
+  }
+}
+    `;
+
+export function usePostImpressionMutation() {
+  return Urql.useMutation<PostImpressionMutation, PostImpressionMutationVariables>(PostImpressionDocument);
 };

@@ -136,7 +136,17 @@ mutation postLendingHistory($userId: Int!, $bookId: Int!, $dueDate: date!) {
 }
 
 mutation postReturnHistory($lendingHistoryId: Int!) {
-  insert_returnHistories_one(object: {lendingHistoryId: $lendingHistoryId}) {
+  insert_returnHistories_one(object: { lendingHistoryId: $lendingHistoryId }) {
+    id
+    lendingHistory {
+      userId
+      bookId
+    }
+  }
+}
+
+mutation postImpression($userId: Int!, $bookId: Int!, $impression: String!) {
+  insert_impressions_one(object: { userId: $userId, bookId: $bookId, impression: $impression }) {
     id
   }
 }
