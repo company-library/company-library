@@ -2,7 +2,6 @@ import { fireEvent, render } from '@testing-library/react'
 import GoogleBook from '@/components/googleBook'
 import useSWR from 'swr'
 import Image from 'next/image'
-import { useGetBookByIsbnQuery } from '@/generated/graphql.client'
 
 jest.mock('swr')
 jest.mock('next/image')
