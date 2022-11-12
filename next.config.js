@@ -5,7 +5,7 @@ const nextConfig = {
     outputStandalone: true,
   },
   images: {
-    domains: ['books.google.com'],
+    domains: ['books.google.com', 's.gravatar.com'],
   },
 }
 

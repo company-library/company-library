@@ -25,7 +25,8 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
           <Image
             src={user.imageUrl}
             alt={`${user.name}のプロフィール画像`}
-            layout="fill"
+            width="60"
+            height="60"
             className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
             data-testid="profileImage"
           />
