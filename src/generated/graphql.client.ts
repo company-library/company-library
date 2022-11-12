@@ -3255,7 +3255,7 @@ export type GetBookQueryVariables = Exact<{
 }>;
 
 
-export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null, impressions: Array<{ __typename?: 'impressions', impression: string, createdAt: any, updatedAt: any }> }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
+export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
 
 export type GetBookByIsbnQueryVariables = Exact<{
   isbn: Scalars['String'];
@@ -3279,6 +3279,13 @@ export type PostReturnHistoryMutationVariables = Exact<{
 
 
 export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number, lendingHistory: { __typename?: 'lendingHistories', userId: number, bookId: number } } | null };
+
+export type GetImpressionsQueryVariables = Exact<{
+  bookId: Scalars['Int'];
+}>;
+
+
+export type GetImpressionsQuery = { __typename?: 'query_root', impressions: Array<{ __typename?: 'impressions', id: number, impression: string, createdAt: any, updatedAt: any, user: { __typename?: 'users', name: string, imageUrl?: string | null } }> };
 
 export type PostImpressionMutationVariables = Exact<{
   userId: Scalars['Int'];
@@ -3402,11 +3409,6 @@ export const GetBookDocument = gql`
         id
         name
         imageUrl
-        impressions(where: {bookId: {_eq: $id}}) {
-          impression
-          createdAt
-          updatedAt
-        }
       }
       returnHistories {
         createdAt
@@ -3489,6 +3491,24 @@ export const PostReturnHistoryDocument = gql`
 
 export function usePostReturnHistoryMutation() {
   return Urql.useMutation<PostReturnHistoryMutation, PostReturnHistoryMutationVariables>(PostReturnHistoryDocument);
+};
+export const GetImpressionsDocument = gql`
+    query getImpressions($bookId: Int!) {
+  impressions(where: {bookId: {_eq: $bookId}}) {
+    id
+    user {
+      name
+      imageUrl
+    }
+    impression
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useGetImpressionsQuery(options: Omit<Urql.UseQueryArgs<GetImpressionsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetImpressionsQuery>({ query: GetImpressionsDocument, ...options });
 };
 export const PostImpressionDocument = gql`
     mutation postImpression($userId: Int!, $bookId: Int!, $impression: String!) {

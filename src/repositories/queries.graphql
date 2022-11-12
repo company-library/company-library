@@ -76,11 +76,6 @@ query getBook($id: Int!) {
         id
         name
         imageUrl
-        impressions(where: {bookId: {_eq: $id}}) {
-          impression
-          createdAt
-          updatedAt
-        }
       }
       returnHistories {
 
@@ -142,6 +137,19 @@ mutation postReturnHistory($lendingHistoryId: Int!) {
       userId
       bookId
     }
+  }
+}
+
+query getImpressions($bookId: Int!) {
+  impressions(where: {bookId: {_eq: $bookId}}) {
+    id
+    user {
+      name
+      imageUrl
+    }
+    impression
+    createdAt
+    updatedAt
   }
 }
 
