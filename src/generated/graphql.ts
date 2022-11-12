@@ -3211,6 +3211,11 @@ export type GetUserQueryQueryVariables = Exact<{
 
 export type GetUserQueryQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> };
 
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> }> };
+
 export type InsertUserQueryMutationVariables = Exact<{
   name: Scalars['String'];
   email: Scalars['String'];
@@ -3284,6 +3289,24 @@ export const GetUserQueryDocument = gql`
     email
     sub
     imageUrl
+  }
+}
+    `;
+export const GetUsersDocument = gql`
+    query getUsers {
+  users(order_by: {createdAt: desc}) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
   }
 }
     `;
@@ -3424,6 +3447,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     getUserQuery(variables: GetUserQueryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserQueryQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserQueryQuery>(GetUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserQuery', 'query');
+    },
+    getUsers(variables?: GetUsersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUsersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUsersQuery>(GetUsersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUsers', 'query');
     },
     insertUserQuery(variables: InsertUserQueryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertUserQueryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<InsertUserQueryMutation>(InsertUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertUserQuery', 'mutation');

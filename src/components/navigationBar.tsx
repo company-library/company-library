@@ -43,6 +43,17 @@ const NavigationBar: FC = () => {
               未返却一覧
             </a>
           </Link>
+          <Link href="/users">
+            <a
+              className={`rounded-md my-auto px-3 py-2 ${
+                router.pathname === '/users'
+                  ? 'bg-gray-600'
+                  : 'text-gray-200 hover:text-white hover:bg-gray-500'
+              }`}
+            >
+              利用者一覧
+            </a>
+          </Link>
         </div>
       </div>
     </nav>

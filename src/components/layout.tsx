@@ -17,7 +17,7 @@ const Layout: FC<LayoutProps> = ({ title, children }) => {
       <header>
         <NavigationBar />
       </header>
-      <main className="max-w-7xl mx-auto">{children}</main>
+      <main className="max-w-7xl mx-auto mt-8">{children}</main>
     </>
   )
 }

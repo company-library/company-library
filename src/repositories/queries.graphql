@@ -8,6 +8,23 @@ query getUserQuery($sub: String!) {
   }
 }
 
+query getUsers {
+  users(order_by: {createdAt: desc}) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+
 mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageUrl: String) {
   insert_users(objects: {name: $name, email: $email, sub: $sub, imageUrl: $imageUrl}) {
     returning {
