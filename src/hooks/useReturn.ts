@@ -5,28 +5,40 @@ export const useReturn = (lendingHistoryId: number, impression: string) => {
   const [, postImpression] = usePostImpressionMutation()
 
   const returnBook = async () => {
-    return await postReturnHistory({
+    const postReturnHistoryResult = await postReturnHistory({
       lendingHistoryId: lendingHistoryId,
     })
-      .then(async (lendingHistoryResult) => {
-        if (lendingHistoryResult.error) {
-          console.error(lendingHistoryResult.error)
-          return lendingHistoryResult.error
+      .then(async (result) => {
+        if (result.error) {
+          console.error(result.error)
+          return result.error
         }
 
-        const lendingHistory = lendingHistoryResult.data?.insert_returnHistories_one?.lendingHistory
-        if (!impression || !lendingHistory) {
-          return lendingHistoryResult
+        return result
+      })
+      .catch((err) => {
+        console.error(err)
+        return new Error(err)
+      })
+    if (postReturnHistoryResult instanceof Error) {
+      return postReturnHistoryResult
+    }
+
+    const lendingHistory = postReturnHistoryResult.data?.insert_returnHistories_one?.lendingHistory
+    if (!impression || !lendingHistory) {
+      return postReturnHistoryResult
+    }
+
+    const { userId, bookId } = lendingHistory
+
+    return await postImpression({ userId, bookId, impression })
+      .then((result) => {
+        if (result.error) {
+          console.error(result.error)
+          return result.error
         }
 
-        const { userId, bookId } = lendingHistory
-        const impressionResult = await postImpression({ userId, bookId, impression })
-        if (impressionResult.error) {
-          console.error(impressionResult.error)
-          return impressionResult.error
-        }
-
-        return lendingHistoryResult
+        return result
       })
       .catch((err) => {
         console.error(err)

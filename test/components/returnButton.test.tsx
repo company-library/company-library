@@ -31,14 +31,27 @@ describe('returnButton component', () => {
   })
 
   it('ボタンをクリックすると、ダイアログが表示される', () => {
-    const { getByRole, getByText } = render(
+    const { getByRole, getByText, getByPlaceholderText } = render(
       <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
 
     expect(getByText('返却しますか？')).toBeInTheDocument()
+    expect(getByPlaceholderText('感想を書いてください')).toBeInTheDocument()
     expect(getByRole('button', { name: 'Ok' })).toBeInTheDocument()
     expect(getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+  })
+
+  it('ダイアログで感想を入力することができる', async () => {
+    const { getByRole, getByPlaceholderText, getByDisplayValue } = render(
+      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+    )
+    fireEvent.click(getByRole('button', { name: '返却する' }))
+    fireEvent.change(getByPlaceholderText('感想を書いてください'), {
+      target: { value: '感想を書いたよ' },
+    })
+
+    expect(getByDisplayValue('感想を書いたよ')).toBeInTheDocument()
   })
 
   it('ダイアログのOkボタンをクリックすると、返却処理が実行され、リロードされる', async () => {
