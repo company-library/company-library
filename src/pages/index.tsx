@@ -25,7 +25,6 @@ const Home: NextPage = () => {
           <div className="relative">
             <input
               type="search"
-              id="default-search"
               className="block p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-blue-500"
               placeholder="書籍のタイトルで検索"
               onChange={(event) => setSearchKeyword(event.target.value)}
