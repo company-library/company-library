@@ -1,7 +1,11 @@
 import { FC } from 'react'
 import Image from 'next/image'
 import LendButton from '@/components/lendButton'
+import ReturnButton from '@/components/returnButton'
 import { useCustomUser } from '@/hooks/useCustomUser'
+import { DateTime } from 'luxon'
+
+const dateFormat = 'yyyy/MM/dd'
 
 type BookDetailProps = {
   book: {
@@ -45,16 +49,23 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
 
   const holdings = book.registrationHistories.length
   const reservations = book.reservations.length
-  const lendHistories = book.lendingHistories.length
+  const lendHistories = book.lendingHistories.filter((h) => h.returnHistories.length === 0)
 
-  const lendables = holdings - lendHistories - reservations
+  const lendables = holdings - lendHistories.length - reservations
 
-  // 借りているか = 返却履歴のない貸出履歴がある
-  const isLending = book.lendingHistories.some(
-    (h) => h.user.id === userId && h.returnHistories.length === 0,
-  )
+  // 借りているか = 返却履歴のない自分の貸出履歴がある
+  const lendingHistory = lendHistories.find((h) => h.user.id === userId)
+  const isLending = !!lendingHistory
 
   const isLendable = !isLending && lendables > 0
+
+  const lendingHistories = book.lendingHistories
+    .filter((h) => h.returnHistories.length === 0)
+    .sort((h1, h2) => (h1.dueDate > h2.dueDate ? 1 : -1))
+
+  const lentHistories = book.lendingHistories
+    .filter((h) => h.returnHistories.length !== 0)
+    .sort((h1, h2) => (h1.returnHistories[0].createdAt < h2.returnHistories[0].createdAt ? 1 : -1))
 
   return (
     <div>
@@ -62,8 +73,8 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
         <Image
           src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
           alt={book.title}
-          width={128}
-          height={200}
+          width={300}
+          height={400}
         />
       </div>
 
@@ -74,34 +85,74 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
       </div>
 
       <LendButton bookId={book.id} disabled={!isLendable} />
-      <button
-        className="bg-gray-400 hover:bg-gray-300 text-white rounded px-4 py-2 disabled:bg-gray-100"
+      <ReturnButton
+        lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
         disabled={!isLending}
-      >
-        返却する
-      </button>
+      />
+
+      {lendingHistories.length > 0 && (
+        <>
+          <div>借りている人</div>
+          <table>
+            <thead>
+              <tr>
+                <th>返却予定日</th>
+                <th>人</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lendingHistories.map((lendingHistory, index) => {
+                const dueDate = DateTime.fromISO(lendingHistory.dueDate)
+                const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
+
+                return (
+                  <tr key={lendingHistory.id}>
+                    <td
+                      className={isOver ? 'text-red-400 font-bold' : ''}
+                      data-testid={`dueDate-${index}`}
+                    >
+                      {dueDate.setZone('Asia/Tokyo').toFormat(dateFormat)}
+                    </td>
+                    <td data-testid={`lendingUser-${index}`}>{lendingHistory.user.name}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </>
+      )}
 
       <div>借りた人</div>
-      <table>
-        <thead>
-          <tr>
-            <th>返却予定日 or 返却日付</th>
-            <th>人</th>
-            <th>感想</th>
-          </tr>
-        </thead>
-        <tbody>
-          {book.lendingHistories.map((lendingHistory) => {
-            return (
-              <tr key={lendingHistory.id}>
-                <td>{lendingHistory.returnHistories[0]?.createdAt || lendingHistory.dueDate}</td>
-                <td>{lendingHistory.user.name}</td>
-                <td>{lendingHistory.user.impressions[0]?.impression}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      {lentHistories.length === 0 ? (
+        <div>いません</div>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>返却日付</th>
+              <th>人</th>
+              <th>感想</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lentHistories.map((lendingHistory, index) => {
+              return (
+                <tr key={lendingHistory.id}>
+                  <td data-testid={`returnedDate-${index}`}>
+                    {DateTime.fromISO(lendingHistory.returnHistories[0].createdAt)
+                      .setZone('Asia/Tokyo')
+                      .toFormat(dateFormat)}
+                  </td>
+                  <td data-testid={`returnedUser-${index}`}>{lendingHistory.user.name}</td>
+                  <td data-testid={`impression-${index}`}>
+                    {lendingHistory.user.impressions[0]?.impression}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

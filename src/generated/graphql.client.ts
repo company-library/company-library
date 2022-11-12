@@ -3266,6 +3266,13 @@ export type PostLendingHistoryMutationVariables = Exact<{
 
 export type PostLendingHistoryMutation = { __typename?: 'mutation_root', insert_lendingHistories_one?: { __typename?: 'lendingHistories', userId: number, bookId: number, dueDate: any } | null };
 
+export type PostReturnHistoryMutationVariables = Exact<{
+  lendingHistoryId: Scalars['Int'];
+}>;
+
+
+export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number } | null };
+
 
 export const GetUserQueryDocument = gql`
     query getUserQuery($sub: String!) {
@@ -3429,4 +3436,15 @@ export const PostLendingHistoryDocument = gql`
 
 export function usePostLendingHistoryMutation() {
   return Urql.useMutation<PostLendingHistoryMutation, PostLendingHistoryMutationVariables>(PostLendingHistoryDocument);
+};
+export const PostReturnHistoryDocument = gql`
+    mutation postReturnHistory($lendingHistoryId: Int!) {
+  insert_returnHistories_one(object: {lendingHistoryId: $lendingHistoryId}) {
+    id
+  }
+}
+    `;
+
+export function usePostReturnHistoryMutation() {
+  return Urql.useMutation<PostReturnHistoryMutation, PostReturnHistoryMutationVariables>(PostReturnHistoryDocument);
 };
