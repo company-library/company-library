@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
 import Layout from '@/components/layout'
 import BookTile from '@/components/bookTile'
 import { useGetBooksQuery } from '@/generated/graphql.client'
@@ -12,12 +11,6 @@ const Home: NextPage = () => {
 
   return (
     <Layout title="トップページ | company-library">
-      <div>
-        <Link href="/private">
-          <a>private page</a>
-        </Link>
-      </div>
-
       <div>
         <p className="text-4xl">新着</p>
       </div>
