@@ -16,6 +16,8 @@ describe('navigationBar component', () => {
     expect(getByText('登録')).not.toHaveClass('bg-gray-600')
     expect(getByText('未返却一覧')).toBeInTheDocument()
     expect(getByText('未返却一覧')).not.toHaveClass('bg-gray-600')
+    expect(getByText('利用者一覧')).toBeInTheDocument()
+    expect(getByText('利用者一覧')).not.toHaveClass('bg-gray-600')
   })
 
   it('pathが/books/registerの場合、登録ボタンのデザインが強調される', () => {
@@ -27,5 +29,16 @@ describe('navigationBar component', () => {
     const { getByText } = render(<NavigationBar />)
 
     expect(getByText('登録')).toHaveClass('bg-gray-600')
+  })
+
+  it('pathが/usersの場合、利用者一覧ボタンのデザインが強調される', () => {
+    routerMock.mockReturnValueOnce({
+      push: jest.fn(),
+      pathname: '/users',
+    })
+
+    const { getByText } = render(<NavigationBar />)
+
+    expect(getByText('利用者一覧')).toHaveClass('bg-gray-600')
   })
 })
