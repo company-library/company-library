@@ -1,6 +1,6 @@
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import Layout from '@/components/layout'
-import { bookWithImage } from '../__utils__/data/book'
+import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 jest.mock('@/components/layout')
 
@@ -12,7 +12,7 @@ describe('index page', () => {
         fetching: false,
         error: false,
         data: {
-          books: [bookWithImage],
+          books: [bookWithImage, bookWithoutImage],
         },
       },
     ])
@@ -23,12 +23,23 @@ describe('index page', () => {
 
   const TopPage = require('@/pages/index').default
 
-  it('本の一覧が新着順に表示される', () => {
+  it('本の一覧が表示される', () => {
     const { getByText } = render(<TopPage />)
 
     expect(LayoutMock.mock.calls[0][0].title).toBe('トップページ | company-library')
-    expect(getByText('新着')).toBeInTheDocument()
     expect(getByText(bookWithImage.title)).toBeInTheDocument()
+    expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
+  })
+
+  it('検索キーワードの入力フォームに入力があると、検索される', () => {
+    const searchWord = 'testBook'
+
+    const { getByPlaceholderText } = render(<TopPage />)
+    fireEvent.change(getByPlaceholderText('書籍のタイトルで検索'), {
+      target: { value: searchWord },
+    })
+
+    expect(useGetBooksQueryMock).toBeCalledWith({ variables: { keyword: `%${searchWord}%` } })
   })
 
   it('本の一覧の読み込み中は「Loading...」と表示される', () => {

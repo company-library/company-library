@@ -19,8 +19,8 @@ mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageU
     }
   }}
 
-query getBooks {
-  books {
+query getBooks($keyword: String!) {
+  books(where: {title: {_ilike: $keyword}}) {
     id
     title
     isbn

@@ -3221,7 +3221,9 @@ export type InsertUserQueryMutationVariables = Exact<{
 
 export type InsertUserQueryMutation = { __typename?: 'mutation_root', insert_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> } | null };
 
-export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetBooksQueryVariables = Exact<{
+  keyword: Scalars['String'];
+}>;
 
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
@@ -3309,8 +3311,8 @@ export function useInsertUserQueryMutation() {
   return Urql.useMutation<InsertUserQueryMutation, InsertUserQueryMutationVariables>(InsertUserQueryDocument);
 };
 export const GetBooksDocument = gql`
-    query getBooks {
-  books {
+    query getBooks($keyword: String!) {
+  books(where: {title: {_ilike: $keyword}}) {
     id
     title
     isbn
@@ -3320,7 +3322,7 @@ export const GetBooksDocument = gql`
 }
     `;
 
-export function useGetBooksQuery(options?: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
+export function useGetBooksQuery(options: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBooksQuery>({ query: GetBooksDocument, ...options });
 };
 export const InsertBookDocument = gql`

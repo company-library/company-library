@@ -2,9 +2,11 @@ import type { NextPage } from 'next'
 import Layout from '@/components/layout'
 import BookTile from '@/components/bookTile'
 import { useGetBooksQuery } from '@/generated/graphql.client'
+import { useState } from 'react'
 
 const Home: NextPage = () => {
-  const [result] = useGetBooksQuery()
+  const [searchKeyword, setSearchKeyword] = useState('')
+  const [result] = useGetBooksQuery({ variables: { keyword: `%${searchKeyword}%` } })
   if (result.error) {
     console.error(result.error)
   }
@@ -12,7 +14,16 @@ const Home: NextPage = () => {
   return (
     <Layout title="トップページ | company-library">
       <div>
-        <p className="text-4xl">新着</p>
+        <form>
+          <div className="relative">
+            <input
+              type="search"
+              className="block p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-blue-500"
+              placeholder="書籍のタイトルで検索"
+              onChange={(event) => setSearchKeyword(event.target.value)}
+            />
+          </div>
+        </form>
       </div>
 
       <div className="flex flex-wrap">

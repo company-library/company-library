@@ -3221,7 +3221,9 @@ export type InsertUserQueryMutationVariables = Exact<{
 
 export type InsertUserQueryMutation = { __typename?: 'mutation_root', insert_users?: { __typename?: 'users_mutation_response', returning: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> } | null };
 
-export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetBooksQueryVariables = Exact<{
+  keyword: Scalars['String'];
+}>;
 
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
@@ -3301,8 +3303,8 @@ export const InsertUserQueryDocument = gql`
 }
     `;
 export const GetBooksDocument = gql`
-    query getBooks {
-  books {
+    query getBooks($keyword: String!) {
+  books(where: {title: {_ilike: $keyword}}) {
     id
     title
     isbn
@@ -3426,7 +3428,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     insertUserQuery(variables: InsertUserQueryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertUserQueryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<InsertUserQueryMutation>(InsertUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertUserQuery', 'mutation');
     },
-    getBooks(variables?: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
+    getBooks(variables: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
     },
     insertBook(variables: InsertBookMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertBookMutation> {
