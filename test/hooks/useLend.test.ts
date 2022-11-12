@@ -57,12 +57,6 @@ describe('useLend hook', () => {
     expect(result.current.dueDate).toBe(expectedDuDate)
   })
 
-  it('貸出処理の状態をUIで表示するためのコンポーネントを返す', () => {
-    const { result } = renderHook(() => useLend(expectedBookId, initialDuDate))
-
-    expect(result.current.postLendingHistoryResult).toBe(expectedMutationResult)
-  })
-
   it('貸出処理は、ユーザーID，本のID，返却予定日を渡して実行する', async () => {
     const { result } = renderHook(() => useLend(expectedBookId, initialDuDate))
 

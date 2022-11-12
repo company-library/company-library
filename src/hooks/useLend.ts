@@ -12,7 +12,7 @@ export const useLend = (bookId: number, initialDueDate: string) => {
     setDueDate(e.currentTarget.value)
   }
 
-  const [postLendingHistoryResult, postLendingHistory] = usePostLendingHistoryMutation()
+  const [, postLendingHistory] = usePostLendingHistoryMutation()
   const lend = async () => {
     const result = await postLendingHistory({
       userId: user ? user.id : 0,
@@ -43,6 +43,5 @@ export const useLend = (bookId: number, initialDueDate: string) => {
     lend,
     dueDate,
     handleDueDate,
-    postLendingHistoryResult,
   }
 }
