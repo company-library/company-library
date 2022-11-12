@@ -1,16 +1,9 @@
 import { FC } from 'react'
 import Image from 'next/image'
-
-type User = {
-  id: number
-  name: string
-  email: string
-  imageUrl?: string | null
-  lendingHistories: Array<{ returnHistories_aggregate: { aggregate?: { count: number } | null } }>
-}
+import { UserSummary } from '@/models/user'
 
 type UserCardProps = {
-  user: User
+  user: UserSummary
 }
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
@@ -34,7 +27,9 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
           <Image
             src={user.imageUrl}
             alt={`${user.name}のプロフィール画像`}
+            layout="fill"
             className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
+            data-testid="profileImage"
           />
         )}
       </div>
@@ -42,11 +37,15 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="py-3 w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">今まで借りた冊数</span>
-            <span className="ml-1 text-sm">{haveReadBookCount}</span>
+            <span className="ml-1 text-sm" data-testid="haveReadBookCount">
+              {haveReadBookCount}
+            </span>
           </div>
           <div className="py-3 -ml-px w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">現在読んでいる冊数</span>
-            <span className="ml-1 text-sm">{readingBookCount}</span>
+            <span className="ml-1 text-sm" data-testid="readingBookCount">
+              {readingBookCount}
+            </span>
           </div>
         </div>
       </div>
