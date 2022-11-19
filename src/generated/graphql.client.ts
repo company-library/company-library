@@ -3211,6 +3211,11 @@ export type GetUserQueryQueryVariables = Exact<{
 
 export type GetUserQueryQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> };
 
+export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUsersQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> }> };
+
 export type InsertUserQueryMutationVariables = Exact<{
   name: Scalars['String'];
   email: Scalars['String'];
@@ -3290,6 +3295,28 @@ export const GetUserQueryDocument = gql`
 
 export function useGetUserQueryQuery(options: Omit<Urql.UseQueryArgs<GetUserQueryQueryVariables>, 'query'>) {
   return Urql.useQuery<GetUserQueryQuery>({ query: GetUserQueryDocument, ...options });
+};
+export const GetUsersDocument = gql`
+    query getUsers {
+  users(order_by: {createdAt: desc}) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+    `;
+
+export function useGetUsersQuery(options?: Omit<Urql.UseQueryArgs<GetUsersQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUsersQuery>({ query: GetUsersDocument, ...options });
 };
 export const InsertUserQueryDocument = gql`
     mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageUrl: String) {
