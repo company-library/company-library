@@ -5,7 +5,7 @@ export type User = {
   sub: string
 }
 
-export const isCustomUser = (value: any): value is User => {
+export const isUser = (value: any): value is User => {
   return (
     typeof value.id === 'number' &&
     typeof value.name === 'string' &&
