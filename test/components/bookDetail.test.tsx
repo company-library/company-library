@@ -22,6 +22,9 @@ describe('BookDetail component', () => {
   jest
     .spyOn(require('@/components/returnButton'), 'default')
     .mockReturnValue(<button>返却する</button>)
+  jest
+    .spyOn(require('@/components/bookDetails/impressionList'), 'default')
+    .mockReturnValue(<div>感想リスト</div>)
   const expectedUserId = 1
   jest
     .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
@@ -102,6 +105,14 @@ describe('BookDetail component', () => {
     })
   })
 
+  describe('感想', () => {
+    it('感想のリストを表示する', () => {
+      const { getByText } = render(<BookDetail book={lendableBook} />)
+
+      expect(getByText('感想')).toBeInTheDocument()
+    })
+  })
+
   describe('借りた人', () => {
     it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', () => {
       const returnedBook = {
@@ -111,7 +122,7 @@ describe('BookDetail component', () => {
           {
             id: 1,
             createdAt: '2022-10-01',
-            user: { id: 1, name: 'user01', impressions: [] },
+            user: { id: 1, name: 'user01' },
             dueDate: '2022-10-24',
             returnHistories: [{ createdAt: '2022-10-20' }],
           },
@@ -121,13 +132,6 @@ describe('BookDetail component', () => {
             user: {
               id: 2,
               name: 'user02',
-              impressions: [
-                {
-                  impression: '感想を書きました',
-                  createdAt: '2022-10-30',
-                  updatedAt: '2022-10-30',
-                },
-              ],
             },
             dueDate: '2022-10-08',
             returnHistories: [{ createdAt: '2022-10-30' }],
@@ -135,7 +139,7 @@ describe('BookDetail component', () => {
           {
             id: 3,
             createdAt: '2022-10-01',
-            user: { id: 3, name: 'user03', impressions: [] },
+            user: { id: 3, name: 'user03' },
             dueDate: '2022-10-15',
             returnHistories: [{ createdAt: '2022-10-25' }],
           },
@@ -145,15 +149,12 @@ describe('BookDetail component', () => {
       const { getByText, getByTestId } = render(<BookDetail book={returnedBook} />)
 
       expect(getByText('借りた人')).toBeInTheDocument()
-      expect(getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/30')
+      expect(getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
       expect(getByTestId(`returnedUser-${0}`).textContent).toBe('user02')
-      expect(getByTestId(`impression-${0}`).textContent).toBe('感想を書きました')
-      expect(getByTestId(`returnedDate-${1}`).textContent).toBe('2022/10/25')
+      expect(getByTestId(`returnedDate-${1}`).textContent).toBe('2022/10/01〜2022/10/25')
       expect(getByTestId(`returnedUser-${1}`).textContent).toBe('user03')
-      expect(getByTestId(`impression-${1}`).textContent).toBe('')
-      expect(getByTestId(`returnedDate-${2}`).textContent).toBe('2022/10/20')
+      expect(getByTestId(`returnedDate-${2}`).textContent).toBe('2022/10/01〜2022/10/20')
       expect(getByTestId(`returnedUser-${2}`).textContent).toBe('user01')
-      expect(getByTestId(`impression-${2}`).textContent).toBe('')
     })
 
     it('返却済の貸出履歴がない場合、いないことが表示される', () => {
