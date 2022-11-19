@@ -44,7 +44,9 @@ const ImpressionList: FC<ImpressionListProps> = ({ bookId }) => {
                 {DateTime.fromISO(impression.updatedAt).setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
               </td>
               <td data-testid={`postedUser-${index}`}>{impression.user.name}</td>
-              <td data-testid={`impression-${index}`}>{impression.impression}</td>
+              <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
+                {impression.impression}
+              </td>
             </tr>
           )
         })}

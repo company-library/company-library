@@ -11,7 +11,7 @@ describe('ImpressionList component', () => {
         name: 'user01',
         imageUrl: '',
       },
-      impression: '本の感想です。面白かったです。',
+      impression: '本の感想です。\n面白かったです。',
       createdAt: '2022-10-30T10:00:00+09:00',
       updatedAt: '2022-10-31T10:00:00+09:00',
     },
@@ -50,10 +50,18 @@ describe('ImpressionList component', () => {
     expect(getByTestId(`impression-${0}`).textContent).toBe('興味深い本でした')
     expect(getByTestId(`postedDate-${1}`).textContent).toBe('2022/10/31')
     expect(getByTestId(`postedUser-${1}`).textContent).toBe('user01')
-    expect(getByTestId(`impression-${1}`).textContent).toBe('本の感想です。面白かったです。')
+    expect(getByTestId(`impression-${1}`).textContent).toBe('本の感想です。\n面白かったです。')
     expect(getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/21')
     expect(getByTestId(`postedUser-${2}`).textContent).toBe('user03')
     expect(getByTestId(`impression-${2}`).textContent).toBe('感想')
+  })
+
+  it('感想は、改行を反映して表示する', () => {
+    const { getByTestId } = render(<ImpressionList bookId={bookId} />)
+
+    expect(getByTestId(`impression-${0}`)).toHaveClass('whitespace-pre-wrap')
+    expect(getByTestId(`impression-${1}`)).toHaveClass('whitespace-pre-wrap')
+    expect(getByTestId(`impression-${2}`)).toHaveClass('whitespace-pre-wrap')
   })
 
   it('感想が書かれていない場合は、そのことを表示する', () => {
