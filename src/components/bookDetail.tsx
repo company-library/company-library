@@ -64,96 +64,107 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
 
   return (
     <div>
-      <div>
-        <Image
-          src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-          alt={book.title}
-          width={300}
-          height={400}
-        />
-      </div>
-
-      <div>{book.title}</div>
-      <div>
-        <span>{`${lendables}冊貸し出し可能`}</span> (<span>{`所蔵数: ${holdings}冊`}</span>,{' '}
-        <span>{`予約数: ${reservations}件`}</span>)
-      </div>
-
-      <LendButton bookId={book.id} disabled={!isLendable} />
-      <ReturnButton
-        lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
-        disabled={!isLending}
-      />
-
-      {lendingHistories.length > 0 && (
-        <div>
-          借りている人
-          <table>
-            <thead>
-              <tr>
-                <th>返却予定日</th>
-                <th>人</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lendingHistories.map((lendingHistory, index) => {
-                const dueDate = DateTime.fromISO(lendingHistory.dueDate)
-                const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
-
-                return (
-                  <tr key={lendingHistory.id}>
-                    <td
-                      className={isOver ? 'text-red-400 font-bold' : ''}
-                      data-testid={`dueDate-${index}`}
-                    >
-                      {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
-                    </td>
-                    <td data-testid={`lendingUser-${index}`}>{lendingHistory.user.name}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+      <div className="flex flex-wrap">
+        <div className="w-full lg:w-1/2">
+          <Image
+            src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+            alt={book.title}
+            width={300}
+            height={400}
+          />
         </div>
-      )}
 
-      <div>
-        感想
-        <ImpressionList bookId={book.id} />
+        <div className="w-full lg:w-1/2 flex flex-col">
+          <h1 className="text-3xl font-bold">{book.title}</h1>
+
+          <p className="mt-5 indent-3">
+            <span>{`${lendables}冊貸し出し可能`}</span> (<span>{`所蔵数: ${holdings}冊`}</span>,{' '}
+            <span>{`予約数: ${reservations}件`}</span>)
+          </p>
+
+          <div className="mt-auto">
+            <LendButton bookId={book.id} disabled={!isLendable} />
+            <span className="ml-5">
+              <ReturnButton
+                lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
+                disabled={!isLending}
+              />
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div>
-        借りた人
-        {lentHistories.length === 0 ? (
-          <p>いません</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>貸出期間</th>
-                <th>人</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lentHistories.map((lendingHistory, index) => {
-                return (
-                  <tr key={lendingHistory.id}>
-                    <td data-testid={`returnedDate-${index}`}>
-                      {DateTime.fromISO(lendingHistory.createdAt)
-                        .setZone('Asia/Tokyo')
-                        .toFormat(DATE_FORMAT)}
-                      〜
-                      {DateTime.fromISO(lendingHistory.returnHistories[0].createdAt)
-                        .setZone('Asia/Tokyo')
-                        .toFormat(DATE_FORMAT)}
-                    </td>
-                    <td data-testid={`returnedUser-${index}`}>{lendingHistory.user.name}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+      <div className="mt-10">
+        {lendingHistories.length > 0 && (
+          <div className="mt-2">
+            借りている人
+            <table>
+              <thead>
+                <tr>
+                  <th>返却予定日</th>
+                  <th>人</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lendingHistories.map((lendingHistory, index) => {
+                  const dueDate = DateTime.fromISO(lendingHistory.dueDate)
+                  const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
+
+                  return (
+                    <tr key={lendingHistory.id}>
+                      <td
+                        className={isOver ? 'text-red-400 font-bold' : ''}
+                        data-testid={`dueDate-${index}`}
+                      >
+                        {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
+                      </td>
+                      <td data-testid={`lendingUser-${index}`}>{lendingHistory.user.name}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
+
+        <div className="mt-2">
+          感想
+          <ImpressionList bookId={book.id} />
+        </div>
+
+        <div className="mt-2">
+          借りた人
+          {lentHistories.length === 0 ? (
+            <p>いません</p>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>貸出期間</th>
+                  <th>人</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lentHistories.map((lendingHistory, index) => {
+                  return (
+                    <tr key={lendingHistory.id}>
+                      <td data-testid={`returnedDate-${index}`}>
+                        {DateTime.fromISO(lendingHistory.createdAt)
+                          .setZone('Asia/Tokyo')
+                          .toFormat(DATE_FORMAT)}
+                        〜
+                        {DateTime.fromISO(lendingHistory.returnHistories[0].createdAt)
+                          .setZone('Asia/Tokyo')
+                          .toFormat(DATE_FORMAT)}
+                      </td>
+                      <td data-testid={`returnedUser-${index}`}>{lendingHistory.user.name}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
   )
