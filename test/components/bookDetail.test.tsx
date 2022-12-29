@@ -78,11 +78,11 @@ describe('BookDetail component', () => {
 
       expect(getByText('借りている人')).toBeInTheDocument()
       expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
-      expect(getByTestId(`lendingUser-${0}`).textContent).toBe('user02')
+      expect(getByTestId(`lendingUser-${0}`).textContent).toBe('u')
       expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
-      expect(getByTestId(`lendingUser-${1}`).textContent).toBe('user03')
+      expect(getByTestId(`lendingUser-${1}`).textContent).toBe('u')
       expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
-      expect(getByTestId(`lendingUser-${2}`).textContent).toBe('user01')
+      expect(getByTestId(`lendingUser-${2}`).textContent).toBe('u')
     })
 
     it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', () => {
@@ -150,11 +150,11 @@ describe('BookDetail component', () => {
 
       expect(getByText('借りた人')).toBeInTheDocument()
       expect(getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
-      expect(getByTestId(`returnedUser-${0}`).textContent).toBe('user02')
+      expect(getByTestId(`returnedUser-${0}`).textContent).toBe('u')
       expect(getByTestId(`returnedDate-${1}`).textContent).toBe('2022/10/01〜2022/10/25')
-      expect(getByTestId(`returnedUser-${1}`).textContent).toBe('user03')
+      expect(getByTestId(`returnedUser-${1}`).textContent).toBe('u')
       expect(getByTestId(`returnedDate-${2}`).textContent).toBe('2022/10/01〜2022/10/20')
-      expect(getByTestId(`returnedUser-${2}`).textContent).toBe('user01')
+      expect(getByTestId(`returnedUser-${2}`).textContent).toBe('u')
     })
 
     it('返却済の貸出履歴がない場合、いないことが表示される', () => {
