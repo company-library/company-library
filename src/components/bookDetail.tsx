@@ -98,27 +98,28 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
         {lendingHistories.length > 0 && (
           <div className="mt-2">
             借りている人
-            <table>
-              <thead>
-                <tr>
-                  <th>返却予定日</th>
-                  <th>人</th>
-                </tr>
-              </thead>
+            <table className="table w-full">
               <tbody>
                 {lendingHistories.map((lendingHistory, index) => {
                   const dueDate = DateTime.fromISO(lendingHistory.dueDate)
                   const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
 
                   return (
-                    <tr key={lendingHistory.id}>
-                      <td
-                        className={isOver ? 'text-red-400 font-bold' : ''}
-                        data-testid={`dueDate-${index}`}
-                      >
-                        {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
+                    <tr className="hover:hover" key={lendingHistory.id}>
+                      <td className="w-[15rem]" data-testid={`dueDate-${index}`}>
+                        <span className={isOver ? 'text-red-400 font-bold' : ''}>
+                          {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
+                        </span>
                       </td>
-                      <td data-testid={`lendingUser-${index}`}>{lendingHistory.user.name}</td>
+                      <td data-testid={`lendingUser-${index}`}>
+                        <div className="flex items-center space-x-3">
+                          <div className="avatar placeholder">
+                            <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
+                              <span>{lendingHistory.user.name.substring(0, 1)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   )
                 })}
@@ -137,18 +138,12 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
           {lentHistories.length === 0 ? (
             <p>いません</p>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>貸出期間</th>
-                  <th>人</th>
-                </tr>
-              </thead>
+            <table className="table w-full">
               <tbody>
                 {lentHistories.map((lendingHistory, index) => {
                   return (
-                    <tr key={lendingHistory.id}>
-                      <td data-testid={`returnedDate-${index}`}>
+                    <tr className="hover:hover" key={lendingHistory.id}>
+                      <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
                         {DateTime.fromISO(lendingHistory.createdAt)
                           .setZone('Asia/Tokyo')
                           .toFormat(DATE_FORMAT)}
@@ -157,7 +152,15 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
                           .setZone('Asia/Tokyo')
                           .toFormat(DATE_FORMAT)}
                       </td>
-                      <td data-testid={`returnedUser-${index}`}>{lendingHistory.user.name}</td>
+                      <td data-testid={`returnedUser-${index}`}>
+                        <div className="flex items-center space-x-3">
+                          <div className="avatar placeholder">
+                            <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
+                              <span className="">{lendingHistory.user.name.substring(0, 1)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                   )
                 })}

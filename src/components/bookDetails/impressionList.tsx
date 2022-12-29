@@ -28,22 +28,23 @@ const ImpressionList: FC<ImpressionListProps> = ({ bookId }) => {
   )
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>投稿日</th>
-          <th>人</th>
-          <th>感想</th>
-        </tr>
-      </thead>
+    <table className="table w-full">
       <tbody>
         {recentImpressions.map((impression, index) => {
           return (
-            <tr key={impression.id}>
-              <td data-testid={`postedDate-${index}`}>
+            <tr className="hover:hover" key={impression.id}>
+              <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
                 {DateTime.fromISO(impression.updatedAt).setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
               </td>
-              <td data-testid={`postedUser-${index}`}>{impression.user.name}</td>
+              <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
+                <div className="flex items-center space-x-3">
+                  <div className="avatar placeholder">
+                    <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
+                      <span className="">{impression.user.name.substring(0, 1)}</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
               <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
                 {impression.impression}
               </td>
