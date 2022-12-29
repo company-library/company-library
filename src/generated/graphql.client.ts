@@ -3211,6 +3211,13 @@ export type GetUserQueryQueryVariables = Exact<{
 
 export type GetUserQueryQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> };
 
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', bookId: number, returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> } | null };
+
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3232,6 +3239,13 @@ export type GetBooksQueryVariables = Exact<{
 
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
+
+export type GetBooksByIdsQueryVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+}>;
+
+
+export type GetBooksByIdsQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
 
 export type InsertBookMutationVariables = Exact<{
   title: Scalars['String'];
@@ -3296,6 +3310,29 @@ export const GetUserQueryDocument = gql`
 export function useGetUserQueryQuery(options: Omit<Urql.UseQueryArgs<GetUserQueryQueryVariables>, 'query'>) {
   return Urql.useQuery<GetUserQueryQuery>({ query: GetUserQueryDocument, ...options });
 };
+export const GetUserByIdDocument = gql`
+    query getUserById($id: Int!) {
+  users_by_pk(id: $id) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      bookId
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+    `;
+
+export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserByIdQuery>({ query: GetUserByIdDocument, ...options });
+};
 export const GetUsersDocument = gql`
     query getUsers {
   users(order_by: {createdAt: desc}) {
@@ -3351,6 +3388,21 @@ export const GetBooksDocument = gql`
 
 export function useGetBooksQuery(options: Omit<Urql.UseQueryArgs<GetBooksQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBooksQuery>({ query: GetBooksDocument, ...options });
+};
+export const GetBooksByIdsDocument = gql`
+    query getBooksByIds($ids: [Int!]) {
+  books(where: {id: {_in: $ids}}) {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
+    `;
+
+export function useGetBooksByIdsQuery(options?: Omit<Urql.UseQueryArgs<GetBooksByIdsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBooksByIdsQuery>({ query: GetBooksByIdsDocument, ...options });
 };
 export const InsertBookDocument = gql`
     mutation insertBook($title: String!, $isbn: String!, $imageUrl: String) {

@@ -8,6 +8,24 @@ query getUserQuery($sub: String!) {
   }
 }
 
+query getUserById($id: Int!) {
+  users_by_pk(id: $id) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      bookId
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+
 query getUsers {
   users(order_by: {createdAt: desc}) {
     id
@@ -38,6 +56,16 @@ mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageU
 
 query getBooks($keyword: String!) {
   books(where: {title: {_ilike: $keyword}}) {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
+
+query getBooksByIds($ids: [Int!]) {
+  books(where: {id: {_in: $ids}}) {
     id
     title
     isbn
