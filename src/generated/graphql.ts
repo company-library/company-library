@@ -3211,6 +3211,13 @@ export type GetUserQueryQueryVariables = Exact<{
 
 export type GetUserQueryQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null }> };
 
+export type GetUserByIdQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', bookId: number, returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> } | null };
+
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3232,6 +3239,13 @@ export type GetBooksQueryVariables = Exact<{
 
 
 export type GetBooksQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
+
+export type GetBooksByIdsQueryVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['Int']> | Scalars['Int']>;
+}>;
+
+
+export type GetBooksByIdsQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, createdAt: any }> };
 
 export type InsertBookMutationVariables = Exact<{
   title: Scalars['String'];
@@ -3308,6 +3322,25 @@ export const GetUserQueryDocument = gql`
   }
 }
     `;
+export const GetUserByIdDocument = gql`
+    query getUserById($id: Int!) {
+  users_by_pk(id: $id) {
+    id
+    name
+    email
+    sub
+    imageUrl
+    lendingHistories {
+      bookId
+      returnHistories_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+}
+    `;
 export const GetUsersDocument = gql`
     query getUsers {
   users(order_by: {createdAt: desc}) {
@@ -3344,6 +3377,17 @@ export const InsertUserQueryDocument = gql`
 export const GetBooksDocument = gql`
     query getBooks($keyword: String!) {
   books(where: {title: {_ilike: $keyword}}) {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
+    `;
+export const GetBooksByIdsDocument = gql`
+    query getBooksByIds($ids: [Int!]) {
+  books(where: {id: {_in: $ids}}) {
     id
     title
     isbn
@@ -3486,6 +3530,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     getUserQuery(variables: GetUserQueryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserQueryQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserQueryQuery>(GetUserQueryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserQuery', 'query');
     },
+    getUserById(variables: GetUserByIdQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserByIdQuery>(GetUserByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUserById', 'query');
+    },
     getUsers(variables?: GetUsersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUsersQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUsersQuery>(GetUsersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUsers', 'query');
     },
@@ -3494,6 +3541,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getBooks(variables: GetBooksQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetBooksQuery>(GetBooksDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooks', 'query');
+    },
+    getBooksByIds(variables?: GetBooksByIdsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetBooksByIdsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetBooksByIdsQuery>(GetBooksByIdsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getBooksByIds', 'query');
     },
     insertBook(variables: InsertBookMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<InsertBookMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<InsertBookMutation>(InsertBookDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'insertBook', 'mutation');
