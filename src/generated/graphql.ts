@@ -3269,7 +3269,7 @@ export type GetBookQueryVariables = Exact<{
 }>;
 
 
-export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null, impressions: Array<{ __typename?: 'impressions', impression: string, createdAt: any, updatedAt: any }> }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
+export type GetBookQuery = { __typename?: 'query_root', books: Array<{ __typename?: 'books', id: number, title: string, isbn: string, imageUrl?: string | null, registrationHistories: Array<{ __typename?: 'registrationHistories', userId: number, createdAt: any }>, lendingHistories: Array<{ __typename?: 'lendingHistories', id: number, createdAt: any, dueDate: any, user: { __typename?: 'users', id: number, name: string, imageUrl?: string | null }, returnHistories: Array<{ __typename?: 'returnHistories', createdAt: any }> }>, reservations: Array<{ __typename?: 'reservations', userId: number, reservationDate: any, createdAt: any }> }> };
 
 export type GetBookByIsbnQueryVariables = Exact<{
   isbn: Scalars['String'];
@@ -3292,7 +3292,23 @@ export type PostReturnHistoryMutationVariables = Exact<{
 }>;
 
 
-export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number } | null };
+export type PostReturnHistoryMutation = { __typename?: 'mutation_root', insert_returnHistories_one?: { __typename?: 'returnHistories', id: number, lendingHistory: { __typename?: 'lendingHistories', userId: number, bookId: number } } | null };
+
+export type GetImpressionsQueryVariables = Exact<{
+  bookId: Scalars['Int'];
+}>;
+
+
+export type GetImpressionsQuery = { __typename?: 'query_root', impressions: Array<{ __typename?: 'impressions', id: number, impression: string, createdAt: any, updatedAt: any, user: { __typename?: 'users', name: string, imageUrl?: string | null } }> };
+
+export type PostImpressionMutationVariables = Exact<{
+  userId: Scalars['Int'];
+  bookId: Scalars['Int'];
+  impression: Scalars['String'];
+}>;
+
+
+export type PostImpressionMutation = { __typename?: 'mutation_root', insert_impressions_one?: { __typename?: 'impressions', id: number } | null };
 
 
 export const GetUserQueryDocument = gql`
@@ -3413,11 +3429,6 @@ export const GetBookDocument = gql`
         id
         name
         imageUrl
-        impressions(where: {bookId: {_eq: $id}}) {
-          impression
-          createdAt
-          updatedAt
-        }
       }
       returnHistories {
         createdAt
@@ -3478,6 +3489,33 @@ export const PostReturnHistoryDocument = gql`
     mutation postReturnHistory($lendingHistoryId: Int!) {
   insert_returnHistories_one(object: {lendingHistoryId: $lendingHistoryId}) {
     id
+    lendingHistory {
+      userId
+      bookId
+    }
+  }
+}
+    `;
+export const GetImpressionsDocument = gql`
+    query getImpressions($bookId: Int!) {
+  impressions(where: {bookId: {_eq: $bookId}}) {
+    id
+    user {
+      name
+      imageUrl
+    }
+    impression
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export const PostImpressionDocument = gql`
+    mutation postImpression($userId: Int!, $bookId: Int!, $impression: String!) {
+  insert_impressions_one(
+    object: {userId: $userId, bookId: $bookId, impression: $impression}
+  ) {
+    id
   }
 }
     `;
@@ -3524,6 +3562,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     postReturnHistory(variables: PostReturnHistoryMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostReturnHistoryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostReturnHistoryMutation>(PostReturnHistoryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postReturnHistory', 'mutation');
+    },
+    getImpressions(variables: GetImpressionsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetImpressionsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetImpressionsQuery>(GetImpressionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getImpressions', 'query');
+    },
+    postImpression(variables: PostImpressionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PostImpressionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PostImpressionMutation>(PostImpressionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'postImpression', 'mutation');
     }
   };
 }
