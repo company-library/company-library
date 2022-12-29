@@ -106,8 +106,11 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
 
                   return (
                     <tr className="hover:hover" key={lendingHistory.id}>
-                      <td className="w-[15rem]" data-testid={`dueDate-${index}`}>
-                        <span className={isOver ? 'text-red-400 font-bold' : ''}>
+                      <td className="w-[15rem]">
+                        <span
+                          className={isOver ? 'text-red-400 font-bold' : ''}
+                          data-testid={`dueDate-${index}`}
+                        >
                           {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
                         </span>
                       </td>
