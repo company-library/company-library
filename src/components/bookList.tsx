@@ -19,10 +19,22 @@ const BookList: FC<BookListProps> = ({ ids }) => {
   }
 
   const books = result.data.books
+  if (books.length === 0) {
+    return (
+      <p>該当の書籍はありません</p>
+    )
+  }
+
   return (
-    <>
-      {books.map((book) => <BookTile key={book.id} book={book} />)}
-    </>
+    <div className="flex flex-wrap">
+      {books.map((book) => {
+        return (
+          <div key={book.id} className="m-10">
+            <BookTile book={book} />
+          </div>
+        )
+      })}
+    </div>
   )
 }
 

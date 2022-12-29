@@ -28,16 +28,20 @@ const User: FC<UserProps> = ({ id }) => {
   }
 
   const readingBooks = user.lendingHistories.filter((h) => h.returnHistories_aggregate.aggregate?.count === 0)
-  const readBooks = user.lendingHistories.filter((h) => h.returnHistories_aggregate.aggregate?.count === 1)
+  const haveReadBooks = user.lendingHistories.filter((h) => h.returnHistories_aggregate.aggregate?.count ?? 0 > 1)
   return (
     <>
-      <h1 className="text-3xl mb-8">{user.name}</h1>
-      <h2>現在読んでいる書籍</h2>
-      <BookList
-        ids={readingBooks.map((h) => h.bookId)} />
-      <h2>今まで読んだ書籍</h2>
-      <BookList
-        ids={readBooks.map((h) => h.bookId)} />
+      <h1 className="text-3xl mb-8">{user.name}さんの情報</h1>
+      <h2 className="text-xl mb-2">現在読んでいる書籍</h2>
+      <div className="mb-6">
+        <BookList
+          ids={readingBooks.map((h) => h.bookId)} />
+      </div>
+      <h2 className="text-xl mb-2">今まで読んだ書籍</h2>
+      <div>
+        <BookList
+          ids={haveReadBooks.map((h) => h.bookId)} />
+      </div>
     </>
   )
 }
