@@ -42,7 +42,7 @@ describe('UserDetail component', () => {
     expect(getByText('Loading...')).toBeInTheDocument()
   })
 
-  it('ユーザー情報の読み込みでエラーが発生した場合は、「Error!」というメッセージが表示される', () => {
+  it('ユーザー情報の読み込みでエラーが発生した場合は、HTTPステータスコード500のエラーページが表示される', () => {
     const expectedErrorMsg = 'error has occurred!'
     useGetUserQueryMock.mockReturnValueOnce([{ fetching: false, error: expectedErrorMsg }])
     const consoleErrorMock = jest.fn()
@@ -50,7 +50,7 @@ describe('UserDetail component', () => {
 
     const { getByText } = render(<User id={userId} />)
 
-    expect(getByText('Error!')).toBeInTheDocument()
+    expect(getByText('500')).toBeInTheDocument()
     expect(consoleErrorMock).toBeCalledWith(expectedErrorMsg)
   })
 

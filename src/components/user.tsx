@@ -15,7 +15,7 @@ const User: FC<UserProps> = ({ id }) => {
     }
     return (
       <>
-        {result.fetching ? <div>Loading...</div> : <div>Error!</div>}
+        {result.fetching ? <div>Loading...</div> : <Error statusCode={500} />}
       </>
     )
   }
