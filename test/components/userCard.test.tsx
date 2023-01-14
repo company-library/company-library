@@ -14,8 +14,8 @@ describe('UserCard component', () => {
     expect(getByText(user1.name)).toBeInTheDocument()
     expect(getByText(user1.email)).toBeInTheDocument()
     expect(getByTestId('profileImage')).toBeInTheDocument()
-    expect(getByTestId('haveReadBookCount').textContent).toBe('2')
-    expect(getByTestId('readingBookCount').textContent).toBe('1')
+    expect(getByTestId('readingBookCount').textContent).toBe('3')
+    expect(getByTestId('haveReadBookCount').textContent).toBe('4')
 
     fireEvent.click(getByText(user1.name))
 

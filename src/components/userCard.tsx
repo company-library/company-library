@@ -8,12 +8,14 @@ type UserCardProps = {
 }
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
-  const haveReadBookCount = user.lendingHistories.filter(
-    (history) => history.returnHistories_aggregate.aggregate?.count ?? 0 > 0,
-  ).length
-  const readingBookCount = user.lendingHistories.filter(
-    (history) => history.returnHistories_aggregate.aggregate?.count === 0,
-  ).length
+  const lendingHistories = user.lendingHistories.map((h) => {
+    return { bookId: h.bookId, isReturned: (h.returnHistories_aggregate?.aggregate?.count ?? 0) > 0 }
+  }).reduce<Array<{ bookId: number, isReturned: boolean }>>((acc, obj) => {
+    return acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned) ? acc : [...acc, obj]
+  }, [])
+
+  const readingBooks = lendingHistories.filter((h) => !h.isReturned)
+  const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
 
   return (
     <Link href={`/users/${user.id}`}>
@@ -38,13 +40,13 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
           <div className="py-3 w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">現在読んでいる冊数</span>
             <span className="ml-1 text-sm" data-testid="readingBookCount">
-              {readingBookCount}
+              {readingBooks.length}
             </span>
           </div>
           <div className="py-3 -ml-px w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">今まで借りた冊数</span>
             <span className="ml-1 text-sm" data-testid="haveReadBookCount">
-             {haveReadBookCount}
+             {haveReadBooks.length}
             </span>
           </div>
         </div>
