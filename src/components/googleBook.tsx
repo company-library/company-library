@@ -9,6 +9,7 @@ import {
   useInsertRegistrationHistoryMutation,
 } from '@/generated/graphql.client'
 import { useRouter } from 'next/router'
+import registerNotification from '@/pages/api/books/registerNotification'
 
 type GoogleBookProps = {
   isbn: string
@@ -50,11 +51,14 @@ const GoogleBook: FC<GoogleBookProps> = ({ isbn }) => {
 
         const bookId = bookResult.data?.insert_books_one?.id
         if (bookId) {
-          insertRegistrationHistory({ bookId: bookId, userId: 1 }).then((registrationResult) => {
+          insertRegistrationHistory({ bookId: bookId, userId: 1 }).then(async (registrationResult) => {
             if (registrationResult.error) {
               console.error('registration insert error: ', registrationResult.error)
               return
             }
+
+            await registerNotification(title)
+
             router.push(`/books/${bookId}`)
           })
         }
