@@ -27,8 +27,14 @@ const User: FC<UserProps> = ({ id }) => {
     )
   }
 
-  const readingBooks = user.lendingHistories.filter((h) => h.returnHistories_aggregate?.aggregate?.count === 0)
-  const haveReadBooks = user.lendingHistories.filter((h) => h.returnHistories_aggregate?.aggregate?.count ?? 0 > 0)
+  const lendingHistories = user.lendingHistories.map((h) => {
+    return { bookId: h.bookId, isReturned: (h.returnHistories_aggregate?.aggregate?.count ?? 0) > 0 }
+  }).reduce<Array<{ bookId: number, isReturned: boolean }>>((acc, obj) => {
+    return acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned) ? acc : [...acc, obj]
+  }, [])
+
+  const readingBooks = lendingHistories.filter((h) => !h.isReturned)
+  const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
   return (
     <>
       <h1 className="text-3xl mb-8">{user.name}さんの情報</h1>

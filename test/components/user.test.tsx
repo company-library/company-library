@@ -12,11 +12,15 @@ describe('UserDetail component', () => {
         users_by_pk: {
           name: 'テスト太郎',
           lendingHistories: [
-            { returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { returnHistories_aggregate: { aggregate: { count: 1 } } },
-            { returnHistories_aggregate: { aggregate: { count: 1 } } }
+            { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+            { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+            { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
+            { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
+            { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
+            { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+            { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+            { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
+            { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } }
           ]
         }
       }
@@ -27,7 +31,7 @@ describe('UserDetail component', () => {
 
     expect(getByText('テスト太郎さんの情報')).toBeInTheDocument()
     expect(getByText('現在読んでいる書籍(3冊)'))
-    expect(getByText('今まで読んだ書籍(2冊)'))
+    expect(getByText('今まで読んだ書籍(4冊)'))
   })
 
   it('ユーザー情報の読み込み中は、「Loading...」というメッセージが表示される', async () => {
