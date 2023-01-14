@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { DateTime } from 'luxon'
 import { useGetImpressionsQuery } from '@/generated/graphql.client'
 import { DATE_FORMAT } from '@/constants'
+import UserAvatar from '@/components/userAvatar'
 
 type ImpressionListProps = {
   bookId: number
@@ -37,13 +38,7 @@ const ImpressionList: FC<ImpressionListProps> = ({ bookId }) => {
                 {DateTime.fromISO(impression.updatedAt).setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
               </td>
               <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
-                <div className="flex items-center space-x-3">
-                  <div className="avatar placeholder">
-                    <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
-                      <span className="">{impression.user.name.substring(0, 1)}</span>
-                    </div>
-                  </div>
-                </div>
+                <UserAvatar user={impression.user} />
               </td>
               <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
                 {impression.impression}

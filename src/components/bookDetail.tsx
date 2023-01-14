@@ -6,6 +6,7 @@ import { useCustomUser } from '@/hooks/useCustomUser'
 import { DateTime } from 'luxon'
 import { DATE_FORMAT } from '@/constants'
 import ImpressionList from '@/components/bookDetails/impressionList'
+import UserAvatar from '@/components/userAvatar'
 
 type BookDetailProps = {
   book: {
@@ -115,13 +116,7 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
                         </span>
                       </td>
                       <td data-testid={`lendingUser-${index}`}>
-                        <div className="flex items-center space-x-3">
-                          <div className="avatar placeholder">
-                            <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
-                              <span>{lendingHistory.user.name.substring(0, 1)}</span>
-                            </div>
-                          </div>
-                        </div>
+                        <UserAvatar user={lendingHistory.user} />
                       </td>
                     </tr>
                   )
@@ -143,26 +138,20 @@ const BookDetail: FC<BookDetailProps> = ({ book }) => {
           ) : (
             <table className="table w-full">
               <tbody>
-                {lentHistories.map((lendingHistory, index) => {
+                {lentHistories.map((lentHistory, index) => {
                   return (
-                    <tr className="hover:hover" key={lendingHistory.id}>
+                    <tr className="hover:hover" key={lentHistory.id}>
                       <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
-                        {DateTime.fromISO(lendingHistory.createdAt)
+                        {DateTime.fromISO(lentHistory.createdAt)
                           .setZone('Asia/Tokyo')
                           .toFormat(DATE_FORMAT)}
                         〜
-                        {DateTime.fromISO(lendingHistory.returnHistories[0].createdAt)
+                        {DateTime.fromISO(lentHistory.returnHistories[0].createdAt)
                           .setZone('Asia/Tokyo')
                           .toFormat(DATE_FORMAT)}
                       </td>
                       <td data-testid={`returnedUser-${index}`}>
-                        <div className="flex items-center space-x-3">
-                          <div className="avatar placeholder">
-                            <div className="bg-neutral-focus text-neutral-content rounded-full w-12">
-                              <span className="">{lendingHistory.user.name.substring(0, 1)}</span>
-                            </div>
-                          </div>
-                        </div>
+                        <UserAvatar user={lentHistory.user} />
                       </td>
                     </tr>
                   )
