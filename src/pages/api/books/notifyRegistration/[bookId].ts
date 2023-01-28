@@ -1,18 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { sdk } from '@/libs/graphql-codegen/sdk'
-import * as process from 'process'
-import { IncomingWebhook } from '@slack/webhook'
 import { getToken } from 'next-auth/jwt'
+import { callWebhook, getWebhookUrl } from '@/libs/slack/webhook'
 
+/**
+ * Slackへの書籍登録通知を行うAPI
+ * @param {NextApiRequest} req
+ * @param {NextApiResponse} res
+ */
 const bookId = async (req: NextApiRequest, res: NextApiResponse) => {
   const token = await getToken({ req })
   if (!token) {
     return res.status(403)
   }
 
-  const webhookUrl = process.env.SLACK_WEBHOOK_URL
-  if (!webhookUrl) {
-    console.debug('SLACK_WEBHOOK_URL is not set in the environment variable')
+  const maybeWebhookUrl = getWebhookUrl()
+
+  if (!maybeWebhookUrl) {
     return res.status(200)
   }
 
@@ -27,15 +31,9 @@ const bookId = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400)
   }
 
-  const webhook = new IncomingWebhook(webhookUrl)
+  await callWebhook(maybeWebhookUrl,`「${book.books_by_pk.title}」という書籍が新しく登録されました` )
 
-  await webhook.send({
-    username: 'company-librarian',
-    icon_emoji: ':teacher:',
-    text: `「${book.books_by_pk.title}」という書籍が新しく登録されました`
-  })
-
-  return res.status(200).json('Called slack notification webhook')
+  return res.status(200).json('Called slack webhook')
 }
 
 export default bookId
