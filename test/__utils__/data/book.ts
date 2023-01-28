@@ -1,3 +1,5 @@
+import type { BookDetailType } from '@/models/bookDetailType'
+
 export const bookWithImage = {
   id: 1,
   title: '画像有りのタイトル',
@@ -13,7 +15,7 @@ export const bookWithoutImage = {
 
 const now = new Date()
 
-export const lendableBook = {
+export const lendableBook: BookDetailType = {
   ...bookWithImage,
   isbn: '1111111111111',
   registrationHistories: [

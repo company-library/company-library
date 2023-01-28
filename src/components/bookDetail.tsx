@@ -2,66 +2,30 @@ import { FC } from 'react'
 import Image from 'next/image'
 import LendButton from '@/components/lendButton'
 import ReturnButton from '@/components/returnButton'
-import { useCustomUser } from '@/hooks/useCustomUser'
 import { DateTime } from 'luxon'
 import { DATE_FORMAT } from '@/constants'
 import ImpressionList from '@/components/bookDetails/impressionList'
 import UserAvatar from '@/components/userAvatar'
+import { BookDetailType } from '@/models/bookDetailType'
+import { useAvailableLent } from '@/hooks/useAvailableLent'
 
 type BookDetailProps = {
-  book: {
-    id: number
-    title: string
-    isbn: string
-    imageUrl?: string | null
-    registrationHistories: Array<{
-      userId: number
-      createdAt: any
-    }>
-    lendingHistories: Array<{
-      id: number
-      createdAt: any
-      dueDate: any
-      user: {
-        id: number
-        name: string
-        imageUrl?: string | null
-      }
-      returnHistories: Array<{
-        createdAt: any
-      }>
-    }>
-    reservations: Array<{
-      userId: number
-      reservationDate: any
-      createdAt: any
-    }>
-  }
+  book: BookDetailType
 }
 
 const BookDetail: FC<BookDetailProps> = ({ book }) => {
-  const { user } = useCustomUser()
-  const userId = user ? user.id : 0
+  const {
+    lendables,
+    holdings,
+    reservations,
 
-  const holdings = book.registrationHistories.length
-  const reservations = book.reservations.length
-  const lendHistories = book.lendingHistories.filter((h) => h.returnHistories.length === 0)
+    lendingHistory,
+    lendingHistories,
+    lentHistories,
 
-  const lendables = holdings - lendHistories.length - reservations
-
-  // 借りているか = 返却履歴のない自分の貸出履歴がある
-  const lendingHistory = lendHistories.find((h) => h.user.id === userId)
-  const isLending = !!lendingHistory
-
-  const isLendable = !isLending && lendables > 0
-
-  const lendingHistories = book.lendingHistories
-    .filter((h) => h.returnHistories.length === 0)
-    .sort((h1, h2) => (h1.dueDate > h2.dueDate ? 1 : -1))
-
-  const lentHistories = book.lendingHistories
-    .filter((h) => h.returnHistories.length !== 0)
-    .sort((h1, h2) => (h1.returnHistories[0].createdAt < h2.returnHistories[0].createdAt ? 1 : -1))
+    isLending,
+    isLendable,
+  } = useAvailableLent(book)
 
   return (
     <div>
