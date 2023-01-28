@@ -46,13 +46,13 @@ describe('ImpressionList component', () => {
     const { getByTestId } = render(<ImpressionList bookId={bookId} />)
 
     expect(getByTestId(`postedDate-${0}`).textContent).toBe('2022/11/01')
-    expect(getByTestId(`postedUser-${0}`).textContent).toBe('user02')
+    expect(getByTestId(`postedUser-${0}`).textContent).toBe('u')
     expect(getByTestId(`impression-${0}`).textContent).toBe('興味深い本でした')
     expect(getByTestId(`postedDate-${1}`).textContent).toBe('2022/10/31')
-    expect(getByTestId(`postedUser-${1}`).textContent).toBe('user01')
+    expect(getByTestId(`postedUser-${1}`).textContent).toBe('u')
     expect(getByTestId(`impression-${1}`).textContent).toBe('本の感想です。\n面白かったです。')
     expect(getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/21')
-    expect(getByTestId(`postedUser-${2}`).textContent).toBe('user03')
+    expect(getByTestId(`postedUser-${2}`).textContent).toBe('u')
     expect(getByTestId(`impression-${2}`).textContent).toBe('感想')
   })
 
