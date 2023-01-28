@@ -52,7 +52,18 @@ mutation insertUserQuery($name: String!, $email: String!, $sub: String!, $imageU
       sub
       imageUrl
     }
-  }}
+  }
+}
+
+query getBookById($id: Int!) {
+  books_by_pk(id: $id) {
+    id
+    title
+    isbn
+    imageUrl
+    createdAt
+  }
+}
 
 query getBooks($keyword: String!) {
   books(where: {title: {_ilike: $keyword}}) {
