@@ -30,6 +30,8 @@ const bookId = async (req: NextApiRequest, res: NextApiResponse) => {
   const webhook = new IncomingWebhook(webhookUrl)
 
   await webhook.send({
+    username: 'company-librarian',
+    icon_emoji: ':teacher:',
     text: `「${book.books_by_pk.title}」という書籍が新しく登録されました`
   })
 
