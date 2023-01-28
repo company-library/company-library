@@ -19,5 +19,5 @@ export type UserSummary = {
   name: string
   email: string
   imageUrl?: string | null
-  lendingHistories: Array<{ returnHistories_aggregate: { aggregate?: { count: number } | null } }>
+  lendingHistories: Array<{ bookId: number, returnHistories_aggregate: { aggregate?: { count: number } | null } }>
 }

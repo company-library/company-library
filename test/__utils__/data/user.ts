@@ -6,9 +6,15 @@ export const user1: UserSummary = {
   email: 'test1@example.com',
   imageUrl: 'https://example.com/image/1',
   lendingHistories: [
-    { returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { returnHistories_aggregate: { aggregate: { count: 0 } } },
+    { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+    { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+    { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
+    { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
+    { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
+    { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+    { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+    { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
+    { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } }
   ],
 }
 
