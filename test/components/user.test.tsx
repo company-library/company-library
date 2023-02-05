@@ -5,26 +5,29 @@ describe('UserDetail component', () => {
   const userId = 1
   const useGetUserQueryMock = jest
     .spyOn(require('@/generated/graphql.client'), 'useGetUserByIdQuery')
-    .mockReturnValue([{
-      fetching: false,
-      error: false,
-      data: {
-        users_by_pk: {
-          name: 'テスト太郎',
-          lendingHistories: [
-            { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
-            { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
-            { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-            { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-            { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
-            { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } }
-          ]
-        }
-      }
-    }])
+    .mockReturnValue([
+      {
+        fetching: false,
+        error: false,
+        data: {
+          users_by_pk: {
+            name: 'テスト太郎',
+            lendingHistories: [
+              { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+              { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+              { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
+              { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
+              { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
+              { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+              { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+              { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
+              { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } },
+            ],
+          },
+        },
+      },
+    ])
+  jest.spyOn(require('@/components/bookList'), 'default').mockReturnValue(<div>bookList</div>)
 
   it('ユーザーの情報が表示される', async () => {
     const { getByText } = render(<User id={userId} />)
