@@ -3221,7 +3221,7 @@ export type GetUserByIdQuery = { __typename?: 'query_root', users_by_pk?: { __ty
 export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUsersQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> }> };
+export type GetUsersQuery = { __typename?: 'query_root', users: Array<{ __typename?: 'users', id: number, name: string, email: string, sub: string, imageUrl?: string | null, lendingHistories: Array<{ __typename?: 'lendingHistories', bookId: number, returnHistories_aggregate: { __typename?: 'returnHistories_aggregate', aggregate?: { __typename?: 'returnHistories_aggregate_fields', count: number } | null } }> }> };
 
 export type InsertUserQueryMutationVariables = Exact<{
   name: Scalars['String'];
@@ -3350,6 +3350,7 @@ export const GetUsersDocument = gql`
     sub
     imageUrl
     lendingHistories {
+      bookId
       returnHistories_aggregate {
         aggregate {
           count
