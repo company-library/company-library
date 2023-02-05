@@ -1,9 +1,11 @@
 import { FC } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useCustomUser } from '@/hooks/useCustomUser'
 
 const NavigationBar: FC = () => {
   const router = useRouter()
+  const { user } = useCustomUser()
 
   return (
     <nav className="bg-gray-400 text-white">
@@ -32,10 +34,10 @@ const NavigationBar: FC = () => {
               登録
             </a>
           </Link>
-          <Link href="#">
+          <Link href={`/users/${user?.id}`}>
             <a
               className={`rounded-md my-auto px-3 py-2 ${
-                router.pathname === '#'
+                router.asPath === `/users/${user?.id}`
                   ? 'bg-gray-600'
                   : 'text-gray-200 hover:text-white hover:bg-gray-500'
               }`}
