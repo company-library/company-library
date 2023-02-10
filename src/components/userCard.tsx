@@ -18,7 +18,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
   const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
 
   return (
-    <Link href={`/users/${user.id}`} legacyBehavior>
+    <Link href={`/users/${user.id}`} data-testid="userProfileLink">
       <div className="cursor-pointer col-span-1 bg-white rounded-lg border shadow divide-y divide-gray-200">
         <div className="w-full flex items-center justify-between p-6 space-x-6">
           <div>
@@ -52,7 +52,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
         </div>
       </div>
     </Link>
-  );
+  )
 }
 
 export default UserCard

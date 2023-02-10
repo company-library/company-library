@@ -1,10 +1,15 @@
 import { fireEvent, render } from '@testing-library/react'
 import GoogleBook from '@/components/googleBook'
 import useSWR from 'swr'
-import Image from 'next/image'
 
 jest.mock('swr')
-jest.mock('next/image')
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    // eslint-disable-next-line
+    return <img {...props} />
+  }
+}))
 
 describe('googleBook component', () => {
   const expectedTitle = '書籍タイトル'
@@ -53,23 +58,14 @@ describe('googleBook component', () => {
   jest
     .spyOn(require('@/generated/graphql.client'), 'useInsertRegistrationHistoryMutation')
     .mockReturnValue([undefined, insertRegistrationHistoryMock])
-  const ImageMock = (Image as jest.Mock).mockImplementation(() => {
-    return <span></span>
-  })
+  jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({ push: jest.fn() })
 
   it('ISBNを与えると、該当の書籍が表示される', () => {
-    const { getByText } = render(<GoogleBook isbn="1234567890123" />)
+    const { getByText, getByTestId } = render(<GoogleBook isbn="1234567890123" />)
 
     expect(getByText(expectedTitle)).toBeInTheDocument()
-    expect(ImageMock).toBeCalledWith(
-      {
-        alt: expectedTitle,
-        src: expectedThumbnailUrl,
-        width: 300,
-        height: 400,
-      },
-      {},
-    )
+    expect(getByTestId('bookImg')).toHaveAttribute('src', expectedThumbnailUrl)
+    expect(getByTestId('bookImg')).toHaveAttribute('alt', expectedTitle)
   })
 
   it('該当の書籍を追加できる', () => {

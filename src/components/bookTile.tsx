@@ -20,6 +20,7 @@ const BookTile: FC<BookProps> = ({ book }) => {
             alt={book.title}
             width={300}
             height={400}
+            data-testid="bookImg"
           />
           <p className="text-sm font-medium p-2">{book.title}</p>
         </div>
@@ -34,6 +35,7 @@ const BookTile: FC<BookProps> = ({ book }) => {
         alt={book.title}
         width={300}
         height={400}
+        data-testid="bookImg"
       />
       <p className="text-sm font-medium p-2">{book.title}</p>
     </div>
