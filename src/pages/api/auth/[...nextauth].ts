@@ -1,25 +1,22 @@
 import NextAuth from 'next-auth'
-import AzureADB2CProvider from 'next-auth/providers/azure-ad-b2c'
+import Auth0Provider from 'next-auth/providers/auth0'
 import { sdk } from '@/libs/graphql-codegen/sdk'
 
 if (
-  !process.env.AZURE_AD_B2C_TENANT_NAME ||
-  !process.env.AZURE_AD_B2C_CLIENT_ID ||
-  !process.env.AZURE_AD_B2C_CLIENT_SECRET ||
-  !process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW
+  !process.env.AUTH0_CLIENT_ID ||
+  !process.env.AUTH0_CLIENT_SECRET ||
+  !process.env.AUTH0_ISSUER
 ) {
-  console.error('Azure AD B2Cに関する、環境変数設定に漏れがあります')
+  console.error('Auth0に関する、環境変数設定に漏れがあります')
   process.exit()
 }
 
 export default NextAuth({
   providers: [
-    AzureADB2CProvider({
-      tenantId: process.env.AZURE_AD_B2C_TENANT_NAME,
-      clientId: process.env.AZURE_AD_B2C_CLIENT_ID,
-      clientSecret: process.env.AZURE_AD_B2C_CLIENT_SECRET,
-      primaryUserFlow: process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW,
-      authorization: { params: { scope: 'offline_access openid' } },
+    Auth0Provider({
+      clientId: process.env.AUTH0_CLIENT_ID,
+      clientSecret: process.env.AUTH0_CLIENT_SECRET,
+      issuer: process.env.AUTH0_ISSUER
     }),
   ],
   callbacks: {

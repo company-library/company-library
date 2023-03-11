@@ -10,7 +10,7 @@ const SignIn: NextPage = () => {
   useEffect(() => {
     const f = async () => {
       if (status === 'unauthenticated') {
-        await signIn('azure-ad-b2c')
+        await signIn('auth0')
       } else if (status === 'authenticated') {
         await router.push('/')
       }
