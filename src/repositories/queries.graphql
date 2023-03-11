@@ -1,5 +1,5 @@
-query getUserQuery($sub: String!) {
-  users(where: {sub: {_eq: $sub}}) {
+query getUserQuery($email: String!) {
+  users(where: {email: {_eq: $email}}) {
     id
     name
     email

@@ -3205,7 +3205,7 @@ export type Users_Variance_Fields = {
 };
 
 export type GetUserQueryQueryVariables = Exact<{
-  sub: Scalars['String'];
+  email: Scalars['String'];
 }>;
 
 
@@ -3312,8 +3312,8 @@ export type PostImpressionMutation = { __typename?: 'mutation_root', insert_impr
 
 
 export const GetUserQueryDocument = gql`
-    query getUserQuery($sub: String!) {
-  users(where: {sub: {_eq: $sub}}) {
+    query getUserQuery($email: String!) {
+  users(where: {email: {_eq: $email}}) {
     id
     name
     email

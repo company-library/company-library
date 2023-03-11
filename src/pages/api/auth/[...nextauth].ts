@@ -32,7 +32,7 @@ export default NextAuth({
         return session
       }
 
-      const maybeUser = await sdk().getUserQuery({ sub: token.sub })
+      const maybeUser = await sdk().getUserQuery({ email: token.email })
       session.customUser =
         maybeUser.users.length > 0
           ? maybeUser.users[0]
