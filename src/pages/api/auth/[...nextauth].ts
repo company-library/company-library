@@ -2,11 +2,7 @@ import NextAuth from 'next-auth'
 import Auth0Provider from 'next-auth/providers/auth0'
 import { sdk } from '@/libs/graphql-codegen/sdk'
 
-if (
-  !process.env.AUTH0_CLIENT_ID ||
-  !process.env.AUTH0_CLIENT_SECRET ||
-  !process.env.AUTH0_ISSUER
-) {
+if (!process.env.AUTH0_CLIENT_ID || !process.env.AUTH0_CLIENT_SECRET || !process.env.AUTH0_ISSUER) {
   console.error('Auth0に関する、環境変数設定に漏れがあります')
   process.exit()
 }
@@ -16,13 +12,17 @@ export default NextAuth({
     Auth0Provider({
       clientId: process.env.AUTH0_CLIENT_ID,
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
-      issuer: process.env.AUTH0_ISSUER
+      issuer: process.env.AUTH0_ISSUER,
     }),
   ],
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
         token.idToken = account.id_token
+        token.accessToken = account.access_token
+
+        console.log('🐵', account.id_token)
+        console.log('🐮', account.access_token)
       }
 
       return token
@@ -44,6 +44,7 @@ export default NextAuth({
             })
 
       session.idToken = token.idToken
+      session.accessToken = token.accessToken
 
       return session
     },
