@@ -1,18 +1,34 @@
 table:
-  schema: public
   name: return_histories
+  schema: public
 configuration:
-  custom_root_fields: {}
-  custom_name: returnHistories
   column_config:
-    lending_history_id:
-      custom_name: lendingHistoryId
     created_at:
       custom_name: createdAt
+    lending_history_id:
+      custom_name: lendingHistoryId
   custom_column_names:
-    lending_history_id: lendingHistoryId
     created_at: createdAt
+    lending_history_id: lendingHistoryId
+  custom_name: returnHistories
+  custom_root_fields: {}
 object_relationships:
   - name: lendingHistory
     using:
       foreign_key_constraint_on: lending_history_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - lending_history_id
+        - created_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - lending_history_id
+        - created_at
+      filter: {}

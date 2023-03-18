@@ -1,42 +1,62 @@
 table:
-  schema: public
   name: books
+  schema: public
 configuration:
-  custom_root_fields: {}
   column_config:
-    image_url:
-      custom_name: imageUrl
     created_at:
       custom_name: createdAt
+    image_url:
+      custom_name: imageUrl
   custom_column_names:
-    image_url: imageUrl
     created_at: createdAt
+    image_url: imageUrl
+  custom_root_fields: {}
 array_relationships:
   - name: impressions
     using:
       foreign_key_constraint_on:
         column: book_id
         table:
-          schema: public
           name: impressions
+          schema: public
   - name: lendingHistories
     using:
       foreign_key_constraint_on:
         column: book_id
         table:
-          schema: public
           name: lending_histories
+          schema: public
   - name: registrationHistories
     using:
       foreign_key_constraint_on:
         column: book_id
         table:
-          schema: public
           name: registration_histories
+          schema: public
   - name: reservations
     using:
       foreign_key_constraint_on:
         column: book_id
         table:
-          schema: public
           name: reservations
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - isbn
+        - id
+        - image_url
+        - title
+        - created_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - title
+        - isbn
+        - image_url
+        - created_at
+      filter: {}

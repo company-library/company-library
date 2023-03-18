@@ -1,23 +1,23 @@
 table:
-  schema: public
   name: lending_histories
+  schema: public
 configuration:
-  custom_root_fields: {}
-  custom_name: lendingHistories
   column_config:
-    due_date:
-      custom_name: dueDate
-    created_at:
-      custom_name: createdAt
-    user_id:
-      custom_name: userId
     book_id:
       custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    due_date:
+      custom_name: dueDate
+    user_id:
+      custom_name: userId
   custom_column_names:
-    due_date: dueDate
-    created_at: createdAt
-    user_id: userId
     book_id: bookId
+    created_at: createdAt
+    due_date: dueDate
+    user_id: userId
+  custom_name: lendingHistories
+  custom_root_fields: {}
 object_relationships:
   - name: book
     using:
@@ -31,5 +31,25 @@ array_relationships:
       foreign_key_constraint_on:
         column: lending_history_id
         table:
-          schema: public
           name: return_histories
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - id
+        - book_id
+        - user_id
+        - due_date
+        - created_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - due_date
+        - book_id
+        - id
+        - user_id
+        - created_at
+      filter: {}

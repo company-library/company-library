@@ -1,22 +1,22 @@
 table:
-  schema: public
   name: impressions
+  schema: public
 configuration:
-  custom_root_fields: {}
   column_config:
-    updated_at:
-      custom_name: updatedAt
-    created_at:
-      custom_name: createdAt
-    user_id:
-      custom_name: userId
     book_id:
       custom_name: bookId
+    created_at:
+      custom_name: createdAt
+    updated_at:
+      custom_name: updatedAt
+    user_id:
+      custom_name: userId
   custom_column_names:
-    updated_at: updatedAt
-    created_at: createdAt
-    user_id: userId
     book_id: bookId
+    created_at: createdAt
+    updated_at: updatedAt
+    user_id: userId
+  custom_root_fields: {}
 object_relationships:
   - name: book
     using:
@@ -24,3 +24,40 @@ object_relationships:
   - name: user
     using:
       foreign_key_constraint_on: user_id
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - book_id
+        - id
+        - user_id
+        - impression
+        - created_at
+        - updated_at
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - book_id
+        - id
+        - user_id
+        - impression
+        - created_at
+        - updated_at
+      filter: {}
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - book_id
+        - id
+        - user_id
+        - impression
+        - created_at
+        - updated_at
+      filter:
+        user:
+          email:
+            _eq: X-Hasura-User-Id
+      check: null
