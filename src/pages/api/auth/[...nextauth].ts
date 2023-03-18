@@ -2,7 +2,7 @@ import NextAuth from 'next-auth'
 import Auth0Provider from 'next-auth/providers/auth0'
 import { sdk } from '@/libs/graphql-codegen/sdk'
 
-if (!process.env.AUTH0_CLIENT_ID || !process.env.AUTH0_CLIENT_SECRET || !process.env.AUTH0_ISSUER) {
+if (!process.env.AUTH0_CLIENT_ID || !process.env.AUTH0_CLIENT_SECRET || !process.env.AUTH0_ISSUER || !process.env.AUTH0_AUDIENCE) {
   console.error('Auth0に関する、環境変数設定に漏れがあります')
   process.exit()
 }
@@ -13,6 +13,16 @@ export default NextAuth({
       clientId: process.env.AUTH0_CLIENT_ID,
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
       issuer: process.env.AUTH0_ISSUER,
+      token: {
+        params: {
+          audience: process.env.AUTH0_AUDIENCE
+        }
+      },
+      authorization: {
+        params: {
+          audience: encodeURI(process.env.AUTH0_AUDIENCE)
+        }
+      },
     }),
   ],
   callbacks: {
@@ -20,9 +30,6 @@ export default NextAuth({
       if (account) {
         token.idToken = account.id_token
         token.accessToken = account.access_token
-
-        console.log('🐵', account.id_token)
-        console.log('🐮', account.access_token)
       }
 
       return token

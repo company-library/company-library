@@ -7,8 +7,12 @@ type ClientProviderProps = {
 }
 
 const ClientProvider: FC<ClientProviderProps> = ({ children }) => {
-  const { data: session } = useSession()
-  const idToken = session?.idToken
+  const { data: session, status } = useSession()
+  const accessToken = session?.accessToken
+
+  if (status !== 'authenticated') {
+    return <>{children}</>
+  }
 
   const graphqlEndpoint = process.env.NEXT_PUBLIC_HASURA_GRAPHQL_ENDPOINT ?? ''
 
@@ -17,7 +21,7 @@ const ClientProvider: FC<ClientProviderProps> = ({ children }) => {
     fetchOptions: () => {
       return {
         headers: {
-          authorization: `Bearer ${idToken}`,
+          authorization: `Bearer ${accessToken}`,
         },
       }
     },
