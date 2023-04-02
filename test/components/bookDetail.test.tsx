@@ -14,21 +14,21 @@ jest.mock('next/image', () => ({
 
 jest.mock('@/components/lendButton', () => ({
   __esModule: true,
-  default: (_: any) => {
+  default: () => {
     return <button>借りる</button>
   },
 }))
 
 jest.mock('@/components/returnButton', () => ({
   __esModule: true,
-  default: (_: any) => {
+  default: () => {
     return <button>返却する</button>
   },
 }))
 
 jest.mock('@/components/bookDetails/impressionList', () => ({
   __esModule: true,
-  default: (_: any) => {
+  default: () => {
     return <div>感想リスト</div>
   },
 }))
@@ -36,7 +36,7 @@ jest.mock('@/components/bookDetails/impressionList', () => ({
 const expectedUserId = 1
 jest.mock('@/hooks/useCustomUser', () => ({
   __esModule: true,
-  useCustomUser: (_: any) => {
+  useCustomUser: () => {
     return { user: { id: expectedUserId } }
   },
 }))

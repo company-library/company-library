@@ -1,33 +1,38 @@
 import { render } from '@testing-library/react'
 import User from '@/components/user'
 
+const useGetUserByIdQueryMock = jest.fn().mockReturnValue([
+  {
+    fetching: false,
+    error: false,
+    data: {
+      users_by_pk: {
+        name: 'テスト太郎',
+        lendingHistories: [
+          { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+          { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
+          { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
+          { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
+          { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
+          { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+          { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
+          { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
+          { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } },
+        ],
+      },
+    },
+  },
+])
+
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetUserByIdQuery: () => useGetUserByIdQueryMock(),
+}))
+
+jest.mock('@/components/bookList')
+
 describe('UserDetail component', () => {
   const userId = 1
-  const useGetUserQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetUserByIdQuery')
-    .mockReturnValue([
-      {
-        fetching: false,
-        error: false,
-        data: {
-          users_by_pk: {
-            name: 'テスト太郎',
-            lendingHistories: [
-              { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-              { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-              { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
-              { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
-              { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
-              { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-              { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-              { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
-              { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } },
-            ],
-          },
-        },
-      },
-    ])
-  jest.spyOn(require('@/components/bookList'), 'default').mockReturnValue(<div>bookList</div>)
 
   it('ユーザーの情報が表示される', async () => {
     const { getByText } = render(<User id={userId} />)
@@ -38,7 +43,7 @@ describe('UserDetail component', () => {
   })
 
   it('ユーザー情報の読み込み中は、「Loading...」というメッセージが表示される', async () => {
-    useGetUserQueryMock.mockReturnValueOnce([{ fetching: true }])
+    useGetUserByIdQueryMock.mockReturnValueOnce([{ fetching: true }])
 
     const { getByText } = render(<User id={userId} />)
 
@@ -47,7 +52,7 @@ describe('UserDetail component', () => {
 
   it('ユーザー情報の読み込みでエラーが発生した場合は、HTTPステータスコード500のエラーページが表示される', () => {
     const expectedErrorMsg = 'error has occurred!'
-    useGetUserQueryMock.mockReturnValueOnce([{ fetching: false, error: expectedErrorMsg }])
+    useGetUserByIdQueryMock.mockReturnValueOnce([{ fetching: false, error: expectedErrorMsg }])
     const consoleErrorMock = jest.fn()
     console.error = consoleErrorMock
 
@@ -58,7 +63,7 @@ describe('UserDetail component', () => {
   })
 
   it('ユーザーが存在しない場合は、HTTPステータスコード404のエラーページが表示される', async () => {
-    useGetUserQueryMock.mockReturnValueOnce([{ fetching: false, error: false, data: {} }])
+    useGetUserByIdQueryMock.mockReturnValueOnce([{ fetching: false, error: false, data: {} }])
 
     const { getByText } = render(<User id={userId} />)
 
