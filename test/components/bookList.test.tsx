@@ -2,20 +2,22 @@ import { render } from '@testing-library/react'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 import BookList from '@/components/bookList'
 
-describe('BookList component', () => {
-  const books = [bookWithImage, bookWithoutImage]
-  const useGetBooksQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetBooksByIdsQuery')
-    .mockReturnValue([
-      {
-        fetching: false,
-        error: false,
-        data: {
-          books,
-        },
-      },
-    ])
+const books = [bookWithImage, bookWithoutImage]
+const useGetBooksQueryMock = jest.fn().mockReturnValue([
+  {
+    fetching: false,
+    error: false,
+    data: {
+      books,
+    },
+  },
+])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetBooksByIdsQuery: () => useGetBooksQueryMock(),
+}))
 
+describe('BookList component', () => {
   it('本の一覧が表示される', () => {
     const { getByText } = render(<BookList ids={books.map((book) => book.id)} />)
 

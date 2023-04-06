@@ -4,19 +4,15 @@ import { render } from '@testing-library/react'
 
 jest.mock('@/components/layout')
 
-describe('users page', () => {
-  const useGetUsersQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetUsersQuery')
-    .mockReturnValue([
-      {
-        fetching: false,
-        error: false,
-        data: {
-          users: [user1, user2],
-        },
-      },
-    ])
+const useGetUsersQueryMock = jest
+  .fn()
+  .mockReturnValue([{ fetching: false, error: false, data: { users: [user1, user2] } }])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetUsersQuery: () => useGetUsersQueryMock(),
+}))
 
+describe('users page', () => {
   const LayoutMock = (Layout as jest.Mock).mockImplementation(({ children }) => {
     return <div>{children}</div>
   })

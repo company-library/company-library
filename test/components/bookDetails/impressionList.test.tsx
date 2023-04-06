@@ -1,47 +1,52 @@
 import { render } from '@testing-library/react'
 import ImpressionList from '@/components/bookDetails/impressionList'
 
+const bookId = 10
+const expectedImpressions = [
+  {
+    id: 1,
+    user: {
+      name: 'user01',
+      imageUrl: '',
+    },
+    impression: '本の感想です。\n面白かったです。',
+    createdAt: '2022-10-30T10:00:00+09:00',
+    updatedAt: '2022-10-31T10:00:00+09:00',
+  },
+  {
+    id: 2,
+    user: {
+      name: 'user02',
+      imageUrl: '',
+    },
+    impression: '興味深い本でした',
+    createdAt: '2022-11-01T10:00:00+09:00',
+    updatedAt: '2022-11-01T10:00:00+09:00',
+  },
+  {
+    id: 3,
+    user: {
+      name: 'user03',
+      imageUrl: '',
+    },
+    impression: '感想',
+    createdAt: '2022-10-20T10:00:00+09:00',
+    updatedAt: '2022-10-21T10:00:00+09:00',
+  },
+]
+const useGetImpressionsQueryMock = jest.fn().mockReturnValue([
+  {
+    fetching: false,
+    error: undefined,
+    data: { impressions: expectedImpressions },
+  },
+])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetImpressionsQuery: () => useGetImpressionsQueryMock(),
+}))
+
 describe('ImpressionList component', () => {
-  const bookId = 10
-
-  const expectedImpressions = [
-    {
-      id: 1,
-      user: {
-        name: 'user01',
-        imageUrl: '',
-      },
-      impression: '本の感想です。\n面白かったです。',
-      createdAt: '2022-10-30T10:00:00+09:00',
-      updatedAt: '2022-10-31T10:00:00+09:00',
-    },
-    {
-      id: 2,
-      user: {
-        name: 'user02',
-        imageUrl: '',
-      },
-      impression: '興味深い本でした',
-      createdAt: '2022-11-01T10:00:00+09:00',
-      updatedAt: '2022-11-01T10:00:00+09:00',
-    },
-    {
-      id: 3,
-      user: {
-        name: 'user03',
-        imageUrl: '',
-      },
-      impression: '感想',
-      createdAt: '2022-10-20T10:00:00+09:00',
-      updatedAt: '2022-10-21T10:00:00+09:00',
-    },
-  ]
-  const useGetImpressionsQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetImpressionsQuery')
-    .mockReturnValue([
-      { fetching: false, error: undefined, data: { impressions: expectedImpressions } },
-    ])
-
   it('本の感想を更新日の新しい順に表示する', () => {
     const { getByTestId } = render(<ImpressionList bookId={bookId} />)
 

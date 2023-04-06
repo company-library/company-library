@@ -2,33 +2,46 @@ import BookDetailPage from '@/pages/books/[id]'
 import { render } from '@testing-library/react'
 import { lendableBook } from '../../__utils__/data/book'
 
+const expectedBook = lendableBook
+
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => {
+    return { query: { id: expectedBook.id } }
+  },
+}))
+
+const useGetBookQueryMock = jest
+  .fn()
+  .mockReturnValue([{ fetching: false, error: false, data: { books: [expectedBook] } }])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetBookQuery: () => useGetBookQueryMock(),
+}))
+
+const LayoutMock = jest.fn().mockImplementation((props) => {
+  return <div>{props.children}</div>
+})
+jest.mock('@/components/layout', () => {
+  return {
+    __esModule: true,
+    default: (...args: any) => LayoutMock(...args),
+  }
+})
+
+const BookDetailMock = jest.fn().mockImplementation(() => <div>bookDetail</div>)
+jest.mock('@/components/bookDetail', () => {
+  return {
+    __esModule: true,
+    default: (...args: any) => BookDetailMock(...args),
+  }
+})
+
 describe('BookDetail page', () => {
-  const expectedBook = lendableBook
-
-  jest
-    .spyOn(require('next/router'), 'useRouter')
-    .mockReturnValue({ query: { id: expectedBook.id } })
-
-  const useGetBookQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetBookQuery')
-    .mockReturnValue([{ fetching: false, error: false, data: { books: [expectedBook] } }])
-
-  const LayoutMock = jest
-    .spyOn(require('@/components/layout'), 'default')
-    .mockImplementation((props: any) => {
-      return <div>{props.children}</div>
-    })
-
-  const BookDetailMock = jest
-    .spyOn(require('@/components/bookDetail'), 'default')
-    .mockReturnValue(<div>bookDetail</div>)
-
   it('本の情報の読み込みが完了した場合は、先頭の本を表示する', () => {
     render(<BookDetailPage />)
 
-    // @ts-expect-error
     expect(LayoutMock.mock.calls[0][0]['title']).toBe(`${expectedBook.title} | company-library`)
-    // @ts-expect-error
     expect(BookDetailMock.mock.calls[0][0]['book']).toBe(expectedBook)
   })
 
