@@ -2,15 +2,18 @@ import { render } from '@testing-library/react'
 import NavigationBar from '@/components/navigationBar'
 import { user1 } from '../__utils__/data/user'
 
-describe('navigationBar component', () => {
-  const routerMock = jest
-    .spyOn(require('next/router'), 'useRouter')
-    .mockReturnValue({ push: jest.fn() })
-  const loggedInUser = user1
-  jest
-    .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
-    .mockReturnValue({ user: loggedInUser })
+const routerMock = jest.fn().mockReturnValue({ push: jest.fn() })
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => routerMock(),
+}))
+const loggedInUser = user1
+jest.mock('@/hooks/useCustomUser', () => ({
+  __esModule: true,
+  useCustomUser: () => ({ user: loggedInUser }),
+}))
 
+describe('navigationBar component', () => {
   it('ナビゲーション項目が表示される', () => {
     const { getByText } = render(<NavigationBar />)
 

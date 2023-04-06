@@ -1,41 +1,53 @@
 import { useLend } from '@/hooks/useLend'
 import { act, renderHook } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { user1 } from '../__utils__/data/user'
+
+const useRouterMock = jest.fn().mockReturnValue({ reload: jest.fn() })
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => useRouterMock(),
+}))
+
+const loggedInUser = user1
+jest.mock('@/hooks/useCustomUser', () => ({
+  __esModule: true,
+  useCustomUser: () => ({ user: loggedInUser }),
+}))
+
+const expectedMutationResult = {
+  data: undefined,
+  error: undefined,
+  extensions: undefined,
+  fetching: false,
+  operation: undefined,
+  stale: false,
+}
+
+const mutationMock = jest.fn().mockImplementation(
+  () =>
+    new Promise((resolve) =>
+      resolve({
+        data: {},
+        error: undefined,
+        extensions: undefined,
+        hasNext: false,
+        operation: {},
+      }),
+    ),
+)
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  usePostLendingHistoryMutation: () => {
+    return [expectedMutationResult, mutationMock]
+  },
+}))
 
 describe('useLend hook', () => {
   const expectedBookId = 1
   const today = DateTime.local().setZone('Asia/Tokyo')
   const dateFormat = 'yyyy-MM-dd'
   const initialDuDate = today.toFormat(dateFormat)
-
-  const expectedUserId = 1
-  jest
-    .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
-    .mockReturnValue({ user: { id: expectedUserId } })
-  jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({ reload: jest.fn() })
-
-  const expectedMutationResult = {
-    data: undefined,
-    error: undefined,
-    extensions: undefined,
-    fetching: false,
-    operation: undefined,
-    stale: false,
-  }
-
-  const expected = {
-    data: {},
-    error: undefined,
-    extensions: undefined,
-    hasNext: false,
-    operation: {},
-  }
-  const mutationMock = jest
-    .fn()
-    .mockImplementation(() => new Promise((resolve) => resolve(expected)))
-  jest
-    .spyOn(require('@/generated/graphql.client'), 'usePostLendingHistoryMutation')
-    .mockReturnValue([expectedMutationResult, mutationMock])
 
   it('返却予定日の初期値に、引数で渡した日付がセットされる', () => {
     const { result } = renderHook(() => useLend(expectedBookId, initialDuDate))
@@ -63,7 +75,7 @@ describe('useLend hook', () => {
     await result.current.lend()
 
     expect(mutationMock).toBeCalledWith({
-      userId: expectedUserId,
+      userId: loggedInUser.id,
       bookId: expectedBookId,
       dueDate: initialDuDate,
     })
