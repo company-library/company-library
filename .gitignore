@@ -36,3 +36,7 @@ yarn-error.log*
 
 # IDE
 .idea/
+
+# terraform
+/terraform/key.json
+/terraform/terraform.tfvars
