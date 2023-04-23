@@ -9,7 +9,6 @@ type UserProps = {
 
 const User: FC<UserProps> = ({ id }) => {
   const [result] = useGetUserByIdQuery({ variables: { id: id } })
-  console.log(result)
   if (result.fetching || result.error || !result.data) {
     if (result.error) {
       console.error(result.error)
