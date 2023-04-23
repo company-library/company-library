@@ -4,12 +4,16 @@ import { renderHook } from '@testing-library/react'
 import { user1, user2 } from '../__utils__/data/user'
 import { DateTime } from 'luxon'
 
+const useCustomUserMock = jest.fn()
+jest.mock('@/hooks/useCustomUser', () => ({
+  __esModule: true,
+  useCustomUser: () => useCustomUserMock(),
+}))
+
 describe('useAvailableLent hook', () => {
   const loggedInUser = user1
   const otherUser = user2
-  const useCustomUserMock = jest
-    .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
-    .mockReturnValue({ user: loggedInUser })
+  useCustomUserMock.mockReturnValue({ user: loggedInUser })
 
   const today = DateTime.local().setZone('Asia/Tokyo')
   const bookBase = lendableBook
