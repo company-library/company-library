@@ -8,15 +8,24 @@ const intersectionObserverMock = () => ({
 })
 window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
 
+const returnBookMock = jest.fn()
+jest.mock('@/hooks/useReturn', () => ({
+  __esModule: true,
+  useReturn: () => {
+    return { returnBook: returnBookMock }
+  },
+}))
+
+const reloadMock = jest.fn()
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => {
+    return { reload: reloadMock }
+  },
+}))
+
 describe('returnButton component', () => {
   const lendingHistoryId = 10
-
-  const returnBookMock = jest.fn()
-  jest.spyOn(require('@/hooks/useReturn'), 'useReturn').mockReturnValue({
-    returnBook: returnBookMock,
-  })
-  const reloadMock = jest.fn()
-  jest.spyOn(require('next/router'), 'useRouter').mockReturnValue({ reload: reloadMock })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', () => {
     const { getByRole, rerender } = render(

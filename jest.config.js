@@ -8,7 +8,9 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 /** @type {import('jest').Config} */
 const customJestConfig = {
-  collectCoverage: true,
+  // カバレッジを取得するとエラーが発生するので一時的に無効にする
+  // https://github.com/instanbuljs/v8-to-istanbul/issues/198
+  collectCoverage: false,
   // on node 14.x coverage provider v8 offers good speed and more or less good report
   coverageProvider: 'v8',
   collectCoverageFrom: [

@@ -4,19 +4,21 @@ import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 jest.mock('@/components/layout')
 
-describe('index page', () => {
-  const useGetBooksQueryMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetBooksQuery')
-    .mockReturnValue([
-      {
-        fetching: false,
-        error: false,
-        data: {
-          books: [bookWithImage, bookWithoutImage],
-        },
-      },
-    ])
+const useGetBooksQueryMock = jest.fn().mockReturnValue([
+  {
+    fetching: false,
+    error: false,
+    data: {
+      books: [bookWithImage, bookWithoutImage],
+    },
+  },
+])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetBooksQuery: (args: any) => useGetBooksQueryMock(args),
+}))
 
+describe('index page', () => {
   const LayoutMock = (Layout as jest.Mock).mockImplementation(({ children }) => {
     return <div>{children}</div>
   })

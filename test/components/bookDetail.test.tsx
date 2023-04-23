@@ -12,23 +12,38 @@ jest.mock('next/image', () => ({
   },
 }))
 
+jest.mock('@/components/lendButton', () => ({
+  __esModule: true,
+  default: () => {
+    return <button>借りる</button>
+  },
+}))
+
+jest.mock('@/components/returnButton', () => ({
+  __esModule: true,
+  default: () => {
+    return <button>返却する</button>
+  },
+}))
+
+jest.mock('@/components/bookDetails/impressionList', () => ({
+  __esModule: true,
+  default: () => {
+    return <div>感想リスト</div>
+  },
+}))
+
+const expectedUserId = 1
+jest.mock('@/hooks/useCustomUser', () => ({
+  __esModule: true,
+  useCustomUser: () => {
+    return { user: { id: expectedUserId } }
+  },
+}))
+
 describe('BookDetail component', () => {
   const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
   Settings.now = () => expectedNow.toMillis()
-
-  jest.spyOn(require('@/components/lendButton'), 'default').mockImplementation(() => {
-    return <button>借りる</button>
-  })
-  jest
-    .spyOn(require('@/components/returnButton'), 'default')
-    .mockReturnValue(<button>返却する</button>)
-  jest
-    .spyOn(require('@/components/bookDetails/impressionList'), 'default')
-    .mockReturnValue(<div>感想リスト</div>)
-  const expectedUserId = 1
-  jest
-    .spyOn(require('@/hooks/useCustomUser'), 'useCustomUser')
-    .mockReturnValue({ user: { id: expectedUserId } })
 
   it('本の情報が表示される', async () => {
     const book = lendableBook

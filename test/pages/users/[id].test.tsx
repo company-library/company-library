@@ -2,30 +2,32 @@ import { render } from '@testing-library/react'
 import UserPage from '@/pages/users/[id]'
 import { user1 } from '../../__utils__/data/user'
 
+const expectedUser = user1
+const useRouterMock = jest.fn().mockReturnValue({ query: { id: expectedUser.id } })
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => useRouterMock(),
+}))
+
+const LayoutMock = jest.fn().mockImplementation(({ children }) => {
+  return <div>{children}</div>
+})
+jest.mock('@/components/layout', () => ({
+  __esModule: true,
+  default: (...args: any) => LayoutMock(...args),
+}))
+
+const UserDetailMock = jest.fn()
+jest.mock('@/components/user', () => ({
+  __esModule: true,
+  default: (...args: any) => UserDetailMock(...args),
+}))
+
 describe('UserDetail page', () => {
-  const expectedUser = user1
-
-  const routerMock = { query: { id: expectedUser.id } }
-  const useRouterMock = jest
-    .spyOn(require('next/router'), 'useRouter')
-    .mockReturnValue(routerMock)
-
-  const LayoutMock = jest
-    .spyOn(require('@/components/layout'), 'default')
-    .mockImplementation((props: any) => {
-      return <div>{props.children}</div>
-    })
-
-  const UserDetailMock = jest
-    .spyOn(require('@/components/user'), 'default')
-    .mockReturnValue(<div>userDetail</div>)
-
   it('ユーザー情報が表示される', () => {
     render(<UserPage />)
 
-    // @ts-expect-error
     expect(LayoutMock.mock.calls[0][0]['title']).toBe(`利用者情報 | company-library`)
-    // @ts-expect-error
     expect(UserDetailMock.mock.calls[0][0]['id']).toBe(expectedUser.id)
   })
 

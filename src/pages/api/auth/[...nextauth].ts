@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import AzureADB2CProvider from 'next-auth/providers/azure-ad-b2c'
 import { sdk } from '@/libs/graphql-codegen/sdk'
+import { User } from '@/models/user'
 
 if (
   !process.env.AZURE_AD_B2C_TENANT_NAME ||
@@ -22,6 +23,9 @@ export default NextAuth({
       authorization: { params: { scope: 'offline_access openid' } },
     }),
   ],
+  pages: {
+    signIn: '/auth/signIn',
+  },
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
@@ -31,20 +35,35 @@ export default NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (token.name == null || token.email == null || token.sub == null) {
+      if (token.name == null || token.email == null || token.sub == null || token.idToken === undefined) {
         return session
       }
 
-      const maybeUser = await sdk().getUserQuery({ sub: token.sub })
-      session.customUser =
-        maybeUser.users.length > 0
-          ? maybeUser.users[0]
-          : await sdk().insertUserQuery({
-              name: token.name,
-              email: token.email,
-              sub: token.sub,
-              imageUrl: token.picture,
-            })
+      const getUser = async (sub: string, name: string, email: string, imageUrl: string | undefined | null): Promise<User | undefined> => {
+        const maybeUser = await sdk().getUserQuery({ sub })
+        if(maybeUser.users.length > 0) {
+          return maybeUser.users[0]
+        }
+
+        const newUser = await sdk().insertUserQuery({
+          name: name,
+          email: email,
+          sub: sub,
+          imageUrl: imageUrl,
+        })
+        if (newUser.insert_users?.returning?.length ?? 0  === 0) {
+          return undefined
+        }
+
+        return newUser.insert_users?.returning[0]
+      }
+
+      const maybeUser = await getUser(token.sub, token.name, token.email, token.picture)
+      if (!maybeUser) {
+        return session
+      }
+
+      session.customUser = maybeUser
 
       session.idToken = token.idToken
 

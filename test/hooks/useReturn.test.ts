@@ -2,43 +2,47 @@ import { renderHook } from '@testing-library/react'
 import { useReturn } from '@/hooks/useReturn'
 import { CombinedError } from 'urql'
 
+const expectedReturnHistoryId = 16
+const expectedUserId = 5
+const expectedBookId = 10
+
+const expectedPostReturnHistoryResult = {
+  data: {
+    insert_returnHistories_one: {
+      lendingHistory: {
+        id: expectedReturnHistoryId,
+        userId: expectedUserId,
+        bookId: expectedBookId,
+      },
+    },
+  },
+  error: undefined,
+}
+
+const postReturnHistoryMock = jest
+  .fn()
+  .mockReturnValue(Promise.resolve(expectedPostReturnHistoryResult))
+
+const expectedPostImpressionResult = {
+  data: { insert: { id: expectedReturnHistoryId } },
+  error: undefined,
+}
+const postImpressionMock = jest.fn().mockReturnValue(Promise.resolve(expectedPostImpressionResult))
+
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  usePostReturnHistoryMutation: () => {
+    return [undefined, postReturnHistoryMock]
+  },
+  usePostImpressionMutation: () => {
+    return [undefined, postImpressionMock]
+  },
+}))
+
 describe('useReturn hook', () => {
   const lendingHistoryId = 10
   const impression = '本の感想'
   const emptyImpression = ''
-
-  const expectedReturnHistoryId = 16
-  const expectedUserId = 5
-  const expectedBookId = 10
-  const expectedPostReturnHistoryResult = {
-    data: {
-      insert_returnHistories_one: {
-        lendingHistory: {
-          id: expectedReturnHistoryId,
-          userId: expectedUserId,
-          bookId: expectedBookId,
-        },
-      },
-    },
-    error: undefined,
-  }
-  const postReturnHistoryMock = jest
-    .fn()
-    .mockReturnValue(Promise.resolve(expectedPostReturnHistoryResult))
-  jest
-    .spyOn(require('@/generated/graphql.client'), 'usePostReturnHistoryMutation')
-    .mockReturnValue([undefined, postReturnHistoryMock])
-
-  const expectedPostImpressionResult = {
-    data: { insert: { id: expectedReturnHistoryId } },
-    error: undefined,
-  }
-  const postImpressionMock = jest
-    .fn()
-    .mockReturnValue(Promise.resolve(expectedPostImpressionResult))
-  jest
-    .spyOn(require('@/generated/graphql.client'), 'usePostImpressionMutation')
-    .mockReturnValue([undefined, postImpressionMock])
 
   describe('returnBook function', () => {
     const { result } = renderHook(() => useReturn(lendingHistoryId, impression))

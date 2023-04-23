@@ -14,17 +14,16 @@ const BookTile: FC<BookProps> = ({ book }) => {
   if (book.id) {
     return (
       <Link href={`/books/${book.id}`}>
-        <a>
-          <div className="cursor-pointer max-w-sm rounded-lg shadow-lg overflow-hidden hover:shadow-2xl ">
-            <Image
-              src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-              alt={book.title}
-              width={300}
-              height={400}
-            />
-            <p className="text-sm font-medium p-2">{book.title}</p>
-          </div>
-        </a>
+        <div className="cursor-pointer max-w-sm rounded-lg shadow-lg overflow-hidden hover:shadow-2xl ">
+          <Image
+            src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+            alt={book.title}
+            width={300}
+            height={400}
+            data-testid="bookImg"
+          />
+          <p className="text-sm font-medium p-2">{book.title}</p>
+        </div>
       </Link>
     )
   }
@@ -36,6 +35,7 @@ const BookTile: FC<BookProps> = ({ book }) => {
         alt={book.title}
         width={300}
         height={400}
+        data-testid="bookImg"
       />
       <p className="text-sm font-medium p-2">{book.title}</p>
     </div>

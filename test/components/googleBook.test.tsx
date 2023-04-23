@@ -1,13 +1,56 @@
 import { fireEvent, render } from '@testing-library/react'
 import GoogleBook from '@/components/googleBook'
 import useSWR from 'swr'
-import Image from 'next/image'
 
 jest.mock('swr')
-jest.mock('next/image')
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    // eslint-disable-next-line
+    return <img {...props} />
+  },
+}))
+
+const expectedTitle = '書籍タイトル'
+const useGetBookByIsbnQueryMock = jest.fn().mockReturnValue([
+  {
+    data: {
+      books: [
+        {
+          title: expectedTitle,
+          registrationHistories: [
+            {
+              id: 1,
+            },
+          ],
+        },
+      ],
+    },
+  },
+])
+const insertBookMock = jest.fn().mockReturnValue(new Promise((_resolve, _reject) => {}))
+const useInsertBookMutationMock = jest.fn().mockReturnValue([undefined, insertBookMock])
+const insertRegistrationHistoryMock = jest
+  .fn()
+  .mockReturnValue(new Promise((_resolve, _reject) => {}))
+const useInsertRegistrationHistoryMutationMock = jest
+  .fn()
+  .mockReturnValue([undefined, insertRegistrationHistoryMock])
+jest.mock('@/generated/graphql.client', () => ({
+  __esModule: true,
+  useGetBookByIsbnQuery: () => useGetBookByIsbnQueryMock(),
+  useInsertBookMutation: () => useInsertBookMutationMock(),
+  useInsertRegistrationHistoryMutation: () => useInsertRegistrationHistoryMutationMock(),
+}))
+
+jest.mock('next/router', () => ({
+  __esModule: true,
+  useRouter: () => {
+    return { push: jest.fn() }
+  },
+}))
 
 describe('googleBook component', () => {
-  const expectedTitle = '書籍タイトル'
   const expectedThumbnailUrl = '/thumbnail.png'
 
   // @ts-ignore
@@ -25,51 +68,13 @@ describe('googleBook component', () => {
       ],
     },
   })
-  const getBookByIsbnMock = jest
-    .spyOn(require('@/generated/graphql.client'), 'useGetBookByIsbnQuery')
-    .mockReturnValue([
-      {
-        data: {
-          books: [
-            {
-              title: expectedTitle,
-              registrationHistories: [
-                {
-                  id: 1,
-                },
-              ],
-            },
-          ],
-        },
-      },
-    ])
-  const insertBookMock = jest.fn().mockReturnValue(new Promise((_resolve, _reject) => {}))
-  jest
-    .spyOn(require('@/generated/graphql.client'), 'useInsertBookMutation')
-    .mockReturnValue([undefined, insertBookMock])
-  const insertRegistrationHistoryMock = jest
-    .fn()
-    .mockReturnValue(new Promise((_resolve, _reject) => {}))
-  jest
-    .spyOn(require('@/generated/graphql.client'), 'useInsertRegistrationHistoryMutation')
-    .mockReturnValue([undefined, insertRegistrationHistoryMock])
-  const ImageMock = (Image as jest.Mock).mockImplementation(() => {
-    return <span></span>
-  })
 
   it('ISBNを与えると、該当の書籍が表示される', () => {
-    const { getByText } = render(<GoogleBook isbn="1234567890123" />)
+    const { getByText, getByTestId } = render(<GoogleBook isbn="1234567890123" />)
 
     expect(getByText(expectedTitle)).toBeInTheDocument()
-    expect(ImageMock).toBeCalledWith(
-      {
-        alt: expectedTitle,
-        src: expectedThumbnailUrl,
-        width: 300,
-        height: 400,
-      },
-      {},
-    )
+    expect(getByTestId('bookImg')).toHaveAttribute('src', expectedThumbnailUrl)
+    expect(getByTestId('bookImg')).toHaveAttribute('alt', expectedTitle)
   })
 
   it('該当の書籍を追加できる', () => {
@@ -84,7 +89,7 @@ describe('googleBook component', () => {
   })
 
   it('該当の書籍を登録できる', () => {
-    getBookByIsbnMock.mockReturnValueOnce([
+    useGetBookByIsbnQueryMock.mockReturnValueOnce([
       {
         data: {
           books: [],

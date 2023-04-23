@@ -9,20 +9,23 @@ const intersectionObserverMock = () => ({
 })
 window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
 
+const dateFormat = 'yyyy-MM-dd'
+const today = DateTime.local().setZone('Asia/Tokyo')
+const expectedInitialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
+const lendMock = jest.fn()
+const handleDueDateMock = jest.fn()
+const useLendMock = jest.fn().mockReturnValue({
+  lend: lendMock,
+  dueDate: today.toFormat(dateFormat),
+  handleDueDate: handleDueDateMock,
+})
+jest.mock('@/hooks/useLend', () => ({
+  __esModule: true,
+  useLend: (...args: any) => useLendMock(...args),
+}))
+
 describe('LendButton component', () => {
   const bookId = 1
-
-  const dateFormat = 'yyyy-MM-dd'
-  const today = DateTime.local().setZone('Asia/Tokyo')
-  const expectedInitialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
-
-  const lendMock = jest.fn()
-  const handleDueDateMock = jest.fn()
-  const useLendMock = jest.spyOn(require('@/hooks/useLend'), 'useLend').mockReturnValue({
-    lend: lendMock,
-    dueDate: today.toFormat(dateFormat),
-    handleDueDate: handleDueDateMock,
-  })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
     const { getByRole, rerender } = render(<LendButton bookId={bookId} disabled={true} />)
