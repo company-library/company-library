@@ -19,7 +19,6 @@ const BookDetailPage: NextPage = () => {
   }
 
   const book = result.data.books[0]
-  console.log(book)
 
   return (
     <Layout title={`${book.title} | company-library`}>
