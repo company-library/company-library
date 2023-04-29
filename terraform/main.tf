@@ -68,9 +68,9 @@ resource "google_cloud_run_service" "company-library-hasura" {
 
     metadata {
       annotations = {
-        "autoscaling.knative.dev/maxScale"      = "100"
+        "autoscaling.knative.dev/maxScale"        = "100"
         "run.googleapis.com/vpc-access-connector" = google_vpc_access_connector.company-library.id
-        "run.googleapis.com/client-name"        = "terraform"
+        "run.googleapis.com/client-name"          = "terraform"
       }
     }
   }
