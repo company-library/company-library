@@ -39,5 +39,6 @@ yarn-error.log*
 
 # terraform
 /terraform/key.json
+/terraform/terraform.tfstate
 /terraform/terraform.tfvars
 /terraform/.terraform/
