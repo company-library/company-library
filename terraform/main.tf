@@ -21,6 +21,10 @@ resource "google_compute_network" "vpc_network" {
   name = "terraform-network"
 }
 
+variable "db_user" {}
+variable "db_pass" {}
+variable "db_name" {}
+
 resource "google_sql_database_instance" "company-library" {
   name             = "cl-db"
   database_version = "POSTGRES_14"
@@ -33,15 +37,23 @@ resource "google_sql_database_instance" "company-library" {
   }
 }
 
+resource "google_sql_database" "company-library" {
+  name     = var.db_name
+  instance = google_sql_database_instance.company-library.name
+}
+
+resource "google_sql_user" "users" {
+  name     = var.db_user
+  instance = google_sql_database_instance.company-library.name
+  password = var.db_pass
+}
+
+
 resource "google_vpc_access_connector" "company-library" {
   name          = "cl-vpc-con"
   ip_cidr_range = "10.8.0.0/28"
   network       = google_compute_network.vpc_network.id
 }
-
-variable "db_user" {}
-variable "db_pass" {}
-variable "db_name" {}
 
 resource "google_cloud_run_service" "company-library-hasura" {
   name     = "cl-hasura"
