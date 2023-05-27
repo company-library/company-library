@@ -45,24 +45,20 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
 
 resource "google_sql_database_instance" "company-library" {
-  name             = "cl-db"
-  database_version = "POSTGRES_14"
-  region           = "asia-northeast1"
+  name                = "cl-db"
+  database_version    = "POSTGRES_14"
+  region              = "asia-northeast1"
+  deletion_protection = false
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
   settings {
     tier = "db-f1-micro"
     ip_configuration {
-      ipv4_enabled                                  = false
-      private_network                               = google_compute_network.vpc_network.id
+      ipv4_enabled    = false
+      private_network = google_compute_network.vpc_network.id
     }
   }
-}
-
-resource "google_sql_database" "company-library" {
-  name     = var.db_name
-  instance = google_sql_database_instance.company-library.name
 }
 
 resource "google_sql_user" "users" {
@@ -71,6 +67,10 @@ resource "google_sql_user" "users" {
   password = var.db_pass
 }
 
+resource "google_sql_database" "company-library" {
+  name     = var.db_name
+  instance = google_sql_database_instance.company-library.name
+}
 
 resource "google_vpc_access_connector" "company-library" {
   name          = "cl-vpc-con"
@@ -114,7 +114,7 @@ resource "google_cloud_run_service" "company-library-hasura" {
 
 data "google_iam_policy" "noauth" {
   binding {
-    role = "roles/run.invoker"
+    role    = "roles/run.invoker"
     members = [
       "allUsers",
     ]
@@ -122,9 +122,9 @@ data "google_iam_policy" "noauth" {
 }
 
 resource "google_cloud_run_service_iam_policy" "noauth" {
-  location    = google_cloud_run_service.company-library-hasura.location
-  project     = google_cloud_run_service.company-library-hasura.project
-  service     = google_cloud_run_service.company-library-hasura.name
+  location = google_cloud_run_service.company-library-hasura.location
+  project  = google_cloud_run_service.company-library-hasura.project
+  service  = google_cloud_run_service.company-library-hasura.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
 }
