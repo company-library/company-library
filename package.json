@@ -9,7 +9,10 @@
     "lint": "next lint",
     "test": "jest",
     "typeCheck": "tsc --pretty --noEmit",
-    "generate": "graphql-codegen --config codegen.yml"
+    "generate": "graphql-codegen --config codegen.yml",
+    "db:generate": "npx prisma generate",
+    "db:push": "dotenv -e .env.development.local -- npx prisma db push",
+    "db:console": "dotenv -e .env.development.local -- npx prisma studio"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
