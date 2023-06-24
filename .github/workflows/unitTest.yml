@@ -1,7 +1,7 @@
 name: unitTest
 
 on:
-  push
+  pull_request
 
 jobs:
   test:
