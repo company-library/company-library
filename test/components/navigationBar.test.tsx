@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import NavigationBar from '@/components/navigationBar'
+import OldNavigationBar from '@/components/oldNavigationBar'
 import { oldUser1 } from '../__utils__/data/user'
 
 const routerMock = jest.fn().mockReturnValue({ push: jest.fn() })
@@ -15,7 +15,7 @@ jest.mock('@/hooks/useCustomUser', () => ({
 
 describe('navigationBar component', () => {
   it('ナビゲーション項目が表示される', () => {
-    const { getByText } = render(<NavigationBar />)
+    const { getByText } = render(<OldNavigationBar />)
 
     expect(getByText('company-library')).toBeInTheDocument()
     expect(getByText('書籍一覧')).toBeInTheDocument()
@@ -34,7 +34,7 @@ describe('navigationBar component', () => {
       pathname: '/books/register',
     })
 
-    const { getByText } = render(<NavigationBar />)
+    const { getByText } = render(<OldNavigationBar />)
 
     expect(getByText('登録')).toHaveClass('bg-gray-600')
   })
@@ -45,7 +45,7 @@ describe('navigationBar component', () => {
       pathname: '/users',
     })
 
-    const { getByText } = render(<NavigationBar />)
+    const { getByText } = render(<OldNavigationBar />)
 
     expect(getByText('利用者一覧')).toHaveClass('bg-gray-600')
   })
@@ -56,7 +56,7 @@ describe('navigationBar component', () => {
       asPath: `/users/${loggedInUser.id}`,
     })
 
-    const { getByText, rerender } = render(<NavigationBar />)
+    const { getByText, rerender } = render(<OldNavigationBar />)
 
     expect(getByText('未返却一覧')).toHaveClass('bg-gray-600')
 
@@ -65,7 +65,7 @@ describe('navigationBar component', () => {
       push: jest.fn(),
       asPath: `/users/${loggedInUser.id + 1}`,
     })
-    rerender(<NavigationBar />)
+    rerender(<OldNavigationBar />)
     expect(getByText('未返却一覧')).not.toHaveClass('bg-gray-600')
   })
 })

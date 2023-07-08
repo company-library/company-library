@@ -1,20 +1,27 @@
-import { SessionProvider } from 'next-auth/react'
 import NavigationBar from '@/components/navigationBar'
+import { getServerSession } from 'next-auth'
+import prisma from '@/libs/prisma/client'
 
 export const metadata = {
   title: 'company-library',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession()
+  const email = session?.user?.email
+  const userId = email
+    ? await prisma.users.findUnique({ where: { email } }).then((user) => {
+        return user?.id
+      })
+    : undefined
+
   return (
     <html lang="ja">
       <body>
-        <SessionProvider>
-          <header>
-            <NavigationBar />
-          </header>
-          <main className="max-w-7xl mx-auto mt-8">{children}</main>
-        </SessionProvider>
+        <header>
+          <NavigationBar userId={userId} />
+        </header>
+        <main className="max-w-7xl mx-auto mt-8">{children}</main>
       </body>
     </html>
   )

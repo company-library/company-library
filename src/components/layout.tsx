@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React, { FC } from 'react'
-import NavigationBar from '@/components/navigationBar'
+import OldNavigationBar from '@/components/oldNavigationBar'
 
 type LayoutProps = {
   title: string
@@ -15,7 +15,7 @@ const Layout: FC<LayoutProps> = ({ title, children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <header>
-        <NavigationBar />
+        <OldNavigationBar />
       </header>
       <main className="max-w-7xl mx-auto mt-8">{children}</main>
     </>
