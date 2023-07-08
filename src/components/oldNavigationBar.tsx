@@ -1,15 +1,11 @@
-'use client'
-
 import { FC } from 'react'
-import { usePathname } from 'next/navigation'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useCustomUser } from '@/hooks/useCustomUser'
 
-type NavigationBarProps = {
-  userId: number | undefined
-}
-
-const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
-  const pathname = usePathname()
+const OldNavigationBar: FC = () => {
+  const router = useRouter()
+  const { user } = useCustomUser()
 
   return (
     <nav className="bg-gray-400 text-white">
@@ -19,7 +15,9 @@ const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
           <Link
             href="/"
             className={`rounded-md my-auto px-3 py-2 ${
-              pathname === '/' ? 'bg-gray-600' : 'text-gray-200 hover:text-white hover:bg-gray-500'
+              router.pathname === '/'
+                ? 'bg-gray-600'
+                : 'text-gray-200 hover:text-white hover:bg-gray-500'
             } `}
           >
             書籍一覧
@@ -27,7 +25,7 @@ const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
           <Link
             href="/books/register"
             className={`rounded-md my-auto px-3 py-2 ${
-              pathname === '/books/register'
+              router.pathname === '/books/register'
                 ? 'bg-gray-600'
                 : 'text-gray-200 hover:text-white hover:bg-gray-500'
             }`}
@@ -35,19 +33,19 @@ const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
             登録
           </Link>
           <Link
-            href={`/users/${userId}`}
+            href={`/users/${user?.id}`}
             className={`rounded-md my-auto px-3 py-2 ${
-              pathname === `/users/${userId}`
+              router.asPath === `/users/${user?.id}`
                 ? 'bg-gray-600'
                 : 'text-gray-200 hover:text-white hover:bg-gray-500'
             }`}
           >
-            未返却一覧（userId: {userId}）
+            未返却一覧
           </Link>
           <Link
             href="/users"
             className={`rounded-md my-auto px-3 py-2 ${
-              pathname === '/users'
+              router.pathname === '/users'
                 ? 'bg-gray-600'
                 : 'text-gray-200 hover:text-white hover:bg-gray-500'
             }`}
@@ -60,4 +58,4 @@ const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
   )
 }
 
-export default NavigationBar
+export default OldNavigationBar
