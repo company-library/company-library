@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react'
 import UserPage from '@/pages/users/[id]'
-import { user1 } from '../../__utils__/data/user'
+import { oldUser1 } from '../../__utils__/data/user'
 
-const expectedUser = user1
+const expectedUser = oldUser1
 const useRouterMock = jest.fn().mockReturnValue({ query: { id: expectedUser.id } })
 jest.mock('next/router', () => ({
   __esModule: true,

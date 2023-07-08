@@ -6,10 +6,10 @@ export const metadata: Metadata = {
 }
 
 const Users = async () => {
-  const users = await prisma.users.findMany()
-  console.log('prisma.users', prisma.users)
-  console.log('prisma.users.findMany)', prisma.users.findMany)
-  console.log(users)
+  const users = await prisma.users.findMany().catch((e) => {
+    console.error(e)
+    return new Error('User fetch failed')
+  })
 
   if (users instanceof Error) {
     return (

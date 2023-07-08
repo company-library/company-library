@@ -8,7 +8,7 @@ jest.mock('@/libs/prisma/client', () => ({
   default: mockDeep<PrismaClient>(),
 }))
 
-beforeEach(() => {
+afterEach(() => {
   mockReset(prismaMock)
 })
 

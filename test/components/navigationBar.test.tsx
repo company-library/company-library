@@ -1,13 +1,13 @@
 import { render } from '@testing-library/react'
 import NavigationBar from '@/components/navigationBar'
-import { user1 } from '../__utils__/data/user'
+import { oldUser1 } from '../__utils__/data/user'
 
 const routerMock = jest.fn().mockReturnValue({ push: jest.fn() })
 jest.mock('next/router', () => ({
   __esModule: true,
   useRouter: () => routerMock(),
 }))
-const loggedInUser = user1
+const loggedInUser = oldUser1
 jest.mock('@/hooks/useCustomUser', () => ({
   __esModule: true,
   useCustomUser: () => ({ user: loggedInUser }),
