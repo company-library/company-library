@@ -1,29 +1,33 @@
-import { NextPage } from 'next'
-import Layout from '@/components/layout'
-import { useGetBookQuery } from '@/generated/graphql.client'
-import { useRouter } from 'next/router'
-import BookDetail from '@/components/bookDetail'
+import prisma from '@/libs/prisma/client'
 
-const BookDetailPage: NextPage = () => {
-  const router = useRouter()
-  const bookId = Number(router.query.id)
+type BookDetailPageParams = {
+  params: {
+    id: number
+  }
+}
 
-  const [result] = useGetBookQuery({ variables: { id: bookId } })
+const BookDetailPage = async ({ params }: BookDetailPageParams) => {
+  const bookId = Number(params.id)
+  const book = await prisma.book.findUnique({ where: { id: bookId } }).catch((e) => {
+    console.error(e)
+    return new Error('Book fetch failed')
+  })
 
-  if (result.fetching || result.error || !result.data) {
-    return (
-      <Layout title={'詳細 | company-library'}>
-        {result.fetching ? <div>Loading...</div> : <div>Error!</div>}
-      </Layout>
-    )
+  if (book instanceof Error) {
+    return <div>Error!</div>
   }
 
-  const book = result.data.books[0]
+  if (book == null) {
+    return <div>その本は存在しないようです</div>
+  }
 
   return (
-    <Layout title={`${book.title} | company-library`}>
-      <BookDetail book={book} />
-    </Layout>
+    <div>
+      <p>{bookId}</p>
+      <p>{book.id}</p>
+      <p>{book.title}</p>
+      <p>{book.imageUrl}</p>
+    </div>
   )
 }
 
