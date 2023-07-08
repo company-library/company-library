@@ -7,7 +7,10 @@ import prisma from '@/libs/prisma/client'
 // }
 
 const Users = async () => {
-  const users = await prisma.users.findMany()
+  const users = await prisma.users.findMany().catch((e) => {
+    console.error(e)
+    return new Error('User fetch failed')
+  })
 
   if (users instanceof Error) {
     return (
