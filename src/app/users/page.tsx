@@ -1,8 +1,9 @@
 import prisma from '@/libs/prisma/client'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: '利用者一覧 | company-library',
+export const generateMetadata = async () => {
+  return {
+    title: '利用者一覧 | company-library',
+  }
 }
 
 const Users = async () => {
