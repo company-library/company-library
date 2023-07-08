@@ -1,6 +1,6 @@
-import BookDetailPage from '@/pages/books/[id]'
+import BookDetailPage from '@/app/books/[id]/page'
 import { render } from '@testing-library/react'
-import { lendableBook } from '../../__utils__/data/book'
+import { lendableBook } from '../../../__utils__/data/book'
 
 const expectedBook = lendableBook
 
