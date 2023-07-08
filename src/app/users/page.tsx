@@ -1,16 +1,13 @@
 import prisma from '@/libs/prisma/client'
 
-export const generateMetadata = async () => {
-  return {
-    title: '利用者一覧 | company-library',
-  }
-}
+// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
+// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
+// export const metadata: Metadata = {
+//   title: '利用者一覧 | company-library',
+// }
 
 const Users = async () => {
-  const users = await prisma.users.findMany().catch((e) => {
-    console.error(e)
-    return new Error('User fetch failed')
-  })
+  const users = await prisma.users.findMany()
 
   if (users instanceof Error) {
     return (
