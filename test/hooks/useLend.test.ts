@@ -1,7 +1,7 @@
 import { useLend } from '@/hooks/useLend'
 import { act, renderHook } from '@testing-library/react'
 import { DateTime } from 'luxon'
-import { user1 } from '../__utils__/data/user'
+import { oldUser1 } from '../__utils__/data/user'
 
 const useRouterMock = jest.fn().mockReturnValue({ reload: jest.fn() })
 jest.mock('next/router', () => ({
@@ -9,7 +9,7 @@ jest.mock('next/router', () => ({
   useRouter: () => useRouterMock(),
 }))
 
-const loggedInUser = user1
+const loggedInUser = oldUser1
 jest.mock('@/hooks/useCustomUser', () => ({
   __esModule: true,
   useCustomUser: () => ({ user: loggedInUser }),
