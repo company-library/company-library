@@ -2,6 +2,8 @@ import NavigationBar from '@/components/navigationBar'
 import { getServerSession } from 'next-auth'
 import prisma from '@/libs/prisma/client'
 
+import '../styles/globals.css'
+
 export const metadata = {
   title: 'company-library',
 }
