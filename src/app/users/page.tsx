@@ -1,4 +1,5 @@
 import prisma from '@/libs/prisma/client'
+import UserCard from '@/components/userCard'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
@@ -7,10 +8,12 @@ import prisma from '@/libs/prisma/client'
 // }
 
 const Users = async () => {
-  const users = await prisma.users.findMany().catch((e) => {
-    console.error(e)
-    return new Error('User fetch failed')
-  })
+  const users = await prisma.users
+    .findMany({ include: { lendingHistories: { include: { returnHistory: true } } } })
+    .catch((e) => {
+      console.error(e)
+      return new Error('User fetch failed')
+    })
 
   if (users instanceof Error) {
     return (
@@ -25,13 +28,7 @@ const Users = async () => {
       <h1 className="text-3xl mb-8">利用者一覧</h1>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {users.map((user) => {
-          return (
-            <div key={user.id}>
-              <p>{user.id}</p>
-              <p>{user.name}</p>
-            </div>
-          )
-          // return <UserCard key={user.id} user={user} />
+          return <UserCard key={user.id} user={user} />
         })}
       </div>
     </>

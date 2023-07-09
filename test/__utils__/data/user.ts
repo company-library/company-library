@@ -1,4 +1,4 @@
-import { UserSummary } from '@/models/user'
+import { OldUserSummary } from '@/models/user'
 
 export const user1 = {
   id: 1,
@@ -16,7 +16,7 @@ export const user2 = {
   createdAt: new Date('2023-01-02'),
 }
 
-export const oldUser1: UserSummary = {
+export const oldUser1: OldUserSummary = {
   id: 1,
   name: 'テスト太郎',
   email: 'test1@example.com',
@@ -34,7 +34,7 @@ export const oldUser1: UserSummary = {
   ],
 }
 
-export const oldUser2: UserSummary = {
+export const oldUser2: OldUserSummary = {
   id: 2,
   name: 'テスト二郎',
   email: 'test2@example.com',
