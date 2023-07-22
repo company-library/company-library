@@ -32,19 +32,19 @@ async function main() {
     },
   })
 
-  const book1RegistrationHistory1 = await prisma.registrationHistory.create({
+  await prisma.registrationHistory.create({
     data: {
       bookId: book1.id,
       userId: alice.id,
     },
   })
-  const book1RegistrationHistory2 = await prisma.registrationHistory.create({
+  await prisma.registrationHistory.create({
     data: {
       bookId: book1.id,
       userId: bob.id,
     },
   })
-  const book2RegistrationHistory = await prisma.registrationHistory.create({
+  await prisma.registrationHistory.create({
     data: {
       bookId: book2.id,
       userId: alice.id,
