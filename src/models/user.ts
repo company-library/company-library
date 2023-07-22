@@ -14,10 +14,27 @@ export const isUser = (value: any): value is User => {
   )
 }
 
+export type OldUserSummary = {
+  id: number
+  name: string
+  email: string
+  imageUrl?: string | null
+  lendingHistories: Array<{
+    bookId: number
+    returnHistories_aggregate: { aggregate?: { count: number } | null }
+  }>
+}
+
 export type UserSummary = {
   id: number
   name: string
   email: string
   imageUrl?: string | null
-  lendingHistories: Array<{ bookId: number, returnHistories_aggregate: { aggregate?: { count: number } | null } }>
+  lendingHistories: Array<{
+    bookId: number
+    lentAt: Date
+    returnHistory: {
+      returnedAt: Date
+    } | null
+  }>
 }

@@ -11,9 +11,36 @@ datasource db {
 }
 
 model Users {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  imageUrl  String?
-  createdAt DateTime @default(now())
+  id               Int                @id @default(autoincrement())
+  email            String             @unique
+  name             String
+  imageUrl         String?
+  createdAt        DateTime           @default(now())
+  lendingHistories LendingHistories[]
+}
+
+model Books {
+  id               Int                @id @default(autoincrement())
+  title            String
+  ISBN             String             @unique
+  imageUrl         String?
+  createdAt        DateTime           @default(now())
+  lendingHistories LendingHistories[]
+}
+
+model LendingHistories {
+  id              Int              @id @default(autoincrement())
+  bookId          Int
+  userId          Int
+  dueDate         DateTime
+  lentAt          DateTime         @default(now())
+  Books           Books            @relation(fields: [bookId], references: [id])
+  Users           Users            @relation(fields: [userId], references: [id])
+  returnHistory   ReturnHistories?
+}
+
+model ReturnHistories {
+  lendingHistoryId Int              @unique
+  returnedAt       DateTime         @default(now())
+  lendingHistory   LendingHistories @relation(fields: [lendingHistoryId], references: [id])
 }
