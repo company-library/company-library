@@ -11,36 +11,72 @@ datasource db {
 }
 
 model Users {
-  id               Int                @id @default(autoincrement())
-  email            String             @unique
-  name             String
-  imageUrl         String?
-  createdAt        DateTime           @default(now())
-  lendingHistories LendingHistories[]
+  id                    Int                     @id @default(autoincrement())
+  email                 String                  @unique
+  name                  String
+  imageUrl              String?
+  createdAt             DateTime                @default(now())
+  lendingHistories      LendingHistories[]
+  RegistrationHistories RegistrationHistories[]
+  Impressions           Impressions[]
+  Reservations          Reservations[]
 }
 
 model Books {
-  id               Int                @id @default(autoincrement())
-  title            String
-  ISBN             String             @unique
-  imageUrl         String?
-  createdAt        DateTime           @default(now())
-  lendingHistories LendingHistories[]
+  id                    Int                     @id @default(autoincrement())
+  title                 String
+  ISBN                  String                  @unique
+  imageUrl              String?
+  createdAt             DateTime                @default(now())
+  lendingHistories      LendingHistories[]
+  RegistrationHistories RegistrationHistories[]
+  Impressions           Impressions[]
+  Reservations          Reservations[]
 }
 
 model LendingHistories {
-  id              Int              @id @default(autoincrement())
-  bookId          Int
-  userId          Int
-  dueDate         DateTime
-  lentAt          DateTime         @default(now())
-  Books           Books            @relation(fields: [bookId], references: [id])
-  Users           Users            @relation(fields: [userId], references: [id])
-  returnHistory   ReturnHistories?
+  id            Int              @id @default(autoincrement())
+  bookId        Int
+  userId        Int
+  dueDate       DateTime
+  lentAt        DateTime         @default(now())
+  Books         Books            @relation(fields: [bookId], references: [id])
+  Users         Users            @relation(fields: [userId], references: [id])
+  returnHistory ReturnHistories?
 }
 
 model ReturnHistories {
   lendingHistoryId Int              @unique
   returnedAt       DateTime         @default(now())
   lendingHistory   LendingHistories @relation(fields: [lendingHistoryId], references: [id])
+}
+
+model RegistrationHistories {
+  id        Int      @id @default(autoincrement())
+  bookId    Int
+  userId    Int
+  Books     Books    @relation(fields: [bookId], references: [id])
+  Users     Users    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Impressions {
+  id         Int      @id @default(autoincrement())
+  bookId     Int
+  userId     Int
+  impression String
+  Books      Books    @relation(fields: [bookId], references: [id])
+  Users      Users    @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Reservations {
+  id              Int      @id @default(autoincrement())
+  bookId          Int
+  userId          Int
+  reservationDate DateTime @db.Date
+  Books           Books    @relation(fields: [bookId], references: [id])
+  Users           Users    @relation(fields: [userId], references: [id])
+  createdAt       DateTime @default(now())
 }
