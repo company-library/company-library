@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    domains: ['books.google.com', 's.gravatar.com'],
+    domains: ['books.google.com', 's.gravatar.com', 'picsum.photos'],
   },
 }
 
