@@ -10,73 +10,87 @@ datasource db {
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
-model Users {
-  id                    Int                     @id @default(autoincrement())
-  email                 String                  @unique
+model User {
+  id                    Int                   @id @default(autoincrement())
+  email                 String                @unique
   name                  String
   imageUrl              String?
-  createdAt             DateTime                @default(now())
-  lendingHistories      LendingHistories[]
-  RegistrationHistories RegistrationHistories[]
-  Impressions           Impressions[]
-  Reservations          Reservations[]
+  createdAt             DateTime              @default(now())
+  lendingHistories      LendingHistory[]
+  RegistrationHistories RegistrationHistory[]
+  Impressions           Impression[]
+  Reservations          Reservation[]
+
+  @@map("users")
 }
 
-model Books {
-  id                    Int                     @id @default(autoincrement())
+model Book {
+  id                    Int                   @id @default(autoincrement())
   title                 String
-  ISBN                  String                  @unique
+  ISBN                  String                @unique
   imageUrl              String?
-  createdAt             DateTime                @default(now())
-  lendingHistories      LendingHistories[]
-  RegistrationHistories RegistrationHistories[]
-  Impressions           Impressions[]
-  Reservations          Reservations[]
+  createdAt             DateTime              @default(now())
+  lendingHistories      LendingHistory[]
+  RegistrationHistories RegistrationHistory[]
+  Impressions           Impression[]
+  Reservations          Reservation[]
+
+  @@map("books")
 }
 
-model LendingHistories {
-  id            Int              @id @default(autoincrement())
+model LendingHistory {
+  id            Int            @id @default(autoincrement())
   bookId        Int
   userId        Int
   dueDate       DateTime
-  lentAt        DateTime         @default(now())
-  Books         Books            @relation(fields: [bookId], references: [id])
-  Users         Users            @relation(fields: [userId], references: [id])
-  returnHistory ReturnHistories?
+  lentAt        DateTime       @default(now())
+  Books         Book           @relation(fields: [bookId], references: [id])
+  Users         User           @relation(fields: [userId], references: [id])
+  returnHistory ReturnHistory?
+
+  @@map("lending_histories")
 }
 
-model ReturnHistories {
-  lendingHistoryId Int              @unique
-  returnedAt       DateTime         @default(now())
-  lendingHistory   LendingHistories @relation(fields: [lendingHistoryId], references: [id])
+model ReturnHistory {
+  lendingHistoryId Int            @unique
+  returnedAt       DateTime       @default(now())
+  lendingHistory   LendingHistory @relation(fields: [lendingHistoryId], references: [id])
+
+  @@map("return_histories")
 }
 
-model RegistrationHistories {
+model RegistrationHistory {
   id        Int      @id @default(autoincrement())
   bookId    Int
   userId    Int
-  Books     Books    @relation(fields: [bookId], references: [id])
-  Users     Users    @relation(fields: [userId], references: [id])
+  Books     Book     @relation(fields: [bookId], references: [id])
+  Users     User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  @@map("registration_histories")
 }
 
-model Impressions {
+model Impression {
   id         Int      @id @default(autoincrement())
   bookId     Int
   userId     Int
   impression String
-  Books      Books    @relation(fields: [bookId], references: [id])
-  Users      Users    @relation(fields: [userId], references: [id])
+  Books      Book     @relation(fields: [bookId], references: [id])
+  Users      User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@map("impressions")
 }
 
-model Reservations {
+model Reservation {
   id              Int      @id @default(autoincrement())
   bookId          Int
   userId          Int
   reservationDate DateTime @db.Date
-  Books           Books    @relation(fields: [bookId], references: [id])
-  Users           Users    @relation(fields: [userId], references: [id])
+  Books           Book     @relation(fields: [bookId], references: [id])
+  Users           User     @relation(fields: [userId], references: [id])
   createdAt       DateTime @default(now())
+
+  @@map("reservations")
 }
