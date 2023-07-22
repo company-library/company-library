@@ -3,7 +3,7 @@ import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../__utils__/data/user'
 
 describe('users page', () => {
-  prismaMock.users.findMany.mockResolvedValue([user1, user2])
+  prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
   const UserPage = require('@/app/users/page').default
 
@@ -19,7 +19,7 @@ describe('users page', () => {
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
     console.error = jest.fn()
-    prismaMock.users.findMany.mockRejectedValueOnce(expectErrorMsg)
+    prismaMock.user.findMany.mockRejectedValueOnce(expectErrorMsg)
 
     render(await UserPage())
 

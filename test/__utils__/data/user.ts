@@ -1,10 +1,11 @@
-import { OldUserSummary, UserSummary } from '@/models/user'
+import { OldUserSummary } from '@/models/user'
 
-export const user1: UserSummary = {
+export const user1 = {
   id: 1,
   name: 'テスト太郎',
   email: 'test1@example.com',
   imageUrl: 'https://example.com/image/1',
+  createdAt: new Date(),
   lendingHistories: [
     { bookId: 1, lentAt: new Date('2021-01-01'), returnHistory: null },
     { bookId: 1, lentAt: new Date('2021-02-01'), returnHistory: null },
@@ -38,11 +39,12 @@ export const user1: UserSummary = {
   ],
 }
 
-export const user2: UserSummary = {
+export const user2 = {
   id: 2,
   name: 'テスト二郎',
   email: 'test2@example.com',
   imageUrl: null,
+  createdAt: new Date(),
   lendingHistories: [],
 }
 

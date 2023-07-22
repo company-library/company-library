@@ -12,7 +12,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await getServerSession()
   const email = session?.user?.email
   const userId = email
-    ? await prisma.users.findUnique({ where: { email } }).then((user) => {
+    ? await prisma.user.findUnique({ where: { email } }).then((user) => {
         return user?.id
       })
     : undefined

@@ -8,7 +8,7 @@ import UserCard from '@/components/userCard'
 // }
 
 const Users = async () => {
-  const users = await prisma.users
+  const users = await prisma.user
     .findMany({ include: { lendingHistories: { include: { returnHistory: true } } } })
     .catch((e) => {
       console.error(e)
