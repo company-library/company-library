@@ -15,10 +15,11 @@ describe('Home page', () => {
     },
   })
 
+  it.todo('ページタイトルが「トップページ | company-library」である')
+
   it('本の一覧が表示される', () => {
     render(<TopPage />)
 
-    // expect(LayoutMock.mock.calls[0][0].title).toBe('トップページ | company-library')
     expect(screen.getByText(bookWithImage.title)).toBeInTheDocument()
     expect(screen.getByText(bookWithoutImage.title)).toBeInTheDocument()
   })
