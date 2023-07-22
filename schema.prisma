@@ -17,9 +17,9 @@ model User {
   imageUrl              String?
   createdAt             DateTime              @default(now())
   lendingHistories      LendingHistory[]
-  RegistrationHistories RegistrationHistory[]
-  Impressions           Impression[]
-  Reservations          Reservation[]
+  registrationHistories RegistrationHistory[]
+  impressions           Impression[]
+  reservations          Reservation[]
 
   @@map("users")
 }
@@ -27,13 +27,13 @@ model User {
 model Book {
   id                    Int                   @id @default(autoincrement())
   title                 String
-  ISBN                  String                @unique
+  isbn                  String                @unique
   imageUrl              String?
   createdAt             DateTime              @default(now())
   lendingHistories      LendingHistory[]
-  RegistrationHistories RegistrationHistory[]
-  Impressions           Impression[]
-  Reservations          Reservation[]
+  registrationHistories RegistrationHistory[]
+  impressions           Impression[]
+  reservations          Reservation[]
 
   @@map("books")
 }
@@ -44,8 +44,8 @@ model LendingHistory {
   userId        Int
   dueDate       DateTime
   lentAt        DateTime       @default(now())
-  Books         Book           @relation(fields: [bookId], references: [id])
-  Users         User           @relation(fields: [userId], references: [id])
+  book          Book           @relation(fields: [bookId], references: [id])
+  user          User           @relation(fields: [userId], references: [id])
   returnHistory ReturnHistory?
 
   @@map("lending_histories")
@@ -63,9 +63,9 @@ model RegistrationHistory {
   id        Int      @id @default(autoincrement())
   bookId    Int
   userId    Int
-  Books     Book     @relation(fields: [bookId], references: [id])
-  Users     User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  book      Book     @relation(fields: [bookId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@map("registration_histories")
 }
@@ -75,10 +75,10 @@ model Impression {
   bookId     Int
   userId     Int
   impression String
-  Books      Book     @relation(fields: [bookId], references: [id])
-  Users      User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  book       Book     @relation(fields: [bookId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("impressions")
 }
@@ -88,9 +88,9 @@ model Reservation {
   bookId          Int
   userId          Int
   reservationDate DateTime @db.Date
-  Books           Book     @relation(fields: [bookId], references: [id])
-  Users           User     @relation(fields: [userId], references: [id])
   createdAt       DateTime @default(now())
+  book            Book     @relation(fields: [bookId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
 
   @@map("reservations")
 }
