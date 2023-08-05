@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import AzureADB2CProvider from 'next-auth/providers/azure-ad-b2c'
 import prisma from '@/libs/prisma/client'
 
@@ -12,7 +12,7 @@ if (
   process.exit()
 }
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     AzureADB2CProvider({
       tenantId: process.env.AZURE_AD_B2C_TENANT_NAME,
@@ -75,6 +75,7 @@ const handler = NextAuth({
       return session
     },
   },
-})
+}
 
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }
