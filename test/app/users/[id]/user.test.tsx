@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import User from '@/components/user'
+import User from '@/app/users/[id]/user'
 
 const useGetUserByIdQueryMock = jest.fn().mockReturnValue([
   {

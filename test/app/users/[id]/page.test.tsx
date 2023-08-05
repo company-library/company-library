@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
-import UserPage from '@/pages/users/[id]'
-import { oldUser1 } from '../../__utils__/data/user'
+import UserPage from '@/app/users/[id]/page'
+import { oldUser1 } from '../../../__utils__/data/user'
 
 const expectedUser = oldUser1
 const useRouterMock = jest.fn().mockReturnValue({ query: { id: expectedUser.id } })
@@ -25,7 +25,7 @@ jest.mock('@/components/user', () => ({
 
 describe('UserDetail page', () => {
   it('ユーザー情報が表示される', () => {
-    render(<UserPage />)
+    render(<UserPage params={{ id: '1' }} />)
 
     expect(LayoutMock.mock.calls[0][0]['title']).toBe(`利用者情報 | company-library`)
     expect(UserDetailMock.mock.calls[0][0]['id']).toBe(expectedUser.id)
@@ -34,7 +34,7 @@ describe('UserDetail page', () => {
   it('クエリにidがない場合は、HTTPステータスコード400のエラーページが表示される', () => {
     useRouterMock.mockReturnValueOnce({ query: {} })
 
-    const { getByText } = render(<UserPage />)
+    const { getByText } = render(<UserPage params={{ id: '1' }} />)
 
     expect(getByText('400')).toBeInTheDocument()
   })

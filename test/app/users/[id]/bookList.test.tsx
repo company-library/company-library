@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
-import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
-import BookList from '@/components/bookList'
+import { bookWithImage, bookWithoutImage } from '../../../__utils__/data/book'
+import BookList from '@/app/users/[id]/bookList'
 
 const books = [bookWithImage, bookWithoutImage]
 const useGetBooksQueryMock = jest.fn().mockReturnValue([
@@ -19,7 +19,7 @@ jest.mock('@/generated/graphql.client', () => ({
 
 describe('BookList component', () => {
   it('本の一覧が表示される', () => {
-    const { getByText } = render(<BookList ids={books.map((book) => book.id)} />)
+    const { getByText } = render(<BookList books={books} />)
 
     expect(getByText(bookWithImage.title)).toBeInTheDocument()
     expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
@@ -36,7 +36,7 @@ describe('BookList component', () => {
       },
     ])
 
-    const { getByText } = render(<BookList ids={books.map((book) => book.id)} />)
+    const { getByText } = render(<BookList books={books} />)
 
     expect(getByText('該当の書籍はありません')).toBeInTheDocument()
   })
@@ -44,7 +44,7 @@ describe('BookList component', () => {
   it('本の一覧の読み込み中は「Loading...」というメッセージが表示される', () => {
     useGetBooksQueryMock.mockReturnValueOnce([{ fetching: true }])
 
-    const { getByText } = render(<BookList ids={books.map((book) => book.id)} />)
+    const { getByText } = render(<BookList books={books} />)
 
     expect(getByText('Loading...')).toBeInTheDocument()
   })
@@ -54,7 +54,7 @@ describe('BookList component', () => {
     console.error = jest.fn()
     useGetBooksQueryMock.mockReturnValueOnce([{ fetching: false, error: expectErrorMsg }])
 
-    const { getByText } = render(<BookList ids={books.map((book) => book.id)} />)
+    const { getByText } = render(<BookList books={books} />)
 
     expect(getByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)

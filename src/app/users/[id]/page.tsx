@@ -6,7 +6,13 @@ import User from '@/app/users/[id]/user'
 //   title: '利用者情報 | company-library',
 // }
 
-const UserPage = async ({ params }: { params: { id: string } }) => {
+type UserPageProps = {
+  params: {
+    id: string
+  }
+}
+
+const UserPage = async ({ params }: UserPageProps) => {
   return <User id={Number(params.id)} />
 }
 
