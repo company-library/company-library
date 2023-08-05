@@ -4,7 +4,7 @@ import BookTile from '@/components/bookTile'
 import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
 import { useState } from 'react'
-import { Book } from '@/models/books'
+import { Book } from '@/models/book'
 import { CustomError, isCustomError } from '@/models/errors'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
