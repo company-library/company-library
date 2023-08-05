@@ -1,6 +1,6 @@
 import NavigationBar from '@/components/navigationBar'
 import { getServerSession } from 'next-auth'
-import prisma from '@/libs/prisma/client'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 import '../styles/globals.css'
 
@@ -9,13 +9,8 @@ export const metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession()
-  const email = session?.user?.email
-  const userId = email
-    ? await prisma.user.findUnique({ where: { email } }).then((user) => {
-        return user?.id
-      })
-    : undefined
+  const session = await getServerSession(authOptions)
+  const userId = session?.customUser.id
 
   return (
     <html lang="ja">
