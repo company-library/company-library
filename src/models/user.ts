@@ -2,7 +2,6 @@ export type User = {
   id: number
   name: string
   email: string
-  sub: string
 }
 
 export const isUser = (value: any): value is User => {
