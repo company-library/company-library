@@ -1,18 +1,30 @@
-import type { NextPage } from 'next'
-import Layout from '@/components/layout'
-import BookTile from '@/components/bookTile'
-import { useGetBooksQuery } from '@/generated/graphql.client'
-import { useState } from 'react'
+'use client'
 
-const Home: NextPage = () => {
+import BookTile from '@/components/bookTile'
+import useSWR from 'swr'
+import fetcher from '@/libs/swr/fetcher'
+import { useState } from 'react'
+import { Book } from '@/models/book'
+import { CustomError, isCustomError } from '@/models/errors'
+
+// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
+// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
+// export const metadata: Metadata = {
+//   title: 'トップページ | company-library',
+// }
+
+const Home = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
-  const [result] = useGetBooksQuery({ variables: { keyword: `%${searchKeyword}%` } })
-  if (result.error) {
-    console.error(result.error)
+  const { data, error } = useSWR<{ books: Book[] } | CustomError>(
+    `/api/books/search?q=${searchKeyword}`,
+    fetcher,
+  )
+  if (error) {
+    console.error(error)
   }
 
   return (
-    <Layout title="トップページ | company-library">
+    <div>
       <div>
         <form>
           <div className="relative">
@@ -27,12 +39,12 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex flex-wrap">
-        {result.fetching ? (
+        {!data ? (
           <div>Loading...</div>
-        ) : result.error || !result.data ? (
+        ) : error || isCustomError(data) ? (
           <div>Error!</div>
         ) : (
-          result.data.books.map((book) => {
+          data.books.map((book) => {
             return (
               <div key={book.id}>
                 <div className="m-10">
@@ -43,7 +55,7 @@ const Home: NextPage = () => {
           })
         )}
       </div>
-    </Layout>
+    </div>
   )
 }
 

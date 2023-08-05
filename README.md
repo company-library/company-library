@@ -18,3 +18,10 @@ npx hasura metadata apply
 npx hasura migrate apply --database-name default
 npx hasura metadata reload
 ```
+
+## Migrate DB with Prisma
+
+```bash
+yarn db:generate
+yarn db:push
+```
