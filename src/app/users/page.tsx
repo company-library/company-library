@@ -16,11 +16,7 @@ const Users = async () => {
     })
 
   if (users instanceof Error) {
-    return (
-      <>
-        <div>Error!</div>
-      </>
-    )
+    return <div>Error!</div>
   }
 
   return (
