@@ -2,6 +2,9 @@ import React, { Suspense } from 'react'
 import BookDetail from '@/components/bookDetail'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import LendingList from '@/app/books/[id]/lendingList'
+import ImpressionList from '@/app/books/[id]/impressionList'
+import ReturnList from '@/app/books/[id]/returnList'
 
 type BookDetailPageParams = {
   params: {
@@ -25,6 +28,20 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
       <Suspense fallback={<div>Loading...</div>}>
         <BookDetail bookId={bookId} userId={userId} />
       </Suspense>
+
+      <div className="mt-10">
+        <Suspense fallback={<div>Loading...</div>}>
+          <LendingList bookId={bookId} />
+        </Suspense>
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <ImpressionList bookId={bookId} />
+        </Suspense>
+
+        <Suspense fallback={<div>Loading...</div>}>
+          <ReturnList bookId={bookId} />
+        </Suspense>
+      </div>
     </div>
   )
 }
