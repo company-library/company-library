@@ -1,5 +1,3 @@
-'use client'
-
 import { FC } from 'react'
 import BookTile from '@/components/bookTile'
 import { Book } from '@/models/book'
