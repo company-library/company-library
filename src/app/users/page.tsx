@@ -1,5 +1,5 @@
 import prisma from '@/libs/prisma/client'
-import UserCard from '@/components/userCard'
+import UserCard from '@/app/users/userCard'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
