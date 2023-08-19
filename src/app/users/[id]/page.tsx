@@ -1,6 +1,8 @@
 import prisma from '@/libs/prisma/client'
-import { Book } from '@/models/book'
 import BookList from '@/app/users/[id]/bookList'
+import { lendingHistory } from '@/models/lendingHistory'
+import { service } from '@/app/users/[id]/service'
+import { readingHistories } from '@/hooks/server/readingHistories'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
@@ -51,13 +53,17 @@ const UserPage = async ({ params }: UserPageProps) => {
   return (
     <>
       <h1 className="text-3xl mb-8">{user.name}さんの情報</h1>
-      <h2 className="text-xl mb-2">現在読んでいる書籍({readingBooks.length}冊)</h2>
-      <div className="mb-6">
-        <BookList books={readingBooks.map((b) => b.book)} />
-      </div>
-      <h2 className="text-xl mb-2">今まで読んだ書籍({haveReadBooks.length}冊)</h2>
       <div>
-        <BookList books={haveReadBooks.map((b) => b.book)} />
+        <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
+        <div className="mt-2">
+          <BookList books={readingBooks.map((b) => b.book)} />
+        </div>
+      </div>
+      <div className="mt-6">
+        <h2 className="text-xl">今まで読んだ書籍({haveReadBooks.length}冊)</h2>
+        <div className="mt-2">
+          <BookList books={haveReadBooks.map((b) => b.book)} />
+        </div>
       </div>
     </>
   )
