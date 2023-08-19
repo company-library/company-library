@@ -1,7 +1,7 @@
-import BookDetail from '@/components/bookDetail'
 import { render } from '@testing-library/react'
 import { lendableBook } from '../__utils__/data/book'
 import { DateTime, Settings } from 'luxon'
+import { prismaMock } from '../__utils__/libs/prisma/singleton'
 
 // next/imageのモック
 jest.mock('next/image', () => ({
@@ -42,17 +42,33 @@ jest.mock('@/hooks/useCustomUser', () => ({
 }))
 
 describe('BookDetail component', () => {
+  const BookDetailComponent = require('@/components/bookDetail').default
+
   const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
   Settings.now = () => expectedNow.toMillis()
+  const userId = 2
+
+  const book = lendableBook
+  // @ts-ignore
+  prismaMock.book.findUnique.mockResolvedValue({
+    title: book.title,
+    imageUrl: book.imageUrl,
+    lendingHistories: book.lendingHistories,
+    _count: {
+      registrationHistories: book.registrationHistories.length,
+      reservations: book.reservations.length,
+    },
+  })
 
   it('本の情報が表示される', async () => {
-    const book = lendableBook
-    const { getByText, getByRole, getByAltText } = render(<BookDetail book={book} />)
+    const { getByText, getByRole, getByAltText } = render(
+      await BookDetailComponent({ bookId: book.id, userId: userId }),
+    )
 
     expect(getByAltText(book.title)).toBeInTheDocument()
     expect(getByAltText(book.title)).toHaveAttribute('src', book.imageUrl)
     expect(getByText(book.title)).toBeInTheDocument()
-    expect(getByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+    expect(getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
     expect(getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
     expect(getByText(`予約数: ${1}件`)).toBeInTheDocument()
     expect(getByRole('button', { name: '借りる' })).toBeInTheDocument()
@@ -88,8 +104,10 @@ describe('BookDetail component', () => {
       ],
     }
 
-    it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', () => {
-      const { getByText, getByTestId } = render(<BookDetail book={lendingBook} />)
+    it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', async () => {
+      const { getByText, getByTestId } = render(
+        await BookDetailComponent({ bookId: lendingBook.id, userId: userId }),
+      )
 
       expect(getByText('借りている人')).toBeInTheDocument()
       expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
@@ -100,8 +118,10 @@ describe('BookDetail component', () => {
       expect(getByTestId(`lendingUser-${2}`).textContent).toBe('u')
     })
 
-    it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', () => {
-      const { getByTestId } = render(<BookDetail book={lendingBook} />)
+    it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', async () => {
+      const { getByTestId } = render(
+        await BookDetailComponent({ bookId: lendingBook.id, userId: userId }),
+      )
 
       expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
       expect(getByTestId(`dueDate-${0}`)).toHaveClass('text-red-400', 'font-bold')
@@ -113,23 +133,27 @@ describe('BookDetail component', () => {
       expect(getByTestId(`dueDate-${2}`)).not.toHaveClass('font-bold')
     })
 
-    it('貸出中のユーザーがいない場合、項目ごと表示されない', () => {
-      const { queryByText } = render(<BookDetail book={lendableBook} />)
+    it('貸出中のユーザーがいない場合、項目ごと表示されない', async () => {
+      const { queryByText } = render(
+        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
+      )
 
       expect(queryByText('借りている人')).not.toBeInTheDocument()
     })
   })
 
   describe('感想', () => {
-    it('感想のリストを表示する', () => {
-      const { getByText } = render(<BookDetail book={lendableBook} />)
+    it('感想のリストを表示する', async () => {
+      const { getByText } = render(
+        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
+      )
 
       expect(getByText('感想')).toBeInTheDocument()
     })
   })
 
   describe('借りた人', () => {
-    it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', () => {
+    it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', async () => {
       const returnedBook = {
         ...lendableBook,
         reservations: [],
@@ -161,7 +185,9 @@ describe('BookDetail component', () => {
         ],
       }
 
-      const { getByText, getByTestId } = render(<BookDetail book={returnedBook} />)
+      const { getByText, getByTestId } = render(
+        await BookDetailComponent({ bookId: returnedBook.id, userId: userId }),
+      )
 
       expect(getByText('借りた人')).toBeInTheDocument()
       expect(getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
@@ -172,8 +198,10 @@ describe('BookDetail component', () => {
       expect(getByTestId(`returnedUser-${2}`).textContent).toBe('u')
     })
 
-    it('返却済の貸出履歴がない場合、いないことが表示される', () => {
-      const { getByText } = render(<BookDetail book={lendableBook} />)
+    it('返却済の貸出履歴がない場合、いないことが表示される', async () => {
+      const { getByText } = render(
+        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
+      )
 
       expect(getByText('借りた人')).toBeInTheDocument()
       expect(getByText('いません')).toBeInTheDocument()
