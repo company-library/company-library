@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import BookDetail from '@/app/books/[id]/bookDetail'
+import BookDetail from '@/components/bookDetail'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
@@ -23,7 +23,7 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
   return (
     <div className="px-40">
       <Suspense fallback={<div>Loading...</div>}>
-        <BookDetail bookId={bookId} />
+        <BookDetail bookId={bookId} userId={userId} />
       </Suspense>
     </div>
   )
