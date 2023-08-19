@@ -5,7 +5,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 type BookDetailPageParams = {
   params: {
-    id: number
+    id: string
   }
 }
 
@@ -15,7 +15,10 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
   const userId = session.customUser.id
-  const bookId = params.id
+  const bookId = Number(params.id)
+  if (isNaN(bookId)) {
+    return <div>不正な書籍です。</div>
+  }
 
   return (
     <div className="px-40">
