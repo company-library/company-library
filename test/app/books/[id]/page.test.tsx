@@ -1,63 +1,44 @@
-import BookDetailPage from '@/app/books/[id]/page'
-import { render } from '@testing-library/react'
-import { lendableBook } from '../../../__utils__/data/book'
+import { render, screen } from '@testing-library/react'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { user1, user2 } from '../../../__utils__/data/user'
+import { bookWithImage } from '../../../__utils__/data/book'
 
-const expectedBook = lendableBook
-
-jest.mock('next/router', () => ({
+const BookDetailMock = jest.fn().mockReturnValue(<div>xxx</div>)
+jest.mock('@/app/books/[[id]]/bookDetail', () => ({
   __esModule: true,
-  useRouter: () => {
-    return { query: { id: expectedBook.id } }
-  },
+  default: (...args: any) => BookDetailMock(...args),
 }))
 
-const useGetBookQueryMock = jest
-  .fn()
-  .mockReturnValue([{ fetching: false, error: false, data: { books: [expectedBook] } }])
-jest.mock('@/generated/graphql.client', () => ({
+const getServerSessionMock = jest.fn().mockReturnValue({ customUser: { id: 1 } })
+jest.mock('next-auth', () => ({
   __esModule: true,
-  useGetBookQuery: () => useGetBookQueryMock(),
+  getServerSession: () => getServerSessionMock(),
 }))
-
-const LayoutMock = jest.fn().mockImplementation((props) => {
-  return <div>{props.children}</div>
-})
-jest.mock('@/components/layout', () => {
-  return {
-    __esModule: true,
-    default: (...args: any) => LayoutMock(...args),
-  }
-})
-
-const BookDetailMock = jest.fn().mockImplementation(() => <div>bookDetail</div>)
-jest.mock('@/components/bookDetail', () => {
-  return {
-    __esModule: true,
-    default: (...args: any) => BookDetailMock(...args),
-  }
-})
+jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
+  __esModule: true,
+  authOptions: {},
+}))
 
 describe('BookDetail page', () => {
-  it('本の情報の読み込みが完了した場合は、先頭の本を表示する', () => {
-    render(<BookDetailPage />)
+  prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
-    expect(LayoutMock.mock.calls[0][0]['title']).toBe(`${expectedBook.title} | company-library`)
-    expect(BookDetailMock.mock.calls[0][0]['book']).toBe(expectedBook)
+  const BookDetailPage = require('@/app/books/[id]/page').default
+
+  it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
+    const bookId = bookWithImage.id
+
+    render(await BookDetailPage({ params: { id: bookId } }))
+
+    expect(BookDetailMock).toBeCalledWith({ bookId: bookId }, {})
   })
 
-  it('本の情報の読み込み中は、「Loading...」と表示する', () => {
-    useGetBookQueryMock.mockReturnValueOnce([{ fetching: true }])
+  it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
+    getServerSessionMock.mockReturnValueOnce(null)
 
-    const { getByText } = render(<BookDetailPage />)
+    render(await BookDetailPage({ params: { id: '1' } }))
 
-    expect(getByText('Loading...')).toBeInTheDocument()
-  })
-
-  it('本の情報の読み込みでエラーが発生した場合は、「Error!」と表示する', () => {
-    useGetBookQueryMock.mockReturnValueOnce([{ fetching: false, error: true }])
-
-    const { getByText } = render(<BookDetailPage />)
-
-    expect(getByText('Error!')).toBeInTheDocument()
+    expect(
+      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+    ).toBeInTheDocument()
   })
 })

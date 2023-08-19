@@ -1,4 +1,7 @@
-import prisma from '@/libs/prisma/client'
+import React, { Suspense } from 'react'
+import BookDetail from '@/app/books/[id]/bookDetail'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 type BookDetailPageParams = {
   params: {
@@ -7,26 +10,18 @@ type BookDetailPageParams = {
 }
 
 const BookDetailPage = async ({ params }: BookDetailPageParams) => {
-  const bookId = Number(params.id)
-  const book = await prisma.book.findUnique({ where: { id: bookId } }).catch((e) => {
-    console.error(e)
-    return new Error('Book fetch failed')
-  })
-
-  if (book instanceof Error) {
-    return <div>Error!</div>
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
-
-  if (book == null) {
-    return <div>その本は存在しないようです</div>
-  }
+  const userId = session.customUser.id
+  const bookId = params.id
 
   return (
-    <div>
-      <p>{bookId}</p>
-      <p>{book.id}</p>
-      <p>{book.title}</p>
-      <p>{book.imageUrl}</p>
+    <div className="px-40">
+      <Suspense fallback={<div>Loading...</div>}>
+        <BookDetail bookId={bookId} />
+      </Suspense>
     </div>
   )
 }
