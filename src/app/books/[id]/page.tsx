@@ -13,15 +13,16 @@ type BookDetailPageParams = {
 }
 
 const BookDetailPage = async ({ params }: BookDetailPageParams) => {
+  const bookId = Number(params.id)
+  if (isNaN(bookId)) {
+    return <div>不正な書籍です。</div>
+  }
+
   const session = await getServerSession(authOptions)
   if (!session) {
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
   const userId = session.customUser.id
-  const bookId = Number(params.id)
-  if (isNaN(bookId)) {
-    return <div>不正な書籍です。</div>
-  }
 
   return (
     <div className="px-40">
