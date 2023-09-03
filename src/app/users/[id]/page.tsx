@@ -23,7 +23,7 @@ const UserPage = async ({ params }: UserPageProps) => {
   const user = await prisma.user
     .findUnique({
       where: { id },
-      include: { lendingHistories: { include: { returnHistory: true, book: true } } },
+      include: { lendingHistories: { include: { returnHistory: true } } },
     })
     .catch((e) => {
       console.error(e)
@@ -40,13 +40,13 @@ const UserPage = async ({ params }: UserPageProps) => {
       <div className="mt-8">
         <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
         <div className="mt-2">
-          <BookList books={readingBooks.map((b) => b.book)} />
+          <BookList bookIds={readingBooks.map((b) => b.bookId)} />
         </div>
       </div>
       <div className="mt-6">
         <h2 className="text-xl">今まで読んだ書籍({haveReadBooks.length}冊)</h2>
         <div className="mt-2">
-          <BookList books={haveReadBooks.map((b) => b.book)} />
+          <BookList bookIds={haveReadBooks.map((b) => b.bookId)} />
         </div>
       </div>
     </>
