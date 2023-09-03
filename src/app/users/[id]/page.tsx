@@ -52,8 +52,8 @@ const UserPage = async ({ params }: UserPageProps) => {
   const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
   return (
     <>
-      <h1 className="text-3xl mb-8">{user.name}さんの情報</h1>
-      <div>
+      <h1 className="text-3xl">{user.name}さんの情報</h1>
+      <div className="mt-8">
         <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
         <div className="mt-2">
           <BookList books={readingBooks.map((b) => b.book)} />
