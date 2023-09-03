@@ -1,7 +1,6 @@
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import AzureADB2CProvider from 'next-auth/providers/azure-ad-b2c'
-import { sdk } from '@/libs/graphql-codegen/sdk'
-import { User } from '@/models/user'
+import prisma from '@/libs/prisma/client'
 
 if (
   !process.env.AZURE_AD_B2C_TENANT_NAME ||
@@ -13,7 +12,7 @@ if (
   process.exit()
 }
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     AzureADB2CProvider({
       tenantId: process.env.AZURE_AD_B2C_TENANT_NAME,
@@ -35,30 +34,36 @@ export default NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (token.name == null || token.email == null || token.sub == null || token.idToken === undefined) {
+      if (token.name == null || token.email == null || token.idToken === undefined) {
         return session
       }
 
-      const getUser = async (sub: string, name: string, email: string, imageUrl: string | undefined | null): Promise<User | undefined> => {
-        const maybeUser = await sdk().getUserQuery({ sub })
-        if(maybeUser.users.length > 0) {
-          return maybeUser.users[0]
+      const getUser = async (name: string, email: string, imageUrl: string | undefined | null) => {
+        const maybeUser = await prisma.user.findUnique({ where: { email } })
+        if (maybeUser != null) {
+          return maybeUser
         }
 
-        const newUser = await sdk().insertUserQuery({
-          name: name,
-          email: email,
-          sub: sub,
-          imageUrl: imageUrl,
-        })
-        if (newUser.insert_users?.returning?.length ?? 0  === 0) {
+        const newUser = await prisma.user
+          .create({
+            data: {
+              name: name,
+              email: email,
+              imageUrl: imageUrl,
+            },
+          })
+          .catch((e) => {
+            console.error(e)
+            return new Error('User create failed')
+          })
+        if (newUser instanceof Error) {
           return undefined
         }
 
-        return newUser.insert_users?.returning[0]
+        return newUser
       }
 
-      const maybeUser = await getUser(token.sub, token.name, token.email, token.picture)
+      const maybeUser = await getUser(token.name, token.email, token.picture)
       if (!maybeUser) {
         return session
       }
@@ -70,4 +75,7 @@ export default NextAuth({
       return session
     },
   },
-})
+}
+
+const handler = NextAuth(authOptions)
+export { handler as GET, handler as POST }
