@@ -34,7 +34,10 @@ export const user1: UserSummary = {
     },
     {
       ...lendingHistory4,
-      returnHistory: { lendingHistoryId: lendingHistory4.id, returnedAt: new Date('2021-04-04') },
+      returnHistory: {
+        lendingHistoryId: lendingHistory4.id,
+        returnedAt: new Date('2021-04-04'),
+      },
     },
     {
       ...lendingHistory5,
