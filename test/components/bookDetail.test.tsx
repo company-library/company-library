@@ -212,4 +212,29 @@ describe('BookDetail component', () => {
 
     expect(screen.getByRole('button', { name: '返却する' })).toBeDisabled()
   })
+
+  it('本の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
+    const expectedError = new Error('DBエラー')
+    prismaMock.book.findUnique.mockRejectedValueOnce(expectedError)
+    console.error = jest.fn()
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(
+      screen.getByText('本の取得に失敗しました。再読み込みしてみてください。'),
+    ).toBeInTheDocument()
+    expect(console.error).toBeCalledWith(expectedError)
+  })
+
+  it('対象のIDで本が取得できなかった場合、エラーメッセージが表示される', async () => {
+    prismaMock.book.findUnique.mockResolvedValueOnce(null)
+    console.error = jest.fn()
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(
+      screen.getByText('本の取得に失敗しました。再読み込みしてみてください。'),
+    ).toBeInTheDocument()
+    expect(console.error).toBeCalledWith('対象のIDの本は存在しません。bookId:', book.id)
+  })
 })

@@ -29,13 +29,13 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
       console.error(e)
       return new Error('Book fetch failed')
     })
-
   if (bookDetail instanceof Error) {
-    return <div>本の取得に失敗しました。再読み込みしてみてください</div>
+    return <div>本の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
   if (bookDetail == null) {
-    return <div>その本は存在しないようです</div>
+    console.error('対象のIDの本は存在しません。bookId:', bookId)
+    return <div>本の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
   const holdingCount = bookDetail._count.registrationHistories
