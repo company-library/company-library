@@ -12,46 +12,39 @@ const ReturnList = async ({ bookId }: Props) => {
     .findMany({
       where: { lendingHistory: { bookId: bookId } },
       include: { lendingHistory: { include: { user: true } } },
+      orderBy: [{ returnedAt: 'asc' }],
     })
     .catch((e) => {
       console.error(e)
       return new Error('Book fetch failed')
     })
-
   if (returnHistories instanceof Error) {
-    return <div>本の取得に失敗しました。再読み込みしてみてください</div>
-  }
-
-  if (returnHistories == null) {
-    return <div>その本は存在しないようです</div>
+    return <div>返却履歴の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
   return (
-    <div>
-      <h2>借りた人</h2>
-      <table className="table w-full">
-        <tbody>
-          {returnHistories.map((lentHistory, index) => {
-            return (
-              <tr className="hover:hover" key={lentHistory.lendingHistoryId}>
-                <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
-                  {DateTime.fromISO(lentHistory.lendingHistory.lentAt.toISOString())
-                    .setZone('Asia/Tokyo')
-                    .toFormat(DATE_FORMAT)}
-                  〜
-                  {DateTime.fromISO(lentHistory.returnedAt.toISOString())
-                    .setZone('Asia/Tokyo')
-                    .toFormat(DATE_FORMAT)}
-                </td>
-                <td data-testid={`returnedUser-${index}`}>
-                  <UserAvatar user={lentHistory.lendingHistory.user} />
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
+    <table className="table w-full">
+      <tbody>
+        {returnHistories.map((returnHistory, index) => {
+          return (
+            <tr className="hover:hover" key={returnHistory.lendingHistoryId}>
+              <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
+                {DateTime.fromISO(returnHistory.lendingHistory.lentAt.toISOString())
+                  .setZone('Asia/Tokyo')
+                  .toFormat(DATE_FORMAT)}
+                〜
+                {DateTime.fromISO(returnHistory.returnedAt.toISOString())
+                  .setZone('Asia/Tokyo')
+                  .toFormat(DATE_FORMAT)}
+              </td>
+              <td data-testid={`returnedUser-${index}`}>
+                <UserAvatar user={returnHistory.lendingHistory.user} />
+              </td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
   )
 }
 
