@@ -36,18 +36,27 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
         <BookDetail bookId={bookId} userId={userId} />
       </Suspense>
 
-      <div className="mt-10">
-        <Suspense fallback={<div>Loading...</div>}>
-          <LendingList bookId={bookId} />
-        </Suspense>
+      <div>
+        <div className="mt-10">
+          <h2>借りている人</h2>
+          <Suspense fallback={<div>Loading...</div>}>
+            <LendingList bookId={bookId} />
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<div>Loading...</div>}>
-          <ImpressionList bookId={bookId} />
-        </Suspense>
+        <div className="mt-10">
+          <h2>感想</h2>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ImpressionList bookId={bookId} />
+          </Suspense>
+        </div>
 
-        <Suspense fallback={<div>Loading...</div>}>
-          <ReturnList bookId={bookId} />
-        </Suspense>
+        <div className="mt-10">
+          <h2>借りた人</h2>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ReturnList bookId={bookId} />
+          </Suspense>
+        </div>
       </div>
     </div>
   )

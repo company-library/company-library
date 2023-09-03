@@ -49,6 +49,11 @@ describe('BookDetail page', () => {
     render(await BookDetailPage({ params: { id: book.id } }))
 
     expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, {})
+    const heading2s = screen.getAllByRole('heading', { level: 2 })
+    expect(heading2s.length).toBe(3)
+    expect(heading2s[0].textContent).toBe('借りている人')
+    expect(heading2s[1].textContent).toBe('感想')
+    expect(heading2s[2].textContent).toBe('借りた人')
     expect(LendingListMock).toBeCalledWith({ bookId: book.id }, {})
     expect(ImpressionListMock).toBeCalledWith({ bookId: book.id }, {})
     expect(ReturnListMock).toBeCalledWith({ bookId: book.id }, {})
