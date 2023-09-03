@@ -3,6 +3,12 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
+  await prisma.returnHistory.deleteMany({})
+  await prisma.lendingHistory.deleteMany({})
+  await prisma.registrationHistory.deleteMany({})
+  await prisma.book.deleteMany({})
+  await prisma.user.deleteMany({})
+
   const alice = await prisma.user.create({
     data: {
       email: 'alice@prisma.io',
@@ -48,6 +54,31 @@ async function main() {
     data: {
       bookId: book2.id,
       userId: alice.id,
+    },
+  })
+
+  const lendingHistory = await prisma.lendingHistory.create({
+    data: {
+      bookId: book1.id,
+      userId: alice.id,
+      lentAt: new Date(),
+      dueDate: new Date(),
+    },
+  })
+
+  await prisma.lendingHistory.create({
+    data: {
+      bookId: book2.id,
+      userId: alice.id,
+      lentAt: new Date(),
+      dueDate: new Date(),
+    },
+  })
+
+  await prisma.returnHistory.create({
+    data: {
+      lendingHistoryId: lendingHistory.id,
+      returnedAt: new Date(),
     },
   })
 }

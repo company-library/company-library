@@ -1,10 +1,14 @@
-export type User = {
+import { User as PrismaUser } from '@prisma/client'
+
+export type User = PrismaUser
+
+export type OldUser = {
   id: number
   name: string
   email: string
 }
 
-export const isUser = (value: any): value is User => {
+export const isOldUser = (value: any): value is OldUser => {
   return (
     typeof value.id === 'number' &&
     typeof value.name === 'string' &&

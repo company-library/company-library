@@ -27,3 +27,30 @@ export const lendableBook = {
   lendingHistories: [],
   reservations: [{ userId: 1, reservationDate: now, createdAt: now }],
 }
+
+export const book1 = bookWithImage
+
+export const book2 = {
+  ...bookWithImage,
+  id: 2,
+}
+
+export const book3 = {
+  ...bookWithImage,
+  id: 3,
+}
+
+export const book4 = {
+  ...bookWithImage,
+  id: 4,
+}
+
+export const book5 = {
+  ...bookWithImage,
+  id: 5,
+}
+
+export const book6 = {
+  ...bookWithImage,
+  id: 6,
+}

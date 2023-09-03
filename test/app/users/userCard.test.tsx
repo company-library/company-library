@@ -1,6 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
-import UserCard from '@/components/userCard'
-import { user1, user2 } from '../__utils__/data/user'
+import UserCard from '@/app/users/userCard'
+import { user1, user2 } from '../../__utils__/data/user'
 
 jest.mock('next/link', () => ({
   __esModule: true,
