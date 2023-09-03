@@ -4,7 +4,7 @@ import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
 
 const BookDetailMock = jest.fn().mockReturnValue(<div>bookDetail</div>)
-jest.mock('@/components/bookDetail', () => ({
+jest.mock('@/app/books/[id]/bookDetail', () => ({
   __esModule: true,
   default: (...args: any) => BookDetailMock(...args),
 }))

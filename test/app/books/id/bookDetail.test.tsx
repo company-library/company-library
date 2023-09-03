@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { bookWithoutImage, lendableBook } from '../__utils__/data/book'
-import { prismaMock } from '../__utils__/libs/prisma/singleton'
+import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 jest.mock('next/image', () => ({
   __esModule: true,
@@ -25,7 +25,7 @@ jest.mock('@/components/returnButton', () => ({
 }))
 
 describe('BookDetail component', () => {
-  const BookDetailComponent = require('@/components/bookDetail').default
+  const BookDetailComponent = require('@/app/books/[id]/bookDetail').default
 
   const userId = 2
 

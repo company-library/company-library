@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import BookDetail from '@/components/bookDetail'
+import BookDetail from '@/app/books/[id]/bookDetail'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import LendingList from '@/app/books/[id]/lendingList'
