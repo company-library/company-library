@@ -1,9 +1,7 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { lendableBook } from '../__utils__/data/book'
-import { DateTime, Settings } from 'luxon'
 import { prismaMock } from '../__utils__/libs/prisma/singleton'
 
-// next/imageのモック
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
@@ -14,43 +12,25 @@ jest.mock('next/image', () => ({
 
 jest.mock('@/components/lendButton', () => ({
   __esModule: true,
-  default: () => {
-    return <button>借りる</button>
+  default: (...args: any[]) => {
+    return <button disabled={args[0].disabled}>借りる</button>
   },
 }))
 
 jest.mock('@/components/returnButton', () => ({
   __esModule: true,
-  default: () => {
-    return <button>返却する</button>
-  },
-}))
-
-jest.mock('@/components/bookDetails/impressionList', () => ({
-  __esModule: true,
-  default: () => {
-    return <div>感想リスト</div>
-  },
-}))
-
-const expectedUserId = 1
-jest.mock('@/hooks/useCustomUser', () => ({
-  __esModule: true,
-  useCustomUser: () => {
-    return { user: { id: expectedUserId } }
+  default: (...args: any[]) => {
+    return <button disabled={args[0].disabled}>返却する</button>
   },
 }))
 
 describe('BookDetail component', () => {
   const BookDetailComponent = require('@/components/bookDetail').default
 
-  const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
-  Settings.now = () => expectedNow.toMillis()
   const userId = 2
 
   const book = lendableBook
-  // @ts-ignore
-  prismaMock.book.findUnique.mockResolvedValue({
+  const bookDetail = {
     title: book.title,
     imageUrl: book.imageUrl,
     lendingHistories: book.lendingHistories,
@@ -58,153 +38,178 @@ describe('BookDetail component', () => {
       registrationHistories: book.registrationHistories.length,
       reservations: book.reservations.length,
     },
+  }
+  // @ts-ignore
+  prismaMock.book.findUnique.mockResolvedValue(bookDetail)
+
+  it('本の詳細情報と操作ボタンが表示される', async () => {
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(screen.getByAltText(book.title)).toBeInTheDocument()
+    expect(screen.getByAltText(book.title)).toHaveAttribute('src', book.imageUrl)
+    expect(screen.getByText(book.title)).toBeInTheDocument()
+    expect(screen.getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
+    expect(screen.getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
+    expect(screen.getByText(`予約数: ${1}件`)).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: '借りる' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '返却する' })).toBeInTheDocument()
   })
 
-  it('本の情報が表示される', async () => {
-    const { getByText, getByRole, getByAltText } = render(
-      await BookDetailComponent({ bookId: book.id, userId: userId }),
-    )
+  it('貸し出し可能数は、 登録履歴数 - 未返却の貸出履歴数 である', async () => {
+    const registrationHistoriesCount = 23
+    const lendingHistoriesCount = 17
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: [...Array(lendingHistoriesCount)].map((_, i) => i),
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
+    })
 
-    expect(getByAltText(book.title)).toBeInTheDocument()
-    expect(getByAltText(book.title)).toHaveAttribute('src', book.imageUrl)
-    expect(getByText(book.title)).toBeInTheDocument()
-    expect(getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
-    expect(getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
-    expect(getByText(`予約数: ${1}件`)).toBeInTheDocument()
-    expect(getByRole('button', { name: '借りる' })).toBeInTheDocument()
-    expect(getByRole('button', { name: '返却する' })).toBeInTheDocument()
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(
+      screen.getByText(`${registrationHistoriesCount - lendingHistoriesCount}冊貸し出し可能`),
+    ).toBeInTheDocument()
   })
 
-  describe('借りている人', () => {
-    const lendingBook = {
-      ...lendableBook,
-      reservations: [],
-      lendingHistories: [
-        {
-          id: 1,
-          createdAt: '2022-10-01',
-          user: { id: 1, name: 'user01', impressions: [] },
-          dueDate: '2022-11-01',
-          returnHistories: [],
-        },
-        {
-          id: 2,
-          createdAt: '2022-10-01',
-          user: { id: 2, name: 'user02', impressions: [] },
-          dueDate: '2022-10-30',
-          returnHistories: [],
-        },
-        {
-          id: 3,
-          createdAt: '2022-10-01',
-          user: { id: 3, name: 'user03', impressions: [] },
-          dueDate: '2022-10-31',
-          returnHistories: [],
-        },
-      ],
-    }
-
-    it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', async () => {
-      const { getByText, getByTestId } = render(
-        await BookDetailComponent({ bookId: lendingBook.id, userId: userId }),
-      )
-
-      expect(getByText('借りている人')).toBeInTheDocument()
-      expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
-      expect(getByTestId(`lendingUser-${0}`).textContent).toBe('u')
-      expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
-      expect(getByTestId(`lendingUser-${1}`).textContent).toBe('u')
-      expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
-      expect(getByTestId(`lendingUser-${2}`).textContent).toBe('u')
+  it('所蔵数は、 登録履歴数 である', async () => {
+    const registrationHistoriesCount = 23
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      // @ts-ignore
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
     })
 
-    it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', async () => {
-      const { getByTestId } = render(
-        await BookDetailComponent({ bookId: lendingBook.id, userId: userId }),
-      )
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
 
-      expect(getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
-      expect(getByTestId(`dueDate-${0}`)).toHaveClass('text-red-400', 'font-bold')
-      expect(getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
-      expect(getByTestId(`dueDate-${1}`)).not.toHaveClass('text-red-400')
-      expect(getByTestId(`dueDate-${1}`)).not.toHaveClass('font-bold')
-      expect(getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
-      expect(getByTestId(`dueDate-${2}`)).not.toHaveClass('text-red-400')
-      expect(getByTestId(`dueDate-${2}`)).not.toHaveClass('font-bold')
-    })
-
-    it('貸出中のユーザーがいない場合、項目ごと表示されない', async () => {
-      const { queryByText } = render(
-        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
-      )
-
-      expect(queryByText('借りている人')).not.toBeInTheDocument()
-    })
+    expect(screen.getByText(`所蔵数: ${registrationHistoriesCount}冊`)).toBeInTheDocument()
   })
 
-  describe('感想', () => {
-    it('感想のリストを表示する', async () => {
-      const { getByText } = render(
-        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
-      )
-
-      expect(getByText('感想')).toBeInTheDocument()
+  it('予約数は、 予約履歴数 である', async () => {
+    const reservationsCount = 17
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      // @ts-ignore
+      _count: {
+        reservations: reservationsCount,
+      },
     })
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(screen.getByText(`予約数: ${reservationsCount}件`)).toBeInTheDocument()
   })
 
-  describe('借りた人', () => {
-    it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', async () => {
-      const returnedBook = {
-        ...lendableBook,
-        reservations: [],
-        lendingHistories: [
-          {
-            id: 1,
-            createdAt: '2022-10-01',
-            user: { id: 1, name: 'user01' },
-            dueDate: '2022-10-24',
-            returnHistories: [{ createdAt: '2022-10-20' }],
-          },
-          {
-            id: 2,
-            createdAt: '2022-10-01',
-            user: {
-              id: 2,
-              name: 'user02',
-            },
-            dueDate: '2022-10-08',
-            returnHistories: [{ createdAt: '2022-10-30' }],
-          },
-          {
-            id: 3,
-            createdAt: '2022-10-01',
-            user: { id: 3, name: 'user03' },
-            dueDate: '2022-10-15',
-            returnHistories: [{ createdAt: '2022-10-25' }],
-          },
-        ],
-      }
-
-      const { getByText, getByTestId } = render(
-        await BookDetailComponent({ bookId: returnedBook.id, userId: userId }),
-      )
-
-      expect(getByText('借りた人')).toBeInTheDocument()
-      expect(getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
-      expect(getByTestId(`returnedUser-${0}`).textContent).toBe('u')
-      expect(getByTestId(`returnedDate-${1}`).textContent).toBe('2022/10/01〜2022/10/25')
-      expect(getByTestId(`returnedUser-${1}`).textContent).toBe('u')
-      expect(getByTestId(`returnedDate-${2}`).textContent).toBe('2022/10/01〜2022/10/20')
-      expect(getByTestId(`returnedUser-${2}`).textContent).toBe('u')
+  it('借りるボタンは、貸し出し可能数が0冊の場合、無効である', async () => {
+    const registrationHistoriesCount = 23
+    const lendingHistories = [...Array(registrationHistoriesCount)].map((_, i) => ({
+      id: i + 1,
+      userId: 0,
+    }))
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: lendingHistories,
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
     })
 
-    it('返却済の貸出履歴がない場合、いないことが表示される', async () => {
-      const { getByText } = render(
-        await BookDetailComponent({ bookId: lendableBook.id, userId: userId }),
-      )
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    expect(screen.getByText(`${0}冊貸し出し可能`)).toBeInTheDocument()
 
-      expect(getByText('借りた人')).toBeInTheDocument()
-      expect(getByText('いません')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
+  })
+
+  it('借りるボタンは、借用中の場合、無効である', async () => {
+    // 借りている
+    const registrationHistoriesCount = 10
+    const lendingHistories = [...Array(registrationHistoriesCount - 2)].map((_, i) => ({
+      id: i + 1,
+      userId: 0,
+    }))
+    const userLendingHistory = { userId: userId }
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: [...lendingHistories, userLendingHistory],
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
     })
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    expect(screen.getByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
+  })
+
+  it('借りるボタンは、貸し出し可能数が1冊以上 かつ 借用中ではない 場合、有効である', async () => {
+    const registrationHistoriesCount = 56
+    const lendingHistories = [...Array(registrationHistoriesCount - 1)].map((_, i) => ({
+      id: i + 1,
+      userId: 0,
+    }))
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: lendingHistories,
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
+    })
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    expect(screen.getByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+
+    expect(screen.getByRole('button', { name: '借りる' })).toBeEnabled()
+  })
+
+  it('返却するボタンは、借用中の場合、有効である', async () => {
+    // 借りている
+    const registrationHistoriesCount = 5
+    const lendingHistories = [...Array(registrationHistoriesCount - 1)].map((_, i) => ({
+      id: i + 1,
+      userId: 0,
+    }))
+    const userLendingHistory = { userId: userId }
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: [...lendingHistories, userLendingHistory],
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
+    })
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(screen.getByRole('button', { name: '返却する' })).toBeEnabled()
+  })
+
+  it('返却するボタンは、借用中ではない場合、無効である', async () => {
+    // 借りている
+    const registrationHistoriesCount = 8
+    const lendingHistories = [...Array(registrationHistoriesCount)].map((_, i) => ({
+      id: i + 1,
+      userId: 0,
+    }))
+    // @ts-ignore
+    prismaMock.book.findUnique.mockResolvedValueOnce({
+      ...bookDetail,
+      lendingHistories: [...lendingHistories],
+      _count: {
+        registrationHistories: registrationHistoriesCount,
+      },
+    })
+
+    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+
+    expect(screen.getByRole('button', { name: '返却する' })).toBeDisabled()
   })
 })
