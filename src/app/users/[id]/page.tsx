@@ -1,7 +1,5 @@
 import prisma from '@/libs/prisma/client'
 import BookList from '@/app/users/[id]/bookList'
-import { lendingHistory } from '@/models/lendingHistory'
-import { service } from '@/app/users/[id]/service'
 import { readingHistories } from '@/hooks/server/readingHistories'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
@@ -35,21 +33,7 @@ const UserPage = async ({ params }: UserPageProps) => {
     return <div>Error!</div>
   }
 
-  const lendingHistories = user.lendingHistories
-    .map((h) => {
-      return {
-        book: h.book,
-        isReturned: !!h.returnHistory,
-      }
-    })
-    .reduce<Array<{ book: Book; isReturned: boolean }>>((acc, obj) => {
-      return acc.some((a) => a.book.id === obj.book.id && a.isReturned === obj.isReturned)
-        ? acc
-        : [...acc, obj]
-    }, [])
-
-  const readingBooks = lendingHistories.filter((h) => !h.isReturned)
-  const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
+  const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
   return (
     <>
       <h1 className="text-3xl">{user.name}さんの情報</h1>
