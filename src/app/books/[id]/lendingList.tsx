@@ -1,7 +1,6 @@
-import { DateTime } from 'luxon'
-import { DATE_FORMAT } from '@/constants'
 import UserAvatar from '@/components/userAvatar'
 import prisma from '@/libs/prisma/client'
+import { isOverdue, toJstFormat } from '@/libs/luxon/utils'
 
 type Props = {
   bookId: number
@@ -26,17 +25,14 @@ const LendingList = async ({ bookId }: Props) => {
     <table className="table w-full">
       <tbody>
         {lendingHistories.map((lendingHistory, index) => {
-          const dueDate = DateTime.fromISO(lendingHistory.dueDate.toISOString())
-          const isOver = dueDate.diff(DateTime.now(), 'days').days <= -1
-
           return (
             <tr className="hover:hover" key={lendingHistory.id}>
               <td className="w-[15rem]">
                 <span
-                  className={isOver ? 'text-red-400 font-bold' : ''}
+                  className={isOverdue(lendingHistory.dueDate) ? 'text-red-400 font-bold' : ''}
                   data-testid={`dueDate-${index}`}
                 >
-                  {dueDate.setZone('Asia/Tokyo').toFormat(DATE_FORMAT)}
+                  {toJstFormat(lendingHistory.dueDate)}
                 </span>
               </td>
               <td data-testid={`lendingUser-${index}`}>

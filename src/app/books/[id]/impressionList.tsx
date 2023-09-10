@@ -1,7 +1,6 @@
-import { DateTime } from 'luxon'
-import { DATE_FORMAT } from '@/constants'
 import UserAvatar from '@/components/userAvatar'
 import prisma from '@/libs/prisma/client'
+import { toJstFormat } from '@/libs/luxon/utils'
 
 type Props = {
   bookId: number
@@ -29,9 +28,7 @@ const ImpressionList = async ({ bookId }: Props) => {
           return (
             <tr className="hover:hover" key={impression.id}>
               <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
-                {DateTime.fromISO(impression.updatedAt.toISOString())
-                  .setZone('Asia/Tokyo')
-                  .toFormat(DATE_FORMAT)}
+                {toJstFormat(impression.updatedAt)}
               </td>
               <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
                 <UserAvatar user={impression.user} />

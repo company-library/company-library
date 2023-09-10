@@ -3,7 +3,8 @@
 import React, { FC, Fragment, useState } from 'react'
 import { useLend } from '@/hooks/useLend'
 import { Dialog, Transition } from '@headlessui/react'
-import { DateTime } from 'luxon'
+import { DATE_SYSTEM_FORMAT } from '@/constants'
+import { getDaysLaterJstDate, toJstFormat } from '@/libs/luxon/utils'
 
 type LendButtonProps = {
   bookId: number
@@ -11,15 +12,11 @@ type LendButtonProps = {
   disabled: boolean
 }
 
-const dateFormat = 'yyyy-MM-dd'
-
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
-  const today = DateTime.local().setZone('Asia/Tokyo')
-  const initialDuDate = today.plus({ days: 7 })
   const { lend, dueDate, handleDueDate } = useLend(
     bookId,
     userId,
-    initialDuDate.toFormat(dateFormat),
+    getDaysLaterJstDate(7, DATE_SYSTEM_FORMAT),
   )
 
   const [isOpen, setIsOpen] = useState(false)
@@ -78,7 +75,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       value={dueDate}
                       onChange={handleDueDate}
-                      min={today.toFormat(dateFormat)}
+                      min={toJstFormat(new Date(), DATE_SYSTEM_FORMAT)}
                     />
                   </div>
 
