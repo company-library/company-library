@@ -1,3 +1,5 @@
+'use client'
+
 import React, { FC, Fragment, useState } from 'react'
 import { useLend } from '@/hooks/useLend'
 import { Dialog, Transition } from '@headlessui/react'
@@ -5,15 +7,20 @@ import { DateTime } from 'luxon'
 
 type LendButtonProps = {
   bookId: number
+  userId: number
   disabled: boolean
 }
 
 const dateFormat = 'yyyy-MM-dd'
 
-const LendButton: FC<LendButtonProps> = ({ bookId, disabled }) => {
+const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   const today = DateTime.local().setZone('Asia/Tokyo')
   const initialDuDate = today.plus({ days: 7 })
-  const { lend, dueDate, handleDueDate } = useLend(bookId, initialDuDate.toFormat(dateFormat))
+  const { lend, dueDate, handleDueDate } = useLend(
+    bookId,
+    userId,
+    initialDuDate.toFormat(dateFormat),
+  )
 
   const [isOpen, setIsOpen] = useState(false)
 

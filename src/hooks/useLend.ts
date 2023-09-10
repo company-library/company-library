@@ -1,10 +1,10 @@
-import { useRouter } from 'next/router'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { usePostLendingHistoryMutation } from '@/generated/graphql.client'
-import { useCustomUser } from '@/hooks/useCustomUser'
 
-export const useLend = (bookId: number, initialDueDate: string) => {
-  const { user } = useCustomUser()
+export const useLend = (bookId: number, userId: number, initialDueDate: string) => {
   const router = useRouter()
 
   const [dueDate, setDueDate] = useState(initialDueDate)
@@ -15,7 +15,7 @@ export const useLend = (bookId: number, initialDueDate: string) => {
   const [, postLendingHistory] = usePostLendingHistoryMutation()
   const lend = async () => {
     const result = await postLendingHistory({
-      userId: user ? user.id : 0,
+      userId: userId,
       bookId: bookId,
       dueDate: dueDate,
     })
@@ -36,7 +36,7 @@ export const useLend = (bookId: number, initialDueDate: string) => {
       window.alert(result.message)
     }
 
-    router.reload()
+    router.refresh()
   }
 
   return {

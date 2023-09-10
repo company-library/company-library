@@ -26,21 +26,24 @@ jest.mock('@/hooks/useLend', () => ({
 
 describe('LendButton component', () => {
   const bookId = 1
+  const userId = 2
 
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
-    const { getByRole, rerender } = render(<LendButton bookId={bookId} disabled={true} />)
+    const { getByRole, rerender } = render(
+      <LendButton bookId={bookId} userId={userId} disabled={true} />,
+    )
 
     expect(getByRole('button', { name: '借りる' })).toBeDisabled()
-    expect(useLendMock).toBeCalledWith(bookId, expectedInitialDuDate)
+    expect(useLendMock).toBeCalledWith(bookId, userId, expectedInitialDuDate)
 
-    rerender(<LendButton bookId={bookId} disabled={false} />)
+    rerender(<LendButton bookId={bookId} userId={userId} disabled={false} />)
 
     expect(getByRole('button', { name: '借りる' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、返却予定日の初期値を表示したダイアログが表示される', async () => {
     const { getByRole, getByText, getByDisplayValue } = render(
-      <LendButton bookId={bookId} disabled={false} />,
+      <LendButton bookId={bookId} userId={userId} disabled={false} />,
     )
     fireEvent.click(getByRole('button', { name: '借りる' }))
 
@@ -49,7 +52,9 @@ describe('LendButton component', () => {
   })
 
   it('ダイアログの返却予定日を変更すると、変更処理が実行される', async () => {
-    const { getByRole, getByDisplayValue } = render(<LendButton bookId={bookId} disabled={false} />)
+    const { getByRole, getByDisplayValue } = render(
+      <LendButton bookId={bookId} userId={userId} disabled={false} />,
+    )
     fireEvent.click(getByRole('button', { name: '借りる' }))
     fireEvent.change(getByDisplayValue(today.toFormat(dateFormat)), {
       target: { value: today.plus({ days: 14 }).toFormat(dateFormat) },
@@ -59,7 +64,9 @@ describe('LendButton component', () => {
   })
 
   it('ダイアログのOkボタンをクリックすると、貸出処理が実行される', async () => {
-    const { getByRole, queryByText } = render(<LendButton bookId={bookId} disabled={false} />)
+    const { getByRole, queryByText } = render(
+      <LendButton bookId={bookId} userId={userId} disabled={false} />,
+    )
     fireEvent.click(getByRole('button', { name: '借りる' }))
     fireEvent.click(getByRole('button', { name: 'Ok' }))
 
@@ -70,7 +77,9 @@ describe('LendButton component', () => {
   })
 
   it('ダイアログのCancelボタンをクリックすると、貸出処理は実行されない', async () => {
-    const { getByRole, queryByText } = render(<LendButton bookId={bookId} disabled={false} />)
+    const { getByRole, queryByText } = render(
+      <LendButton bookId={bookId} userId={userId} disabled={false} />,
+    )
     fireEvent.click(getByRole('button', { name: '借りる' }))
     fireEvent.click(getByRole('button', { name: 'Cancel' }))
 

@@ -16,11 +16,11 @@ jest.mock('@/hooks/useReturn', () => ({
   },
 }))
 
-const reloadMock = jest.fn()
-jest.mock('next/router', () => ({
+const refreshMock = jest.fn()
+jest.mock('next/navigation', () => ({
   __esModule: true,
   useRouter: () => {
-    return { reload: reloadMock }
+    return { refresh: refreshMock }
   },
 }))
 
@@ -73,7 +73,7 @@ describe('returnButton component', () => {
     await waitFor(() => {
       expect(returnBookMock).toBeCalled()
       expect(queryByText('返却しますか？')).not.toBeInTheDocument()
-      expect(reloadMock).toBeCalled()
+      expect(refreshMock).toBeCalled()
     })
   })
 
@@ -91,7 +91,7 @@ describe('returnButton component', () => {
       expect(returnBookMock).toBeCalled()
       expect(window.alert).toBeCalledWith('返却に失敗しました。もう一度試してみてください。')
       expect(queryByText('返却しますか？')).not.toBeInTheDocument()
-      expect(reloadMock).toBeCalled()
+      expect(refreshMock).toBeCalled()
     })
   })
 
