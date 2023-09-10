@@ -1,12 +1,14 @@
 import { FC } from 'react'
 import BookTile from '@/components/bookTile'
-import { Book } from '@/models/book'
+import prisma from '@/libs/prisma/client'
 
 type BookListProps = {
-  books: Book[]
+  bookIds: number[]
 }
 
-const BookList: FC<BookListProps> = ({ books }) => {
+const BookList: FC<BookListProps> = async ({ bookIds }) => {
+  const books = await prisma.book.findMany({ where: { id: { in: bookIds } } })
+
   if (books.length === 0) {
     return <p>該当の書籍はありません</p>
   }

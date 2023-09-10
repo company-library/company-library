@@ -2,27 +2,14 @@ import { FC } from 'react'
 import Image from 'next/image'
 import { UserSummary } from '@/models/user'
 import Link from 'next/link'
+import { readingHistories } from '@/hooks/server/readingHistories'
 
 type UserCardProps = {
   user: UserSummary
 }
 
 const UserCard: FC<UserCardProps> = ({ user }) => {
-  const lendingHistories = user.lendingHistories
-    .map((h) => {
-      return {
-        bookId: h.bookId,
-        isReturned: !!h.returnHistory?.returnedAt,
-      }
-    })
-    .reduce<Array<{ bookId: number; isReturned: boolean }>>((acc, obj) => {
-      return acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned)
-        ? acc
-        : [...acc, obj]
-    }, [])
-
-  const readingBooks = lendingHistories.filter((h) => !h.isReturned)
-  const haveReadBooks = lendingHistories.filter((h) => h.isReturned)
+  const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
 
   return (
     <Link href={`/users/${user.id}`} data-testid="userProfileLink">

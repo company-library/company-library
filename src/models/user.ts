@@ -1,4 +1,6 @@
 import { User as PrismaUser } from '@prisma/client'
+import { LendingHistory } from '@/models/lendingHistory'
+import { ReturnHistory } from '@/models/returnHistory'
 
 export type User = PrismaUser
 
@@ -32,12 +34,11 @@ export type UserSummary = {
   id: number
   name: string
   email: string
-  imageUrl?: string | null
-  lendingHistories: Array<{
-    bookId: number
-    lentAt: Date
-    returnHistory: {
-      returnedAt: Date
-    } | null
-  }>
+  imageUrl: string | null
+  createdAt: Date
+  lendingHistories: Array<
+    LendingHistory & {
+      returnHistory: ReturnHistory | null
+    }
+  >
 }
