@@ -1,24 +1,18 @@
-import Layout from '@/components/layout'
 import GoogleBook from '@/components/googleBook'
 import { fireEvent, render } from '@testing-library/react'
-import Register from '@/pages/books/register'
 
 jest.mock('@/components/layout')
 jest.mock('@/components/googleBook')
 
-describe('register page', () => {
+describe('book form component', () => {
   ;(GoogleBook as jest.Mock).mockImplementation(() => {
     return <>google book component</>
   })
-  const layoutMock = (Layout as jest.Mock).mockImplementation(({ children }) => {
-    return <div>{children}</div>
-  })
+
+  const BookFormComponent = require('@/app/books/register/bookForm').default
 
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
-    const { getByText, queryByText, getByLabelText } = render(<Register />)
-
-    expect(layoutMock.mock.calls[0][0].title).toBe('本を登録 | company-library')
-    expect(getByText('本を登録')).toBeInTheDocument()
+    const { getByText, queryByText, getByLabelText } = render(<BookFormComponent />)
 
     const input = getByLabelText('ISBN（13桁）を入力してください')
     // 12桁だと表示されない
