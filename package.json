@@ -22,7 +22,7 @@
     "@headlessui/react": "^1.7.0",
     "@prisma/client": "^5.0.0",
     "daisyui": "^2.43.0",
-    "graphql": "^16.5.0",
+    "graphql": "^16.8.1",
     "luxon": "^3.2.1",
     "next": "13.4.12",
     "next-auth": "^4.22.1",
