@@ -1,7 +1,6 @@
-import { DateTime } from 'luxon'
-import { DATE_FORMAT } from '@/constants'
 import UserAvatar from '@/components/userAvatar'
 import prisma from '@/libs/prisma/client'
+import { toJstFormat } from '@/libs/luxon/utils'
 
 type Props = {
   bookId: number
@@ -29,13 +28,8 @@ const ReturnList = async ({ bookId }: Props) => {
           return (
             <tr className="hover:hover" key={returnHistory.lendingHistoryId}>
               <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
-                {DateTime.fromISO(returnHistory.lendingHistory.lentAt.toISOString())
-                  .setZone('Asia/Tokyo')
-                  .toFormat(DATE_FORMAT)}
-                〜
-                {DateTime.fromISO(returnHistory.returnedAt.toISOString())
-                  .setZone('Asia/Tokyo')
-                  .toFormat(DATE_FORMAT)}
+                {toJstFormat(returnHistory.lendingHistory.lentAt)}〜
+                {toJstFormat(returnHistory.returnedAt)}
               </td>
               <td data-testid={`returnedUser-${index}`}>
                 <UserAvatar user={returnHistory.lendingHistory.user} />
