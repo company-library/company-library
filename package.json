@@ -48,7 +48,7 @@
     "autoprefixer": "^10.4.7",
     "dotenv-cli": "^7.2.1",
     "eslint": "8.43.0",
-    "eslint-config-next": "13.4.12",
+    "eslint-config-next": "14.0.0",
     "eslint-config-prettier": "^8.8.0",
     "hasura-cli": "^2.7.0",
     "identity-obj-proxy": "^3.0.0",
