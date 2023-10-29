@@ -14,7 +14,7 @@ export const lendingHistory2: LendingHistory = {
   bookId: book2.id,
   userId: 1, // user1.id
   lentAt: new Date('2020-01-01'),
-  dueDate: new Date('2020-02-01'),
+  dueDate: new Date('2020-02-02'),
 }
 
 export const lendingHistory3: LendingHistory = {
