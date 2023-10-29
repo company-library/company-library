@@ -1,5 +1,6 @@
 import prisma from '@/libs/prisma/client'
 import BookList from '@/app/users/[id]/bookList'
+import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { readingHistories } from '@/hooks/server/readingHistories'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
@@ -40,7 +41,7 @@ const UserPage = async ({ params }: UserPageProps) => {
       <div className="mt-8">
         <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
         <div className="mt-2">
-          <BookList bookIds={readingBooks.map((b) => b.bookId)} />
+          <ReadingBookList readingBooks={readingBooks} />
         </div>
       </div>
       <div className="mt-6">
