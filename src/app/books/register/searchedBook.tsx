@@ -7,10 +7,12 @@ import BookTile from '@/components/bookTile'
 import { Book } from '@/models/book'
 import { CustomError, isCustomError } from '@/models/errors'
 import fetcher from '@/libs/swr/fetcher'
-import { registerBook } from '@/app/books/register/actions'
+import AddBookDiv from '@/app/books/register/addBookDiv'
+import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 
 type GoogleBookProps = {
   isbn: string
+  userId: number
 }
 
 type SearchedBook = {
@@ -27,8 +29,8 @@ type SearchedBook = {
   ]
 }
 
-const SearchedBook: FC<GoogleBookProps> = ({ isbn }) => {
-  const { data: googleBookData } = useSWR(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
+const SearchedBook: FC<GoogleBookProps> = ({ isbn, userId }) => {
+  const { data: googleBookData } = useSWR(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`, fetcher)
   const googleBook: SearchedBook | undefined = googleBookData
   const title = googleBook?.items?.[0].volumeInfo?.title
   const thumbnailUrl = googleBook?.items?.[0].volumeInfo?.imageLinks?.thumbnail
@@ -44,8 +46,6 @@ const SearchedBook: FC<GoogleBookProps> = ({ isbn }) => {
     return <div>Error!</div>
   }
   const companyBook = companyBookData?.book
-
-  const registerBookWithProps = registerBook.bind(null, title, isbn, thumbnailUlr)
 
   if (!title || !thumbnailUrl) {
     return (
@@ -66,29 +66,10 @@ const SearchedBook: FC<GoogleBookProps> = ({ isbn }) => {
       <div className="my-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
         <BookTile book={book} />
       </div>
-      {companyBook ? (
-        <>
-          <p>
-            すでに登録されています
-            <br />
-            現在の登録冊数：{companyBook._count.registrationHistories}
-          </p>
-          <button
-            className="rounded-md my-auto px-3 py-2 bg-gray-400 text-white hover:bg-gray-500"
-            onClick={() => addBook(companyBook.id)}
-          >
-            追加する
-          </button>
-        </>
+      {!!companyBook?._count && companyBook._count.registrationHistories >= 1 ? (
+        <AddBookDiv companyBook={companyBook} userId={userId} />
       ) : (
-        <form action={registerBookWithProps}>
-          <button
-            type="submit"
-            className="rounded-md my-auto px-3 py-2 bg-gray-400 text-white hover:bg-gray-500"
-          >
-            登録する
-          </button>
-        </form>
+        <RegisterBookDiv title={title} isbn={isbn} thumbnailUrl={thumbnailUrl} userId={userId} />
       )}
     </>
   )

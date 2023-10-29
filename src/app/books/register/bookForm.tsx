@@ -4,7 +4,11 @@ import { ChangeEvent, FC, useState } from 'react'
 import { formatForSearch } from '@/utils/stringUtils'
 import SearchedBook from '@/app/books/register/searchedBook'
 
-const BookForm: FC = () => {
+type BookFormProps = {
+  userId: number
+}
+
+const BookForm: FC<BookFormProps> = ({ userId }) => {
   const [isbn, setIsbn] = useState('')
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +30,7 @@ const BookForm: FC = () => {
         </label>
       </form>
 
-      {isbn.length === 13 && <SearchedBook isbn={isbn} />}
+      {isbn.length === 13 && <SearchedBook isbn={isbn} userId={userId} />}
     </>
   )
 }

@@ -1,11 +1,14 @@
 'use server'
 
 import prisma from '@/libs/prisma/client'
-import { CustomError } from '@/models/errors'
-import { NextResponse } from 'next/server'
 import { redirect } from 'next/navigation'
 
-export const registerBook = async (title: string, isbn: string, imageUrl: string) => {
+export const registerBook = async (
+  title: string,
+  isbn: string,
+  imageUrl: string | undefined,
+  userId: number,
+) => {
   const book = await prisma.book
     .create({
       data: {
@@ -19,38 +22,37 @@ export const registerBook = async (title: string, isbn: string, imageUrl: string
       return new Error('Book creation failed')
     })
   if (book instanceof Error) {
-    const customError: CustomError = { errorCode: '500', message: book.message }
-    return NextResponse.json(customError, { status: 500 })
+    return book
   }
-  redirect(`/books/${book.id}`)
 
-  // if (title) {
-  //   insertBook({ title, isbn, imageUrl }).then((bookResult) => {
-  //     if (bookResult.error) {
-  //       console.error('book insert error: ', bookResult.error)
-  //       return
-  //     }
-  //
-  //     const bookId = bookResult.data?.insert_books_one?.id
-  //     if (bookId) {
-  //       insertRegistrationHistory({ bookId: bookId, userId: 1 }).then((registrationResult) => {
-  //         if (registrationResult.error) {
-  //           console.error('registration insert error: ', registrationResult.error)
-  //           return
-  //         }
-  //         router.push(`/books/${bookId}`)
-  //       })
-  //     }
-  //   })
-  // }
+  const registrationHistory = await prisma.registrationHistory
+    .create({
+      data: {
+        bookId: book.id,
+        userId: userId,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('Registration creation failed')
+    })
+  if (registrationHistory instanceof Error) {
+    return registrationHistory
+  }
+
+  redirect(`/books/${book.id}`)
 }
 
-export const addBook = async (bookId: number) => {
-  insertRegistrationHistory({ bookId: bookId, userId: 1 }).then((registrationResult) => {
-    if (registrationResult.error) {
-      console.error('registration insert error: ', registrationResult.error)
-      return
-    }
-    router.push(`/books/${bookId}`)
-  })
+export const addBook = async (bookId: number, userId: number) => {
+  const history = await prisma.registrationHistory
+    .create({ data: { bookId: bookId, userId: userId } })
+    .catch((e) => {
+      console.error(e)
+      return new Error('Registration creation failed')
+    })
+  if (history instanceof Error) {
+    return history
+  }
+
+  redirect(`/books/${bookId}`)
 }
