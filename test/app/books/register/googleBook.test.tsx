@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react'
-import GoogleBook from '@/components/googleBook'
+import GoogleBook from '@/app/books/register/searchedBook'
 import useSWR from 'swr'
 
 jest.mock('swr')
@@ -38,7 +38,6 @@ const useInsertRegistrationHistoryMutationMock = jest
   .mockReturnValue([undefined, insertRegistrationHistoryMock])
 jest.mock('@/generated/graphql.client', () => ({
   __esModule: true,
-  useGetBookByIsbnQuery: () => useGetBookByIsbnQueryMock(),
   useInsertBookMutation: () => useInsertBookMutationMock(),
   useInsertRegistrationHistoryMutation: () => useInsertRegistrationHistoryMutationMock(),
 }))

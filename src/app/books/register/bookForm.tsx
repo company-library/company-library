@@ -2,7 +2,7 @@
 
 import { ChangeEvent, FC, useState } from 'react'
 import { formatForSearch } from '@/utils/stringUtils'
-import GoogleBook from '@/app/books/register/googleBook'
+import SearchedBook from '@/app/books/register/searchedBook'
 
 const BookForm: FC = () => {
   const [isbn, setIsbn] = useState('')
@@ -26,7 +26,7 @@ const BookForm: FC = () => {
         </label>
       </form>
 
-      {isbn.length === 13 && <GoogleBook isbn={isbn} />}
+      {isbn.length === 13 && <SearchedBook isbn={isbn} />}
     </>
   )
 }

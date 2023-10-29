@@ -4,5 +4,5 @@ export type CustomError = {
 }
 
 export const isCustomError = (arg: any): arg is CustomError => {
-  return 'errorCode' in arg && 'message' in arg
+  return arg != null && 'errorCode' in arg && 'message' in arg
 }
