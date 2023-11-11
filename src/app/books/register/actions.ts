@@ -40,7 +40,7 @@ export const registerBook = async (
     return registrationHistory
   }
 
-  redirect(`/books/${book.id}`)
+  redirect(`${process.env.NEXTAUTH_URL}/books/${book.id}`)
 }
 
 export const addBook = async (bookId: number, userId: number) => {
@@ -54,5 +54,5 @@ export const addBook = async (bookId: number, userId: number) => {
     return history
   }
 
-  redirect(`/books/${bookId}`)
+  redirect(`${process.env.NEXTAUTH_URL}/books/${bookId}`)
 }

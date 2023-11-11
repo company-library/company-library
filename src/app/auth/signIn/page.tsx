@@ -1,3 +1,5 @@
+'use client'
+
 import { signIn, useSession } from 'next-auth/react'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
