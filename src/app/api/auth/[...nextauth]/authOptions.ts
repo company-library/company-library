@@ -22,9 +22,6 @@ export const authOptions: NextAuthOptions = {
       authorization: { params: { scope: 'offline_access openid' } },
     }),
   ],
-  pages: {
-    signIn: '/auth/signIn',
-  },
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
