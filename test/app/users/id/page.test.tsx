@@ -11,6 +11,10 @@ describe('UserDetail page', () => {
     __esModule: true,
     default: () => <div>BookList</div>,
   }))
+  jest.mock('@/app/users/[id]/readingBookList', () => ({
+    __esModule: true,
+    default: () => <div>ReadingBookList</div>,
+  }))
 
   it('ユーザーの情報が表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(expectedUser)

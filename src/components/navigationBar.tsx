@@ -42,7 +42,7 @@ const NavigationBar: FC<NavigationBarProps> = ({ userId }) => {
                 : 'text-gray-200 hover:text-white hover:bg-gray-500'
             }`}
           >
-            未返却一覧
+            マイページ
           </Link>
           <Link
             href="/users"
