@@ -47,7 +47,7 @@ const SearchedBook: FC<GoogleBookProps> = ({ isbn, userId }) => {
   }
   const companyBook = companyBookData?.book
 
-  if (!title || !thumbnailUrl) {
+  if (!title) {
     return (
       <>
         <p>書籍は見つかりませんでした</p>

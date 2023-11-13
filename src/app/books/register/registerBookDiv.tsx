@@ -6,7 +6,7 @@ import { registerBook } from '@/app/books/register/actions'
 type RegisterBookDivProps = {
   title: string
   isbn: string
-  thumbnailUrl: string
+  thumbnailUrl: string | undefined
   userId: number
 }
 
