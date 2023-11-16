@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
@@ -24,7 +23,7 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
     return <div>不正な書籍です。</div>
   }
 
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession()
   if (!session) {
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }

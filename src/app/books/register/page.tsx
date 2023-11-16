@@ -2,7 +2,8 @@ import { type NextPage } from 'next'
 import Headline from '@/components/common/headline'
 import BookForm from '@/app/books/register/bookForm'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
