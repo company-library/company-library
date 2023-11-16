@@ -10,10 +10,11 @@ export const readingHistories = (lendingHistories: LH[]) => {
     .map((h) => {
       return {
         bookId: h.bookId,
+        dueDate: h.dueDate,
         isReturned: !!h.returnHistory,
       }
     })
-    .reduce<Array<{ bookId: number; isReturned: boolean }>>((acc, obj) => {
+    .reduce<Array<{ bookId: number; dueDate: Date; isReturned: boolean }>>((acc, obj) => {
       return acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned)
         ? acc
         : [...acc, obj]
