@@ -16,7 +16,7 @@ export const registerBook = async (
   isbn: string,
   imageUrl: string | undefined,
   userId: number,
-) => {
+): Promise<Error> => {
   const book = await prisma.book
     .create({
       data: {
@@ -57,7 +57,7 @@ export const registerBook = async (
  * @param {number} userId
  * @returns {Promise<Error>}
  */
-export const addBook = async (bookId: number, userId: number) => {
+export const addBook = async (bookId: number, userId: number): Promise<Error> => {
   const history = await prisma.registrationHistory
     .create({ data: { bookId: bookId, userId: userId } })
     .catch((e) => {
