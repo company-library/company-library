@@ -10,6 +10,11 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 //   title: '本を登録 | company-library',
 // }
 
+/**
+ * 書籍登録するページ
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const RegisterPage: NextPage = async () => {
   const session = await getServerSession(authOptions)
   if (!session) {

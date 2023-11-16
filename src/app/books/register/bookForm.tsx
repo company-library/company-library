@@ -8,6 +8,12 @@ type BookFormProps = {
   userId: number
 }
 
+/**
+ * 書籍登録のための検索フォーム
+ * @param {number} userId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const BookForm: FC<BookFormProps> = ({ userId }) => {
   const [isbn, setIsbn] = useState('')
 

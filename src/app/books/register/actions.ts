@@ -3,6 +3,14 @@
 import prisma from '@/libs/prisma/client'
 import { redirect } from 'next/navigation'
 
+/**
+ * 書籍登録をするServer Action
+ * @param {string} title
+ * @param {string} isbn
+ * @param {string | undefined} imageUrl
+ * @param {number} userId
+ * @returns {Promise<Error>}
+ */
 export const registerBook = async (
   title: string,
   isbn: string,
@@ -43,6 +51,12 @@ export const registerBook = async (
   redirect(`${process.env.NEXTAUTH_URL}/books/${book.id}`)
 }
 
+/**
+ * 書籍追加をするServer Action
+ * @param {number} bookId
+ * @param {number} userId
+ * @returns {Promise<Error>}
+ */
 export const addBook = async (bookId: number, userId: number) => {
   const history = await prisma.registrationHistory
     .create({ data: { bookId: bookId, userId: userId } })

@@ -10,6 +10,15 @@ type RegisterBookDivProps = {
   userId: number
 }
 
+/**
+ * 書籍登録のためのdiv
+ * @param {string} title
+ * @param {string} isbn
+ * @param {string | undefined} thumbnailUrl
+ * @param {number} userId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, isbn, thumbnailUrl, userId }) => {
   const registerBookWithArgs = registerBook.bind(null, title, isbn, thumbnailUrl, userId)
 

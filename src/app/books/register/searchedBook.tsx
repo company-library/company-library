@@ -29,6 +29,13 @@ type SearchedBook = {
   ]
 }
 
+/**
+ * GoogleBooksAPIから取得した書籍情報を表示するコンポーネント
+ * @param {string} isbn
+ * @param {number} userId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const SearchedBook: FC<GoogleBookProps> = ({ isbn, userId }) => {
   const { data: googleBookData } = useSWR(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`, fetcher)
   const googleBook: SearchedBook | undefined = googleBookData

@@ -13,6 +13,13 @@ type AddBookDivProps = {
   userId: number
 }
 
+/**
+ * 書籍追加のためのdiv
+ * @param {{id: number, _count: {registrationHistories: number}}} companyBook
+ * @param {number} userId
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const AddBookDiv: FC<AddBookDivProps> = ({ companyBook, userId }) => {
   const addBookWithArgs = addBook.bind(null, companyBook.id, userId)
 
