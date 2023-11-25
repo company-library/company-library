@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
 
       const getUser = async (name: string, email: string, imageUrl: string | undefined | null) => {
         const maybeUser = await prisma.user.findUnique({ where: { email } })
+        console.log('maybeUser', maybeUser)
         if (maybeUser != null) {
           return maybeUser
         }

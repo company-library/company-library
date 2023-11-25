@@ -1,9 +1,9 @@
 'use client'
 
-import { signIn, useSession } from 'next-auth/react'
+import { SessionProvider, signIn, useSession } from 'next-auth/react'
 import { NextPage } from 'next'
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 const SignIn: NextPage = () => {
   const router = useRouter()
@@ -24,4 +24,12 @@ const SignIn: NextPage = () => {
   return <div />
 }
 
-export default SignIn
+const WrappedSignIn: NextPage = () => {
+  return (
+    <SessionProvider>
+      <SignIn />
+    </SessionProvider>
+  )
+}
+
+export default WrappedSignIn

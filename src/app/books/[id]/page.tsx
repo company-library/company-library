@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
@@ -23,7 +24,7 @@ const BookDetailPage = async ({ params }: BookDetailPageParams) => {
     return <div>不正な書籍です。</div>
   }
 
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
   if (!session) {
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
