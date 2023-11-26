@@ -1,4 +1,4 @@
-import LendButton from '@/components/lendButton'
+import LendButton from '@/app/books/[id]/lendButton'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
 

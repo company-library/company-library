@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { FC, Fragment, useState } from 'react'
+import { FC, Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useReturn } from '@/hooks/useReturn'
 

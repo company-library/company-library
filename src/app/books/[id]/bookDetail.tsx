@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import Image from 'next/image'
-import LendButton from '@/components/lendButton'
-import ReturnButton from '@/components/returnButton'
+import LendButton from '@/app/books/[id]/lendButton'
+import ReturnButton from '@/app/books/[id]/returnButton'
 import prisma from '@/libs/prisma/client'
 
 type BookDetailProps = {
