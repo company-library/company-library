@@ -20,4 +20,14 @@ describe('register page', () => {
 
     expect(screen.getByText('本を登録')).toBeInTheDocument()
   })
+
+  it('セッションが取得できない場合はエラーメッセージが表示される', async () => {
+    getServerSessionMock.mockReturnValueOnce(null)
+
+    render(await RegisterPage())
+
+    expect(
+      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+    ).toBeInTheDocument()
+  })
 })
