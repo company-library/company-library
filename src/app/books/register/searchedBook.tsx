@@ -10,7 +10,7 @@ import fetcher from '@/libs/swr/fetcher'
 import AddBookDiv from '@/app/books/register/addBookDiv'
 import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 
-type GoogleBookProps = {
+type SearchedBookProps = {
   isbn: string
   userId: number
 }
