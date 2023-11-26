@@ -57,18 +57,18 @@ describe('Luxon utils', () => {
       {
         caseName: '月をまたがない場合',
         days: 10,
-        expected: '2022/10/31',
+        expected: '2022-10-30T15:00:00.000Z',
       },
       {
         caseName: '月をまたぐ場合',
         days: 11,
-        expected: '2022/11/01',
+        expected: '2022-10-31T15:00:00.000Z',
       },
     ])('引数で渡した日数経過後の日付を返す($caseName)', ({ days, expected }) => {
       const now = DateTime.local(2022, 10, 21, 23, 59, 58, { zone: 'Asia/Tokyo' })
       Settings.now = () => now.toMillis()
 
-      expect(getDaysLaterJstDate(days)).toBe(expected)
+      expect(getDaysLaterJstDate(days).toISOString()).toBe(expected)
     })
   })
 })
