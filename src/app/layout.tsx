@@ -1,4 +1,4 @@
-import NavigationBar from '@/components/navigationBar'
+import NavigationBar from '@/app/navigationBar'
 import { getServerSession } from 'next-auth'
 
 import '../styles/globals.css'

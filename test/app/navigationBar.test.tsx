@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import NavigationBar from '@/components/navigationBar'
+import NavigationBar from '@/app/navigationBar'
 import { user1 } from '../__utils__/data/user'
 
 const pathnameMock = jest.fn().mockReturnValue({ push: jest.fn() })
