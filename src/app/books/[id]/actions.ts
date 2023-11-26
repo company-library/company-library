@@ -10,11 +10,7 @@ import { redirect } from 'next/navigation'
  * @param {Date} dueDate
  * @returns {Promise<Error>}
  */
-export const lendBook = async (
-  bookId: number,
-  userId: number,
-  dueDate: Date,
-): Promise<Error | void> => {
+export const lendBook = async (bookId: number, userId: number, dueDate: Date): Promise<Error> => {
   const history = await prisma.lendingHistory
     .create({ data: { bookId, userId, dueDate } })
     .catch((e) => {
