@@ -6859,13 +6859,13 @@ rc@1.2.8, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-dom@18.2.0:
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
-  integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
+react-dom@canary:
+  version "18.3.0-canary-6c7b41da3-20231123"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.0-canary-6c7b41da3-20231123.tgz#288d753184e4776bcac534e3eb7020671c17027f"
+  integrity sha512-qkIXjnYNwR21kPr+r0MnG0Fi1/22p2bSaFlV+0sUFUFu6jGjzqHM+VB3DNz6z/5coFc399dzrXflAzWC7LS2Cw==
   dependencies:
     loose-envify "^1.1.0"
-    scheduler "^0.23.0"
+    scheduler "0.24.0-canary-6c7b41da3-20231123"
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -6882,10 +6882,10 @@ react-is@^18.0.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.2.0.tgz#199431eeaaa2e09f86427efbb4f1473edb47609b"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
-react@18.2.0:
-  version "18.2.0"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
-  integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
+react@canary:
+  version "18.3.0-canary-6c7b41da3-20231123"
+  resolved "https://registry.yarnpkg.com/react/-/react-18.3.0-canary-6c7b41da3-20231123.tgz#70528b558752ec97eacd7d7c43460f04e3023dbc"
+  integrity sha512-Hjc8AOz/DVCyUizb64E7dHVHI02R4ax8G9jSKDc5wa43fZuoFpZONIMYLZ9xBDMWXlHZNvCnvgK5pm1EgfPM2g==
   dependencies:
     loose-envify "^1.1.0"
 
@@ -7186,10 +7186,10 @@ saxes@^5.0.1:
   dependencies:
     xmlchars "^2.2.0"
 
-scheduler@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.23.0.tgz#ba8041afc3d30eb206a487b6b384002e4e61fdfe"
-  integrity sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==
+scheduler@0.24.0-canary-6c7b41da3-20231123:
+  version "0.24.0-canary-6c7b41da3-20231123"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.24.0-canary-6c7b41da3-20231123.tgz#f4dc8f6b978adc3dd4c0f07f6018d70443b05ca9"
+  integrity sha512-j+PUL9xms/yGkIzGR9tC3TrLY5R0uRI3mVMSsv6en03kSoA3jypGCoCSuhaEd29FSVJIG8e0UEyopLwt4TOPlQ==
   dependencies:
     loose-envify "^1.1.0"
 

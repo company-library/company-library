@@ -10,9 +10,6 @@ jest.mock('@/app/books/register/actions', () => ({
 describe('add book div component', () => {
   const AddBookDivComponent = require('@/app/books/register/addBookDiv').default
 
-  // react, react-domのバージョンがexperimentalのものだと、テストが通る
-  // 18.2.0(現時点の最新)だと、テストが通らない
-  // https://github.com/vercel/next.js/issues/54757
   it('追加ボタンをクリックすると、server actionが実行される', async () => {
     const companyBook = { id: 1, _count: { registrationHistories: 2 } }
     const userId = user1.id

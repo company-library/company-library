@@ -10,9 +10,6 @@ jest.mock('@/app/books/register/actions', () => ({
 describe('register book div component', () => {
   const RegisterBookDivComponent = require('@/app/books/register/registerBookDiv').default
 
-  // react, react-domのバージョンがexperimentalのものだと、テストが通る
-  // 18.2.0(現時点の最新)だと、テストが通らない
-  // https://github.com/vercel/next.js/issues/54757
   it('登録ボタンをクリックすると、server actionが実行される', () => {
     const title = 'testBook'
     const isbn = '1234567890123'
