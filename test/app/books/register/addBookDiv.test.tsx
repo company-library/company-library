@@ -13,12 +13,14 @@ describe('add book div component', () => {
   it('追加ボタンをクリックすると、server actionが実行される', async () => {
     const companyBook = { id: 1, _count: { registrationHistories: 2 } }
     const userId = user1.id
-    const { getByText } = render(<AddBookDivComponent companyBook={companyBook} userId={userId} />)
+    const { getByRole, getByText } = render(
+      <AddBookDivComponent companyBook={companyBook} userId={userId} />,
+    )
 
     expect(getByText(/現在の登録冊数：2/)).toBeInTheDocument()
     expect(addBookActionMock).not.toBeCalled()
 
-    fireEvent.click(getByText('追加する'))
+    fireEvent.click(getByRole('button', { name: '追加する' }))
 
     expect(addBookActionMock).toBeCalledTimes(1)
   })

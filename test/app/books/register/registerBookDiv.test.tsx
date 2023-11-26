@@ -16,7 +16,7 @@ describe('register book div component', () => {
     const thumbnailUrl = 'https://example.com/test.jpg'
     const userId = user1.id
 
-    const { getByText } = render(
+    const { getByRole, getByText } = render(
       <RegisterBookDivComponent
         title={title}
         isbn={isbn}
@@ -27,7 +27,7 @@ describe('register book div component', () => {
 
     expect(registerBookActionMock).not.toBeCalled()
 
-    fireEvent.click(getByText('登録する'))
+    fireEvent.click(getByRole('button', { name: '登録する' }))
 
     expect(registerBookActionMock).toBeCalledTimes(1)
   })
