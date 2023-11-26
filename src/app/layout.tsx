@@ -1,22 +1,17 @@
 import NavigationBar from '@/app/navigationBar'
-import { getServerSession } from 'next-auth'
 
 import '../styles/globals.css'
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 
 export const metadata = {
   title: 'company-library',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions)
-  const userId = session?.customUser.id
-
   return (
     <html lang="ja">
       <body>
         <header>
-          <NavigationBar userId={userId} />
+          <NavigationBar />
         </header>
         <main className="max-w-7xl mx-auto mt-8">{children}</main>
       </body>
