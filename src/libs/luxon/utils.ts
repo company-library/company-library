@@ -19,7 +19,7 @@ export const toJstFormat = (date: Date, format: Format = DATE_DISPLAY_FORMAT): s
  * @returns {Date}
  */
 export const dateStringToDate = (str: string): Date => {
-  return DateTime.fromFormat(str, DATE_SYSTEM_FORMAT).toJSDate()
+  return DateTime.fromFormat(str, DATE_SYSTEM_FORMAT).setZone('Asia/Tokyo').toJSDate()
 }
 
 /**
