@@ -36,7 +36,7 @@ type SearchedBook = {
  * @returns {JSX.Element}
  * @constructor
  */
-const SearchedBook: FC<GoogleBookProps> = ({ isbn, userId }) => {
+const SearchedBook: FC<SearchedBookProps> = ({ isbn, userId }) => {
   const { data: googleBookData } = useSWR(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`, fetcher)
   const googleBook: SearchedBook | undefined = googleBookData
   const title = googleBook?.items?.[0].volumeInfo?.title
