@@ -14,6 +14,15 @@ export const toJstFormat = (date: Date, format: Format = DATE_DISPLAY_FORMAT): s
 }
 
 /**
+ * 指定のフォーマットでJST日時文字列にする
+ * @param {string} str
+ * @returns {Date}
+ */
+export const dateStringToDate = (str: string): Date => {
+  return DateTime.fromFormat(str, DATE_SYSTEM_FORMAT).toJSDate()
+}
+
+/**
  * 引数で渡された期日がすぎているかどうか
  * @param {Date} deadline 期日
  * @returns {boolean} true:過ぎている

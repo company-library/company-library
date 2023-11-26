@@ -3,7 +3,7 @@
 import React, { FC, Fragment, startTransition, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
-import { getDaysLaterJstDate, toJstFormat } from '@/libs/luxon/utils'
+import { dateStringToDate, getDaysLaterJstDate, toJstFormat } from '@/libs/luxon/utils'
 import { lendBook } from '@/app/books/[id]/actions'
 
 type LendButtonProps = {
@@ -77,8 +77,8 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
                     <input
                       type="date"
                       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      value={dueDate.toISOString().slice(0, 10)}
-                      onChange={(e) => setDueDate(new Date(Date.parse(e.target.value)))}
+                      value={toJstFormat(dueDate, DATE_SYSTEM_FORMAT)}
+                      onChange={(e) => setDueDate(dateStringToDate(e.target.value))}
                       min={toJstFormat(new Date(), DATE_SYSTEM_FORMAT)}
                     />
                   </div>

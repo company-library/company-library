@@ -1,4 +1,4 @@
-import { getDaysLaterJstDate, isOverdue, toJstFormat } from '@/libs/luxon/utils'
+import { dateStringToDate, getDaysLaterJstDate, isOverdue, toJstFormat } from '@/libs/luxon/utils'
 import { DateTime, Settings } from 'luxon'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 
@@ -14,6 +14,14 @@ describe('Luxon utils', () => {
       const utcDate = new Date(Date.UTC(2022, 9, 31, 16, 0, 0))
 
       expect(toJstFormat(utcDate)).toBe('2022/11/01')
+    })
+  })
+
+  describe('dateStringToDate', () => {
+    it('引数で渡した日付文字列をDate型に変換する', () => {
+      const str = '2022-11-01'
+
+      expect(dateStringToDate(str)).toEqual(new Date(Date.UTC(2022, 9, 31, 15, 0, 0)))
     })
   })
 
