@@ -1,4 +1,4 @@
-import { dateStringToDate, getDaysLaterJstDate, isOverdue, toJstFormat } from '@/libs/luxon/utils'
+import { dateStringToDate, getDaysLater, isOverdue, toJstFormat } from '@/libs/luxon/utils'
 import { DateTime, Settings } from 'luxon'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 
@@ -76,7 +76,7 @@ describe('Luxon utils', () => {
       const now = DateTime.local(2022, 10, 21, 23, 59, 58, { zone: 'Asia/Tokyo' })
       Settings.now = () => now.toMillis()
 
-      expect(getDaysLaterJstDate(days).toISOString()).toBe(expected)
+      expect(getDaysLater(days).toISOString()).toBe(expected)
     })
   })
 })

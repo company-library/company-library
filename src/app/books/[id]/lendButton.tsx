@@ -3,7 +3,7 @@
 import React, { FC, Fragment, startTransition, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
-import { dateStringToDate, getDaysLaterJstDate, toJstFormat } from '@/libs/luxon/utils'
+import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
 import { lendBook } from '@/app/books/[id]/actions'
 
 type LendButtonProps = {
@@ -13,7 +13,7 @@ type LendButtonProps = {
 }
 
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
-  const [dueDate, setDueDate] = useState(getDaysLaterJstDate(7))
+  const [dueDate, setDueDate] = useState(getDaysLater(7))
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -26,7 +26,6 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   }
 
   const onClick = () => {
-    // @ts-ignore
     startTransition(async () => {
       await lendBook(bookId, userId, dueDate)
       closeModal()
