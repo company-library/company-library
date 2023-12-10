@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
 const registerBookActionMock = jest.fn()
@@ -16,7 +16,7 @@ describe('register book div component', () => {
     const thumbnailUrl = 'https://example.com/test.jpg'
     const userId = user1.id
 
-    const { getByRole, getByText } = render(
+    render(
       <RegisterBookDivComponent
         title={title}
         isbn={isbn}
@@ -27,7 +27,7 @@ describe('register book div component', () => {
 
     expect(registerBookActionMock).not.toBeCalled()
 
-    fireEvent.click(getByRole('button', { name: '登録する' }))
+    fireEvent.click(screen.getByRole('button', { name: '登録する' }))
 
     expect(registerBookActionMock).toBeCalledTimes(1)
   })
