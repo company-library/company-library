@@ -10,14 +10,14 @@ jest.mock('next/image', () => ({
   },
 }))
 
-jest.mock('@/components/lendButton', () => ({
+jest.mock('@/app/books/[id]/lendButton', () => ({
   __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>借りる</button>
   },
 }))
 
-jest.mock('@/components/returnButton', () => ({
+jest.mock('@/app/books/[id]/returnButton', () => ({
   __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>返却する</button>

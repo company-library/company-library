@@ -1,27 +1,37 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import React, { FC, Fragment, useState } from 'react'
+import { FC, Fragment, startTransition, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { useReturn } from '@/hooks/useReturn'
+import { DATE_SYSTEM_FORMAT } from '@/constants'
+import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
+import { lendBook } from '@/app/books/[id]/actions'
 
-type ReturnButtonProps = {
-  lendingHistoryId: number
+type LendButtonProps = {
+  bookId: number
+  userId: number
   disabled: boolean
 }
 
-const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => {
-  const [impression, setImpression] = useState('')
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setImpression(e.target.value)
-  }
-
-  const router = useRouter()
-  const { returnBook } = useReturn(lendingHistoryId, impression)
+const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
+  const [dueDate, setDueDate] = useState(getDaysLater(7))
 
   const [isOpen, setIsOpen] = useState(false)
-  const closeModal = () => setIsOpen(false)
-  const openModal = () => setIsOpen(true)
+
+  const closeModal = () => {
+    setIsOpen(false)
+  }
+
+  const openModal = () => {
+    setIsOpen(true)
+  }
+
+  const onClick = () => {
+    // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
+    startTransition(async () => {
+      await lendBook(bookId, userId, dueDate)
+      closeModal()
+    })
+  }
 
   return (
     <>
@@ -30,7 +40,7 @@ const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => 
         disabled={disabled}
         onClick={() => openModal()}
       >
-        返却する
+        借りる
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -60,14 +70,16 @@ const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => 
               >
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                    返却しますか？
+                    何日まで借りますか？
                   </Dialog.Title>
 
                   <div className="mt-2">
-                    <textarea
-                      placeholder="感想を書いてください"
-                      value={impression}
-                      onChange={handleChange}
+                    <input
+                      type="date"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      value={toJstFormat(dueDate, DATE_SYSTEM_FORMAT)}
+                      onChange={(e) => setDueDate(dateStringToDate(e.target.value))}
+                      min={toJstFormat(new Date(), DATE_SYSTEM_FORMAT)}
                     />
                   </div>
 
@@ -75,15 +87,7 @@ const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => 
                     <button
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      onClick={async () => {
-                        const result = await returnBook()
-                        if (result instanceof Error) {
-                          window.alert('返却に失敗しました。もう一度試してみてください。')
-                        }
-
-                        closeModal()
-                        router.refresh()
-                      }}
+                      onClick={onClick}
                     >
                       Ok
                     </button>
@@ -106,4 +110,4 @@ const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => 
   )
 }
 
-export default ReturnButton
+export default LendButton

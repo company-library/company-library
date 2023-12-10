@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import ReturnButton from '@/components/returnButton'
+import ReturnButton from '@/app/books/[id]/returnButton'
 
 // TransitionとDialogを使用するコンポーネントの場合に必要なモック
 const intersectionObserverMock = () => ({

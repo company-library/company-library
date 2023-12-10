@@ -1,33 +1,27 @@
 'use client'
 
-import React, { FC, Fragment, useState } from 'react'
-import { useLend } from '@/hooks/useLend'
+import { useRouter } from 'next/navigation'
+import { FC, Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { DATE_SYSTEM_FORMAT } from '@/constants'
-import { getDaysLaterJstDate, toJstFormat } from '@/libs/luxon/utils'
+import { useReturn } from '@/hooks/useReturn'
 
-type LendButtonProps = {
-  bookId: number
-  userId: number
+type ReturnButtonProps = {
+  lendingHistoryId: number
   disabled: boolean
 }
 
-const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
-  const { lend, dueDate, handleDueDate } = useLend(
-    bookId,
-    userId,
-    getDaysLaterJstDate(7, DATE_SYSTEM_FORMAT),
-  )
+const ReturnButton: FC<ReturnButtonProps> = ({ lendingHistoryId, disabled }) => {
+  const [impression, setImpression] = useState('')
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setImpression(e.target.value)
+  }
+
+  const router = useRouter()
+  const { returnBook } = useReturn(lendingHistoryId, impression)
 
   const [isOpen, setIsOpen] = useState(false)
-
-  const closeModal = () => {
-    setIsOpen(false)
-  }
-
-  const openModal = () => {
-    setIsOpen(true)
-  }
+  const closeModal = () => setIsOpen(false)
+  const openModal = () => setIsOpen(true)
 
   return (
     <>
@@ -36,7 +30,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
         disabled={disabled}
         onClick={() => openModal()}
       >
-        借りる
+        返却する
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>
@@ -66,16 +60,14 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
               >
                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                    何日まで借りますか？
+                    返却しますか？
                   </Dialog.Title>
 
                   <div className="mt-2">
-                    <input
-                      type="date"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      value={dueDate}
-                      onChange={handleDueDate}
-                      min={toJstFormat(new Date(), DATE_SYSTEM_FORMAT)}
+                    <textarea
+                      placeholder="感想を書いてください"
+                      value={impression}
+                      onChange={handleChange}
                     />
                   </div>
 
@@ -84,8 +76,13 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
                       type="button"
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={async () => {
-                        await lend()
+                        const result = await returnBook()
+                        if (result instanceof Error) {
+                          window.alert('返却に失敗しました。もう一度試してみてください。')
+                        }
+
                         closeModal()
+                        router.refresh()
                       }}
                     >
                       Ok
@@ -109,4 +106,4 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   )
 }
 
-export default LendButton
+export default ReturnButton
