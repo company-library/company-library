@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FC, Fragment, startTransition, useState } from 'react'
+import { FC, Fragment, startTransition, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
@@ -26,6 +26,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   }
 
   const onClick = () => {
+    // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
     startTransition(async () => {
       await lendBook(bookId, userId, dueDate)
       closeModal()
