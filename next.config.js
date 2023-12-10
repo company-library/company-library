@@ -3,7 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   images: {
-    domains: ['books.google.com', 's.gravatar.com', 'picsum.photos'],
+    remotePatterns: [
+      { hostname: 'books.google.com' },
+      { hostname: 's.gravatar.com' },
+      { hostname: 'picsum.photos' },
+    ],
   },
 }
 
