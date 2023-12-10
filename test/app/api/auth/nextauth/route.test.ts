@@ -18,11 +18,6 @@ describe('auth api', () => {
     process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW = 'primaryUserFlow'
   })
 
-  afterEach(() => {
-    // 各テストでrequireが再実行されるようにreset
-    jest.resetModules()
-  })
-
   describe('AAD B2Cで認証するために必要な環境変数が未設定の場合、processを終了する', () => {
     const mockConsoleError = jest.spyOn(console, 'error')
     const mockExit = jest.spyOn(process, 'exit')
@@ -53,8 +48,10 @@ describe('auth api', () => {
         ...aadEnvs,
       }
 
-      // moduleを読み込むために変数へ格納する
-      const _authOptions = require('@/app/api/auth/[...nextauth]/authOptions').authOptions
+      jest.isolateModules(() => {
+        // moduleを読み込むために変数へ格納する
+        const _authOptions = require('@/app/api/auth/[...nextauth]/authOptions').authOptions
+      })
 
       expect(mockConsoleError).toHaveBeenCalledTimes(1)
       expect(mockConsoleError).toHaveBeenCalledWith(
