@@ -10,7 +10,7 @@ type Format = typeof DATE_DISPLAY_FORMAT | typeof DATE_SYSTEM_FORMAT
  * @returns {string} JST日時文字列
  */
 export const toJstFormat = (date: Date, format: Format = DATE_DISPLAY_FORMAT): string => {
-  return DateTime.fromJSDate(date).setZone('Asia/Tokyo').toFormat(format)
+  return DateTime.fromJSDate(date, { zone: 'Asia/Tokyo' }).toFormat(format)
 }
 
 /**
@@ -19,7 +19,7 @@ export const toJstFormat = (date: Date, format: Format = DATE_DISPLAY_FORMAT): s
  * @returns {Date}
  */
 export const dateStringToDate = (str: string): Date => {
-  return DateTime.fromFormat(str, DATE_SYSTEM_FORMAT).setZone('Asia/Tokyo').toJSDate()
+  return DateTime.fromFormat(str, DATE_SYSTEM_FORMAT, { zone: 'Asia/Tokyo' }).toJSDate()
 }
 
 /**
@@ -40,7 +40,7 @@ export const isOverdue = (deadline: Date): boolean => {
  * @returns {string}
  */
 export const getDaysLater = (days: number): Date => {
-  const currentDate: DateTime = DateTime.now().setZone('Asia/Tokyo').startOf('day')
+  const currentDate: DateTime = DateTime.local({ zone: 'Asia/Tokyo' }).startOf('day')
 
   return currentDate.plus({ days }).toJSDate()
 }
