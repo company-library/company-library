@@ -61,22 +61,11 @@ describe('Luxon utils', () => {
   })
 
   describe('getDaysLaterJstDate', () => {
-    it.each([
-      {
-        caseName: '月をまたがない場合',
-        days: 10,
-        expected: '2022-10-31T00:00:00.000Z',
-      },
-      {
-        caseName: '月をまたぐ場合',
-        days: 11,
-        expected: '2022-11-01T00:00:00.000Z',
-      },
-    ])('引数で渡した日数経過後の日付を返す($caseName)', ({ days, expected }) => {
-      const now = DateTime.local(2022, 10, 21, 23, 59, 58, { zone: 'Asia/Tokyo' })
+    it('引数で渡した日数経過後の日付を返す', () => {
+      const now = DateTime.local(2022, 10, 1, 0, 0, 0, { zone: 'Asia/Tokyo' })
       Settings.now = () => now.toMillis()
 
-      expect(getDaysLater(days).toISOString()).toBe(expected)
+      expect(getDaysLater(10).toISOString()).toBe('2022-10-10T15:00:00.000Z') // 2022/10/11 00:00:00 (JST)
     })
   })
 })

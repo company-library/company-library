@@ -1,6 +1,7 @@
 import LendButton from '@/app/books/[id]/lendButton'
 import { fireEvent, render, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import { dateStringToDate } from '@/libs/luxon/utils'
 
 // TransitionとDialogを使用するコンポーネントの場合に必要なモック
 const intersectionObserverMock = () => ({
@@ -10,18 +11,13 @@ const intersectionObserverMock = () => ({
 window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
 
 const dateFormat = 'yyyy-MM-dd'
-const today = DateTime.now().setZone('Asia/Tokyo')
-const expectedInitialDueDate = today.plus({ days: 7 }).toFormat(dateFormat)
-const lendMock = jest.fn()
-const handleDueDateMock = jest.fn()
-const useLendMock = jest.fn().mockReturnValue({
-  lend: lendMock,
-  dueDate: today.toFormat(dateFormat),
-  handleDueDate: handleDueDateMock,
-})
-jest.mock('@/hooks/useLend', () => ({
+const today = DateTime.local().setZone('Asia/Tokyo')
+const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
+const lendBookMock = jest.fn()
+jest.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
-  useLend: (...args: any) => useLendMock(...args),
+  lendBook: (bookId: string, userId: string, dueDate: Date) =>
+    lendBookMock(bookId, userId, dueDate),
 }))
 
 describe('LendButton component', () => {
@@ -34,7 +30,6 @@ describe('LendButton component', () => {
     )
 
     expect(getByRole('button', { name: '借りる' })).toBeDisabled()
-    expect(useLendMock).toBeCalledWith(bookId, userId, expectedInitialDueDate)
 
     rerender(<LendButton bookId={bookId} userId={userId} disabled={false} />)
 
@@ -48,31 +43,29 @@ describe('LendButton component', () => {
     fireEvent.click(getByRole('button', { name: '借りる' }))
 
     expect(getByText('何日まで借りますか？')).toBeInTheDocument()
-    expect(getByDisplayValue(today.toFormat(dateFormat))).toBeInTheDocument()
-  })
-
-  it('ダイアログの返却予定日を変更すると、変更処理が実行される', async () => {
-    const { getByRole, getByDisplayValue } = render(
-      <LendButton bookId={bookId} userId={userId} disabled={false} />,
-    )
-    fireEvent.click(getByRole('button', { name: '借りる' }))
-    fireEvent.change(getByDisplayValue(today.toFormat(dateFormat)), {
-      target: { value: today.plus({ days: 14 }).toFormat(dateFormat) },
-    })
-
-    expect(handleDueDateMock).toBeCalled()
+    expect(getByDisplayValue(initialDuDate)).toBeInTheDocument()
   })
 
   it('ダイアログのOkボタンをクリックすると、貸出処理が実行される', async () => {
-    const { getByRole, queryByText } = render(
+    const expectedDueDate = today.plus({ days: 14 })
+    const { getByRole, queryByText, getByDisplayValue } = render(
       <LendButton bookId={bookId} userId={userId} disabled={false} />,
     )
     fireEvent.click(getByRole('button', { name: '借りる' }))
+
+    fireEvent.change(getByDisplayValue(initialDuDate), {
+      target: { value: expectedDueDate.toFormat(dateFormat) },
+    })
+
     fireEvent.click(getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
       expect(queryByText('何日まで借りますか？')).not.toBeInTheDocument()
-      expect(lendMock).toBeCalled()
+      expect(lendBookMock).toBeCalledWith(
+        bookId,
+        userId,
+        dateStringToDate(expectedDueDate.toISODate()),
+      )
     })
   })
 
@@ -85,7 +78,7 @@ describe('LendButton component', () => {
 
     await waitFor(() => {
       expect(queryByText('何日まで借りますか？')).not.toBeInTheDocument()
-      expect(lendMock).not.toBeCalled()
+      expect(lendBookMock).not.toBeCalled()
     })
   })
 })
