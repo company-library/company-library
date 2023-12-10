@@ -1,10 +1,10 @@
 import React, { Suspense } from 'react'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 
 // Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
 // https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861

@@ -10,8 +10,8 @@ const intersectionObserverMock = () => ({
 window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
 
 const dateFormat = 'yyyy-MM-dd'
-const today = DateTime.local().setZone('Asia/Tokyo')
-const expectedInitialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
+const today = DateTime.now().setZone('Asia/Tokyo')
+const expectedInitialDueDate = today.plus({ days: 7 }).toFormat(dateFormat)
 const lendMock = jest.fn()
 const handleDueDateMock = jest.fn()
 const useLendMock = jest.fn().mockReturnValue({
@@ -34,7 +34,7 @@ describe('LendButton component', () => {
     )
 
     expect(getByRole('button', { name: '借りる' })).toBeDisabled()
-    expect(useLendMock).toBeCalledWith(bookId, userId, expectedInitialDuDate)
+    expect(useLendMock).toBeCalledWith(bookId, userId, expectedInitialDueDate)
 
     rerender(<LendButton bookId={bookId} userId={userId} disabled={false} />)
 

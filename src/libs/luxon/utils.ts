@@ -25,8 +25,14 @@ export const isOverdue = (deadline: Date): boolean => {
   return currentDate > deadlineDate
 }
 
+/**
+ * 引数で渡された日数後のJST日時文字列を返す
+ * @param {number} days
+ * @param {Format} format
+ * @returns {string}
+ */
 export const getDaysLaterJstDate = (days: number, format: Format = DATE_DISPLAY_FORMAT): string => {
-  const currentDate: DateTime = DateTime.now().startOf('day')
+  const currentDate: DateTime = DateTime.now().setZone('Asia/Tokyo').startOf('day')
 
-  return currentDate.plus({ days }).setZone('Asia/Tokyo').toFormat(format)
+  return currentDate.plus({ days }).toFormat(format)
 }

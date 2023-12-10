@@ -1,8 +1,8 @@
 import NavigationBar from '@/components/navigationBar'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 import '../styles/globals.css'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 
 export const metadata = {
   title: 'company-library',

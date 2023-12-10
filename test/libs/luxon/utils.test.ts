@@ -65,7 +65,7 @@ describe('Luxon utils', () => {
         expected: '2022/11/01',
       },
     ])('引数で渡した日数経過後の日付を返す($caseName)', ({ days, expected }) => {
-      const now = DateTime.local(2022, 10, 21, 23, 59, 58)
+      const now = DateTime.local(2022, 10, 21, 23, 59, 58, { zone: 'Asia/Tokyo' })
       Settings.now = () => now.toMillis()
 
       expect(getDaysLaterJstDate(days)).toBe(expected)
