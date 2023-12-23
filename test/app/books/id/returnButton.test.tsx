@@ -1,4 +1,4 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
+import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
 // TransitionとDialogを使用するコンポーネントの場合に必要なモック
@@ -9,11 +9,9 @@ const intersectionObserverMock = () => ({
 window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
 
 const returnBookMock = jest.fn()
-jest.mock('@/hooks/useReturn', () => ({
+jest.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
-  useReturn: () => {
-    return { returnBook: returnBookMock }
-  },
+  returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
 }))
 
 const refreshMock = jest.fn()
@@ -25,23 +23,42 @@ jest.mock('next/navigation', () => ({
 }))
 
 describe('returnButton component', () => {
+  const bookId = 1
+  const userId = 2
   const lendingHistoryId = 10
 
   it('propsのdisabledがtrueの場合、無効化して表示される', () => {
     const { getByRole, rerender } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={true} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={true}
+      />,
     )
 
     expect(getByRole('button', { name: '返却する' })).toBeDisabled()
 
-    rerender(<ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />)
+    rerender(
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
+    )
 
     expect(getByRole('button', { name: '返却する' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、ダイアログが表示される', () => {
     const { getByRole, getByText, getByPlaceholderText } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
 
@@ -53,7 +70,12 @@ describe('returnButton component', () => {
 
   it('ダイアログで感想を入力することができる', async () => {
     const { getByRole, getByPlaceholderText, getByDisplayValue } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
     fireEvent.change(getByPlaceholderText('感想を書いてください'), {
@@ -65,13 +87,26 @@ describe('returnButton component', () => {
 
   it('ダイアログのOkボタンをクリックすると、返却処理が実行され、リロードされる', async () => {
     const { getByRole, queryByText } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
+    fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
+      target: { value: '感想を書いたよ' },
+    })
     fireEvent.click(getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
-      expect(returnBookMock).toBeCalled()
+      expect(returnBookMock).toHaveBeenCalledWith({
+        bookId,
+        userId,
+        lendingHistoryId,
+        impression: '感想を書いたよ',
+      })
       expect(queryByText('返却しますか？')).not.toBeInTheDocument()
       expect(refreshMock).toBeCalled()
     })
@@ -82,7 +117,12 @@ describe('returnButton component', () => {
     window.alert = jest.fn()
 
     const { getByRole, queryByText } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
     fireEvent.click(getByRole('button', { name: 'Ok' }))
@@ -97,7 +137,12 @@ describe('returnButton component', () => {
 
   it('ダイアログのCancelボタンをクリックすると、返却処理は実行されない', async () => {
     const { getByRole, queryByText } = render(
-      <ReturnButton lendingHistoryId={lendingHistoryId} disabled={false} />,
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
     fireEvent.click(getByRole('button', { name: 'Cancel' }))
