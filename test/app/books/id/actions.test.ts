@@ -6,7 +6,7 @@
 
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { lendBook } from '@/app/books/[id]/actions'
+import { lendBook, returnBook, returnBookWithImpression } from '@/app/books/[id]/actions'
 
 const redirectMock = jest.fn()
 jest.mock('next/navigation', () => ({
@@ -61,6 +61,113 @@ describe('server actions', () => {
       })
       expect(errorMock).toBeCalledWith(error)
       expect(redirectMock).not.toBeCalled()
+    })
+  })
+
+  describe('returnBook function', () => {
+    const lendingHistoryId = 222
+
+    it('返却処理として、該当の貸し出し履歴に返却履歴を行う', async () => {
+      prismaMock.returnHistory.create.mockResolvedValueOnce({
+        lendingHistoryId: lendingHistoryId,
+        returnedAt: new Date(),
+      })
+
+      const result = await returnBook(lendingHistoryId)
+
+      expect(result).toBeUndefined()
+      expect(prismaMock.returnHistory.create).toHaveBeenCalledWith({
+        data: {
+          lendingHistoryId,
+        },
+      })
+    })
+
+    it('返却処理に失敗した場合はエラーを返す', async () => {
+      const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+      const error = 'DB error has occurred'
+      prismaMock.returnHistory.create.mockRejectedValueOnce(error)
+
+      const result = (await returnBook(lendingHistoryId)) as Error
+
+      expect(result.message).toBe('返却に失敗しました。もう一度試して見てください。')
+      expect(prismaMock.returnHistory.create).toHaveBeenCalledWith({
+        data: {
+          lendingHistoryId,
+        },
+      })
+      expect(errorMock).toHaveBeenCalledWith(error)
+    })
+  })
+
+  describe('returnBookWithImpression function', () => {
+    const bookId = 111
+    const userId = user1.id
+    const lendingHistoryId = 222
+    const impression = '感想'
+    const args = {
+      bookId: bookId,
+      userId: userId,
+      lendingHistoryId: lendingHistoryId,
+      impression: impression,
+    }
+
+    it('返却処理として、該当の貸し出し履歴に返却履歴の追加と感想の登録を行う', async () => {
+      prismaMock.$transaction.mockResolvedValueOnce([
+        {
+          lendingHistoryId: lendingHistoryId,
+          returnedAt: new Date(),
+        },
+        {
+          id: 1,
+          bookId: bookId,
+          userId: 2,
+          impression: '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ])
+
+      const result = await returnBookWithImpression(args)
+
+      expect(result).toBeUndefined()
+      expect(prismaMock.$transaction).toHaveBeenCalled()
+      expect(prismaMock.returnHistory.create).toHaveBeenCalledWith({
+        data: {
+          lendingHistoryId,
+        },
+      })
+      expect(prismaMock.impression.create).toHaveBeenCalledWith({
+        data: {
+          bookId,
+          userId,
+          impression,
+        },
+      })
+    })
+
+    it('返却処理に失敗した場合はエラーを返す', async () => {
+      const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+      const error = 'DB error has occurred'
+      prismaMock.$transaction.mockRejectedValueOnce(error)
+
+      const result = (await returnBookWithImpression(args)) as Error
+
+      expect(result.message).toBe('返却に失敗しました。もう一度試して見てください。')
+      expect(prismaMock.$transaction).toHaveBeenCalled()
+      expect(prismaMock.returnHistory.create).toHaveBeenCalledWith({
+        data: {
+          lendingHistoryId,
+        },
+      })
+      expect(prismaMock.impression.create).toHaveBeenCalledWith({
+        data: {
+          bookId,
+          userId,
+          impression,
+        },
+      })
+      expect(errorMock).toHaveBeenCalledWith(error)
     })
   })
 })

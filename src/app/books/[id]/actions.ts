@@ -23,3 +23,69 @@ export const lendBook = async (bookId: number, userId: number, dueDate: Date): P
 
   redirect(`${process.env.NEXTAUTH_URL}/books/${bookId}`)
 }
+
+/**
+ * 書籍を返却するServer Action
+ * @param {number} lendingHistoryId 貸し出し履歴ID
+ * @returns {Promise<void | Error>} 処理でエラーがあった場合はErrorオブジェクトを返す
+ */
+export const returnBook = async (lendingHistoryId: number): Promise<void | Error> => {
+  const result = await prisma.returnHistory
+    .create({
+      data: {
+        lendingHistoryId,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('返却に失敗しました。もう一度試して見てください。')
+    })
+  if (result instanceof Error) {
+    return result
+  }
+}
+
+/**
+ * 感想を書いて書籍を返却するServer Action
+ * @param {number} bookId 返却対象の書籍ID
+ * @param {number} userId 返却を行うユーザーID
+ * @param {number} lendingHistoryId 貸し出し履歴ID
+ * @param {string} impression 感想の本文
+ * @returns {Promise<void | Error>} 処理でエラーがあった場合はErrorオブジェクトを返す
+ */
+export const returnBookWithImpression = async ({
+  bookId,
+  userId,
+  lendingHistoryId,
+  impression,
+}: ReturnBookWithImpressionProps): Promise<void | Error> => {
+  const result = await prisma
+    .$transaction([
+      prisma.returnHistory.create({
+        data: {
+          lendingHistoryId,
+        },
+      }),
+
+      prisma.impression.create({
+        data: {
+          bookId,
+          userId,
+          impression,
+        },
+      }),
+    ])
+    .catch((e) => {
+      console.error(e)
+      return new Error('返却に失敗しました。もう一度試して見てください。')
+    })
+  if (result instanceof Error) {
+    return result
+  }
+}
+type ReturnBookWithImpressionProps = {
+  bookId: number
+  userId: number
+  lendingHistoryId: number
+  impression: string
+}

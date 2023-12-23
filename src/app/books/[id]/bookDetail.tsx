@@ -71,6 +71,8 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
           <LendButton bookId={bookId} userId={userId} disabled={!isLendable} />
           <span className="ml-5" />
           <ReturnButton
+            bookId={bookId}
+            userId={userId}
             lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
             disabled={!isLending}
           />
