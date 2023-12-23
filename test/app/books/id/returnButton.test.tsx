@@ -12,7 +12,6 @@ const returnBookMock = jest.fn()
 jest.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
   returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
-  returnBookWithImpression: (args: unknown) => returnBookMock(args),
 }))
 
 const refreshMock = jest.fn()
@@ -96,29 +95,10 @@ describe('returnButton component', () => {
       />,
     )
     fireEvent.click(getByRole('button', { name: '返却する' }))
-    fireEvent.click(getByRole('button', { name: 'Ok' }))
-
-    await waitFor(() => {
-      expect(returnBookMock).toHaveBeenCalledWith(lendingHistoryId)
-      expect(queryByText('返却しますか？')).not.toBeInTheDocument()
-      expect(refreshMock).toBeCalled()
-    })
-  })
-
-  it('感想が入力された場合は、感想付きの返却処理を実行する', async () => {
-    render(
-      <ReturnButton
-        bookId={bookId}
-        userId={userId}
-        lendingHistoryId={lendingHistoryId}
-        disabled={false}
-      />,
-    )
-    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を書いたよ' },
     })
-    fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
+    fireEvent.click(getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
       expect(returnBookMock).toHaveBeenCalledWith({
@@ -127,7 +107,7 @@ describe('returnButton component', () => {
         lendingHistoryId,
         impression: '感想を書いたよ',
       })
-      expect(screen.queryByText('返却しますか？')).not.toBeInTheDocument()
+      expect(queryByText('返却しますか？')).not.toBeInTheDocument()
       expect(refreshMock).toBeCalled()
     })
   })

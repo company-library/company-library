@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, FC, Fragment, startTransition, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { returnBook, returnBookWithImpression } from '@/app/books/[id]/actions'
+import { returnBook } from '@/app/books/[id]/actions'
 
 type ReturnButtonProps = {
   bookId: number
@@ -27,15 +27,12 @@ const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId,
   const onClick = () => {
     // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
     startTransition(async () => {
-      const result =
-        impression === ''
-          ? await returnBook(lendingHistoryId)
-          : await returnBookWithImpression({
-              bookId,
-              userId,
-              lendingHistoryId,
-              impression,
-            })
+      const result = await returnBook({
+        bookId,
+        userId,
+        lendingHistoryId,
+        impression,
+      })
       if (result instanceof Error) {
         window.alert('返却に失敗しました。もう一度試してみてください。')
       }
