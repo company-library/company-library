@@ -1,7 +1,0 @@
-- "!include public_books.yaml"
-- "!include public_impressions.yaml"
-- "!include public_lending_histories.yaml"
-- "!include public_registration_histories.yaml"
-- "!include public_reservations.yaml"
-- "!include public_return_histories.yaml"
-- "!include public_users.yaml"
