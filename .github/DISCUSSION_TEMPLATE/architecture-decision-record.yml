@@ -1,13 +1,13 @@
-labels: [ Architecture Decision Record ]
+labels: [Architecture Decision Record]
 body:
   - type: dropdown
     attributes:
       label: ステータス
       description: この文書のステータスを選択してください。
       options:
-        - "提案済み"
-        - "承認済み"
-        - "破棄"
+        - "提案済み1"
+        - "承認済み1"
+        - "破棄1"
     validations:
       required: true
   - type: textarea
