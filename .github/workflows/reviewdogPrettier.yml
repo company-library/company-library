@@ -1,7 +1,6 @@
 name: reviewdogPrettier
 on: pull_request
 
-
 jobs:
   prettier:
     runs-on: ubuntu-latest
