@@ -1,6 +1,7 @@
 name: reviewdogPrettier
 on: pull_request
 
+
 jobs:
   prettier:
     runs-on: ubuntu-latest
@@ -13,5 +14,6 @@ jobs:
       - run: yarn install
       - uses: EPMatt/reviewdog-action-prettier@v1
         with:
+          github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
           prettier_flags: 'src/ test/'
