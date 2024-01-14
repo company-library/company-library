@@ -13,31 +13,35 @@ type BookProps = {
 const BookTile: FC<BookProps> = ({ book }) => {
   if (book.id) {
     return (
-      <Link href={`/books/${book.id}`}>
-        <div className="cursor-pointer max-w-sm rounded-lg shadow-lg overflow-hidden hover:shadow-2xl ">
-          <Image
-            src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-            alt={book.title}
-            width={300}
-            height={400}
-            data-testid="bookImg"
-          />
-          <p className="text-sm font-medium p-2">{book.title}</p>
+      <Link href={`/books/${book.id}`} className="cursor-pointer hover:shadow-2xl">
+        <div className="w-[300px] rounded-lg shadow-lg">
+          <div className="h-[400px] overflow-hidden">
+            <Image
+              src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+              alt={book.title}
+              width={300}
+              height={400}
+              data-testid="bookImg"
+            />
+          </div>
+          <p className="text-sm font-medium p-2 truncate">{book.title}</p>
         </div>
       </Link>
     )
   }
 
   return (
-    <div className="max-w-sm rounded-lg shadow-lg overflow-hidden">
-      <Image
-        src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
-        alt={book.title}
-        width={300}
-        height={400}
-        data-testid="bookImg"
-      />
-      <p className="text-sm font-medium p-2">{book.title}</p>
+    <div className="w-[300px] rounded-lg shadow-lg">
+      <div className="h-[400px] overflow-hidden">
+        <Image
+          src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+          alt={book.title}
+          width={300}
+          height={400}
+          data-testid="bookImg"
+        />
+      </div>
+      <p className="text-sm font-medium p-2 truncate">{book.title}</p>
     </div>
   )
 }

@@ -46,10 +46,8 @@ const Home = () => {
         ) : (
           data.books.map((book) => {
             return (
-              <div key={book.id}>
-                <div className="m-10">
-                  <BookTile book={book} />
-                </div>
+              <div key={book.id} className="mx-2.5 mt-10">
+                <BookTile book={book} />
               </div>
             )
           })
