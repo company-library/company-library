@@ -5,10 +5,32 @@ import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
-import { Metadata } from 'next'
+import prisma from '@/libs/prisma/client'
 
-export const metadata: Metadata = {
-  title: '詳細 | company-library',
+export const generateMetadata = async ({ params }: BookDetailPageParams) => {
+  const bookId = Number(params.id)
+  if (isNaN(bookId)) {
+    return { title: '書籍詳細 | company-library' }
+  }
+
+  const bookDetail = await prisma.book
+    .findUnique({
+      where: { id: bookId },
+      select: {
+        title: true,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('Book fetch failed')
+    })
+  if (bookDetail instanceof Error || !bookDetail) {
+    return { title: '書籍詳細 | company-library' }
+  }
+
+  return {
+    title: `${bookDetail.title} | company-library`,
+  }
 }
 
 type BookDetailPageParams = {
