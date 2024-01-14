@@ -1,6 +1,5 @@
-import { fireEvent, render } from '@testing-library/react'
-import UserCard from '@/app/users/userCard'
-import { user1, user2 } from '../../__utils__/data/user'
+import { fireEvent, render, screen } from '@testing-library/react'
+import { user1 } from '../../__utils__/data/user'
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -10,22 +9,26 @@ jest.mock('next/link', () => ({
 }))
 
 describe('UserCard component', () => {
-  it('ユーザー情報が表示されていること', () => {
-    const { getByText, getByTestId } = render(<UserCard user={user1} />)
+  const UserAvatarMock = jest
+    .fn()
+    .mockImplementation(() => <div data-testid="profileImage">userAvatar</div>)
+  jest.mock('@/components/userAvatar', () => ({
+    __esModule: true,
+    default: (...args: any) => UserAvatarMock(...args),
+  }))
 
-    expect(getByText(user1.name)).toBeInTheDocument()
-    expect(getByText(user1.email)).toBeInTheDocument()
-    expect(getByTestId('profileImage')).toBeInTheDocument()
-    expect(getByTestId('userProfileLink')).toHaveAttribute('href', `/users/${user1.id}`)
-    expect(getByTestId('readingBookCount').textContent).toBe('3')
-    expect(getByTestId('haveReadBookCount').textContent).toBe('4')
+  const UserCard = require('@/app/users/userCard').default
 
-    fireEvent.click(getByText(user1.name))
-  })
+  it('ユーザー情報が表示されていること', async () => {
+    render(await UserCard({ user: user1 }))
 
-  it('ユーザー画像が存在しない場合は、ユーザー画像は表示されない', () => {
-    const { queryByTestId } = render(<UserCard user={user2} />)
+    expect(screen.getByText(user1.name)).toBeInTheDocument()
+    expect(screen.getByText(user1.email)).toBeInTheDocument()
+    expect(screen.getByTestId('profileImage')).toBeInTheDocument()
+    expect(screen.getByTestId('userProfileLink')).toHaveAttribute('href', `/users/${user1.id}`)
+    expect(screen.getByTestId('readingBookCount').textContent).toBe('3')
+    expect(screen.getByTestId('haveReadBookCount').textContent).toBe('4')
 
-    expect(queryByTestId('profileImage')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByText(user1.name))
   })
 })
