@@ -8,7 +8,7 @@ type UserCardProps = {
   user: UserSummary
 }
 
-const UserCard: FC<UserCardProps> = ({ user }) => {
+const UserCard: FC<UserCardProps> = async ({ user }) => {
   const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
 
   return (
