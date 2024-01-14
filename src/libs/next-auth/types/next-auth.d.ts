@@ -1,8 +1,8 @@
-import { OldUser } from '@/models/user'
+import { User } from '@/models/user'
 
 declare module 'next-auth' {
   interface Session {
-    customUser: OldUser
+    customUser: User
     idToken: string
   }
 }
