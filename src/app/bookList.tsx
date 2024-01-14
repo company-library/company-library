@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Book } from '@/models/book'
 import { CustomError, isCustomError } from '@/models/errors'
 
-const Books = () => {
+const BookList = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const { data, error } = useSWR<{ books: Book[] } | CustomError>(
     `/api/books/search?q=${searchKeyword}`,
@@ -51,4 +51,4 @@ const Books = () => {
   )
 }
 
-export default Books
+export default BookList

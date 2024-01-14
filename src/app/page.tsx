@@ -1,4 +1,4 @@
-import Books from '@/app/books'
+import BookList from '@/app/bookList'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const Home = () => {
   return (
     <div>
-      <Books />
+      <BookList />
     </div>
   )
 }
