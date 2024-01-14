@@ -8,7 +8,11 @@ jest.mock('next/navigation', () => ({
 }))
 
 const loggedInUser = user1
-const getServerSessionMock = jest.fn().mockReturnValue({ customUser: { id: loggedInUser.id } })
+const getServerSessionMock = jest
+  .fn()
+  .mockReturnValue({
+    customUser: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
+  })
 jest.mock('next-auth', () => ({
   __esModule: true,
   getServerSession: () => getServerSessionMock(),
@@ -34,6 +38,7 @@ describe('navigationBar component', () => {
     expect(screen.getByRole('link', { name: 'マイページ' })).not.toHaveClass('bg-gray-600')
     expect(screen.getByRole('link', { name: '利用者一覧' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '利用者一覧' })).not.toHaveClass('bg-gray-600')
+    expect(screen.getByText(loggedInUser.name)).toBeInTheDocument()
   })
 
   it('company-libraryをクリックすると書籍一覧画面へ遷移する', async () => {
