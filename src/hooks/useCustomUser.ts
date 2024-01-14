@@ -1,15 +1,15 @@
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { OldUser, isOldUser } from '@/models/user'
+import { User, isUser } from '@/models/user'
 
 export const useCustomUser = () => {
   const { data: session, status } = useSession()
-  const [user, setUser] = useState<OldUser | undefined>(undefined)
+  const [user, setUser] = useState<User | undefined>(undefined)
 
   useEffect(() => {
     switch (status) {
       case 'authenticated':
-        if (session && isOldUser(session.customUser)) {
+        if (session && isUser(session.customUser)) {
           setUser(session.customUser)
         }
         break

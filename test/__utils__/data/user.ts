@@ -1,4 +1,4 @@
-import { OldUserSummary, UserSummary } from '@/models/user'
+import { UserSummary } from '@/models/user'
 import {
   lendingHistory1,
   lendingHistory2,
@@ -62,30 +62,5 @@ export const user2: UserSummary = {
   email: 'test2@example.com',
   imageUrl: null,
   createdAt: new Date(),
-  lendingHistories: [],
-}
-
-export const oldUser1: OldUserSummary = {
-  id: 1,
-  name: 'テスト太郎',
-  email: 'test1@example.com',
-  imageUrl: 'https://example.com/image/1',
-  lendingHistories: [
-    { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-    { bookId: 1, returnHistories_aggregate: { aggregate: { count: 0 } } },
-    { bookId: 2, returnHistories_aggregate: { aggregate: { count: 0 } } },
-    { bookId: 3, returnHistories_aggregate: { aggregate: { count: 0 } } },
-    { bookId: 3, returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { bookId: 4, returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { bookId: 5, returnHistories_aggregate: { aggregate: { count: 1 } } },
-    { bookId: 6, returnHistories_aggregate: { aggregate: { count: 1 } } },
-  ],
-}
-
-export const oldUser2: OldUserSummary = {
-  id: 2,
-  name: 'テスト二郎',
-  email: 'test2@example.com',
   lendingHistories: [],
 }
