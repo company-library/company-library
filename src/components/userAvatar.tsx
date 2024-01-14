@@ -12,20 +12,21 @@ const UserAvatar: FC<UserAvatarProps> = ({ user }) => {
   return (
     <div className="tooltip" data-tip={user.name} data-testid="name-tooltip">
       {user.imageUrl ? (
-        <Image
-          src={user.imageUrl}
-          alt={`${user.name}のプロフィール画像`}
-          width="60"
-          height="60"
-          className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
-          data-testid="profileImage"
-        />
+        <div className="avatar">
+          <div className="w-12 rounded-full">
+            <Image
+              src={user.imageUrl}
+              alt={`${user.name}のプロフィール画像`}
+              width="48"
+              height="48"
+              data-testid="profileImage"
+            />
+          </div>
+        </div>
       ) : (
-        <div className="flex items-center space-x-3">
-          <div className="avatar placeholder">
-            <div className="bg-neutral-focus text-neutral-content rounded-full w-[60px]">
-              <span>{user.name.substring(0, 1)}</span>
-            </div>
+        <div className="avatar placeholder">
+          <div className="w-12 rounded-full bg-neutral text-neutral-content">
+            <span>{user.name.substring(0, 1)}</span>
           </div>
         </div>
       )}
