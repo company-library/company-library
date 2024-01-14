@@ -36,6 +36,12 @@ describe('navigationBar component', () => {
     expect(screen.getByRole('link', { name: '利用者一覧' })).not.toHaveClass('bg-gray-600')
   })
 
+  it('company-libraryをクリックすると書籍一覧画面へ遷移する', async () => {
+    render(await NavigationBar())
+
+    expect(screen.getByText('company-library')).toHaveAttribute('href', '/')
+  })
+
   it('pathが/の場合、書籍一覧ボタンのデザインが強調される', async () => {
     pathnameMock.mockReturnValue('/')
 
