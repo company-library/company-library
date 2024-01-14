@@ -14,6 +14,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <NavigationBar />
         </header>
         <main className="max-w-7xl mx-auto mt-8">{children}</main>
+        <footer className="mt-10" />
       </body>
     </html>
   )
