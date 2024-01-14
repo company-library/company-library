@@ -7,6 +7,7 @@ import Link from 'next/link'
 const NavigationBar: FC = async () => {
   const session = await getServerSession(authOptions)
   const userId = session?.customUser.id
+  const userName = session?.customUser.name
 
   return (
     <div className="bg-gray-400 text-white">
@@ -30,6 +31,7 @@ const NavigationBar: FC = async () => {
             <li>
               <NavigationBarItem label="利用者一覧" href="/users" />
             </li>
+            <li className="pl-3 my-auto text-gray-200">{userName}</li>
           </ul>
         </div>
       </nav>
