@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import Image from 'next/image'
 import { UserSummary } from '@/models/user'
 import Link from 'next/link'
 import { readingHistories } from '@/hooks/server/readingHistories'
+import UserAvatar from '@/components/userAvatar'
 
 type UserCardProps = {
   user: UserSummary
@@ -19,16 +19,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
             <p className="text-gray-900 text-sm font-medium truncate">{user.name}</p>
             <p className="mt-1 text-gray-500 text-sm truncate">{user.email}</p>
           </div>
-          {user.imageUrl && (
-            <Image
-              src={user.imageUrl}
-              alt={`${user.name}のプロフィール画像`}
-              width="60"
-              height="60"
-              className="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0"
-              data-testid="profileImage"
-            />
-          )}
+          <UserAvatar user={user} />
         </div>
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="py-3 w-0 flex-1 flex">
