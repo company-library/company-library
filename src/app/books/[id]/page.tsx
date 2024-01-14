@@ -5,12 +5,11 @@ import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
+import { Metadata } from 'next'
 
-// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
-// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
-// export const metadata: Metadata = {
-//   title: '詳細 | company-library',
-// }
+export const metadata: Metadata = {
+  title: '詳細 | company-library',
+}
 
 type BookDetailPageParams = {
   params: {

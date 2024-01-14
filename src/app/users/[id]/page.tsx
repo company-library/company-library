@@ -2,12 +2,11 @@ import prisma from '@/libs/prisma/client'
 import BookList from '@/app/users/[id]/bookList'
 import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { readingHistories } from '@/hooks/server/readingHistories'
+import { Metadata } from 'next'
 
-// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
-// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
-// export const metadata: Metadata = {
-//   title: '利用者情報 | company-library',
-// }
+export const metadata: Metadata = {
+  title: '利用者情報 | company-library',
+}
 
 type UserPageProps = {
   params: {

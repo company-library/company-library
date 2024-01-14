@@ -1,11 +1,10 @@
 import prisma from '@/libs/prisma/client'
 import UserCard from '@/app/users/userCard'
+import { Metadata } from 'next'
 
-// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
-// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
-// export const metadata: Metadata = {
-//   title: '利用者一覧 | company-library',
-// }
+export const metadata: Metadata = {
+  title: '利用者一覧 | company-library',
+}
 
 const Users = async () => {
   const users = await prisma.user
