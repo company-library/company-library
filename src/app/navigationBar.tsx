@@ -9,19 +9,31 @@ const NavigationBar: FC = async () => {
   const userId = session?.customUser.id
 
   return (
-    <nav className="bg-gray-400 text-white">
-      <div className="max-w-7xl mx-auto flex">
-        <div className="w-1/5 py-4 text-2xl">
-          <Link href="/">company-library</Link>
+    <div className="bg-gray-400 text-white">
+      <nav className="navbar max-w-7xl mx-auto flex">
+        <div className="flex-1">
+          <Link href="/" className="text-2xl">
+            company-library
+          </Link>
         </div>
-        <div className="space-x-6 flex justify-end w-4/5">
-          <NavigationBarItem label="書籍一覧" href="/" />
-          <NavigationBarItem label="登録" href="/books/register" />
-          <NavigationBarItem label="マイページ" href={`/users/${userId}`} />
-          <NavigationBarItem label="利用者一覧" href="/users" />
+        <div className="flex-none">
+          <ul className="menu menu-horizontal px-1">
+            <li>
+              <NavigationBarItem label="書籍一覧" href="/" />
+            </li>
+            <li>
+              <NavigationBarItem label="登録" href="/books/register" />
+            </li>
+            <li>
+              <NavigationBarItem label="マイページ" href={`/users/${userId}`} />
+            </li>
+            <li>
+              <NavigationBarItem label="利用者一覧" href="/users" />
+            </li>
+          </ul>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   )
 }
 
