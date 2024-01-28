@@ -26,7 +26,7 @@ const ImpressionList = async ({ bookId }: Props) => {
       <tbody>
         {recentImpressions.map((impression, index) => {
           return (
-            <tr className="hover:hover" key={impression.id}>
+            <tr className="hover" key={impression.id}>
               <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
                 {toJstFormat(impression.updatedAt)}
               </td>

@@ -26,7 +26,7 @@ const LendingList = async ({ bookId }: Props) => {
       <tbody>
         {lendingHistories.map((lendingHistory, index) => {
           return (
-            <tr className="hover:hover" key={lendingHistory.id}>
+            <tr className="hover" key={lendingHistory.id}>
               <td className="w-[15rem]">
                 <span
                   className={isOverdue(lendingHistory.dueDate) ? 'text-red-400 font-bold' : ''}

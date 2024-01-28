@@ -26,7 +26,7 @@ const ReturnList = async ({ bookId }: Props) => {
       <tbody>
         {returnHistories.map((returnHistory, index) => {
           return (
-            <tr className="hover:hover" key={returnHistory.lendingHistoryId}>
+            <tr className="hover" key={returnHistory.lendingHistoryId}>
               <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
                 {toJstFormat(returnHistory.lendingHistory.lentAt)}〜
                 {toJstFormat(returnHistory.returnedAt)}
