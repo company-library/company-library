@@ -5,8 +5,8 @@ import fetcher from '@/libs/swr/fetcher'
 
 jest.mock('swr')
 
-describe('Home page', () => {
-  const TopPage = require('@/app/page').default
+describe('BookList page', () => {
+  const TopPage = require('@/app/bookList').default
 
   const swrMock = useSWR as jest.Mock
   swrMock.mockReturnValue({

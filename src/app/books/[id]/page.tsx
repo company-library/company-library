@@ -5,12 +5,33 @@ import LendingList from '@/app/books/[id]/lendingList'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import ReturnList from '@/app/books/[id]/returnList'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
+import prisma from '@/libs/prisma/client'
 
-// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
-// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
-// export const metadata: Metadata = {
-//   title: '詳細 | company-library',
-// }
+export const generateMetadata = async ({ params }: BookDetailPageParams) => {
+  const bookId = Number(params.id)
+  if (isNaN(bookId)) {
+    return { title: '書籍詳細 | company-library' }
+  }
+
+  const bookDetail = await prisma.book
+    .findUnique({
+      where: { id: bookId },
+      select: {
+        title: true,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('Book fetch failed')
+    })
+  if (bookDetail instanceof Error || !bookDetail) {
+    return { title: '書籍詳細 | company-library' }
+  }
+
+  return {
+    title: `${bookDetail.title} | company-library`,
+  }
+}
 
 type BookDetailPageParams = {
   params: {

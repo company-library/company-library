@@ -3,11 +3,29 @@ import BookList from '@/app/users/[id]/bookList'
 import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { readingHistories } from '@/hooks/server/readingHistories'
 
-// Next.jsでメタデータを設定した場合のテストに問題があるようなので、一旦コメントアウト
-// https://github.com/vercel/next.js/issues/47299#issuecomment-1477912861
-// export const metadata: Metadata = {
-//   title: '利用者情報 | company-library',
-// }
+export const generateMetadata = async ({ params }: UserPageProps) => {
+  const id = Number(params.id)
+  if (isNaN(id)) {
+    return { title: '利用者情報 | company-library' }
+  }
+
+  const user = await prisma.user
+    .findUnique({
+      where: { id },
+      select: { name: true },
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('User fetch failed')
+    })
+  if (user instanceof Error || !user) {
+    return { title: '利用者情報 | company-library' }
+  }
+
+  return {
+    title: `${user.name} | company-library`,
+  }
+}
 
 type UserPageProps = {
   params: {
