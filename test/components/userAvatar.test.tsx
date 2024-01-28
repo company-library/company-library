@@ -1,26 +1,39 @@
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { user1, user2 } from '../__utils__/data/user'
-import UserAvatar from '@/components/userAvatar'
 
-describe('UserCard component', () => {
-  it('ユーザー画像が表示されること', () => {
-    const { getByTestId } = render(<UserAvatar user={user1} />)
+describe('UserAvatar component', () => {
+  const getAvatarUrlMock = jest.fn()
+  jest.mock('@/libs/gravatar/getAvatarUrl', () => ({
+    __esModule: true,
+    getAvatarUrl: (email: string) => getAvatarUrlMock(email),
+  }))
 
-    expect(getByTestId('profileImage')).toBeInTheDocument()
+  const UserAvatar = require('@/components/userAvatar').default
+
+  it('ユーザー画像が表示されること', async () => {
+    getAvatarUrlMock.mockResolvedValueOnce(user1.imageUrl)
+
+    render(await UserAvatar({ user: user1 }))
+
+    expect(screen.getByTestId('profileImage')).toBeInTheDocument()
   })
 
-  it('ユーザー画像が存在しない場合は、ユーザー名先頭1文字のアイコンが表示されること', () => {
-    const { queryByTestId, getByText } = render(<UserAvatar user={user2} />)
+  it('ユーザー画像が存在しない場合は、ユーザー名先頭1文字のアイコンが表示されること', async () => {
+    getAvatarUrlMock.mockResolvedValueOnce(undefined)
 
-    expect(queryByTestId('profileImage')).not.toBeInTheDocument()
-    expect(getByText(user2.name.substring(0, 1))).toBeInTheDocument()
+    render(await UserAvatar({ user: user2 }))
+
+    expect(screen.queryByTestId('profileImage')).not.toBeInTheDocument()
+    expect(screen.getByText(user2.name.substring(0, 1))).toBeInTheDocument()
   })
 
   it('ホバーさせると、ツールチップでユーザー名が表示されること', async () => {
-    const user = user1
-    const { queryByText, getByTestId } = render(<UserAvatar user={user} />)
-    expect(queryByText(user.name)).not.toBeInTheDocument()
+    getAvatarUrlMock.mockResolvedValueOnce(user1.imageUrl)
 
-    expect(getByTestId('name-tooltip')).toHaveClass('tooltip')
+    const user = user1
+    render(await UserAvatar({ user: user1 }))
+    expect(screen.queryByText(user.name)).not.toBeInTheDocument()
+
+    expect(screen.getByTestId('name-tooltip')).toHaveClass('tooltip')
   })
 })

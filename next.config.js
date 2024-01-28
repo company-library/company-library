@@ -5,7 +5,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { hostname: 'books.google.com' },
-      { hostname: 's.gravatar.com' },
+      { hostname: 'gravatar.com' },
       { hostname: 'picsum.photos' },
     ],
   },

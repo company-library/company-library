@@ -5,6 +5,12 @@ import { user1, user2 } from '../../__utils__/data/user'
 describe('users page', () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
+  const UserCardMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  jest.mock('@/app/users/userCard', () => ({
+    __esModule: true,
+    default: (...args: any) => UserCardMock(...args),
+  }))
+
   const UserPage = require('@/app/users/page').default
 
   it('利用者一覧が表示される', async () => {

@@ -4,6 +4,12 @@ import { lendableBook } from '../../../__utils__/data/book'
 import { DateTime, Settings } from 'luxon'
 
 describe('LendingList Component', () => {
+  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  jest.mock('@/components/userAvatar', () => ({
+    __esModule: true,
+    default: (...args: any) => UserAvatarMock(...args),
+  }))
+
   const LendingListComponent = require('@/app/books/[id]/lendingList').default
 
   const expectedLendingHistories = [
@@ -37,11 +43,17 @@ describe('LendingList Component', () => {
 
     expect(prismaLendingHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ lentAt: 'asc' }])
     expect(screen.getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
-    expect(screen.getByTestId(`lendingUser-${0}`).textContent).toBe('u')
+    expect(screen.getByTestId(`lendingUser-${0}`).textContent).toBe(
+      expectedLendingHistories[0].user.name,
+    )
     expect(screen.getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
-    expect(screen.getByTestId(`lendingUser-${1}`).textContent).toBe('u')
+    expect(screen.getByTestId(`lendingUser-${1}`).textContent).toBe(
+      expectedLendingHistories[1].user.name,
+    )
     expect(screen.getByTestId(`dueDate-${2}`).textContent).toBe('2022/11/01')
-    expect(screen.getByTestId(`lendingUser-${2}`).textContent).toBe('u')
+    expect(screen.getByTestId(`lendingUser-${2}`).textContent).toBe(
+      expectedLendingHistories[2].user.name,
+    )
   })
 
   it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', async () => {
