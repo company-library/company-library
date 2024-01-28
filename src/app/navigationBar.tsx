@@ -3,9 +3,11 @@ import NavigationBarItem from '@/app/navigationBarItem'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import Link from 'next/link'
+import UserAvatar from '@/components/userAvatar'
 
 const NavigationBar: FC = async () => {
   const session = await getServerSession(authOptions)
+  const user = session?.customUser
   const userId = session?.customUser.id
   const userName = session?.customUser.name
 
@@ -31,7 +33,12 @@ const NavigationBar: FC = async () => {
             <li>
               <NavigationBarItem label="利用者一覧" href="/users" />
             </li>
-            <li className="pl-3 my-auto text-gray-200">{userName}</li>
+            {user && (
+              <li className="pl-3">
+                <UserAvatar user={user} size="sm" />
+              </li>
+            )}
+            <li className="my-auto text-gray-200">{userName}</li>
           </ul>
         </div>
       </nav>

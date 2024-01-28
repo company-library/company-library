@@ -8,11 +8,9 @@ jest.mock('next/navigation', () => ({
 }))
 
 const loggedInUser = user1
-const getServerSessionMock = jest
-  .fn()
-  .mockReturnValue({
-    customUser: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
-  })
+const getServerSessionMock = jest.fn().mockReturnValue({
+  customUser: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
+})
 jest.mock('next-auth', () => ({
   __esModule: true,
   getServerSession: () => getServerSessionMock(),
@@ -21,6 +19,12 @@ jest.mock('next-auth', () => ({
 jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
   __esModule: true,
   authOptions: {},
+}))
+
+const UserAvatarMock = jest.fn().mockImplementation(() => <div>userAvatar</div>)
+jest.mock('@/components/userAvatar', () => ({
+  __esModule: true,
+  default: (...args: any) => UserAvatarMock(...args),
 }))
 
 describe('navigationBar component', () => {
@@ -85,5 +89,18 @@ describe('navigationBar component', () => {
     })
     rerender(await NavigationBar())
     expect(screen.getByRole('link', { name: 'マイページ' })).not.toHaveClass('bg-gray-600')
+  })
+
+  it('ログインユーザーのアバターが表示される', async () => {
+    render(await NavigationBar())
+
+    expect(screen.getByText('userAvatar')).toBeInTheDocument()
+    expect(UserAvatarMock).toHaveBeenLastCalledWith(
+      {
+        user: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
+        size: 'sm',
+      },
+      {},
+    )
   })
 })
