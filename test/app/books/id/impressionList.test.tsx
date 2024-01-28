@@ -61,6 +61,15 @@ describe('ImpressionList component', () => {
     expect(screen.getByTestId(`impression-${2}`)).toHaveClass('whitespace-pre-wrap')
   })
 
+  it('感想が登録されていない場合、その旨のメッセージを表示する', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValueOnce([])
+
+    render(await ImpressionListComponent({ bookId: lendableBook.id }))
+
+    expect(screen.getByText('現在登録されている感想はありません')).toBeInTheDocument()
+  })
+
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
     prismaImpressionsMock.mockRejectedValueOnce(expectedError)

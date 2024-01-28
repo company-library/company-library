@@ -18,7 +18,11 @@ const LendingList = async ({ bookId }: Props) => {
       return new Error('Book fetch failed')
     })
   if (lendingHistories instanceof Error) {
-    return <div>貸出履歴の取得に失敗しました。再読み込みしてみてください。</div>
+    return <p>貸出履歴の取得に失敗しました。再読み込みしてみてください。</p>
+  }
+
+  if (lendingHistories.length === 0) {
+    return <p>現在借りているユーザーはいません</p>
   }
 
   return (

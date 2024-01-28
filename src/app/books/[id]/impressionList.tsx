@@ -18,7 +18,11 @@ const ImpressionList = async ({ bookId }: Props) => {
       return new Error('Book fetch failed')
     })
   if (recentImpressions instanceof Error) {
-    return <div>感想の取得に失敗しました。再読み込みしてみてください。</div>
+    return <p>感想の取得に失敗しました。再読み込みしてみてください。</p>
+  }
+
+  if (recentImpressions.length === 0) {
+    return <p>現在登録されている感想はありません</p>
   }
 
   return (

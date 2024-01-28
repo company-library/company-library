@@ -21,6 +21,10 @@ const ReturnList = async ({ bookId }: Props) => {
     return <div>返却履歴の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
+  if (returnHistories.length === 0) {
+    return <div>これまで借りたユーザーはいません</div>
+  }
+
   return (
     <table className="table w-full">
       <tbody>
