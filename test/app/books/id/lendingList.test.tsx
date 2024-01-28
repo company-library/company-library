@@ -74,6 +74,15 @@ describe('LendingList Component', () => {
     expect(screen.getByTestId(`dueDate-${2}`)).not.toHaveClass('font-bold')
   })
 
+  it('貸出中のユーザーがいない場合、その旨のメッセージが表示される', async () => {
+    // @ts-ignore
+    prismaLendingHistoryMock.mockResolvedValueOnce([])
+
+    render(await LendingListComponent({ bookId: lendableBook.id }))
+
+    expect(screen.getByText('現在借りているユーザーはいません')).toBeInTheDocument()
+  })
+
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
     prismaLendingHistoryMock.mockRejectedValueOnce(expectedError)

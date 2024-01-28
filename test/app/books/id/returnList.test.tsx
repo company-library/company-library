@@ -65,6 +65,15 @@ describe('ReturnList Component', () => {
     )
   })
 
+  it('返却履歴が登録されていない場合、その旨のメッセージが表示される', async () => {
+    // @ts-ignore
+    prismaReturnHistoryMock.mockResolvedValueOnce([])
+
+    render(await ReturnListComponent({ bookId: lendableBook.id }))
+
+    expect(screen.getByText('これまで借りたユーザーはいません')).toBeInTheDocument()
+  })
+
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
     prismaReturnHistoryMock.mockRejectedValueOnce(expectedError)

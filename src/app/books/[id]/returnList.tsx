@@ -21,12 +21,16 @@ const ReturnList = async ({ bookId }: Props) => {
     return <div>返却履歴の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
+  if (returnHistories.length === 0) {
+    return <div>これまで借りたユーザーはいません</div>
+  }
+
   return (
     <table className="table w-full">
       <tbody>
         {returnHistories.map((returnHistory, index) => {
           return (
-            <tr className="hover:hover" key={returnHistory.lendingHistoryId}>
+            <tr className="hover" key={returnHistory.lendingHistoryId}>
               <td className="w-[15rem]" data-testid={`returnedDate-${index}`}>
                 {toJstFormat(returnHistory.lendingHistory.lentAt)}〜
                 {toJstFormat(returnHistory.returnedAt)}
