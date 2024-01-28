@@ -8,14 +8,16 @@ type UserAvatarProps = {
     email: string
   }
   size?: Size
+  tooltip?: Tooltip
 }
 
-const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md' }) => {
+const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'none' }) => {
   const imageUrl = await getAvatarUrl(user.email)
   const width = getWidth(size)
+  const tooltipPosition = getTooltipPosition(tooltip)
 
   return (
-    <div className="tooltip" data-tip={user.name} data-testid="name-tooltip">
+    <div className={`${tooltipPosition}`} data-tip={user.name} data-testid="name-tooltip">
       {imageUrl ? (
         <div className="avatar">
           <div className={`${width}`}>
@@ -53,6 +55,22 @@ const getWidth = (size: Size) => {
       return 'w-12'
     case 'lg':
       return 'w-16'
+    default:
+      return ''
+  }
+}
+
+type Tooltip = 'none' | 'top' | 'bottom' | 'left' | 'right'
+const getTooltipPosition = (tooltip: Tooltip) => {
+  switch (tooltip) {
+    case 'top':
+      return 'tooltip tooltip-top'
+    case 'bottom':
+      return 'tooltip tooltip-bottom'
+    case 'left':
+      return 'tooltip tooltip-left'
+    case 'right':
+      return 'tooltip tooltip-right'
     default:
       return ''
   }
