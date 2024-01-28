@@ -14,6 +14,12 @@ jest.mock('next/navigation', () => ({
   redirect: () => redirectMock(),
 }))
 
+const notifySlackMock = jest.fn()
+jest.mock('@/libs/slack/webhook', () => ({
+  __esModule: true,
+  notifySlack: (msg: string) => notifySlackMock(msg),
+}))
+
 describe('server actions', () => {
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
@@ -52,6 +58,7 @@ describe('server actions', () => {
           userId: userId,
         },
       })
+      expect(notifySlackMock).toBeCalledWith(`「${title}」という書籍が登録されました。`)
       expect(redirectMock).toBeCalled()
     })
 

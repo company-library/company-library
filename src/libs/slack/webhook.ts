@@ -2,7 +2,7 @@ import process from 'process'
 import { IncomingWebhook } from '@slack/webhook'
 
 /**
- * Slackのwebhookをキックする関数
+ * Slack通知を行う
  * @param {string} text
  * @returns {Promise<void>}
  */
