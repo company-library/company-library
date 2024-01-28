@@ -9,7 +9,7 @@ export const metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
-      <body>
+      <body className="w-screen">
         <header>
           <NavigationBar />
         </header>
