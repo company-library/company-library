@@ -16,12 +16,12 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user }) => {
     <div className="tooltip" data-tip={user.name} data-testid="name-tooltip">
       {imageUrl ? (
         <div className="avatar">
-          <div className="w-12 rounded-full">
+          <div className="w-12">
             <Image
               src={imageUrl}
               alt={`${user.name}のプロフィール画像`}
-              width="48"
-              height="48"
+              fill={true}
+              className="rounded-full"
               data-testid="profileImage"
             />
           </div>
