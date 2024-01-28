@@ -3,6 +3,12 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 
 describe('ReturnList Component', () => {
+  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  jest.mock('@/components/userAvatar', () => ({
+    __esModule: true,
+    default: (...args: any) => UserAvatarMock(...args),
+  }))
+
   const ReturnListComponent = require('@/app/books/[id]/returnList').default
 
   const expectedReturnHistories = [
@@ -46,11 +52,17 @@ describe('ReturnList Component', () => {
 
     expect(prismaReturnHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ returnedAt: 'asc' }])
     expect(screen.getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
-    expect(screen.getByTestId(`returnedUser-${0}`).textContent).toBe('u')
+    expect(screen.getByTestId(`returnedUser-${0}`).textContent).toBe(
+      expectedReturnHistories[0].lendingHistory.user.name,
+    )
     expect(screen.getByTestId(`returnedDate-${1}`).textContent).toBe('2022/10/01〜2022/10/25')
-    expect(screen.getByTestId(`returnedUser-${1}`).textContent).toBe('u')
+    expect(screen.getByTestId(`returnedUser-${1}`).textContent).toBe(
+      expectedReturnHistories[1].lendingHistory.user.name,
+    )
     expect(screen.getByTestId(`returnedDate-${2}`).textContent).toBe('2022/10/01〜2022/10/20')
-    expect(screen.getByTestId(`returnedUser-${2}`).textContent).toBe('u')
+    expect(screen.getByTestId(`returnedUser-${2}`).textContent).toBe(
+      expectedReturnHistories[2].lendingHistory.user.name,
+    )
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {

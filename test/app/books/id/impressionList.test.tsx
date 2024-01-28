@@ -3,6 +3,12 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 
 describe('ImpressionList component', () => {
+  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  jest.mock('@/components/userAvatar', () => ({
+    __esModule: true,
+    default: (...args: any) => UserAvatarMock(...args),
+  }))
+
   const ImpressionListComponent = require('@/app/books/[id]/impressionList').default
 
   const prismaImpressionsMock = prismaMock.impression.findMany
@@ -38,15 +44,15 @@ describe('ImpressionList component', () => {
 
     expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ updatedAt: 'desc' }])
     expect(screen.getByTestId(`postedDate-${0}`).textContent).toBe('2022/11/01')
-    expect(screen.getByTestId(`postedUser-${0}`).textContent).toBe('u')
+    expect(screen.getByTestId(`postedUser-${0}`).textContent).toBe(expectedImpressions[0].user.name)
     expect(screen.getByTestId(`impression-${0}`).textContent).toBe('興味深い本でした')
     expect(screen.getByTestId(`postedDate-${1}`).textContent).toBe('2022/10/31')
-    expect(screen.getByTestId(`postedUser-${1}`).textContent).toBe('u')
+    expect(screen.getByTestId(`postedUser-${1}`).textContent).toBe(expectedImpressions[1].user.name)
     expect(screen.getByTestId(`impression-${1}`).textContent).toBe(
       '本の感想です。\n面白かったです。',
     )
     expect(screen.getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/21')
-    expect(screen.getByTestId(`postedUser-${2}`).textContent).toBe('u')
+    expect(screen.getByTestId(`postedUser-${2}`).textContent).toBe(expectedImpressions[2].user.name)
     expect(screen.getByTestId(`impression-${2}`).textContent).toBe('感想')
   })
 
