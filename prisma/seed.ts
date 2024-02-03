@@ -6,6 +6,8 @@ async function main() {
   await prisma.returnHistory.deleteMany({})
   await prisma.lendingHistory.deleteMany({})
   await prisma.registrationHistory.deleteMany({})
+  await prisma.impression.deleteMany({})
+  await prisma.reservation.deleteMany({})
   await prisma.book.deleteMany({})
   await prisma.user.deleteMany({})
 
