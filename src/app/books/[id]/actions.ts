@@ -21,7 +21,7 @@ export const lendBook = async (bookId: number, userId: number, dueDate: Date): P
     return history
   }
 
-  redirect(`${process.env.NEXTAUTH_URL}/books/${bookId}`)
+  redirect(`/books/${bookId}`)
 }
 
 /**
