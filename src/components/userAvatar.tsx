@@ -36,7 +36,7 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'n
             className={`${width} rounded-full bg-neutral text-neutral-content`}
             data-testid="width"
           >
-            <span>{user.name.substring(0, 1)}</span>
+            <span className="text-gray-200">{user.name.substring(0, 1)}</span>
           </div>
         </div>
       )}
