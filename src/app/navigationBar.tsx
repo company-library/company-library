@@ -19,27 +19,27 @@ const NavigationBar: FC = async () => {
             company-library
           </Link>
         </div>
-        <div className="flex-none">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <NavigationBarItem label="書籍一覧" href="/" />
-            </li>
-            <li>
-              <NavigationBarItem label="登録" href="/books/register" />
-            </li>
-            <li>
-              <NavigationBarItem label="マイページ" href={`/users/${userId}`} />
-            </li>
-            <li>
-              <NavigationBarItem label="利用者一覧" href="/users" />
-            </li>
-            {user && (
-              <li className="pl-3">
-                <UserAvatar user={user} size="sm" />
-              </li>
-            )}
-            <li className="my-auto text-gray-200">{userName}</li>
-          </ul>
+        <ul className="menu menu-horizontal px-1">
+          <li>
+            <NavigationBarItem label="書籍一覧" href="/" />
+          </li>
+          <li>
+            <NavigationBarItem label="登録" href="/books/register" />
+          </li>
+          <li>
+            <NavigationBarItem label="マイページ" href={`/users/${userId}`} />
+          </li>
+          <li>
+            <NavigationBarItem label="利用者一覧" href="/users" />
+          </li>
+        </ul>
+        <div className="pl-3">
+          {user && (
+            <div className="">
+              <UserAvatar user={user} size="sm" />
+            </div>
+          )}
+          <div className="my-auto pl-3 text-gray-200">{userName}</div>
         </div>
       </nav>
     </div>
