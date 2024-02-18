@@ -12,10 +12,15 @@ jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }))
 
+jest.mock('@/app/books/register/bookForm', () => ({
+  __esModule: true,
+  default: () => <div>登録フォーム</div>,
+}))
+
 describe('register page', () => {
   const RegisterPage = require('@/app/books/register/page').default
 
-  it('13桁入力するとGoogleBookのコンポーネントが表示される', async () => {
+  it('書籍登録ページが表示される', async () => {
     render(await RegisterPage())
 
     expect(screen.getByText('本を登録')).toBeInTheDocument()
