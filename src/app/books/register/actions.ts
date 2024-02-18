@@ -2,6 +2,7 @@
 
 import prisma from '@/libs/prisma/client'
 import { redirect } from 'next/navigation'
+import { notifySlack } from '@/libs/slack/webhook'
 
 /**
  * 書籍登録をするServer Action
@@ -47,6 +48,9 @@ export const registerBook = async (
   if (registrationHistory instanceof Error) {
     return registrationHistory
   }
+
+  // Slack通知処理の完了を待たない
+  notifySlack(`「${title}」という書籍が登録されました。`)
 
   redirect(`/books/${book.id}`)
 }
