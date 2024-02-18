@@ -48,7 +48,7 @@ export const registerBook = async (
     return registrationHistory
   }
 
-  redirect(`${process.env.NEXTAUTH_URL}/books/${book.id}`)
+  redirect(`/books/${book.id}`)
 }
 
 /**
@@ -68,5 +68,5 @@ export const addBook = async (bookId: number, userId: number): Promise<Error> =>
     return history
   }
 
-  redirect(`${process.env.NEXTAUTH_URL}/books/${bookId}`)
+  redirect(`/books/${bookId}`)
 }
