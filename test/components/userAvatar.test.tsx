@@ -27,13 +27,76 @@ describe('UserAvatar component', () => {
     expect(screen.getByText(user2.name.substring(0, 1))).toBeInTheDocument()
   })
 
-  it('ホバーさせると、ツールチップでユーザー名が表示されること', async () => {
-    getAvatarUrlMock.mockResolvedValueOnce(user1.imageUrl)
+  describe.each([
+    { case: 'ユーザー画像が存在する場合', avatarUrl: user1.imageUrl },
+    { case: 'ユーザー画像が存在しない場合', avatarUrl: undefined },
+  ])('$case', ({ avatarUrl }) => {
+    beforeEach(() => {
+      getAvatarUrlMock.mockResolvedValueOnce(avatarUrl)
+    })
 
-    const user = user1
-    render(await UserAvatar({ user: user1 }))
-    expect(screen.queryByText(user.name)).not.toBeInTheDocument()
+    it.each([
+      {
+        size: undefined,
+        expectedWidth: 'w-12',
+      },
+      {
+        size: 'sm',
+        expectedWidth: 'w-8',
+      },
+      {
+        size: 'md',
+        expectedWidth: 'w-12',
+      },
+      {
+        size: 'lg',
+        expectedWidth: 'w-16',
+      },
+    ])(
+      'sizeプロップスが $size の場合、 widthが $expectedWidth であること',
+      async ({ size, expectedWidth }) => {
+        render(await UserAvatar({ user: user1, size: size }))
 
-    expect(screen.getByTestId('name-tooltip')).toHaveClass('tooltip')
+        expect(screen.getByTestId('width')).toHaveClass(expectedWidth)
+      },
+    )
+
+    it.each([{ tooltip: undefined }, { tooltip: 'none' }])(
+      'tooltipプロップスが $tooltip の場合、 ツールチップが表示されないこと',
+      async ({ tooltip }) => {
+        render(await UserAvatar({ user: user1, tooltip: tooltip }))
+
+        expect(screen.getByTestId('name-tooltip')).not.toHaveClass('tooltip')
+      },
+    )
+
+    it.each([
+      {
+        tooltip: 'top',
+        expectedClasses: ['tooltip', 'tooltip-top'],
+      },
+      {
+        tooltip: 'bottom',
+        expectedClasses: ['tooltip', 'tooltip-bottom'],
+      },
+      {
+        tooltip: 'left',
+        expectedClasses: ['tooltip', 'tooltip-left'],
+      },
+      {
+        tooltip: 'right',
+        expectedClasses: ['tooltip', 'tooltip-right'],
+      },
+    ])(
+      'tooltipプロップスが $tooltip の場合、 ホバーさせるとツールチップでユーザー名が表示されること',
+      async ({ tooltip, expectedClasses }) => {
+        const user = user1
+
+        render(await UserAvatar({ user: user, tooltip: tooltip }))
+
+        expect(screen.getByTestId('name-tooltip')).toHaveClass(...expectedClasses)
+        expect(screen.getByTestId('name-tooltip')).toHaveAttribute('data-tip', user.name)
+      },
+    )
   })
 })
