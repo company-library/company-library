@@ -52,7 +52,7 @@ export const registerBook = async (
   // Slack通知処理の完了を待たない
   notifySlack(`「${title}」という書籍が登録されました。`)
 
-  redirect(`${process.env.NEXTAUTH_URL}/books/${book.id}`)
+  redirect(`/books/${book.id}`)
 }
 
 /**
@@ -72,5 +72,5 @@ export const addBook = async (bookId: number, userId: number): Promise<Error> =>
     return history
   }
 
-  redirect(`${process.env.NEXTAUTH_URL}/books/${bookId}`)
+  redirect(`/books/${bookId}`)
 }

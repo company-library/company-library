@@ -12,8 +12,8 @@ model User {
   id                    Int                   @id @default(autoincrement())
   email                 String                @unique
   name                  String
-  imageUrl              String?
-  createdAt             DateTime              @default(now())
+  imageUrl              String?               @map("image_url")
+  createdAt             DateTime              @default(now()) @map("created_at")
   lendingHistories      LendingHistory[]
   registrationHistories RegistrationHistory[]
   impressions           Impression[]
@@ -26,8 +26,8 @@ model Book {
   id                    Int                   @id @default(autoincrement())
   title                 String
   isbn                  String                @unique
-  imageUrl              String?
-  createdAt             DateTime              @default(now())
+  imageUrl              String?               @map("image_url")
+  createdAt             DateTime              @default(now()) @map("created_at")
   lendingHistories      LendingHistory[]
   registrationHistories RegistrationHistory[]
   impressions           Impression[]
@@ -38,10 +38,10 @@ model Book {
 
 model LendingHistory {
   id            Int            @id @default(autoincrement())
-  bookId        Int
-  userId        Int
-  dueDate       DateTime
-  lentAt        DateTime       @default(now())
+  bookId        Int            @map("book_id")
+  userId        Int            @map("user_id")
+  dueDate       DateTime       @map("due_date")
+  lentAt        DateTime       @default(now()) @map("lent_at")
   book          Book           @relation(fields: [bookId], references: [id])
   user          User           @relation(fields: [userId], references: [id])
   returnHistory ReturnHistory?
@@ -50,8 +50,8 @@ model LendingHistory {
 }
 
 model ReturnHistory {
-  lendingHistoryId Int            @unique
-  returnedAt       DateTime       @default(now())
+  lendingHistoryId Int            @unique @map("lending_history_id")
+  returnedAt       DateTime       @default(now()) @map("returned_at")
   lendingHistory   LendingHistory @relation(fields: [lendingHistoryId], references: [id])
 
   @@map("return_histories")
@@ -59,9 +59,9 @@ model ReturnHistory {
 
 model RegistrationHistory {
   id        Int      @id @default(autoincrement())
-  bookId    Int
-  userId    Int
-  createdAt DateTime @default(now())
+  bookId    Int      @map("book_id")
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
   book      Book     @relation(fields: [bookId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 
@@ -70,11 +70,11 @@ model RegistrationHistory {
 
 model Impression {
   id         Int      @id @default(autoincrement())
-  bookId     Int
-  userId     Int
+  bookId     Int      @map("book_id")
+  userId     Int      @map("user_id")
   impression String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
   book       Book     @relation(fields: [bookId], references: [id])
   user       User     @relation(fields: [userId], references: [id])
 
@@ -83,10 +83,10 @@ model Impression {
 
 model Reservation {
   id              Int      @id @default(autoincrement())
-  bookId          Int
-  userId          Int
-  reservationDate DateTime @db.Date
-  createdAt       DateTime @default(now())
+  bookId          Int      @map("book_id")
+  userId          Int      @map("user_id")
+  reservationDate DateTime @db.Date @map("reservation_date")
+  createdAt       DateTime @default(now()) @map("created_at")
   book            Book     @relation(fields: [bookId], references: [id])
   user            User     @relation(fields: [userId], references: [id])
 
