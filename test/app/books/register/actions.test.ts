@@ -20,6 +20,16 @@ jest.mock('@/libs/slack/webhook', () => ({
   notifySlack: (msg: string) => notifySlackMock(msg),
 }))
 
+jest.mock('@/libs/vercel/downloadAndPutImage', () => ({
+  __esModule: true,
+  downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
+    if (imageUrl) {
+      return `https://example.com/books/${isbn}/internal/cover.jpg`
+    }
+    return undefined
+  },
+}))
+
 describe('server actions', () => {
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
@@ -32,7 +42,7 @@ describe('server actions', () => {
         id: bookId,
         title,
         isbn,
-        imageUrl: null,
+        imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         createdAt: now,
       })
       prismaMock.registrationHistory.create.mockResolvedValueOnce({
@@ -42,14 +52,19 @@ describe('server actions', () => {
         createdAt: new Date(),
       })
 
-      const result = await registerBook(title, isbn, undefined, userId)
+      const result = await registerBook(
+        title,
+        isbn,
+        `https://example.com/books/${isbn}/external/cover.jpg`,
+        userId,
+      )
 
       expect(result).toBeUndefined()
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
           isbn,
-          imageUrl: undefined,
+          imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         },
       })
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
