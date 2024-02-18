@@ -3,6 +3,7 @@
 import prisma from '@/libs/prisma/client'
 import { redirect } from 'next/navigation'
 import { notifySlack } from '@/libs/slack/webhook'
+import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
 /**
  * 書籍登録をするServer Action
@@ -18,12 +19,14 @@ export const registerBook = async (
   imageUrl: string | undefined,
   userId: number,
 ): Promise<Error> => {
+  const vercelBlobUrl = await downloadAndPutImage(imageUrl, isbn)
+
   const book = await prisma.book
     .create({
       data: {
         title,
         isbn,
-        imageUrl,
+        imageUrl: vercelBlobUrl,
       },
     })
     .catch((e) => {

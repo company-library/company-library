@@ -21,6 +21,7 @@
     "@headlessui/react": "^1.7.0",
     "@prisma/client": "^5.0.0",
     "@slack/webhook": "^7.0.2",
+    "@vercel/blob": "^0.22.0",
     "graphql": "^16.8.1",
     "luxon": "^3.2.1",
     "next": "14.0.2",

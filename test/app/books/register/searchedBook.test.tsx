@@ -1,20 +1,20 @@
 import { render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
-import AddBookDiv from '@/app/books/register/addBookDiv'
-import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import useSWR from 'swr'
 
-jest.mock('@/app/books/register/addBookDiv')
-jest.mock('@/app/books/register/registerBookDiv')
+const addRegisterBookDivMock = jest.fn().mockImplementation(() => <>add book div component</>)
+jest.mock('@/app/books/register/addBookDiv', () => ({
+  __esModule: true,
+  default: addRegisterBookDivMock,
+}))
+const registerBookDivMock = jest.fn().mockImplementation(() => <>register book div component</>)
+jest.mock('@/app/books/register/registerBookDiv', () => ({
+  __esModule: true,
+  default: registerBookDivMock,
+}))
 jest.mock('swr')
 
 describe('searched book component', () => {
-  ;(AddBookDiv as jest.Mock).mockImplementation(() => {
-    return <>add book div component</>
-  })
-  ;(RegisterBookDiv as jest.Mock).mockImplementation(() => {
-    return <>register book div component</>
-  })
   const swrMock = useSWR as jest.Mock
   const userId = user1.id
   const isbn = '1234567890123'
@@ -41,6 +41,7 @@ describe('searched book component', () => {
 
     expect(getByText('こちらの本でしょうか？')).toBeInTheDocument()
     expect(getByText('testBook')).toBeInTheDocument()
+    expect(getByText('register book div component')).toBeInTheDocument()
   })
 
   it('登録済みの書籍の場合は書籍を追加するためのコンポーネントを表示する', () => {
@@ -61,14 +62,14 @@ describe('searched book component', () => {
 
     render(<SearchedBookComponent isbn={isbn} userId={userId} />)
 
-    expect(AddBookDiv).toBeCalledWith(
+    expect(addRegisterBookDivMock).toBeCalledWith(
       {
         companyBook,
         userId: user1.id,
       },
       {},
     )
-    expect(RegisterBookDiv).not.toBeCalled()
+    expect(registerBookDivMock).not.toBeCalled()
   })
 
   it('登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する', () => {
@@ -88,8 +89,8 @@ describe('searched book component', () => {
 
     render(<SearchedBookComponent isbn={isbn} userId={userId} />)
 
-    expect(AddBookDiv).not.toBeCalled()
-    expect(RegisterBookDiv).toBeCalledWith(
+    expect(addRegisterBookDivMock).not.toBeCalled()
+    expect(registerBookDivMock).toBeCalledWith(
       {
         title: bookTitle,
         isbn: isbn,

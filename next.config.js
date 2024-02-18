@@ -7,6 +7,7 @@ const nextConfig = {
       { hostname: 'books.google.com' },
       { hostname: 'gravatar.com' },
       { hostname: 'picsum.photos' },
+      { hostname: '*.public.blob.vercel-storage.com' },
     ],
   },
 }
