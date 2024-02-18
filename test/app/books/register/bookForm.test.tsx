@@ -1,14 +1,12 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
-import SearchedBook from '@/app/books/register/searchedBook'
 
-jest.mock('@/app/books/register/searchedBook')
+jest.mock('@/app/books/register/searchedBook', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => <>searched book component</>),
+}))
 
 describe('book form component', () => {
-  ;(SearchedBook as jest.Mock).mockImplementation(() => {
-    return <>searched book component</>
-  })
-
   const BookFormComponent = require('@/app/books/register/bookForm').default
 
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
