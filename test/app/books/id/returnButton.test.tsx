@@ -1,13 +1,6 @@
 import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
-// TransitionとDialogを使用するコンポーネントの場合に必要なモック
-const intersectionObserverMock = () => ({
-  observe() {},
-  disconnect() {},
-})
-window.IntersectionObserver = jest.fn().mockImplementation(intersectionObserverMock)
-
 const returnBookMock = jest.fn()
 jest.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
@@ -27,8 +20,17 @@ describe('returnButton component', () => {
   const userId = 2
   const lendingHistoryId = 10
 
+  HTMLDialogElement.prototype.showModal = jest.fn().mockImplementation(() => {
+    const modal = document.getElementsByClassName('modal')
+    modal[0].setAttribute('open', 'true')
+  })
+  HTMLDialogElement.prototype.close = jest.fn().mockImplementation(() => {
+    const modal = document.getElementsByClassName('modal')
+    modal[0].removeAttribute('open')
+  })
+
   it('propsのdisabledがtrueの場合、無効化して表示される', () => {
-    const { getByRole, rerender } = render(
+    const { rerender } = render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
@@ -37,7 +39,7 @@ describe('returnButton component', () => {
       />,
     )
 
-    expect(getByRole('button', { name: '返却する' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '返却する' })).toBeDisabled()
 
     rerender(
       <ReturnButton
@@ -48,11 +50,11 @@ describe('returnButton component', () => {
       />,
     )
 
-    expect(getByRole('button', { name: '返却する' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: '返却する' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、ダイアログが表示される', () => {
-    const { getByRole, getByText, getByPlaceholderText } = render(
+    render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
@@ -60,16 +62,16 @@ describe('returnButton component', () => {
         disabled={false}
       />,
     )
-    fireEvent.click(getByRole('button', { name: '返却する' }))
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
 
-    expect(getByText('返却しますか？')).toBeInTheDocument()
-    expect(getByPlaceholderText('感想を書いてください')).toBeInTheDocument()
-    expect(getByRole('button', { name: 'Ok' })).toBeInTheDocument()
-    expect(getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: '返却しますか？' })).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('感想を書いてください')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
   })
 
   it('ダイアログで感想を入力することができる', async () => {
-    const { getByRole, getByPlaceholderText, getByDisplayValue } = render(
+    render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
@@ -77,28 +79,28 @@ describe('returnButton component', () => {
         disabled={false}
       />,
     )
-    fireEvent.click(getByRole('button', { name: '返却する' }))
-    fireEvent.change(getByPlaceholderText('感想を書いてください'), {
-      target: { value: '感想を書いたよ' },
-    })
-
-    expect(getByDisplayValue('感想を書いたよ')).toBeInTheDocument()
-  })
-
-  it('ダイアログのOkボタンをクリックすると、返却処理が実行され、リロードされる', async () => {
-    const { getByRole, queryByText } = render(
-      <ReturnButton
-        bookId={bookId}
-        userId={userId}
-        lendingHistoryId={lendingHistoryId}
-        disabled={false}
-      />,
-    )
-    fireEvent.click(getByRole('button', { name: '返却する' }))
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を書いたよ' },
     })
-    fireEvent.click(getByRole('button', { name: 'Ok' }))
+
+    expect(screen.getByDisplayValue('感想を書いたよ')).toBeInTheDocument()
+  })
+
+  it('ダイアログのOkボタンをクリックすると、返却処理が実行され、リロードされる', async () => {
+    render(
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
+    fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
+      target: { value: '感想を書いたよ' },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
       expect(returnBookMock).toHaveBeenCalledWith({
@@ -107,7 +109,9 @@ describe('returnButton component', () => {
         lendingHistoryId,
         impression: '感想を書いたよ',
       })
-      expect(queryByText('返却しますか？')).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
+      ).not.toBeInTheDocument()
       expect(refreshMock).toBeCalled()
     })
   })
@@ -116,7 +120,7 @@ describe('returnButton component', () => {
     returnBookMock.mockReturnValueOnce(new Error('error occurred!'))
     window.alert = jest.fn()
 
-    const { getByRole, queryByText } = render(
+    render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
@@ -124,19 +128,21 @@ describe('returnButton component', () => {
         disabled={false}
       />,
     )
-    fireEvent.click(getByRole('button', { name: '返却する' }))
-    fireEvent.click(getByRole('button', { name: 'Ok' }))
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
       expect(returnBookMock).toBeCalled()
       expect(window.alert).toBeCalledWith('返却に失敗しました。もう一度試してみてください。')
-      expect(queryByText('返却しますか？')).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
+      ).not.toBeInTheDocument()
       expect(refreshMock).toBeCalled()
     })
   })
 
   it('ダイアログのCancelボタンをクリックすると、返却処理は実行されない', async () => {
-    const { getByRole, queryByText } = render(
+    render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
@@ -144,12 +150,14 @@ describe('returnButton component', () => {
         disabled={false}
       />,
     )
-    fireEvent.click(getByRole('button', { name: '返却する' }))
-    fireEvent.click(getByRole('button', { name: 'Cancel' }))
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await waitFor(() => {
       expect(returnBookMock).not.toBeCalled()
-      expect(queryByText('返却しますか？')).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
+      ).not.toBeInTheDocument()
     })
   })
 })
