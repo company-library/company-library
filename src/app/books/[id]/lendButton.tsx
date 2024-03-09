@@ -4,6 +4,7 @@ import { FC, startTransition, useRef, useState } from 'react'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
 import { lendBook } from '@/app/books/[id]/actions'
+import { useRouter } from 'next/navigation'
 
 type LendButtonProps = {
   bookId: number
@@ -12,6 +13,7 @@ type LendButtonProps = {
 }
 
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
+  const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openModal = () => dialogRef.current && dialogRef.current.showModal()
   const closeModal = () => dialogRef.current && dialogRef.current.close()
@@ -20,8 +22,14 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   const onClick = () => {
     // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
     startTransition(async () => {
-      await lendBook(bookId, userId, dueDate)
+      const result = await lendBook(bookId, userId, dueDate)
+      if (result instanceof Error) {
+        window.alert('貸し出しに失敗しました。もう一度試してみてください。')
+        return
+      }
+
       closeModal()
+      router.refresh()
     })
   }
 

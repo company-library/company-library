@@ -33,6 +33,7 @@ const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId,
       })
       if (result instanceof Error) {
         window.alert('返却に失敗しました。もう一度試してみてください。')
+        return
       }
 
       closeModal()

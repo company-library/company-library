@@ -117,7 +117,7 @@ describe('returnButton component', () => {
   })
 
   it('返却処理でエラーが発生した場合、アラート表示する', async () => {
-    returnBookMock.mockReturnValueOnce(new Error('error occurred!'))
+    returnBookMock.mockResolvedValueOnce(new Error('error occurred!'))
     window.alert = jest.fn()
 
     render(
@@ -132,13 +132,9 @@ describe('returnButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
-      expect(returnBookMock).toBeCalled()
       expect(window.alert).toBeCalledWith('返却に失敗しました。もう一度試してみてください。')
-      expect(
-        screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
-      ).not.toBeInTheDocument()
-      expect(refreshMock).toBeCalled()
     })
+    expect(refreshMock).not.toBeCalled()
   })
 
   it('ダイアログのCancelボタンをクリックすると、返却処理は実行されない', async () => {

@@ -38,7 +38,6 @@ describe('server actions', () => {
           dueDate,
         },
       })
-      expect(redirectMock).toBeCalled()
     })
 
     it('貸し出し履歴の追加に失敗した場合はエラーを返す', async () => {
@@ -51,7 +50,8 @@ describe('server actions', () => {
 
       const result = await lendBook(bookId, userId, dueDate)
 
-      expect(result.message).toBe('貸し出しに失敗しました。もう一度試して見てください。')
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toBe('貸し出しに失敗しました。もう一度試して見てください。')
       expect(prismaMock.lendingHistory.create).toBeCalledWith({
         data: {
           bookId,
@@ -60,7 +60,6 @@ describe('server actions', () => {
         },
       })
       expect(errorMock).toBeCalledWith(error)
-      expect(redirectMock).not.toBeCalled()
     })
   })
 
