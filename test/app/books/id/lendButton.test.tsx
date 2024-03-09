@@ -13,6 +13,14 @@ jest.mock('@/app/books/[id]/actions', () => ({
     lendBookMock(bookId, userId, dueDate),
 }))
 
+const refreshMock = jest.fn()
+jest.mock('next/navigation', () => ({
+  __esModule: true,
+  useRouter: () => {
+    return { refresh: refreshMock }
+  },
+}))
+
 describe('LendButton component', () => {
   const bookId = 1
   const userId = 2
@@ -61,12 +69,29 @@ describe('LendButton component', () => {
       expect(
         screen.queryByRole('heading', { level: 3, name: '何日まで借りますか？' }),
       ).not.toBeInTheDocument()
-      expect(lendBookMock).toBeCalledWith(
-        bookId,
-        userId,
-        dateStringToDate(expectedDueDate.toISODate()),
-      )
     })
+    expect(lendBookMock).toBeCalledWith(
+      bookId,
+      userId,
+      dateStringToDate(expectedDueDate.toISODate()),
+    )
+    expect(refreshMock).toBeCalled()
+  })
+
+  it('貸出処理に失敗した場合、エラーメッセージが表示される', async () => {
+    lendBookMock.mockResolvedValueOnce(new Error('error occurred'))
+    window.alert = jest.fn()
+
+    render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+
+    fireEvent.click(screen.getByRole('button', { name: '借りる' }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
+
+    await waitFor(() => {
+      expect(window.alert).toBeCalledWith('貸し出しに失敗しました。もう一度試してみてください。')
+    })
+    expect(refreshMock).not.toBeCalled()
   })
 
   it('ダイアログのCancelボタンをクリックすると、貸出処理は実行されない', async () => {

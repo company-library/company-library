@@ -1,7 +1,6 @@
 'use server'
 
 import prisma from '@/libs/prisma/client'
-import { redirect } from 'next/navigation'
 
 /**
  * 書籍を貸し出すServer Action
@@ -10,7 +9,11 @@ import { redirect } from 'next/navigation'
  * @param {Date} dueDate
  * @returns {Promise<Error>}
  */
-export const lendBook = async (bookId: number, userId: number, dueDate: Date): Promise<Error> => {
+export const lendBook = async (
+  bookId: number,
+  userId: number,
+  dueDate: Date,
+): Promise<undefined | Error> => {
   const history = await prisma.lendingHistory
     .create({ data: { bookId, userId, dueDate } })
     .catch((e) => {
@@ -21,7 +24,7 @@ export const lendBook = async (bookId: number, userId: number, dueDate: Date): P
     return history
   }
 
-  redirect(`/books/${bookId}`)
+  return undefined
 }
 
 /**
@@ -37,7 +40,7 @@ export const returnBook = async ({
   userId,
   lendingHistoryId,
   impression,
-}: ReturnBookWithImpressionProps): Promise<void | Error> => {
+}: ReturnBookWithImpressionProps): Promise<undefined | Error> => {
   const result = await prisma
     .$transaction(async (prisma) => {
       await prisma.returnHistory.create({
@@ -63,6 +66,8 @@ export const returnBook = async ({
   if (result instanceof Error) {
     return result
   }
+
+  return undefined
 }
 type ReturnBookWithImpressionProps = {
   bookId: number
