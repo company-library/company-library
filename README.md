@@ -1,27 +1,28 @@
-## Run local Hasura
+# Company-Library
+
+## Deploy your own
+
+Deploy the example using [Vercel](https://vercel.com):
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcompany-library%2Fcompany-library)
+
+## Run local
+
+### Run local DB
 
 ```bash
 docker-compose --env-file .env.local up -d  
 ```
 
-## Run on local
-
-```bash
-yarn dev
-```
-
-## Migrate DB and Hasura
-
-```bash
-cd hasura
-npx hasura metadata apply
-npx hasura migrate apply --database-name default
-npx hasura metadata reload
-```
-
-## Migrate DB with Prisma
+### Migrate DB
 
 ```bash
 yarn db:generate
 yarn db:push
+```
+
+### Run on local
+
+```bash
+yarn dev
 ```
