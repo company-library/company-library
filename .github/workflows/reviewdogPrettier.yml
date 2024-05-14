@@ -7,10 +7,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
-          cache: 'yarn'
+      - uses: volta-cli/action@v4
       - run: yarn install --frozen-lockfile
       - uses: EPMatt/reviewdog-action-prettier@v1
         with:
