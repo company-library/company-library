@@ -100,7 +100,7 @@ describe('navigationBar component', () => {
         user: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
         size: 'sm',
       },
-      {},
+      undefined,
     )
   })
 })

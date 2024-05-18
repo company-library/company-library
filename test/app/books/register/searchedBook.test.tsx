@@ -67,7 +67,7 @@ describe('searched book component', () => {
         companyBook,
         userId: user1.id,
       },
-      {},
+      undefined,
     )
     expect(registerBookDivMock).not.toBeCalled()
   })
@@ -97,7 +97,7 @@ describe('searched book component', () => {
         thumbnailUrl: undefined,
         userId: userId,
       },
-      {},
+      undefined,
     )
   })
 
