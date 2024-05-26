@@ -2,5 +2,29 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
+  ],
+  "schedule": "before 9am on Saturday",
+  "timezone": "Asia/Tokyo",
+  "packageRules": [
+    {
+      "groupName": "next",
+      "matchPackageNames": ["next", "eslint-config-next"]
+    },
+    {
+      "groupName": "prisma",
+      "matchPackageNames": ["prisma"],
+      "matchPackagePrefixes": ["@prisma"]
+    },
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    }
   ]
 }
