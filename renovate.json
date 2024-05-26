@@ -9,6 +9,11 @@
     {
       "groupName": "next",
       "matchPackageNames": ["next", "eslint-config-next"]
+    },
+    {
+      "groupName": "prisma",
+      "matchPackageNames": ["prisma"],
+      "matchPackagePrefixes": ["@prisma"]
     }
   ]
 }
