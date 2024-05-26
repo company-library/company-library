@@ -29,8 +29,7 @@
     "prisma": "^5.0.0",
     "react": "canary",
     "react-dom": "canary",
-    "swr": "^1.3.0",
-    "urql": "^2.2.3"
+    "swr": "^1.3.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
