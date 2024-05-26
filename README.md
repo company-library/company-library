@@ -64,13 +64,13 @@ Azure ADまたはAzure AD B2Cを使用して認証を行います。
 - [Azure ADの設定手順](https://next-auth.js.org/providers/azure-ad)
 - [Azure AD B2Cの設定手順](https://next-auth.js.org/providers/azure-ad-b2c)
 
-環境変数についてはVercelのプロジェクト作成時に設定するので手元に控えていてください。
+環境変数についてはVercelのプロジェクト作成時に設定するので手元に控えていてください。  
 必要な環境変数については、`.env.example`を参照してください。
 
 ### 2. Vercelへのデプロイ
 
 [Vercel](https://vercel.com)にデプロイします。  
-同時に、Vercel PostgresとVercel Blobも追加します。
+同時に、Vercel PostgresとVercel Blobも追加します。  
 以下のボタンをクリックして、デプロイしてください。  
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcompany-library%2Fcompany-library&stores=%5B%7B%22type%22%3A%22postgres%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D)
@@ -105,7 +105,7 @@ cp .env.example .env.local
 
 `.env.local`に`POSTGRES_PRISMA_URL`と`POSTGRES_URL_NON_POOLING`以外の環境変数を設定してください。
 
-### 3. ローカルDBの起動
+### 3. DBの設定
 
 DBとしてはPostgresを使用することもできますし、Vercel Postgresを使用することもできます。
 
