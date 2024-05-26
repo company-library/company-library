@@ -42,17 +42,35 @@ graph TB;
     style Slack fill:#f0f0f0,stroke:#000,stroke-width:3px,color:#000
 ```
 
+認証基盤は他の認証基盤のニーズがあれば追加します。  
+要望があれば、Issueを立ててください。
+
 ## Deploy your own
 
 - Vercel
 - Vercel Postgres
 - Vercel Blob
+- Azure AD or Azure AD B2C
+- Slack
 
-を使用します
+を使用します。
 
+### 1. 認証基盤の設定
+
+Azure ADまたはAzure AD B2Cを使用して認証を行います。
+
+以下のどちらかを見て、設定を行ってください。
+
+- [Azure ADの設定手順](https://next-auth.js.org/providers/azure-ad)
+- [Azure AD B2Cの設定手順](https://next-auth.js.org/providers/azure-ad-b2c)
+
+環境変数についてはVercelのプロジェクト作成時に設定するので手元に控えていてください。
+必要な環境変数については、`.env.example`を参照してください。
+
+### 2. Vercelへのデプロイ
 Deploy the example using [Vercel](https://vercel.com):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcompany-library%2Fcompany-library)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcompany-library%2Fcompany-library&stores%3D%5B%7B%22type%22%3A%22postgres%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D)
 
 ## Run local
 
