@@ -7,6 +7,11 @@ updates:
       day: "saturday"
       time: "09:00"
       timezone: "Asia/Tokyo"
+    groups:
+      next:
+        patterns:
+          - "next"
+          - "eslint-config-next"
 
   - package-ecosystem: "github-actions"
     directory: "/"
