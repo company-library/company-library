@@ -13,6 +13,15 @@ updates:
           - "next"
           - "eslint-config-next"
 
+      # 個別にグループ化したい場合はここより上に追記してください
+      minor-and-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
