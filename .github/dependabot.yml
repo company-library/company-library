@@ -12,6 +12,10 @@ updates:
         patterns:
           - "next"
           - "eslint-config-next"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
 
       # 個別にグループ化したい場合はここより上に追記してください
       minor-and-patch:
