@@ -21,7 +21,32 @@ Vercel上にデプロイすることで、どこの会社でも簡単に導入�
 - 書籍に関する感想の登録
 - ユーザーの読書履歴の閲覧
 
+## Architecture
+
+```mermaid
+graph TB;
+    Client[クライアント] -->|HTTPリクエスト| Vercel["Next.jsアプリケーション<br>(Vercel)"];
+    Vercel -->|認証要求| Auth["認証<br>(Azure AD/B2C)"];
+    Vercel -->|データベースクエリ| DB["データベース<br>(Vercel Postgresql)"];
+    Vercel -->|ファイルアクセス| Blob["ファイルストレージ<br>(Vercel Blob)"];
+    Auth -->|認証応答| Vercel;
+    DB -->|データ応答| Vercel;
+    Blob -->|ファイル応答| Vercel;
+
+    style Client fill:#f0f0f0,stroke:#000,stroke-width:1px,color:#000
+    style Vercel fill:#f0f0f0,stroke:#000,stroke-width:3px,color:#000
+    style Auth fill:#f0f0f0,stroke:#000,stroke-width:3px,color:#000
+    style DB fill:#f0f0f0,stroke:#000,stroke-width:3px,color:#000
+    style Blob fill:#f0f0f0,stroke:#000,stroke-width:3px,color:#000
+```
+
 ## Deploy your own
+
+- Vercel
+- Vercel Postgres
+- Vercel Blob
+
+を使用します
 
 Deploy the example using [Vercel](https://vercel.com):
 
