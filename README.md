@@ -26,7 +26,7 @@ Vercel上にデプロイすることで、どこの会社でも簡単に導入�
 ```mermaid
 graph TB;
     Client[クライアント] -->|HTTPリクエスト| Vercel["Next.jsアプリケーション<br>(Vercel)"];
-    Vercel -->|認証要求| Auth["認証<br>(Azure AD/B2C)"];
+    Vercel -->|認証要求| Auth["認証<br>(Azure AD  or<br>Azure AD B2C)"];
     Vercel -->|データベースクエリ| DB["データベース<br>(Vercel Postgresql)"];
     Vercel -->|ファイルアクセス| Blob["ファイルストレージ<br>(Vercel Blob)"];
     Auth -->|認証応答| Vercel;
