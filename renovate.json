@@ -14,6 +14,17 @@
       "groupName": "prisma",
       "matchPackageNames": ["prisma"],
       "matchPackagePrefixes": ["@prisma"]
+    },
+    {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
     }
   ]
 }
