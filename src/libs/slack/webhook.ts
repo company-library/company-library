@@ -9,7 +9,7 @@ import { IncomingWebhook } from '@slack/webhook'
 export const notifySlack = async (text: string) => {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL
   if (!webhookUrl) {
-    console.error('SLACK_WEBHOOK_URL is not set in the environment variable')
+    console.info('SLACK_WEBHOOK_URL is not set in the environment variable')
     return
   }
 
@@ -18,6 +18,6 @@ export const notifySlack = async (text: string) => {
   await webhook.send({
     username: 'company-librarian',
     icon_emoji: ':teacher:',
-    text
+    text,
   })
 }
