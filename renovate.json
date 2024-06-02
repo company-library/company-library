@@ -7,15 +7,6 @@
   "timezone": "Asia/Tokyo",
   "packageRules": [
     {
-      "groupName": "next",
-      "matchPackageNames": ["next", "eslint-config-next"]
-    },
-    {
-      "groupName": "prisma",
-      "matchPackageNames": ["prisma"],
-      "matchPackagePrefixes": ["@prisma"]
-    },
-    {
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch",
       "matchPackagePatterns": [
@@ -25,6 +16,15 @@
         "minor",
         "patch"
       ]
+    },
+    {
+      "groupName": "prisma",
+      "matchPackageNames": ["prisma"],
+      "matchPackagePrefixes": ["@prisma"]
+    },
+    {
+      "groupName": "next",
+      "matchPackageNames": ["next", "eslint-config-next"]
     }
   ]
 }
