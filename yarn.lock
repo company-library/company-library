@@ -582,15 +582,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-typed-document-node/core@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "@graphql-typed-document-node/core@npm:3.1.1"
-  peerDependencies:
-    graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/c186e5adceb0dfdaa770856d2f17c831a474f5927d79f984326ecb3d8680ba3c1ee2314f7def1d863692cd9cbe4dffc8bb52fc74ee0aa9b31e9491f24ef59f90
-  languageName: node
-  linkType: hard
-
 "@headlessui/react@npm:^1.7.0":
   version: 1.7.0
   resolution: "@headlessui/react@npm:1.7.0"
@@ -1672,18 +1663,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@urql/core@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "@urql/core@npm:2.6.1"
-  dependencies:
-    "@graphql-typed-document-node/core": "npm:^3.1.1"
-    wonka: "npm:^4.0.14"
-  peerDependencies:
-    graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-  checksum: 10c0/2b08658227b3f7959f2e1c2af956e296fff9ca80d1f79477987495c7922774bfcee13c6fc4bf4b7eda08c9db3d761350fe84b361f2631c12feede0d910abd5b7
-  languageName: node
-  linkType: hard
-
 "@vercel/blob@npm:^0.22.0":
   version: 0.22.0
   resolution: "@vercel/blob@npm:0.22.0"
@@ -2651,7 +2630,6 @@ __metadata:
     tailwindcss: "npm:^3.4.1"
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.1.6"
-    urql: "npm:^2.2.3"
   languageName: unknown
   linkType: soft
 
@@ -3850,12 +3828,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.15.4":
-  version: 1.15.5
-  resolution: "follow-redirects@npm:1.15.5"
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 10c0/418d71688ceaf109dfd6f85f747a0c75de30afe43a294caa211def77f02ef19865b547dfb73fde82b751e1cc507c06c754120b848fe5a7400b0a669766df7615
+  checksum: 10c0/9ff767f0d7be6aa6870c82ac79cf0368cd73e01bbc00e9eb1c2a16fbb198ec105e3c9b6628bb98e9f3ac66fe29a957b9645bcb9a490bb7aa0d35f908b6b85071
   languageName: node
   linkType: hard
 
@@ -8146,19 +8124,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"urql@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "urql@npm:2.2.3"
-  dependencies:
-    "@urql/core": "npm:^2.6.1"
-    wonka: "npm:^4.0.14"
-  peerDependencies:
-    graphql: ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-    react: ">= 16.8.0"
-  checksum: 10c0/819fba45e8351f8e334a3eb840870327ae621799c80d8d393c255c196dca6372615250f9d7dfac97a0e15182b3e244cacd7c0fe1d053aa41004ca51caba3106b
-  languageName: node
-  linkType: hard
-
 "util-deprecate@npm:^1.0.2":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -8354,13 +8319,6 @@ __metadata:
   bin:
     node-which: bin/which.js
   checksum: 10c0/449fa5c44ed120ccecfe18c433296a4978a7583bf2391c50abce13f76878d2476defde04d0f79db8165bdf432853c1f8389d0485ca6e8ebce3bbcded513d5e6a
-  languageName: node
-  linkType: hard
-
-"wonka@npm:^4.0.14":
-  version: 4.0.15
-  resolution: "wonka@npm:4.0.15"
-  checksum: 10c0/b93f15339c0de08259439d3c5bd3a03ca44196fbd7553cbe13c844e7b3ff2eb31b5dc4a0b2e0c3c2119160e65fc471d8366f4559744b53ab52763eb463b6793b
   languageName: node
   linkType: hard
 
