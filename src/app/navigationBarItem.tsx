@@ -1,15 +1,16 @@
 'use client'
 
-import { FC } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import type { Route } from 'next'
 
-type NavigationBarItemProps = {
+export default function NavigationBarItem<T extends string>({
+  label,
+  href,
+}: {
   label: string
-  href: string
-}
-
-const NavigationBarItem: FC<NavigationBarItemProps> = ({ label, href }) => {
+  href: Route<T> | URL
+}) {
   const pathname = usePathname()
 
   return (
@@ -23,5 +24,3 @@ const NavigationBarItem: FC<NavigationBarItemProps> = ({ label, href }) => {
     </Link>
   )
 }
-
-export default NavigationBarItem
