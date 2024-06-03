@@ -6,8 +6,8 @@
 
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
-const putMock = jest.fn().mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
-jest.mock('@vercel/blob', () => ({
+const putMock = vi.fn().mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
+vi.mock('@vercel/blob', () => ({
   __esModule: true,
   put: (...args: any[]) => putMock(...args),
 }))
@@ -17,7 +17,7 @@ describe('downloadAndPutImage function', () => {
     const externalImageUrl = 'https://example.com/image.jpg'
     const isbn = '1234567890'
     const imageFile = new Blob()
-    global.fetch = jest.fn().mockResolvedValue({ blob: () => imageFile })
+    global.fetch = vi.fn().mockResolvedValue({ blob: () => imageFile })
 
     const result = await downloadAndPutImage(externalImageUrl, isbn)
 

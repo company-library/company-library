@@ -44,7 +44,7 @@ describe('books search api', () => {
   })
 
   it('本の一覧の取得に失敗した場合、既定のエラーを返す', async () => {
-    console.error = jest.fn()
+    console.error = vi.fn()
     const expectErrorMsg = 'query has errored!'
     prismaMock.book.findMany.mockRejectedValueOnce(expectErrorMsg)
 

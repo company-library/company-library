@@ -1,8 +1,8 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-const addBookActionMock = jest.fn()
-jest.mock('@/app/books/register/actions', () => ({
+const addBookActionMock = vi.fn()
+vi.mock('@/app/books/register/actions', () => ({
   __esModule: true,
   addBook: { bind: () => () => addBookActionMock() },
 }))

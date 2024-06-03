@@ -2,12 +2,12 @@ import { render } from '@testing-library/react'
 import BookTile from '@/components/bookTile'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line
     return <img {...props} />
-  }
+  },
 }))
 
 describe('book component', () => {

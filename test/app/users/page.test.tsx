@@ -5,8 +5,8 @@ import { user1, user2 } from '../../__utils__/data/user'
 describe('users page', () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
-  const UserCardMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
-  jest.mock('@/app/users/userCard', () => ({
+  const UserCardMock = vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  vi.mock('@/app/users/userCard', () => ({
     __esModule: true,
     default: (...args: any) => UserCardMock(...args),
   }))
@@ -24,7 +24,7 @@ describe('users page', () => {
 
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
-    console.error = jest.fn()
+    console.error = vi.fn()
     prismaMock.user.findMany.mockRejectedValueOnce(expectErrorMsg)
 
     render(await UserPage())

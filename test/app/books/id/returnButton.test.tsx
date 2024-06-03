@@ -1,14 +1,14 @@
 import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
-const returnBookMock = jest.fn()
-jest.mock('@/app/books/[id]/actions', () => ({
+const returnBookMock = vi.fn()
+vi.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
   returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
 }))
 
-const refreshMock = jest.fn()
-jest.mock('next/navigation', () => ({
+const refreshMock = vi.fn()
+vi.mock('next/navigation', () => ({
   __esModule: true,
   useRouter: () => {
     return { refresh: refreshMock }
@@ -20,11 +20,11 @@ describe('returnButton component', () => {
   const userId = 2
   const lendingHistoryId = 10
 
-  HTMLDialogElement.prototype.showModal = jest.fn().mockImplementation(() => {
+  HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')
   })
-  HTMLDialogElement.prototype.close = jest.fn().mockImplementation(() => {
+  HTMLDialogElement.prototype.close = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].removeAttribute('open')
   })
@@ -118,7 +118,7 @@ describe('returnButton component', () => {
 
   it('返却処理でエラーが発生した場合、アラート表示する', async () => {
     returnBookMock.mockResolvedValueOnce(new Error('error occurred!'))
-    window.alert = jest.fn()
+    window.alert = vi.fn()
 
     render(
       <ReturnButton

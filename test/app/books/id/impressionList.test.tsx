@@ -3,8 +3,8 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 
 describe('ImpressionList component', () => {
-  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
-  jest.mock('@/components/userAvatar', () => ({
+  const UserAvatarMock = vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+  vi.mock('@/components/userAvatar', () => ({
     __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
@@ -79,7 +79,7 @@ describe('ImpressionList component', () => {
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
     prismaImpressionsMock.mockRejectedValueOnce(expectedError)
-    console.error = jest.fn()
+    console.error = vi.fn()
 
     render(await ImpressionListComponent({ bookId: lendableBook.id }))
 

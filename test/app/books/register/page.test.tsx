@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-const getServerSessionMock = jest.fn().mockReturnValue({ customUser: { id: user1.id } })
-jest.mock('next-auth', () => ({
+const getServerSessionMock = vi.fn().mockReturnValue({ customUser: { id: user1.id } })
+vi.mock('next-auth', () => ({
   __esModule: true,
   getServerSession: () => getServerSessionMock(),
 }))
 
-jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
   __esModule: true,
   authOptions: {},
 }))
 
-jest.mock('@/app/books/register/bookForm', () => ({
+vi.mock('@/app/books/register/bookForm', () => ({
   __esModule: true,
   default: () => <div>登録フォーム</div>,
 }))

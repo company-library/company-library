@@ -3,12 +3,12 @@ import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
 
-jest.mock('swr')
+vi.mock('swr')
 
 describe('BookList page', () => {
   const TopPage = require('@/app/bookList').default
 
-  const swrMock = useSWR as jest.Mock
+  const swrMock = useSWR as vi.Mock
   swrMock.mockReturnValue({
     data: {
       books: [bookWithImage, bookWithoutImage],
@@ -45,7 +45,7 @@ describe('BookList page', () => {
 
   it('本の一覧の読み込みに失敗した場合、「Error!」と表示される', () => {
     const expectErrorMsg = 'query has errored!'
-    console.error = jest.fn()
+    console.error = vi.fn()
     swrMock.mockReturnValueOnce({ data: {}, error: expectErrorMsg })
     const { rerender } = render(<TopPage />)
     expect(screen.getByText('Error!')).toBeInTheDocument()

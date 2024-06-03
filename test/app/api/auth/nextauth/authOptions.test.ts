@@ -1,74 +1,69 @@
-import { Provider } from 'next-auth/providers'
 import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../../../__utils__/data/user'
+import { Provider } from 'next-auth/providers/index'
 
-describe('authOptions', () => {
-  beforeEach(() => {
-    // テストごとに環境変数を書き換えられるように、各テスト実行前に設定する
-    process.env.AZURE_AD_TENANT_ID = 'tenantIdAAD'
-    process.env.AZURE_AD_CLIENT_ID = 'clientIdAAD'
-    process.env.AZURE_AD_CLIENT_SECRET = 'clientSecretAAD'
+describe('authOptions', async () => {
+  process.env.AZURE_AD_TENANT_ID = 'tenantIdAAD'
+  process.env.AZURE_AD_CLIENT_ID = 'clientIdAAD'
+  process.env.AZURE_AD_CLIENT_SECRET = 'clientSecretAAD'
 
-    process.env.AZURE_AD_B2C_TENANT_NAME = 'tenantNameAADB2C'
-    process.env.AZURE_AD_B2C_CLIENT_ID = 'clientIdAADB2C'
-    process.env.AZURE_AD_B2C_CLIENT_SECRET = 'clientSecretAADB2C'
-    process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW = 'primaryUserFlowAADB2C'
-  })
+  process.env.AZURE_AD_B2C_TENANT_NAME = 'tenantNameAADB2C'
+  process.env.AZURE_AD_B2C_CLIENT_ID = 'clientIdAADB2C'
+  process.env.AZURE_AD_B2C_CLIENT_SECRET = 'clientSecretAADB2C'
+  process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW = 'primaryUserFlowAADB2C'
+  const { authOptions } = await import('@/app/api/auth/[...nextauth]/authOptions')
 
   describe('AAD provider の確認', () => {
-    it('Providerが作成されている', () => {
-      const providerAAD =
-        require('@/app/api/auth/[...nextauth]/authOptions').authOptions.providers.find(
-          (provider: Provider) => provider.id === 'azure-ad',
-        )
+    it('Providerが作成されている', async () => {
+      const providerAAD = authOptions.providers.find(
+        (provider: Provider) => provider.id === 'azure-ad',
+      )
 
       expect(providerAAD).not.toBeUndefined()
     })
 
-    it('Providerに、認証に必要な環境変数の値が設定されている', () => {
-      const providerAAD =
-        require('@/app/api/auth/[...nextauth]/authOptions').authOptions.providers.find(
-          (provider: Provider) => provider.id === 'azure-ad',
-        )
+    it('Providerに、認証に必要な環境変数の値が設定されている', async () => {
+      const providerAAD = authOptions.providers.find(
+        (provider: Provider) => provider.id === 'azure-ad',
+      )
 
-      expect(providerAAD.options['tenantId']).toBe('tenantIdAAD')
-      expect(providerAAD.options['clientId']).toBe('clientIdAAD')
-      expect(providerAAD.options['clientSecret']).toBe('clientSecretAAD')
+      console.warn(providerAAD)
+
+      expect(providerAAD?.options['tenantId']).toBe('tenantIdAAD')
+      expect(providerAAD?.options['clientId']).toBe('clientIdAAD')
+      expect(providerAAD?.options['clientSecret']).toBe('clientSecretAAD')
     })
   })
 
   describe('AAD B2C provider の確認', () => {
     it('AAD B2C のProviderが作成されている', () => {
-      const providerAadB2c =
-        require('@/app/api/auth/[...nextauth]/authOptions').authOptions.providers.find(
-          (provider: Provider) => provider.id === 'azure-ad-b2c',
-        )
+      const providerAadB2c = authOptions.providers.find(
+        (provider: Provider) => provider.id === 'azure-ad-b2c',
+      )
 
       expect(providerAadB2c).not.toBeUndefined()
     })
 
     it('AAD B2C のProviderに、認証に必要な環境変数の値が設定されている', () => {
-      const providerAadB2c =
-        require('@/app/api/auth/[...nextauth]/authOptions').authOptions.providers.find(
-          (provider: Provider) => provider.id === 'azure-ad-b2c',
-        )
+      const providerAadB2c = authOptions.providers.find(
+        (provider: Provider) => provider.id === 'azure-ad-b2c',
+      )
 
-      expect(providerAadB2c.options['tenantId']).toBe('tenantNameAADB2C')
-      expect(providerAadB2c.options['clientId']).toBe('clientIdAADB2C')
-      expect(providerAadB2c.options['clientSecret']).toBe('clientSecretAADB2C')
-      expect(providerAadB2c.options['primaryUserFlow']).toBe('primaryUserFlowAADB2C')
-      expect(providerAadB2c.options['authorization']).toStrictEqual({
+      expect(providerAadB2c?.options['tenantId']).toBe('tenantNameAADB2C')
+      expect(providerAadB2c?.options['clientId']).toBe('clientIdAADB2C')
+      expect(providerAadB2c?.options['clientSecret']).toBe('clientSecretAADB2C')
+      expect(providerAadB2c?.options['primaryUserFlow']).toBe('primaryUserFlowAADB2C')
+      expect(providerAadB2c?.options['authorization']).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })
 
     it('AAD B2C のProviderのscopeに、リフレッシュトークンとIDトークンを要求する', () => {
-      const providerAadB2c =
-        require('@/app/api/auth/[...nextauth]/authOptions').authOptions.providers.find(
-          (provider: Provider) => provider.id === 'azure-ad-b2c',
-        )
+      const providerAadB2c = authOptions.providers.find(
+        (provider: Provider) => provider.id === 'azure-ad-b2c',
+      )
 
-      expect(providerAadB2c.options['authorization']).toStrictEqual({
+      expect(providerAadB2c?.options['authorization']).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })
@@ -77,21 +72,36 @@ describe('authOptions', () => {
   describe('callbacks の確認', () => {
     describe('jwt', () => {
       it('accountが渡された場合、IDトークンをtokenにセットする', async () => {
-        const token = {}
-        const account = { id_token: 'accountIdToken' }
+        const token = { idToken: 'accountIdToken' }
+        const account = {
+          id_token: 'accountIdToken',
+          providerAccountId: 'provider1',
+          provider: 'provider1',
+          type: 'oauth' as ProviderType,
+        }
+        const user = { id: '1' }
 
-        const jwt = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks.jwt
-        const result = await jwt({ token, account })
+        const jwt = authOptions.callbacks?.jwt
+        if (!jwt) {
+          throw new Error('jwt callback is not defined')
+        }
+
+        const result = await jwt({ token, user, account })
 
         expect(result.idToken).toBe(account.id_token)
       })
 
       it('accountが渡されなかった場合、何もしない', async () => {
-        const token = {}
+        const token = { idToken: 'accountIdToken' }
         const account = null
+        const user = { id: '1' }
 
-        const jwt = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks.jwt
-        const result = await jwt({ token, account })
+        const jwt = authOptions.callbacks?.jwt
+        if (!jwt) {
+          throw new Error('jwt callback is not defined')
+        }
+
+        const result = await jwt({ token, user, account })
 
         expect(result.idToken).toBeUndefined()
       })
@@ -119,8 +129,11 @@ describe('authOptions', () => {
             ...inValidToken,
           }
 
-          const session = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks
-            .session
+          const session = authOptions.callbacks?.session
+          if (!session) {
+            throw new Error('session callback is not defined')
+          }
+
           const result = await session({ session: argSession, token: argToken })
 
           expect(result).toStrictEqual(defaultSession)
@@ -132,8 +145,11 @@ describe('authOptions', () => {
         const argSession = { ...defaultSession }
         const argToken = { ...defaultToken }
 
-        const session = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks
-          .session
+        const session = authOptions.callbacks?.session
+        if (!session) {
+          throw new Error('session callback is not defined')
+        }
+
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -149,8 +165,11 @@ describe('authOptions', () => {
         const argSession = { ...defaultSession }
         const argToken = { ...defaultToken }
 
-        const session = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks
-          .session
+        const session = authOptions.callbacks?.session
+        if (!session) {
+          throw new Error('session callback is not defined')
+        }
+
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -168,14 +187,17 @@ describe('authOptions', () => {
       })
 
       it('ユーザーの作成に失敗した場合は、引数で渡されたsessionをそのまま返す', async () => {
-        const mockConsoleError = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+        const mockConsoleError = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
         prismaMock.user.findUnique.mockResolvedValueOnce(null)
         prismaMock.user.create.mockRejectedValueOnce('prisma error')
         const argSession = { ...defaultSession }
         const argToken = { ...defaultToken }
 
-        const session = require('@/app/api/auth/[...nextauth]/authOptions').authOptions.callbacks
-          .session
+        const session = authOptions.callbacks?.session
+        if (!session) {
+          throw new Error('session callback is not defined')
+        }
+
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual(defaultSession)

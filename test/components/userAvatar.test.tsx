@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react'
 import { user1, user2 } from '../__utils__/data/user'
 
 describe('UserAvatar component', () => {
-  const getAvatarUrlMock = jest.fn()
-  jest.mock('@/libs/gravatar/getAvatarUrl', () => ({
+  const getAvatarUrlMock = vi.fn()
+  vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
     __esModule: true,
     getAvatarUrl: (email: string) => getAvatarUrlMock(email),
   }))

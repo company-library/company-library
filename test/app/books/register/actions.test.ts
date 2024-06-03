@@ -8,19 +8,19 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { user1 } from '../../../__utils__/data/user'
 import { addBook, registerBook } from '@/app/books/register/actions'
 
-const redirectMock = jest.fn()
-jest.mock('next/navigation', () => ({
+const redirectMock = vi.fn()
+vi.mock('next/navigation', () => ({
   __esModule: true,
   redirect: () => redirectMock(),
 }))
 
-const notifySlackMock = jest.fn()
-jest.mock('@/libs/slack/webhook', () => ({
+const notifySlackMock = vi.fn()
+vi.mock('@/libs/slack/webhook', () => ({
   __esModule: true,
   notifySlack: (msg: string) => notifySlackMock(msg),
 }))
 
-jest.mock('@/libs/vercel/downloadAndPutImage', () => ({
+vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
   __esModule: true,
   downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
     if (imageUrl) {
@@ -83,7 +83,7 @@ describe('server actions', () => {
       const error = new Error('error has occurred')
       const userId = user1.id
       prismaMock.book.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await registerBook(title, isbn, undefined, userId)
 
@@ -114,7 +114,7 @@ describe('server actions', () => {
         createdAt: now,
       })
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await registerBook('testBook', '1234567890123', undefined, user1.id)
 
@@ -165,7 +165,7 @@ describe('server actions', () => {
       const userId = user1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await addBook(bookId, userId)
 

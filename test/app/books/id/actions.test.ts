@@ -8,8 +8,8 @@ import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendBook, returnBook } from '@/app/books/[id]/actions'
 
-const redirectMock = jest.fn()
-jest.mock('next/navigation', () => ({
+const redirectMock = vi.fn()
+vi.mock('next/navigation', () => ({
   __esModule: true,
   redirect: () => redirectMock(),
 }))
@@ -46,7 +46,7 @@ describe('server actions', () => {
       const dueDate = new Date()
       const error = 'DB error has occurred'
       prismaMock.lendingHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await lendBook(bookId, userId, dueDate)
 
@@ -128,7 +128,7 @@ describe('server actions', () => {
     describe('返却処理に失敗した場合はエラーを返す', () => {
       it('返却履歴の追加に失敗した場合', async () => {
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
-        const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+        const errorMock = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockRejectedValueOnce(error)
 
@@ -145,7 +145,7 @@ describe('server actions', () => {
 
       it('感想の登録に失敗した場合', async () => {
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
-        const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+        const errorMock = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockResolvedValueOnce({
           lendingHistoryId: lendingHistoryId,

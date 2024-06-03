@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../__utils__/data/user'
 
-jest.mock('next/link', () => ({
+vi.mock('next/link', () => ({
   __esModule: true,
   default: (props: any) => {
     return <a {...props} />
@@ -9,10 +9,10 @@ jest.mock('next/link', () => ({
 }))
 
 describe('UserCard component', () => {
-  const UserAvatarMock = jest
+  const UserAvatarMock = vi
     .fn()
     .mockImplementation(() => <div data-testid="profileImage">userAvatar</div>)
-  jest.mock('@/components/userAvatar', () => ({
+  vi.mock('@/components/userAvatar', () => ({
     __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))

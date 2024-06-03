@@ -1,28 +1,28 @@
 import { render, screen } from '@testing-library/react'
 import { user1 } from '../__utils__/data/user'
 
-const pathnameMock = jest.fn().mockReturnValue({ push: jest.fn() })
-jest.mock('next/navigation', () => ({
+const pathnameMock = vi.fn().mockReturnValue({ push: vi.fn() })
+vi.mock('next/navigation', () => ({
   __esModule: true,
   usePathname: () => pathnameMock(),
 }))
 
 const loggedInUser = user1
-const getServerSessionMock = jest.fn().mockReturnValue({
+const getServerSessionMock = vi.fn().mockReturnValue({
   customUser: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
 })
-jest.mock('next-auth', () => ({
+vi.mock('next-auth', () => ({
   __esModule: true,
   getServerSession: () => getServerSessionMock(),
 }))
 
-jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
   __esModule: true,
   authOptions: {},
 }))
 
-const UserAvatarMock = jest.fn().mockImplementation(() => <div>userAvatar</div>)
-jest.mock('@/components/userAvatar', () => ({
+const UserAvatarMock = vi.fn().mockImplementation(() => <div>userAvatar</div>)
+vi.mock('@/components/userAvatar', () => ({
   __esModule: true,
   default: (...args: any) => UserAvatarMock(...args),
 }))
@@ -84,7 +84,7 @@ describe('navigationBar component', () => {
 
     // ログインユーザー以外のIDの場合強調されない
     pathnameMock.mockReturnValue({
-      push: jest.fn(),
+      push: vi.fn(),
       asPath: `/users/${loggedInUser.id + 1}`,
     })
     rerender(await NavigationBar())

@@ -7,11 +7,11 @@ describe('UserDetail page', () => {
 
   const UserDetailPage = require('@/app/users/[id]/page').default
 
-  jest.mock('@/app/users/[id]/bookList', () => ({
+  vi.mock('@/app/users/[id]/bookList', () => ({
     __esModule: true,
     default: () => <div>BookList</div>,
   }))
-  jest.mock('@/app/users/[id]/readingBookList', () => ({
+  vi.mock('@/app/users/[id]/readingBookList', () => ({
     __esModule: true,
     default: () => <div>ReadingBookList</div>,
   }))
@@ -42,7 +42,7 @@ describe('UserDetail page', () => {
 
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
-    console.error = jest.fn()
+    console.error = vi.fn()
     prismaMock.user.findUnique.mockRejectedValueOnce(expectErrorMsg)
 
     render(await UserDetailPage({ params: { id: '1' } }))

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
@@ -10,14 +10,14 @@ jest.mock('next/image', () => ({
   },
 }))
 
-jest.mock('@/app/books/[id]/lendButton', () => ({
+vi.mock('@/app/books/[id]/lendButton', () => ({
   __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>借りる</button>
   },
 }))
 
-jest.mock('@/app/books/[id]/returnButton', () => ({
+vi.mock('@/app/books/[id]/returnButton', () => ({
   __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>返却する</button>
@@ -230,7 +230,7 @@ describe('BookDetail component', () => {
   it('本の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
     prismaBookMock.mockRejectedValueOnce(expectedError)
-    console.error = jest.fn()
+    console.error = vi.fn()
 
     render(await BookDetailComponent({ bookId: book.id, userId: userId }))
 
@@ -242,7 +242,7 @@ describe('BookDetail component', () => {
 
   it('対象のIDで本が取得できなかった場合、エラーメッセージが表示される', async () => {
     prismaBookMock.mockResolvedValueOnce(null)
-    console.error = jest.fn()
+    console.error = vi.fn()
 
     render(await BookDetailComponent({ bookId: book.id, userId: userId }))
 

@@ -1,9 +1,9 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-jest.mock('@/app/books/register/searchedBook', () => ({
+vi.mock('@/app/books/register/searchedBook', () => ({
   __esModule: true,
-  default: jest.fn().mockImplementation(() => <>searched book component</>),
+  default: vi.fn().mockImplementation(() => <>searched book component</>),
 }))
 
 describe('book form component', () => {

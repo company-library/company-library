@@ -6,15 +6,15 @@ import { dateStringToDate } from '@/libs/luxon/utils'
 const dateFormat = 'yyyy-MM-dd'
 const today = DateTime.local().setZone('Asia/Tokyo')
 const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
-const lendBookMock = jest.fn()
-jest.mock('@/app/books/[id]/actions', () => ({
+const lendBookMock = vi.fn()
+vi.mock('@/app/books/[id]/actions', () => ({
   __esModule: true,
   lendBook: (bookId: string, userId: string, dueDate: Date) =>
     lendBookMock(bookId, userId, dueDate),
 }))
 
-const refreshMock = jest.fn()
-jest.mock('next/navigation', () => ({
+const refreshMock = vi.fn()
+vi.mock('next/navigation', () => ({
   __esModule: true,
   useRouter: () => {
     return { refresh: refreshMock }
@@ -25,11 +25,11 @@ describe('LendButton component', () => {
   const bookId = 1
   const userId = 2
 
-  HTMLDialogElement.prototype.showModal = jest.fn().mockImplementation(() => {
+  HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')
   })
-  HTMLDialogElement.prototype.close = jest.fn().mockImplementation(() => {
+  HTMLDialogElement.prototype.close = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].removeAttribute('open')
   })
@@ -80,7 +80,7 @@ describe('LendButton component', () => {
 
   it('貸出処理に失敗した場合、エラーメッセージが表示される', async () => {
     lendBookMock.mockResolvedValueOnce(new Error('error occurred'))
-    window.alert = jest.fn()
+    window.alert = vi.fn()
 
     render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
 
