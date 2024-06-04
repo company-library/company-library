@@ -5,13 +5,7 @@ import { Suspense } from 'react'
 describe('register page', async () => {
   const { getServerSessionMock } = vi.hoisted(() => {
     return {
-      getServerSessionMock: vi.fn().mockImplementation(() => {
-        return {
-          customUser: {
-            id: user1.id,
-          },
-        }
-      }),
+      getServerSessionMock: vi.fn(),
     }
   })
   vi.mock('next-auth', () => ({
@@ -29,6 +23,10 @@ describe('register page', async () => {
     default: () => <div>登録フォーム</div>,
   }))
 
+  beforeEach(() => {
+    getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
+  })
+
   const RegisterPage = (await import('@/app/books/register/page')).default
 
   it('書籍登録ページが表示される', async () => {
@@ -43,7 +41,7 @@ describe('register page', async () => {
   })
 
   it('セッションが取得できない場合はエラーメッセージが表示される', async () => {
-    getServerSessionMock.mockImplementation(() => null)
+    getServerSessionMock.mockReturnValue(null)
 
     render(
       <Suspense>

@@ -41,8 +41,10 @@ describe('BookDetail component', async () => {
     },
   }
   const prismaBookMock = prismaMock.book.findUnique
-  // @ts-ignore
-  prismaBookMock.mockResolvedValue(bookDetail)
+  beforeEach(() => {
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(bookDetail)
+  })
 
   it('本の詳細情報と操作ボタンが表示される', async () => {
     render(
@@ -65,7 +67,7 @@ describe('BookDetail component', async () => {
 
   it('本の書影が無い場合はno_imageが表示される', async () => {
     // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
       imageUrl: bookWithoutImage.imageUrl,
     })
@@ -84,9 +86,9 @@ describe('BookDetail component', async () => {
   it('貸し出し可能数は、 登録履歴数 - 未返却の貸出履歴数 である', async () => {
     const registrationHistoriesCount = 23
     const lendingHistoriesCount = 17
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: [...Array(lendingHistoriesCount)].map((_, i) => i),
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -109,7 +111,7 @@ describe('BookDetail component', async () => {
 
   it('所蔵数は、 登録履歴数 である', async () => {
     const registrationHistoriesCount = 23
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
       // @ts-ignore
       _count: {
@@ -129,7 +131,7 @@ describe('BookDetail component', async () => {
 
   it('予約数は、 予約履歴数 である', async () => {
     const reservationsCount = 17
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
       // @ts-ignore
       _count: {
@@ -153,9 +155,9 @@ describe('BookDetail component', async () => {
       id: i + 1,
       userId: 0,
     }))
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: lendingHistories,
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -181,9 +183,9 @@ describe('BookDetail component', async () => {
       userId: 0,
     }))
     const userLendingHistory = { userId: userId }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: [...lendingHistories, userLendingHistory],
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -207,9 +209,9 @@ describe('BookDetail component', async () => {
       id: i + 1,
       userId: 0,
     }))
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: lendingHistories,
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -235,9 +237,9 @@ describe('BookDetail component', async () => {
       userId: 0,
     }))
     const userLendingHistory = { userId: userId }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: [...lendingHistories, userLendingHistory],
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -261,9 +263,9 @@ describe('BookDetail component', async () => {
       id: i + 1,
       userId: 0,
     }))
-    // @ts-ignore
-    prismaBookMock.mockResolvedValueOnce({
+    prismaBookMock.mockResolvedValue({
       ...bookDetail,
+      // @ts-ignore
       lendingHistories: [...lendingHistories],
       _count: {
         registrationHistories: registrationHistoriesCount,
@@ -282,7 +284,7 @@ describe('BookDetail component', async () => {
 
   it('本の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
-    prismaBookMock.mockRejectedValueOnce(expectedError)
+    prismaBookMock.mockRejectedValue(expectedError)
     console.error = vi.fn()
 
     render(
@@ -299,7 +301,7 @@ describe('BookDetail component', async () => {
   })
 
   it('対象のIDで本が取得できなかった場合、エラーメッセージが表示される', async () => {
-    prismaBookMock.mockResolvedValueOnce(null)
+    prismaBookMock.mockResolvedValue(null)
     console.error = vi.fn()
 
     render(
