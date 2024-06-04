@@ -17,7 +17,7 @@ describe('UserAvatar component', async () => {
   const UserAvatar = (await import('@/components/userAvatar')).default
 
   it('ユーザー画像が表示されること', async () => {
-    getAvatarUrlMock.mockResolvedValueOnce(user1.imageUrl)
+    getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
 
     render(
       <Suspense>
@@ -30,7 +30,7 @@ describe('UserAvatar component', async () => {
   })
 
   it('ユーザー画像が存在しない場合は、ユーザー名先頭1文字のアイコンが表示されること', async () => {
-    getAvatarUrlMock.mockResolvedValueOnce(undefined)
+    getAvatarUrlMock.mockResolvedValue(undefined)
 
     render(
       <Suspense>
@@ -48,7 +48,7 @@ describe('UserAvatar component', async () => {
     { case: 'ユーザー画像が存在しない場合', avatarUrl: undefined },
   ])('$case', ({ avatarUrl }) => {
     beforeEach(() => {
-      getAvatarUrlMock.mockResolvedValueOnce(avatarUrl)
+      getAvatarUrlMock.mockResolvedValue(avatarUrl)
     })
 
     it.each([
