@@ -2,14 +2,16 @@ import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 
-describe('ImpressionList component', () => {
-  const UserAvatarMock = vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+describe('ImpressionList component', async () => {
+  const UserAvatarMock = vi.hoisted(() =>
+    vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+  )
   vi.mock('@/components/userAvatar', () => ({
     __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
 
-  const ImpressionListComponent = require('@/app/books/[id]/impressionList').default
+  const ImpressionListComponent = (await import('@/app/books/[id]/impressionList')).default
 
   const prismaImpressionsMock = prismaMock.impression.findMany
   const expectedImpressions = [

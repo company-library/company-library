@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { Suspense } from 'react'
 
 vi.mock('next/image', () => ({
   __esModule: true,
@@ -24,8 +25,8 @@ vi.mock('@/app/books/[id]/returnButton', () => ({
   },
 }))
 
-describe('BookDetail component', () => {
-  const BookDetailComponent = require('@/app/books/[id]/bookDetail').default
+describe('BookDetail component', async () => {
+  const BookDetailComponent = (await import('@/app/books/[id]/bookDetail')).default
 
   const userId = 2
 
@@ -44,9 +45,14 @@ describe('BookDetail component', () => {
   prismaBookMock.mockResolvedValue(bookDetail)
 
   it('本の詳細情報と操作ボタンが表示される', async () => {
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByAltText(book.title)).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByAltText(book.title)).toBeInTheDocument()
     expect(screen.getByAltText(book.title)).toHaveAttribute('src', book.imageUrl)
     expect(screen.getByText(book.title)).toBeInTheDocument()
     expect(screen.getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
@@ -64,9 +70,14 @@ describe('BookDetail component', () => {
       imageUrl: bookWithoutImage.imageUrl,
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByAltText(book.title)).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByAltText(book.title)).toBeInTheDocument()
     expect(screen.getByAltText(book.title)).toHaveAttribute('src', '/no_image.jpg')
   })
 
@@ -82,10 +93,17 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText(`${registrationHistoriesCount - lendingHistoriesCount}冊貸し出し可能`),
+      await screen.findByText(
+        `${registrationHistoriesCount - lendingHistoriesCount}冊貸し出し可能`,
+      ),
     ).toBeInTheDocument()
   })
 
@@ -99,9 +117,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText(`所蔵数: ${registrationHistoriesCount}冊`)).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(`所蔵数: ${registrationHistoriesCount}冊`)).toBeInTheDocument()
   })
 
   it('予約数は、 予約履歴数 である', async () => {
@@ -114,9 +137,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText(`予約数: ${reservationsCount}件`)).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(`予約数: ${reservationsCount}件`)).toBeInTheDocument()
   })
 
   it('借りるボタンは、貸し出し可能数が0冊の場合、無効である', async () => {
@@ -134,9 +162,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
-    expect(screen.getByText(`${0}冊貸し出し可能`)).toBeInTheDocument()
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(`${0}冊貸し出し可能`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
   })
 
@@ -157,9 +190,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
-    expect(screen.getByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
   })
 
@@ -178,9 +216,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
-    expect(screen.getByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '借りる' })).toBeEnabled()
   })
 
@@ -201,9 +244,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByRole('button', { name: '返却する' })).toBeEnabled()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByRole('button', { name: '返却する' })).toBeEnabled()
   })
 
   it('返却するボタンは、借用中ではない場合、無効である', async () => {
@@ -222,9 +270,14 @@ describe('BookDetail component', () => {
       },
     })
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
-    expect(screen.getByRole('button', { name: '返却する' })).toBeDisabled()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByRole('button', { name: '返却する' })).toBeDisabled()
   })
 
   it('本の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
@@ -232,10 +285,15 @@ describe('BookDetail component', () => {
     prismaBookMock.mockRejectedValueOnce(expectedError)
     console.error = vi.fn()
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('本の取得に失敗しました。再読み込みしてみてください。'),
+      await screen.findByText('本の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
   })
@@ -244,10 +302,14 @@ describe('BookDetail component', () => {
     prismaBookMock.mockResolvedValueOnce(null)
     console.error = vi.fn()
 
-    render(await BookDetailComponent({ bookId: book.id, userId: userId }))
+    render(
+      <Suspense>
+        <BookDetailComponent bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
 
     expect(
-      screen.getByText('本の取得に失敗しました。再読み込みしてみてください。'),
+      await screen.findByText('本の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith('対象のIDの本は存在しません。bookId:', book.id)
   })

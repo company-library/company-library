@@ -1,14 +1,14 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-const registerBookActionMock = vi.fn()
-vi.mock('@/app/books/register/actions', () => ({
-  __esModule: true,
-  registerBook: { bind: () => () => registerBookActionMock() },
-}))
+describe('register book div component', async () => {
+  const registerBookActionMock = vi.hoisted(() => vi.fn())
+  vi.mock('@/app/books/register/actions', () => ({
+    __esModule: true,
+    registerBook: { bind: () => () => registerBookActionMock() },
+  }))
 
-describe('register book div component', () => {
-  const RegisterBookDivComponent = require('@/app/books/register/registerBookDiv').default
+  const RegisterBookDivComponent = (await import('@/app/books/register/registerBookDiv')).default
 
   it('登録ボタンをクリックすると、server actionが実行される', () => {
     const title = 'testBook'

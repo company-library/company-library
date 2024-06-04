@@ -2,13 +2,14 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
+import { Mock } from 'vitest'
 
 vi.mock('swr')
 
-describe('BookList page', () => {
-  const TopPage = require('@/app/bookList').default
+describe('BookList page', async () => {
+  const TopPage = (await import('@/app/bookList')).default
 
-  const swrMock = useSWR as vi.Mock
+  const swrMock = useSWR as Mock
   swrMock.mockReturnValue({
     data: {
       books: [bookWithImage, bookWithoutImage],
