@@ -1,19 +1,15 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendBook, returnBook } from '@/app/books/[id]/actions'
 
-const redirectMock = vi.fn()
-vi.mock('next/navigation', () => ({
-  redirect: () => redirectMock(),
-}))
-
 describe('server actions', () => {
+  const { redirectMock } = vi.hoisted(() => {
+    return { redirectMock: vi.fn() }
+  })
+  vi.mock('next/navigation', () => ({
+    redirect: () => redirectMock(),
+  }))
+
   describe('lendBook function', () => {
     it('貸し出し履歴の追加ができる', async () => {
       const bookId = 1

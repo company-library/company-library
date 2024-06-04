@@ -4,11 +4,10 @@ import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
 import { Mock } from 'vitest'
 
-vi.mock('swr')
-
 describe('BookList page', async () => {
   const TopPage = (await import('@/app/bookList')).default
 
+  vi.mock('swr')
   const swrMock = useSWR as Mock
   swrMock.mockReturnValue({
     data: {

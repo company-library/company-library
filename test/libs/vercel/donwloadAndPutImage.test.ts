@@ -1,17 +1,17 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
-const putMock = vi.fn().mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
-vi.mock('@vercel/blob', () => ({
-  put: (...args: any[]) => putMock(...args),
-}))
-
 describe('downloadAndPutImage function', () => {
+  const { putMock } = vi.hoisted(() => {
+    return { putMock: vi.fn() }
+  })
+  vi.mock('@vercel/blob', () => ({
+    put: (...args: any[]) => putMock(...args),
+  }))
+
+  beforeEach(() => {
+    putMock.mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
+  })
+
   it('ファイルをアップロードした場合、URLを消す', async () => {
     const externalImageUrl = 'https://example.com/image.jpg'
     const isbn = '1234567890'

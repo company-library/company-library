@@ -1,12 +1,14 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-const addBookActionMock = vi.fn()
-vi.mock('@/app/books/register/actions', () => ({
-  addBook: { bind: () => () => addBookActionMock() },
-}))
-
 describe('add book div component', async () => {
+  const { addBookActionMock } = vi.hoisted(() => {
+    return { addBookActionMock: vi.fn() }
+  })
+  vi.mock('@/app/books/register/actions', () => ({
+    addBook: { bind: () => () => addBookActionMock() },
+  }))
+
   const AddBookDivComponent = (await import('@/app/books/register/addBookDiv')).default
 
   it('追加ボタンをクリックすると、server actionが実行される', async () => {

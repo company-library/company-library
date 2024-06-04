@@ -1,33 +1,31 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { user1 } from '../../../__utils__/data/user'
 import { addBook, registerBook } from '@/app/books/register/actions'
 
-const redirectMock = vi.fn()
-vi.mock('next/navigation', () => ({
-  redirect: () => redirectMock(),
-}))
-
-const notifySlackMock = vi.fn()
-vi.mock('@/libs/slack/webhook', () => ({
-  notifySlack: (msg: string) => notifySlackMock(msg),
-}))
-
-vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
-  downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
-    if (imageUrl) {
-      return `https://example.com/books/${isbn}/internal/cover.jpg`
-    }
-    return undefined
-  },
-}))
-
 describe('server actions', () => {
+  const { redirectMock } = vi.hoisted(() => {
+    return { redirectMock: vi.fn() }
+  })
+  vi.mock('next/navigation', () => ({
+    redirect: redirectMock,
+  }))
+
+  const { notifySlackMock } = vi.hoisted(() => {
+    return { notifySlackMock: vi.fn() }
+  })
+  vi.mock('@/libs/slack/webhook', () => ({
+    notifySlack: notifySlackMock,
+  }))
+
+  vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
+    downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
+      if (imageUrl) {
+        return `https://example.com/books/${isbn}/internal/cover.jpg`
+      }
+      return undefined
+    },
+  }))
+
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
       const bookId = 1

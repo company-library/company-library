@@ -3,14 +3,6 @@ import { user1 } from '../../../__utils__/data/user'
 import useSWR from 'swr'
 import { Mock } from 'vitest'
 
-const addRegisterBookDivMock = vi.fn().mockImplementation(() => <>add book div component</>)
-vi.mock('@/app/books/register/addBookDiv', () => ({
-  default: addRegisterBookDivMock,
-}))
-const registerBookDivMock = vi.fn().mockImplementation(() => <>register book div component</>)
-vi.mock('@/app/books/register/registerBookDiv', () => ({
-  default: registerBookDivMock,
-}))
 vi.mock('swr')
 
 describe('searched book component', async () => {
@@ -18,6 +10,21 @@ describe('searched book component', async () => {
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
+
+  const { addRegisterBookDivMock } = vi.hoisted(() => {
+    return { addRegisterBookDivMock: vi.fn().mockImplementation(() => <>add book div component</>) }
+  })
+  vi.mock('@/app/books/register/addBookDiv', () => ({
+    default: addRegisterBookDivMock,
+  }))
+  const { registerBookDivMock } = vi.hoisted(() => {
+    return {
+      registerBookDivMock: vi.fn().mockImplementation(() => <>register book div component</>),
+    }
+  })
+  vi.mock('@/app/books/register/registerBookDiv', () => ({
+    default: registerBookDivMock,
+  }))
 
   const SearchedBookComponent = (await import('@/app/books/register/searchedBook')).default
 

@@ -4,41 +4,68 @@ import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
 
-const BookDetailMock = vi.fn().mockReturnValue(<div>bookDetail</div>)
-vi.mock('@/app/books/[id]/bookDetail', () => ({
-  default: (...args: any) => BookDetailMock(...args),
-}))
-
-const LendingListMock = vi.fn().mockReturnValue(<div>lendingList</div>)
-vi.mock('@/app/books/[id]/lendingList', () => ({
-  default: (...args: any) => LendingListMock(...args),
-}))
-
-const ImpressionListMock = vi.fn().mockReturnValue(<div>impressionList</div>)
-vi.mock('@/app/books/[id]/impressionList', () => ({
-  default: (...args: any) => ImpressionListMock(...args),
-}))
-
-const ReturnListMock = vi.fn().mockReturnValue(<div>returnList</div>)
-vi.mock('@/app/books/[id]/returnList', () => ({
-  default: (...args: any) => ReturnListMock(...args),
-}))
-
-const getServerSessionMock = vi.fn().mockReturnValue({ customUser: { id: user1.id } })
-vi.mock('next-auth', () => ({
-  getServerSession: () => getServerSessionMock(),
-}))
-
-vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-  authOptions: {},
-}))
-
 describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
+  const { BookDetailMock } = vi.hoisted(() => {
+    return {
+      BookDetailMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/bookDetail', () => ({
+    default: (...args: any) => BookDetailMock(...args),
+  }))
+
+  const { LendingListMock } = vi.hoisted(() => {
+    return {
+      LendingListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/lendingList', () => ({
+    default: (...args: any) => LendingListMock(...args),
+  }))
+
+  const { ImpressionListMock } = vi.hoisted(() => {
+    return {
+      ImpressionListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/impressionList', () => ({
+    default: (...args: any) => ImpressionListMock(...args),
+  }))
+
+  const { ReturnListMock } = vi.hoisted(() => {
+    return {
+      ReturnListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/returnList', () => ({
+    default: (...args: any) => ReturnListMock(...args),
+  }))
+
+  const { getServerSessionMock } = vi.hoisted(() => {
+    return {
+      getServerSessionMock: vi.fn(),
+    }
+  })
+  vi.mock('next-auth', () => ({
+    getServerSession: () => getServerSessionMock(),
+  }))
+
+  vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
+    authOptions: {},
+  }))
 
   const BookDetailPage = (await import('@/app/books/[id]/page')).default
 
   const book = bookWithImage
+
+  beforeEach(() => {
+    BookDetailMock.mockReturnValue(<div>BookDetail</div>)
+    LendingListMock.mockReturnValue(<div>LendingList</div>)
+    ImpressionListMock.mockReturnValue(<div>ImpressionList</div>)
+    ReturnListMock.mockReturnValue(<div>ReturnList</div>)
+    getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
+  })
 
   it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
     render(

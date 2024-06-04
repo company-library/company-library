@@ -3,25 +3,33 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import { dateStringToDate } from '@/libs/luxon/utils'
 
-const dateFormat = 'yyyy-MM-dd'
-const today = DateTime.local().setZone('Asia/Tokyo')
-const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
-const lendBookMock = vi.fn()
-vi.mock('@/app/books/[id]/actions', () => ({
-  lendBook: (bookId: string, userId: string, dueDate: Date) =>
-    lendBookMock(bookId, userId, dueDate),
-}))
-
-const refreshMock = vi.fn()
-vi.mock('next/navigation', () => ({
-  useRouter: () => {
-    return { refresh: refreshMock }
-  },
-}))
-
 describe('LendButton component', () => {
   const bookId = 1
   const userId = 2
+
+  const dateFormat = 'yyyy-MM-dd'
+  const today = DateTime.local().setZone('Asia/Tokyo')
+  const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
+  const { lendBookMock } = vi.hoisted(() => {
+    return {
+      lendBookMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/actions', () => ({
+    lendBook: (bookId: string, userId: string, dueDate: Date) =>
+      lendBookMock(bookId, userId, dueDate),
+  }))
+
+  const { refreshMock } = vi.hoisted(() => {
+    return {
+      refreshMock: vi.fn(),
+    }
+  })
+  vi.mock('next/navigation', () => ({
+    useRouter: () => {
+      return { refresh: refreshMock }
+    },
+  }))
 
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')

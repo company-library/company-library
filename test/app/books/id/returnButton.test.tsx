@@ -1,22 +1,22 @@
 import { fireEvent, screen, render, waitFor } from '@testing-library/react'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
-const returnBookMock = vi.fn()
-vi.mock('@/app/books/[id]/actions', () => ({
-  returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
-}))
-
-const refreshMock = vi.fn()
-vi.mock('next/navigation', () => ({
-  useRouter: () => {
-    return { refresh: refreshMock }
-  },
-}))
-
 describe('returnButton component', () => {
   const bookId = 1
   const userId = 2
   const lendingHistoryId = 10
+
+  const returnBookMock = vi.hoisted(() => vi.fn())
+  vi.mock('@/app/books/[id]/actions', () => ({
+    returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
+  }))
+
+  const refreshMock = vi.hoisted(() => vi.fn())
+  vi.mock('next/navigation', () => ({
+    useRouter: () => {
+      return { refresh: refreshMock }
+    },
+  }))
 
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
