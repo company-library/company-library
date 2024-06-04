@@ -11,7 +11,6 @@ describe('users page', async () => {
     }
   })
   vi.mock('@/app/users/userCard', () => ({
-    __esModule: true,
     default: (...args: any) => UserCardMock(...args),
   }))
 

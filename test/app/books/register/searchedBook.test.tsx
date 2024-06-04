@@ -5,12 +5,10 @@ import { Mock } from 'vitest'
 
 const addRegisterBookDivMock = vi.fn().mockImplementation(() => <>add book div component</>)
 vi.mock('@/app/books/register/addBookDiv', () => ({
-  __esModule: true,
   default: addRegisterBookDivMock,
 }))
 const registerBookDivMock = vi.fn().mockImplementation(() => <>register book div component</>)
 vi.mock('@/app/books/register/registerBookDiv', () => ({
-  __esModule: true,
   default: registerBookDivMock,
 }))
 vi.mock('swr')

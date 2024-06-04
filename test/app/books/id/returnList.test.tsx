@@ -9,7 +9,6 @@ describe('ReturnList Component', async () => {
     }
   })
   vi.mock('@/components/userAvatar', () => ({
-    __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

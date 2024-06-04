@@ -6,36 +6,30 @@ import { Suspense } from 'react'
 
 const BookDetailMock = vi.fn().mockReturnValue(<div>bookDetail</div>)
 vi.mock('@/app/books/[id]/bookDetail', () => ({
-  __esModule: true,
   default: (...args: any) => BookDetailMock(...args),
 }))
 
 const LendingListMock = vi.fn().mockReturnValue(<div>lendingList</div>)
 vi.mock('@/app/books/[id]/lendingList', () => ({
-  __esModule: true,
   default: (...args: any) => LendingListMock(...args),
 }))
 
 const ImpressionListMock = vi.fn().mockReturnValue(<div>impressionList</div>)
 vi.mock('@/app/books/[id]/impressionList', () => ({
-  __esModule: true,
   default: (...args: any) => ImpressionListMock(...args),
 }))
 
 const ReturnListMock = vi.fn().mockReturnValue(<div>returnList</div>)
 vi.mock('@/app/books/[id]/returnList', () => ({
-  __esModule: true,
   default: (...args: any) => ReturnListMock(...args),
 }))
 
 const getServerSessionMock = vi.fn().mockReturnValue({ customUser: { id: user1.id } })
 vi.mock('next-auth', () => ({
-  __esModule: true,
   getServerSession: () => getServerSessionMock(),
 }))
 
 vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-  __esModule: true,
   authOptions: {},
 }))
 

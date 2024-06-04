@@ -8,7 +8,6 @@ import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
 const putMock = vi.fn().mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
 vi.mock('@vercel/blob', () => ({
-  __esModule: true,
   put: (...args: any[]) => putMock(...args),
 }))
 

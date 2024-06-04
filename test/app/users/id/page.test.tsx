@@ -8,11 +8,9 @@ describe('UserDetail page', async () => {
   const UserDetailPage = (await import('@/app/users/[id]/page')).default
 
   vi.mock('@/app/users/[id]/bookList', () => ({
-    __esModule: true,
     default: () => <div>BookList</div>,
   }))
   vi.mock('@/app/users/[id]/readingBookList', () => ({
-    __esModule: true,
     default: () => <div>ReadingBookList</div>,
   }))
 

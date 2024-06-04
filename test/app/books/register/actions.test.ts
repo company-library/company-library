@@ -10,18 +10,15 @@ import { addBook, registerBook } from '@/app/books/register/actions'
 
 const redirectMock = vi.fn()
 vi.mock('next/navigation', () => ({
-  __esModule: true,
   redirect: () => redirectMock(),
 }))
 
 const notifySlackMock = vi.fn()
 vi.mock('@/libs/slack/webhook', () => ({
-  __esModule: true,
   notifySlack: (msg: string) => notifySlackMock(msg),
 }))
 
 vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
-  __esModule: true,
   downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
     if (imageUrl) {
       return `https://example.com/books/${isbn}/internal/cover.jpg`

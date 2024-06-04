@@ -7,7 +7,6 @@ describe('ImpressionList component', async () => {
     vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
   )
   vi.mock('@/components/userAvatar', () => ({
-    __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

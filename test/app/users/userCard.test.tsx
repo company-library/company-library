@@ -4,7 +4,6 @@ import { Suspense } from 'react'
 
 describe('UserCard component', async () => {
   vi.mock('next/link', () => ({
-    __esModule: true,
     default: (props: any) => {
       return <a {...props} />
     },

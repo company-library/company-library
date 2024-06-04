@@ -4,7 +4,6 @@ import { Suspense } from 'react'
 
 const pathnameMock = vi.fn().mockReturnValue({ push: vi.fn() })
 vi.mock('next/navigation', () => ({
-  __esModule: true,
   usePathname: () => pathnameMock(),
 }))
 
@@ -13,18 +12,15 @@ const getServerSessionMock = vi.fn().mockReturnValue({
   customUser: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
 })
 vi.mock('next-auth', () => ({
-  __esModule: true,
   getServerSession: () => getServerSessionMock(),
 }))
 
 vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-  __esModule: true,
   authOptions: {},
 }))
 
 const UserAvatarMock = vi.fn().mockImplementation(() => <div>userAvatar</div>)
 vi.mock('@/components/userAvatar', () => ({
-  __esModule: true,
   default: (...args: any) => UserAvatarMock(...args),
 }))
 

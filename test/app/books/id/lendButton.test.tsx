@@ -8,14 +8,12 @@ const today = DateTime.local().setZone('Asia/Tokyo')
 const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
 const lendBookMock = vi.fn()
 vi.mock('@/app/books/[id]/actions', () => ({
-  __esModule: true,
   lendBook: (bookId: string, userId: string, dueDate: Date) =>
     lendBookMock(bookId, userId, dueDate),
 }))
 
 const refreshMock = vi.fn()
 vi.mock('next/navigation', () => ({
-  __esModule: true,
   useRouter: () => {
     return { refresh: refreshMock }
   },

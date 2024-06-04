@@ -4,7 +4,6 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { Suspense } from 'react'
 
 vi.mock('next/image', () => ({
-  __esModule: true,
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
     return <img {...props} alt={props.alt ?? 'alt'} />
@@ -12,14 +11,12 @@ vi.mock('next/image', () => ({
 }))
 
 vi.mock('@/app/books/[id]/lendButton', () => ({
-  __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>借りる</button>
   },
 }))
 
 vi.mock('@/app/books/[id]/returnButton', () => ({
-  __esModule: true,
   default: (...args: any[]) => {
     return <button disabled={args[0].disabled}>返却する</button>
   },

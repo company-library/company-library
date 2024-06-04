@@ -3,7 +3,6 @@ import { user1 } from '../../../__utils__/data/user'
 
 const addBookActionMock = vi.fn()
 vi.mock('@/app/books/register/actions', () => ({
-  __esModule: true,
   addBook: { bind: () => () => addBookActionMock() },
 }))
 

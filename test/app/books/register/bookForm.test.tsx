@@ -2,7 +2,6 @@ import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
 vi.mock('@/app/books/register/searchedBook', () => ({
-  __esModule: true,
   default: vi.fn().mockImplementation(() => <>searched book component</>),
 }))
 

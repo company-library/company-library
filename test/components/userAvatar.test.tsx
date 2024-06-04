@@ -10,7 +10,6 @@ describe('UserAvatar component', async () => {
     }
   })
   vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
-    __esModule: true,
     getAvatarUrl: (email: string) => getAvatarUrlMock(email),
   }))
 

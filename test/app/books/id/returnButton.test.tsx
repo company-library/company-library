@@ -3,13 +3,11 @@ import ReturnButton from '@/app/books/[id]/returnButton'
 
 const returnBookMock = vi.fn()
 vi.mock('@/app/books/[id]/actions', () => ({
-  __esModule: true,
   returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
 }))
 
 const refreshMock = vi.fn()
 vi.mock('next/navigation', () => ({
-  __esModule: true,
   useRouter: () => {
     return { refresh: refreshMock }
   },

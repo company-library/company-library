@@ -9,17 +9,14 @@ describe('register page', async () => {
     }
   })
   vi.mock('next-auth', () => ({
-    __esModule: true,
     getServerSession: () => getServerSessionMock(),
   }))
 
   vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-    __esModule: true,
     authOptions: {},
   }))
 
   vi.mock('@/app/books/register/bookForm', () => ({
-    __esModule: true,
     default: () => <div>登録フォーム</div>,
   }))
 

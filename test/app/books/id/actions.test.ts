@@ -10,7 +10,6 @@ import { lendBook, returnBook } from '@/app/books/[id]/actions'
 
 const redirectMock = vi.fn()
 vi.mock('next/navigation', () => ({
-  __esModule: true,
   redirect: () => redirectMock(),
 }))
 

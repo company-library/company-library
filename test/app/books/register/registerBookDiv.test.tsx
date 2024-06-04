@@ -4,7 +4,6 @@ import { user1 } from '../../../__utils__/data/user'
 describe('register book div component', async () => {
   const registerBookActionMock = vi.hoisted(() => vi.fn())
   vi.mock('@/app/books/register/actions', () => ({
-    __esModule: true,
     registerBook: { bind: () => () => registerBookActionMock() },
   }))
 
