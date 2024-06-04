@@ -27,8 +27,6 @@ describe('authOptions', async () => {
         (provider: Provider) => provider.id === 'azure-ad',
       )
 
-      console.warn(providerAAD)
-
       expect(providerAAD?.options['tenantId']).toBe('tenantIdAAD')
       expect(providerAAD?.options['clientId']).toBe('clientIdAAD')
       expect(providerAAD?.options['clientSecret']).toBe('clientSecretAAD')
@@ -92,7 +90,7 @@ describe('authOptions', async () => {
       })
 
       it('accountが渡されなかった場合、何もしない', async () => {
-        const token = { idToken: 'accountIdToken' }
+        const token = {}
         const account = null
         const user = { id: '1' }
 

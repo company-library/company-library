@@ -7,8 +7,8 @@ vi.mock('@/app/books/register/actions', () => ({
   addBook: { bind: () => () => addBookActionMock() },
 }))
 
-describe('add book div component', () => {
-  const AddBookDivComponent = require('@/app/books/register/addBookDiv').default
+describe('add book div component', async () => {
+  const AddBookDivComponent = (await import('@/app/books/register/addBookDiv')).default
 
   it('追加ボタンをクリックすると、server actionが実行される', async () => {
     const companyBook = { id: 1, _count: { registrationHistories: 2 } }

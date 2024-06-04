@@ -6,8 +6,8 @@ vi.mock('@/app/books/register/searchedBook', () => ({
   default: vi.fn().mockImplementation(() => <>searched book component</>),
 }))
 
-describe('book form component', () => {
-  const BookFormComponent = require('@/app/books/register/bookForm').default
+describe('book form component', async () => {
+  const BookFormComponent = (await import('@/app/books/register/bookForm')).default
 
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
     const { getByText, queryByText, getByLabelText } = render(

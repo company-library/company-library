@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 import useSWR from 'swr'
+import { Mock } from 'vitest'
 
 const addRegisterBookDivMock = vi.fn().mockImplementation(() => <>add book div component</>)
 vi.mock('@/app/books/register/addBookDiv', () => ({
@@ -14,13 +15,13 @@ vi.mock('@/app/books/register/registerBookDiv', () => ({
 }))
 vi.mock('swr')
 
-describe('searched book component', () => {
-  const swrMock = useSWR as vi.Mock
+describe('searched book component', async () => {
+  const swrMock = useSWR as Mock
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
 
-  const SearchedBookComponent = require('@/app/books/register/searchedBook').default
+  const SearchedBookComponent = (await import('@/app/books/register/searchedBook')).default
 
   it('書籍情報が表示される', () => {
     swrMock

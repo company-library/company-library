@@ -3,14 +3,18 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 import { DateTime, Settings } from 'luxon'
 
-describe('LendingList Component', () => {
-  const UserAvatarMock = vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+describe('LendingList Component', async () => {
+  const { UserAvatarMock } = vi.hoisted(() => {
+    return {
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+    }
+  })
   vi.mock('@/components/userAvatar', () => ({
     __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
 
-  const LendingListComponent = require('@/app/books/[id]/lendingList').default
+  const LendingListComponent = (await import('@/app/books/[id]/lendingList')).default
 
   const expectedLendingHistories = [
     {

@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
+import { Suspense } from 'react'
 
 const BookDetailMock = vi.fn().mockReturnValue(<div>bookDetail</div>)
 vi.mock('@/app/books/[id]/bookDetail', () => ({
@@ -38,23 +39,28 @@ vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }))
 
-describe('BookDetail page', () => {
+describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
-  const BookDetailPage = require('@/app/books/[id]/page').default
+  const BookDetailPage = (await import('@/app/books/[id]/page')).default
 
   const book = bookWithImage
 
   it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
-    render(await BookDetailPage({ params: { id: book.id } }))
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: book.id.toString() }} />{' '}
+      </Suspense>,
+    )
 
-    expect(BookDetailMock).toBeCalled()
-    expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
-    const heading2s = screen.getAllByRole('heading', { level: 2 })
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    const heading2s = await screen.findAllByRole('heading', { level: 2 })
     expect(heading2s.length).toBe(3)
     expect(heading2s[0].textContent).toBe('借りているユーザー')
     expect(heading2s[1].textContent).toBe('感想')
     expect(heading2s[2].textContent).toBe('借りたユーザー')
+    expect(BookDetailMock).toBeCalled()
+    expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
     expect(LendingListMock).toBeCalledWith({ bookId: book.id }, undefined)
     expect(ImpressionListMock).toBeCalledWith({ bookId: book.id }, undefined)
     expect(ReturnListMock).toBeCalledWith({ bookId: book.id }, undefined)

@@ -2,14 +2,18 @@ import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 
-describe('ReturnList Component', () => {
-  const UserAvatarMock = vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
+describe('ReturnList Component', async () => {
+  const { UserAvatarMock } = vi.hoisted(() => {
+    return {
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+    }
+  })
   vi.mock('@/components/userAvatar', () => ({
     __esModule: true,
     default: (...args: any) => UserAvatarMock(...args),
   }))
 
-  const ReturnListComponent = require('@/app/books/[id]/returnList').default
+  const ReturnListComponent = (await import('@/app/books/[id]/returnList')).default
 
   const expectedReturnHistories = [
     {
