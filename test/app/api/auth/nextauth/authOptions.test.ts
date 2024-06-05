@@ -11,6 +11,7 @@ describe('authOptions', async () => {
   process.env.AZURE_AD_B2C_CLIENT_ID = 'clientIdAADB2C'
   process.env.AZURE_AD_B2C_CLIENT_SECRET = 'clientSecretAADB2C'
   process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW = 'primaryUserFlowAADB2C'
+
   const { authOptions } = await import('@/app/api/auth/[...nextauth]/authOptions')
 
   describe('AAD provider の確認', () => {
@@ -90,7 +91,7 @@ describe('authOptions', async () => {
       })
 
       it('accountが渡されなかった場合、何もしない', async () => {
-        const token = {}
+        const token = { idToken: undefined }
         const account = null
         const user = { id: '1' }
 
@@ -132,6 +133,7 @@ describe('authOptions', async () => {
             throw new Error('session callback is not defined')
           }
 
+          // @ts-ignore
           const result = await session({ session: argSession, token: argToken })
 
           expect(result).toStrictEqual(defaultSession)
@@ -148,6 +150,7 @@ describe('authOptions', async () => {
           throw new Error('session callback is not defined')
         }
 
+        // @ts-ignore
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -168,6 +171,7 @@ describe('authOptions', async () => {
           throw new Error('session callback is not defined')
         }
 
+        // @ts-ignore
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -196,6 +200,7 @@ describe('authOptions', async () => {
           throw new Error('session callback is not defined')
         }
 
+        // @ts-ignore
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual(defaultSession)

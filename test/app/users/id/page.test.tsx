@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { Suspense } from 'react'
 
 describe('UserDetail page', async () => {
   const expectedUser = user1
@@ -25,6 +26,7 @@ describe('UserDetail page', async () => {
   })
 
   it('クエリにidがない場合は、「Error!」と表示される', async () => {
+    // @ts-ignore
     render(await UserDetailPage({ params: {} }))
 
     expect(screen.getByText('Error!')).toBeInTheDocument()
