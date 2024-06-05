@@ -74,7 +74,7 @@ describe('UserAvatar component', async () => {
 
         render(
           <Suspense>
-            <UserAvatar user={user1} size={size} />{' '}
+            <UserAvatar user={user1} size={size} />
           </Suspense>,
         )
 

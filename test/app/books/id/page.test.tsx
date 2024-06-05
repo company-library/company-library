@@ -70,7 +70,7 @@ describe('BookDetail page', async () => {
   it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
     render(
       <Suspense>
-        <BookDetailPage params={{ id: book.id.toString() }} />{' '}
+        <BookDetailPage params={{ id: book.id.toString() }} />
       </Suspense>,
     )
 
@@ -88,30 +88,52 @@ describe('BookDetail page', async () => {
   })
 
   it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
-    getServerSessionMock.mockReturnValueOnce(null)
+    getServerSessionMock.mockReturnValue(null)
 
-    render(await BookDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+      await screen.findByText('セッションが取得できませんでした。再読み込みしてみてください。'),
     ).toBeInTheDocument()
   })
 
   it('書籍のIDが数値でなかった場合は、エラーメッセージを表示する', async () => {
-    const { rerender } = render(await BookDetailPage({ params: { id: 'true' } }))
-    expect(screen.getByText('不正な書籍です。')).toBeInTheDocument()
+    const { rerender } = render(
+      <Suspense>
+        <BookDetailPage params={{ id: 'true' }} />
+      </Suspense>,
+    )
 
-    rerender(await BookDetailPage({ params: { id: '1n' } }))
-    expect(screen.getByText('不正な書籍です。')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('不正な書籍です。')).toBeInTheDocument()
+
+    rerender(
+      <Suspense>
+        <BookDetailPage params={{ id: '1n' }} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('不正な書籍です。')).toBeInTheDocument()
   })
 
   it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
-    getServerSessionMock.mockReturnValueOnce(null)
+    getServerSessionMock.mockReturnValue(null)
 
-    render(await BookDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+      await screen.findByText('セッションが取得できませんでした。再読み込みしてみてください。'),
     ).toBeInTheDocument()
   })
 })

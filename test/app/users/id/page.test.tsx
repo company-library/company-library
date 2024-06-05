@@ -18,36 +18,56 @@ describe('UserDetail page', async () => {
   it('ユーザーの情報が表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(expectedUser)
 
-    const { getByText } = render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(getByText('テスト太郎さんの情報')).toBeInTheDocument()
-    expect(getByText('現在読んでいる書籍(3冊)'))
-    expect(getByText('今まで読んだ書籍(4冊)'))
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('テスト太郎さんの情報')).toBeInTheDocument()
+    expect(screen.getByText('現在読んでいる書籍(3冊)'))
+    expect(screen.getByText('今まで読んだ書籍(4冊)'))
   })
 
   it('クエリにidがない場合は、「Error!」と表示される', async () => {
-    // @ts-ignore
-    render(await UserDetailPage({ params: {} }))
+    render(
+      <Suspense>
+        {/* @ts-ignore */}
+        <UserDetailPage params={{}} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
   })
 
   it('該当するidのユーザーがない場合は、「Error!」と表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(null)
 
-    render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
   })
 
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
     console.error = vi.fn()
-    prismaMock.user.findUnique.mockRejectedValueOnce(expectErrorMsg)
+    prismaMock.user.findUnique.mockRejectedValue(expectErrorMsg)
 
-    render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)
   })
 })

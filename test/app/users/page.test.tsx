@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../__utils__/data/user'
+import { Suspense } from 'react'
 
 describe('users page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
@@ -17,10 +18,14 @@ describe('users page', async () => {
   const UserPage = (await import('@/app/users/page')).default
 
   it('利用者一覧が表示される', async () => {
-    render(await UserPage())
+    render(
+      <Suspense>
+        <UserPage />
+      </Suspense>,
+    )
 
-    const heading = await screen.findByRole('heading')
-    expect(heading).toHaveTextContent('利用者一覧')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByRole('heading')).toHaveTextContent('利用者一覧')
     expect(screen.getByText(user1.name)).toBeInTheDocument()
     expect(screen.getByText(user2.name)).toBeInTheDocument()
   })
@@ -28,11 +33,16 @@ describe('users page', async () => {
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
     console.error = vi.fn()
-    prismaMock.user.findMany.mockRejectedValueOnce(expectErrorMsg)
+    prismaMock.user.findMany.mockRejectedValue(expectErrorMsg)
 
-    render(await UserPage())
+    render(
+      <Suspense>
+        <UserPage />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)
   })
 })
