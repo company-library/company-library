@@ -1,6 +1,6 @@
 import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../../../__utils__/data/user'
-import { Provider } from 'next-auth/providers/index'
+import { Provider, ProviderType } from 'next-auth/providers/index'
 
 describe('authOptions', async () => {
   process.env.AZURE_AD_TENANT_ID = 'tenantIdAAD'

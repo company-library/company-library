@@ -6,7 +6,7 @@ describe('add book div component', async () => {
     return { addBookActionMock: vi.fn() }
   })
   vi.mock('@/app/books/register/actions', () => ({
-    addBook: { bind: () => () => addBookActionMock() },
+    addBook: { bind: () => addBookActionMock },
   }))
 
   const AddBookDivComponent = (await import('@/app/books/register/addBookDiv')).default
