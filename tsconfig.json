@@ -38,6 +38,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
+    "node_modules/vitest/globals.d.ts",
     "./vitest.setup.ts"
   ],
   "exclude": [
