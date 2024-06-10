@@ -20,7 +20,6 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
 
   const [dueDate, setDueDate] = useState(getDaysLater(7))
   const onClick = () => {
-    // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
     startTransition(async () => {
       const result = await lendBook(bookId, userId, dueDate)
       if (result instanceof Error) {
