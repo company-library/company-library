@@ -1,8 +1,3 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- */
-
 import { GET } from '@/app/api/books/searchByIsbn/route'
 import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 import { bookWithImage } from '../../../../__utils__/data/book'
