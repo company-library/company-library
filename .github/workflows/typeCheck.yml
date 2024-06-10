@@ -1,10 +1,10 @@
-name: unitTest
+name: typeCheck
 
 on:
   pull_request
 
 jobs:
-  test:
+  typeCheck:
     runs-on: ubuntu-latest
 
     steps:

@@ -1,10 +1,10 @@
-name: unitTest
+name: buildCheck
 
 on:
   pull_request
 
 jobs:
-  test:
+  buildCheck:
     runs-on: ubuntu-latest
 
     steps:
