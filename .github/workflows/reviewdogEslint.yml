@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: volta-cli/action@v4
+      - run: volta install node
       - run: volta install pnpm
       - run: pnpm i --frozen-lockfile
       - uses: reviewdog/action-eslint@v1
