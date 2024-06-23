@@ -10,5 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: volta-cli/action@v4
+      - run: volta install pnpm
       - run: pnpm i --frozen-lockfile
       - run: pnpm build
