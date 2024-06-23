@@ -19,7 +19,7 @@ updates:
 
       # 個別にグループ化したい場合はここより上に追記してください
       minor-and-patch:
-        applies-to: version-updates
+        applies-to: "version-updates"
         patterns:
           - "*"
         update-types:
@@ -27,6 +27,14 @@ updates:
           - "patch"
 
   - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+
+  - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
