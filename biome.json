@@ -10,8 +10,7 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 100,
-    "attributePosition": "auto",
-    "ignore": ["src/generated/"]
+    "attributePosition": "auto"
   },
   "javascript": {
     "formatter": {
