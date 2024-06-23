@@ -29,10 +29,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": false,
-      "style": {
-        "useBlockStatements": "off"
-      }
+      "recommended": false
     }
   }
 }
