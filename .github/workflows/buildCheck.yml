@@ -1,0 +1,14 @@
+name: buildCheck
+
+on:
+  pull_request
+
+jobs:
+  buildCheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: volta-cli/action@v4
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
