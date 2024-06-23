@@ -23,7 +23,6 @@ const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId,
 
   const router = useRouter()
   const onClick = () => {
-    // @ts-expect-error canaryバージョンでstartTransitionの型定義に変更があったが、@types/reactにはまだ反映されていない
     startTransition(async () => {
       const result = await returnBook({
         bookId,
