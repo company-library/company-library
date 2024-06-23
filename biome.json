@@ -5,6 +5,7 @@
   },
   "formatter": {
     "enabled": true,
+    "ignore": [".next", "node_modules"],
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
