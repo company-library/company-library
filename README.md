@@ -96,7 +96,7 @@ Slackに通知を送るためには、SlackのWebhook URLが必要です。
 ### 1. 依存関係のインストール
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ### 2. 環境変数の設定
@@ -124,12 +124,12 @@ Vercel Postgresを使用する場合は、Vercelのダッシュボードから�
 ### 4. DBのマイグレーション
 
 ```bash
-yarn db:generate
-yarn db:push
+pnpm db:generate
+pnpm db:push
 ```
 
 ### 5. ローカルサーバーの起動
 
 ```bash
-yarn dev
+pnpm dev
 ```
