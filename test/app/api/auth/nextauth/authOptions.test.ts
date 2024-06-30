@@ -3,14 +3,14 @@ import { user1, user2 } from '../../../../__utils__/data/user'
 import { Provider, ProviderType } from 'next-auth/providers/index'
 
 describe('authOptions', async () => {
-  process.env.AZURE_AD_TENANT_ID = 'tenantIdAAD'
-  process.env.AZURE_AD_CLIENT_ID = 'clientIdAAD'
-  process.env.AZURE_AD_CLIENT_SECRET = 'clientSecretAAD'
+  vi.stubEnv('AZURE_AD_TENANT_ID', 'tenantIdAAD')
+  vi.stubEnv('AZURE_AD_CLIENT_ID', 'clientIdAAD')
+  vi.stubEnv('AZURE_AD_CLIENT_SECRET', 'clientSecretAAD')
 
-  process.env.AZURE_AD_B2C_TENANT_NAME = 'tenantNameAADB2C'
-  process.env.AZURE_AD_B2C_CLIENT_ID = 'clientIdAADB2C'
-  process.env.AZURE_AD_B2C_CLIENT_SECRET = 'clientSecretAADB2C'
-  process.env.AZURE_AD_B2C_PRIMARY_USER_FLOW = 'primaryUserFlowAADB2C'
+  vi.stubEnv('AZURE_AD_B2C_TENANT_NAME', 'tenantNameAADB2C')
+  vi.stubEnv('AZURE_AD_B2C_CLIENT_ID', 'clientIdAADB2C')
+  vi.stubEnv('AZURE_AD_B2C_CLIENT_SECRET', 'clientSecretAADB2C')
+  vi.stubEnv('AZURE_AD_B2C_PRIMARY_USER_FLOW', 'primaryUserFlowAADB2C')
 
   const { authOptions } = await import('@/app/api/auth/[...nextauth]/authOptions')
 
