@@ -4,14 +4,13 @@ import useSWR from 'swr'
 import { Mock } from 'vitest'
 import SearchedBook from '@/app/books/register/searchedBook'
 
-vi.mock('swr')
-
 describe('searched book component', async () => {
   const swrMock = useSWR as Mock
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
 
+  vi.mock('swr')
   const { addRegisterBookDivMock } = vi.hoisted(() => {
     return { addRegisterBookDivMock: vi.fn().mockImplementation(() => <>add book div component</>) }
   })
