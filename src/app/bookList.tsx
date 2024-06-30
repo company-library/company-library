@@ -8,7 +8,7 @@ import { useState } from 'react'
 import useSWR from 'swr'
 
 const BookList = () => {
-  const [searchKeyword, setSearchKeyword] = useState('')
+  const [searchKeyword, setSearchKeyword,] = useState('')
   const { data, error } = useSWR<{ books: Book[] } | CustomError>(
     `/api/books/search?q=${searchKeyword}`,
     fetcher,
