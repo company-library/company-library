@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
+import { user1, user2 } from '../../../__utils__/data/user'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 const BookDetailMock = jest.fn().mockReturnValue(<div>bookDetail</div>)
 jest.mock('@/app/books/[id]/bookDetail', () => ({

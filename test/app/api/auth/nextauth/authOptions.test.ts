@@ -1,6 +1,6 @@
-import { Provider } from 'next-auth/providers'
-import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
+import type { Provider } from 'next-auth/providers'
 import { user1, user2 } from '../../../../__utils__/data/user'
+import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 
 describe('authOptions', () => {
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../__utils__/data/user'
+import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 
 describe('users page', () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])

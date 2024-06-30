@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
-import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
+import { fireEvent, render, screen } from '@testing-library/react'
+import useSWR from 'swr'
+import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 jest.mock('swr')
 

@@ -5,8 +5,8 @@
  */
 
 import { GET } from '@/app/api/books/searchByIsbn/route'
-import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 import { bookWithImage } from '../../../../__utils__/data/book'
+import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 
 describe('books searchByIsbn api', () => {
   const expectedBook = bookWithImage

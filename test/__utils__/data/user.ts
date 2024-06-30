@@ -1,4 +1,4 @@
-import { UserSummary } from '@/models/user'
+import type { UserSummary } from '@/models/user'
 import {
   lendingHistory1,
   lendingHistory2,

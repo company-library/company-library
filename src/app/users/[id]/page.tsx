@@ -1,7 +1,7 @@
-import prisma from '@/libs/prisma/client'
 import BookList from '@/app/users/[id]/bookList'
 import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { readingHistories } from '@/hooks/server/readingHistories'
+import prisma from '@/libs/prisma/client'
 
 export const generateMetadata = async ({ params }: UserPageProps) => {
   const id = Number(params.id)

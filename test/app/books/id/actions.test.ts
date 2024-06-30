@@ -4,9 +4,9 @@
  * @jest-environment node
  */
 
+import { lendBook, returnBook } from '@/app/books/[id]/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { lendBook, returnBook } from '@/app/books/[id]/actions'
 
 const redirectMock = jest.fn()
 jest.mock('next/navigation', () => ({

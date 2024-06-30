@@ -1,7 +1,7 @@
 'use client'
 
-import { FC } from 'react'
 import { addBook } from '@/app/books/register/actions'
+import type { FC } from 'react'
 
 type AddBookDivProps = {
   companyBook: {

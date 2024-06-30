@@ -1,11 +1,11 @@
 'use client'
 
 import BookTile from '@/components/bookTile'
-import useSWR from 'swr'
 import fetcher from '@/libs/swr/fetcher'
+import type { Book } from '@/models/book'
+import { type CustomError, isCustomError } from '@/models/errors'
 import { useState } from 'react'
-import { Book } from '@/models/book'
-import { CustomError, isCustomError } from '@/models/errors'
+import useSWR from 'swr'
 
 const BookList = () => {
   const [searchKeyword, setSearchKeyword] = useState('')

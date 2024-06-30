@@ -1,5 +1,5 @@
-import { LendingHistory } from '@/models/lendingHistory'
-import { ReturnHistory } from '@/models/returnHistory'
+import type { LendingHistory } from '@/models/lendingHistory'
+import type { ReturnHistory } from '@/models/returnHistory'
 
 export type User = {
   id: number

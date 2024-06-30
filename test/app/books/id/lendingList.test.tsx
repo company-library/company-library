@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { lendableBook } from '../../../__utils__/data/book'
 import { DateTime, Settings } from 'luxon'
+import { lendableBook } from '../../../__utils__/data/book'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('LendingList Component', () => {
   const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
