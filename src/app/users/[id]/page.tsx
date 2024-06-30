@@ -5,7 +5,7 @@ import prisma from '@/libs/prisma/client'
 
 export const generateMetadata = async ({ params }: UserPageProps) => {
   const id = Number(params.id)
-  if (isNaN(id)) {
+  if (Number.isNaN(id)) {
     return { title: '利用者情報 | company-library' }
   }
 
@@ -35,7 +35,7 @@ type UserPageProps = {
 
 const UserPage = async ({ params }: UserPageProps) => {
   const id = Number(params.id)
-  if (isNaN(id)) {
+  if (Number.isNaN(id)) {
     return <div>Error!</div>
   }
 
