@@ -2,11 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { Suspense } from 'react'
+import UserDetailPage from '@/app/users/[id]/page'
 
 describe('UserDetail page', async () => {
   const expectedUser = user1
-
-  const UserDetailPage = (await import('@/app/users/[id]/page')).default
 
   vi.mock('@/app/users/[id]/bookList', () => ({
     default: () => <div>BookList</div>,

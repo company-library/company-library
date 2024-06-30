@@ -1,13 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
+import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 
 describe('register book div component', async () => {
   const registerBookActionMock = vi.hoisted(() => vi.fn())
   vi.mock('@/app/books/register/actions', () => ({
     registerBook: { bind: () => () => registerBookActionMock() },
   }))
-
-  const RegisterBookDivComponent = (await import('@/app/books/register/registerBookDiv')).default
 
   it('登録ボタンをクリックすると、server actionが実行される', () => {
     const title = 'testBook'
@@ -16,12 +15,7 @@ describe('register book div component', async () => {
     const userId = user1.id
 
     render(
-      <RegisterBookDivComponent
-        title={title}
-        isbn={isbn}
-        thumbnailUrl={thumbnailUrl}
-        userId={userId}
-      />,
+      <RegisterBookDiv title={title} isbn={isbn} thumbnailUrl={thumbnailUrl} userId={userId} />,
     )
 
     expect(registerBookActionMock).not.toBeCalled()

@@ -2,6 +2,7 @@ import { render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 import useSWR from 'swr'
 import { Mock } from 'vitest'
+import SearchedBook from '@/app/books/register/searchedBook'
 
 vi.mock('swr')
 
@@ -26,8 +27,6 @@ describe('searched book component', async () => {
     default: registerBookDivMock,
   }))
 
-  const SearchedBookComponent = (await import('@/app/books/register/searchedBook')).default
-
   it('書籍情報が表示される', () => {
     swrMock
       .mockReturnValueOnce({
@@ -43,7 +42,7 @@ describe('searched book component', async () => {
       })
       .mockReturnValueOnce({ data: { book: {} } })
 
-    const { getByText } = render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(getByText('こちらの本でしょうか？')).toBeInTheDocument()
     expect(getByText('testBook')).toBeInTheDocument()
@@ -66,7 +65,7 @@ describe('searched book component', async () => {
       })
       .mockReturnValueOnce({ data: { book: companyBook } })
 
-    render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(addRegisterBookDivMock).toBeCalledWith(
       {
@@ -93,7 +92,7 @@ describe('searched book component', async () => {
       })
       .mockReturnValueOnce({ data: { book: {} } })
 
-    render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(addRegisterBookDivMock).not.toBeCalled()
     expect(registerBookDivMock).toBeCalledWith(
@@ -110,7 +109,7 @@ describe('searched book component', async () => {
   it('存在しない書籍の場合は書籍が見つからなかった旨のメッセージを表示する', () => {
     swrMock.mockReturnValueOnce({ data: undefined }).mockReturnValueOnce({ data: { book: {} } })
 
-    const { getByText } = render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(getByText('書籍は見つかりませんでした')).toBeInTheDocument()
   })

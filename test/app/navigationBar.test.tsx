@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { user1 } from '../__utils__/data/user'
 import { Suspense } from 'react'
+import NavigationBar from '@/app/navigationBar'
 
 describe('navigationBar component', async () => {
   const { pathnameMock } = vi.hoisted(() => {
@@ -28,8 +29,6 @@ describe('navigationBar component', async () => {
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const NavigationBar = (await import('@/app/navigationBar')).default
 
   beforeEach(() => {
     pathnameMock.mockReturnValue({ push: vi.fn() })

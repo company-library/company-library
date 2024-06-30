@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
+import AddBookDiv from '@/app/books/register/addBookDiv'
 
 describe('add book div component', async () => {
   const { addBookActionMock } = vi.hoisted(() => {
@@ -9,13 +10,11 @@ describe('add book div component', async () => {
     addBook: { bind: () => addBookActionMock },
   }))
 
-  const AddBookDivComponent = (await import('@/app/books/register/addBookDiv')).default
-
   it('追加ボタンをクリックすると、server actionが実行される', async () => {
     const companyBook = { id: 1, _count: { registrationHistories: 2 } }
     const userId = user1.id
     const { getByRole, getByText } = render(
-      <AddBookDivComponent companyBook={companyBook} userId={userId} />,
+      <AddBookDiv companyBook={companyBook} userId={userId} />,
     )
 
     expect(getByText(/現在の登録冊数：2/)).toBeInTheDocument()

@@ -3,6 +3,7 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 import { DateTime, Settings } from 'luxon'
 import { Suspense } from 'react'
+import LendingList from '@/app/books/[id]/lendingList'
 
 describe('LendingList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
@@ -13,8 +14,6 @@ describe('LendingList Component', async () => {
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const LendingListComponent = (await import('@/app/books/[id]/lendingList')).default
 
   const expectedLendingHistories = [
     {
@@ -45,7 +44,7 @@ describe('LendingList Component', async () => {
 
     render(
       <Suspense>
-        <LendingListComponent bookId={lendableBook.id} />
+        <LendingList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -73,7 +72,7 @@ describe('LendingList Component', async () => {
 
     render(
       <Suspense>
-        <LendingListComponent bookId={lendableBook.id} />
+        <LendingList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -94,7 +93,7 @@ describe('LendingList Component', async () => {
 
     render(
       <Suspense>
-        <LendingListComponent bookId={lendableBook.id} />
+        <LendingList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -109,7 +108,7 @@ describe('LendingList Component', async () => {
 
     render(
       <Suspense>
-        <LendingListComponent bookId={lendableBook.id} />
+        <LendingList bookId={lendableBook.id} />
       </Suspense>,
     )
 

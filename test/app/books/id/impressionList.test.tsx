@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
+import ImpressionList from '@/app/books/[id]/impressionList'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
@@ -10,8 +11,6 @@ describe('ImpressionList component', async () => {
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const ImpressionListComponent = (await import('@/app/books/[id]/impressionList')).default
 
   const prismaImpressionsMock = prismaMock.impression.findMany
   const expectedImpressions = [
@@ -44,7 +43,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionListComponent bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -70,7 +69,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionListComponent bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -86,7 +85,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionListComponent bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -101,7 +100,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionListComponent bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} />
       </Suspense>,
     )
 

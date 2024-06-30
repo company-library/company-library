@@ -2,10 +2,9 @@ import { render, screen } from '@testing-library/react'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { Suspense } from 'react'
+import BookDetail from '@/app/books/[id]/bookDetail'
 
 describe('BookDetail component', async () => {
-  const BookDetailComponent = (await import('@/app/books/[id]/bookDetail')).default
-
   const userId = 2
 
   const book = lendableBook
@@ -47,7 +46,7 @@ describe('BookDetail component', async () => {
   it('本の詳細情報と操作ボタンが表示される', async () => {
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -72,7 +71,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -95,7 +94,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -119,7 +118,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -139,7 +138,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -164,7 +163,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -192,7 +191,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -218,7 +217,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -246,7 +245,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -272,7 +271,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -287,7 +286,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 
@@ -304,7 +303,7 @@ describe('BookDetail component', async () => {
 
     render(
       <Suspense>
-        <BookDetailComponent bookId={book.id} userId={userId} />
+        <BookDetail bookId={book.id} userId={userId} />
       </Suspense>,
     )
 

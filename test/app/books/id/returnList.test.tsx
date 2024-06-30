@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
+import ReturnList from '@/app/books/[id]/returnList'
 
 describe('ReturnList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
@@ -12,8 +13,6 @@ describe('ReturnList Component', async () => {
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const ReturnListComponent = (await import('@/app/books/[id]/returnList')).default
 
   const expectedReturnHistories = [
     {
@@ -54,7 +53,7 @@ describe('ReturnList Component', async () => {
   it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', async () => {
     render(
       <Suspense>
-        <ReturnListComponent bookId={lendableBook.id} />
+        <ReturnList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -82,7 +81,7 @@ describe('ReturnList Component', async () => {
 
     render(
       <Suspense>
-        <ReturnListComponent bookId={lendableBook.id} />
+        <ReturnList bookId={lendableBook.id} />
       </Suspense>,
     )
 
@@ -97,7 +96,7 @@ describe('ReturnList Component', async () => {
 
     render(
       <Suspense>
-        <ReturnListComponent bookId={lendableBook.id} />
+        <ReturnList bookId={lendableBook.id} />
       </Suspense>,
     )
 

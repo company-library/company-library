@@ -1,17 +1,14 @@
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
+import BookForm from '@/app/books/register/bookForm'
 
 vi.mock('@/app/books/register/searchedBook', () => ({
   default: vi.fn().mockImplementation(() => <>searched book component</>),
 }))
 
 describe('book form component', async () => {
-  const BookFormComponent = (await import('@/app/books/register/bookForm')).default
-
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
-    const { getByText, queryByText, getByLabelText } = render(
-      <BookFormComponent userId={user1.id} />,
-    )
+    const { getByText, queryByText, getByLabelText } = render(<BookForm userId={user1.id} />)
 
     const input = getByLabelText('ISBN（13桁）を入力してください')
     // 12桁だと表示されない

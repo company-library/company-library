@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 import { Suspense } from 'react'
+import RegisterPage from '@/app/books/register/page'
 
 describe('register page', async () => {
   const { getServerSessionMock } = vi.hoisted(() => {
@@ -23,8 +24,6 @@ describe('register page', async () => {
   beforeEach(() => {
     getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
   })
-
-  const RegisterPage = (await import('@/app/books/register/page')).default
 
   it('書籍登録ページが表示される', async () => {
     render(

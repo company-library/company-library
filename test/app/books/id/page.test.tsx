@@ -3,6 +3,7 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
+import BookDetailPage from '@/app/books/[id]/page'
 
 describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
@@ -54,8 +55,6 @@ describe('BookDetail page', async () => {
   vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
     authOptions: {},
   }))
-
-  const BookDetailPage = (await import('@/app/books/[id]/page')).default
 
   const book = bookWithImage
 

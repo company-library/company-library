@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../__utils__/data/user'
 import { Suspense } from 'react'
+import UserCard from '@/app/users/userCard'
 
 describe('UserCard component', async () => {
   vi.mock('next/link', () => ({
@@ -12,8 +13,6 @@ describe('UserCard component', async () => {
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => <div data-testid="profileImage">userAvatar</div>,
   }))
-
-  const UserCard = (await import('@/app/users/userCard')).default
 
   it('ユーザー情報が表示されていること', async () => {
     render(

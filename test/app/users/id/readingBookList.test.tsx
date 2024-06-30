@@ -5,12 +5,11 @@ import { lendingHistory1, lendingHistory2 } from '../../../__utils__/data/lendin
 import { toJstFormat } from '@/libs/luxon/utils'
 import { DateTime, Settings } from 'luxon'
 import { Suspense } from 'react'
+import ReadingBookList from '@/app/users/[id]/readingBookList'
 
 describe('ReadingBookList component', async () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
   const expectedReadingBooks = [lendingHistory1, lendingHistory2]
-
-  const ReadingBookList = (await import('@/app/users/[id]/readingBookList')).default
 
   it('返却期限と本の一覧が表示される', async () => {
     prismaMock.book.findMany.mockResolvedValue(expectedBooks)

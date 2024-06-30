@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { user1, user2 } from '../__utils__/data/user'
 import { Suspense } from 'react'
 import { assert } from 'vitest'
+import UserAvatar from '@/components/userAvatar'
 
 describe('UserAvatar component', async () => {
   const { getAvatarUrlMock } = vi.hoisted(() => {
@@ -12,8 +13,6 @@ describe('UserAvatar component', async () => {
   vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
     getAvatarUrl: (email: string) => getAvatarUrlMock(email),
   }))
-
-  const UserAvatar = (await import('@/components/userAvatar')).default
 
   it('ユーザー画像が表示されること', async () => {
     getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
