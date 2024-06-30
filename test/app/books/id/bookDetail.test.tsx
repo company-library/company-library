@@ -4,6 +4,7 @@ import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (props: any) => {
     // eslint-disable-next-line @next/next/no-img-element
     return <img {...props} alt={props.alt ?? 'alt'} />
@@ -12,15 +13,25 @@ jest.mock('next/image', () => ({
 
 jest.mock('@/app/books/[id]/lendButton', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any[]) => {
-    return <button disabled={args[0].disabled}>借りる</button>
+    return (
+      <button type="button" disabled={args[0].disabled}>
+        借りる
+      </button>
+    )
   },
 }))
 
 jest.mock('@/app/books/[id]/returnButton', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any[]) => {
-    return <button disabled={args[0].disabled}>返却する</button>
+    return (
+      <button type="button" disabled={args[0].disabled}>
+        返却する
+      </button>
+    )
   },
 }))
 

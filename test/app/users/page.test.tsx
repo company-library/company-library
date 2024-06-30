@@ -8,6 +8,7 @@ describe('users page', () => {
   const UserCardMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
   jest.mock('@/app/users/userCard', () => ({
     __esModule: true,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserCardMock(...args),
   }))
 

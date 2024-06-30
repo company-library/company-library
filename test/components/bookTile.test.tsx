@@ -4,8 +4,9 @@ import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (props: any) => {
-    // eslint-disable-next-line
+    // biome-ignore lint/a11y/useAltText: <explanation>
     return <img {...props} />
   },
 }))

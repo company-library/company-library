@@ -6,6 +6,7 @@ describe('ReturnList Component', () => {
   const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
   jest.mock('@/components/userAvatar', () => ({
     __esModule: true,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

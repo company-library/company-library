@@ -9,6 +9,7 @@ import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 const putMock = jest.fn().mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
 jest.mock('@vercel/blob', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   put: (...args: any[]) => putMock(...args),
 }))
 
