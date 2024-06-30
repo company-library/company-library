@@ -3,6 +3,13 @@ export type CustomError = {
   message: string
 }
 
-export const isCustomError = (arg: any): arg is CustomError => {
-  return arg != null && 'errorCode' in arg && 'message' in arg
+export const isCustomError = (arg: unknown): arg is CustomError => {
+  if (typeof arg !== 'object' || arg === null) {
+    return false
+  }
+
+  const maybeCustomError = arg as { errorCode?: unknown; message?: unknown }
+  return (
+    typeof maybeCustomError.errorCode === 'string' && typeof maybeCustomError.message === 'string'
+  )
 }

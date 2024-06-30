@@ -7,12 +7,17 @@ export type User = {
   email: string
 }
 
-export const isUser = (value: any): value is User => {
+export const isUser = (value: unknown): value is User => {
+  if (typeof value !== 'object' || value == null) {
+    return false
+  }
+
+  const maybeUser = value as { id: unknown; name: unknown; email: unknown; sub: unknown }
   return (
-    typeof value.id === 'number' &&
-    typeof value.name === 'string' &&
-    typeof value.email === 'string' &&
-    typeof value.sub === 'string'
+    typeof maybeUser.id === 'number' &&
+    typeof maybeUser.name === 'string' &&
+    typeof maybeUser.email === 'string' &&
+    typeof maybeUser.sub === 'string'
   )
 }
 
