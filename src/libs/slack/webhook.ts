@@ -1,5 +1,4 @@
 import { IncomingWebhook } from '@slack/webhook'
-import process from 'process'
 
 /**
  * Slack通知を行う
