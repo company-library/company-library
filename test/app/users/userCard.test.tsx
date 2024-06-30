@@ -4,12 +4,6 @@ import { Suspense } from 'react'
 import UserCard from '@/app/users/userCard'
 
 describe('UserCard component', async () => {
-  vi.mock('next/link', () => ({
-    default: (props: any) => {
-      return <a {...props} />
-    },
-  }))
-
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: any) => <div data-testid="profileImage">userAvatar</div>,
   }))
