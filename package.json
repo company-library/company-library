@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "biome check src/ test/",
+    "lint:fix": "biome check src/ test/ --write",
+    "lint:ci": "biome ci src/ test/",
     "test": "jest",
     "typeCheck": "tsc --pretty --noEmit",
     "db:generate": "npx prisma generate",
@@ -32,6 +34,7 @@
     "swr": "^1.3.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.2",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@types/luxon": "^3.4.2",
@@ -43,13 +46,11 @@
     "dotenv-cli": "^7.4.2",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.4",
-    "eslint-config-prettier": "^8.8.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^28.1.1",
     "jest-environment-jsdom": "^28.1.1",
     "jest-mock-extended": "^3.0.7",
     "postcss": "^8.4.38",
-    "prettier": "^2.6.2",
     "tailwindcss": "^3.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"

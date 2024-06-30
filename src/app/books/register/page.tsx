@@ -1,6 +1,6 @@
-import { Metadata, type NextPage } from 'next'
-import Headline from '@/components/common/headline'
 import BookForm from '@/app/books/register/bookForm'
+import Headline from '@/components/common/headline'
+import type { Metadata, NextPage } from 'next'
 import { getServerSession } from 'next-auth'
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'

@@ -24,6 +24,7 @@ jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
 const UserAvatarMock = jest.fn().mockImplementation(() => <div>userAvatar</div>)
 jest.mock('@/components/userAvatar', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any) => UserAvatarMock(...args),
 }))
 

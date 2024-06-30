@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('ReturnList Component', () => {
   const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
   jest.mock('@/components/userAvatar', () => ({
     __esModule: true,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 
