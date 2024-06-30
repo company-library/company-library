@@ -1,9 +1,9 @@
 'use server'
 
 import prisma from '@/libs/prisma/client'
-import { redirect } from 'next/navigation'
 import { notifySlack } from '@/libs/slack/webhook'
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
+import { redirect } from 'next/navigation'
 
 /**
  * 書籍登録をするServer Action

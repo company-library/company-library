@@ -1,4 +1,3 @@
-import process from 'process'
 import { IncomingWebhook } from '@slack/webhook'
 
 /**

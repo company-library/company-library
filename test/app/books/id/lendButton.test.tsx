@@ -1,7 +1,7 @@
 import LendButton from '@/app/books/[id]/lendButton'
+import { dateStringToDate } from '@/libs/luxon/utils'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
-import { dateStringToDate } from '@/libs/luxon/utils'
 
 describe('LendButton component', () => {
   const bookId = 1
@@ -79,7 +79,7 @@ describe('LendButton component', () => {
     expect(lendBookMock).toBeCalledWith(
       bookId,
       userId,
-      dateStringToDate(expectedDueDate.toISODate()),
+      dateStringToDate(expectedDueDate.toISODate() ?? ''),
     )
     expect(refreshMock).toBeCalled()
   })

@@ -1,6 +1,6 @@
-import { FC } from 'react'
 import BookTile from '@/components/bookTile'
 import prisma from '@/libs/prisma/client'
+import type { FC } from 'react'
 
 type BookListProps = {
   bookIds: number[]

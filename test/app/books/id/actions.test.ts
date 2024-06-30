@@ -1,6 +1,5 @@
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { lendBook, returnBook } from '@/app/books/[id]/actions'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {

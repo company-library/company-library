@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { lendableBook } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
 import ImpressionList from '@/app/books/[id]/impressionList'

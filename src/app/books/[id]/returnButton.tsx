@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { ChangeEvent, FC, startTransition, useRef, useState } from 'react'
 import { returnBook } from '@/app/books/[id]/actions'
+import { useRouter } from 'next/navigation'
+import { type ChangeEvent, type FC, startTransition, useRef, useState } from 'react'
 
 type ReturnButtonProps = {
   bookId: number
@@ -13,8 +13,8 @@ type ReturnButtonProps = {
 
 const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId, disabled }) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const openModal = () => dialogRef.current && dialogRef.current.showModal()
-  const closeModal = () => dialogRef.current && dialogRef.current.close()
+  const openModal = () => dialogRef.current?.showModal()
+  const closeModal = () => dialogRef.current?.close()
 
   const [impression, setImpression] = useState('')
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
