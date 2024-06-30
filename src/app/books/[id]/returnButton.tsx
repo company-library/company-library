@@ -13,8 +13,8 @@ type ReturnButtonProps = {
 
 const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId, disabled }) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const openModal = () => dialogRef.current && dialogRef.current.showModal()
-  const closeModal = () => dialogRef.current && dialogRef.current.close()
+  const openModal = () => dialogRef.current?.showModal()
+  const closeModal = () => dialogRef.current?.close()
 
   const [impression, setImpression] = useState('')
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
