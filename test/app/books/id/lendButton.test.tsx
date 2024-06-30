@@ -73,7 +73,7 @@ describe('LendButton component', () => {
     expect(lendBookMock).toBeCalledWith(
       bookId,
       userId,
-      dateStringToDate(expectedDueDate.toISODate()),
+      dateStringToDate(expectedDueDate.toISODate() ?? ''),
     )
     expect(refreshMock).toBeCalled()
   })
