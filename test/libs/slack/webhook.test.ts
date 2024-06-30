@@ -9,8 +9,8 @@ describe('notifySlack function', () => {
 
   it('Slackのwebhookがキックされる', async () => {
     const expectedText = 'sample message'
-    const sendMock = jest.fn()
-    jest.spyOn(require('@slack/webhook'), 'IncomingWebhook').mockImplementation(() => {
+    const sendMock = vi.fn()
+    vi.spyOn(require('@slack/webhook'), 'IncomingWebhook').mockImplementation(() => {
       return {
         send: sendMock,
       }

@@ -1,7 +1,7 @@
 import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 
 describe('getAvatarUrl', () => {
-  const fetchMock = jest.fn().mockResolvedValue({ ok: true, status: 200 })
+  const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 })
   global.fetch = fetchMock
 
   it('Gravatar画像存在チェックのリクエストが成功して画像がある場合、Gravatar画像取得用のURLを返す', async () => {
@@ -26,7 +26,7 @@ describe('getAvatarUrl', () => {
   it('Gravatar画像存在チェックのリクエストが失敗した場合、undefinedを返す', async () => {
     const expectedError = new Error('network error')
     fetchMock.mockRejectedValueOnce(expectedError)
-    const consoleErrorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+    const consoleErrorMock = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
 
     const result = await getAvatarUrl('MyEmailAddress@example.com ')
 

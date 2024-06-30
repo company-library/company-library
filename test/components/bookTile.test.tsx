@@ -2,16 +2,14 @@ import BookTile from '@/components/bookTile'
 import { render } from '@testing-library/react'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
-jest.mock('next/image', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (props: any) => {
-    // biome-ignore lint/a11y/useAltText: <explanation>
-    return <img {...props} />
-  },
-}))
-
 describe('book component', () => {
+  vi.mock('next/image', () => ({
+    default: (props: any) => {
+      // eslint-disable-next-line
+      return <img {...props} />
+    },
+  }))
+
   it('本のタイトルと画像が表示される', () => {
     const { getByText, getByTestId } = render(<BookTile book={bookWithImage} />)
 

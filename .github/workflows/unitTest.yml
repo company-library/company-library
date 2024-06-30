@@ -11,4 +11,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: volta-cli/action@v4
       - run: yarn install --frozen-lockfile
-      - run: yarn run test
+      - run: yarn test
