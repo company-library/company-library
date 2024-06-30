@@ -31,9 +31,9 @@ describe('authOptions', () => {
           (provider: Provider) => provider.id === 'azure-ad',
         )
 
-      expect(providerAAD.options['tenantId']).toBe('tenantIdAAD')
-      expect(providerAAD.options['clientId']).toBe('clientIdAAD')
-      expect(providerAAD.options['clientSecret']).toBe('clientSecretAAD')
+      expect(providerAAD.options.tenantId).toBe('tenantIdAAD')
+      expect(providerAAD.options.clientId).toBe('clientIdAAD')
+      expect(providerAAD.options.clientSecret).toBe('clientSecretAAD')
     })
   })
 
@@ -53,11 +53,11 @@ describe('authOptions', () => {
           (provider: Provider) => provider.id === 'azure-ad-b2c',
         )
 
-      expect(providerAadB2c.options['tenantId']).toBe('tenantNameAADB2C')
-      expect(providerAadB2c.options['clientId']).toBe('clientIdAADB2C')
-      expect(providerAadB2c.options['clientSecret']).toBe('clientSecretAADB2C')
-      expect(providerAadB2c.options['primaryUserFlow']).toBe('primaryUserFlowAADB2C')
-      expect(providerAadB2c.options['authorization']).toStrictEqual({
+      expect(providerAadB2c.options.tenantId).toBe('tenantNameAADB2C')
+      expect(providerAadB2c.options.clientId).toBe('clientIdAADB2C')
+      expect(providerAadB2c.options.clientSecret).toBe('clientSecretAADB2C')
+      expect(providerAadB2c.options.primaryUserFlow).toBe('primaryUserFlowAADB2C')
+      expect(providerAadB2c.options.authorization).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })
@@ -68,7 +68,7 @@ describe('authOptions', () => {
           (provider: Provider) => provider.id === 'azure-ad-b2c',
         )
 
-      expect(providerAadB2c.options['authorization']).toStrictEqual({
+      expect(providerAadB2c.options.authorization).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })
