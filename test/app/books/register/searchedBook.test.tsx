@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react'
-import { user1 } from '../../../__utils__/data/user'
 import useSWR from 'swr'
+import { user1 } from '../../../__utils__/data/user'
 
 const addRegisterBookDivMock = jest.fn().mockImplementation(() => <>add book div component</>)
 jest.mock('@/app/books/register/addBookDiv', () => ({

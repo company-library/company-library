@@ -1,14 +1,14 @@
 'use client'
 
-import { FC } from 'react'
-import useSWR from 'swr'
-import { GOOGLE_BOOK_SEARCH_QUERY } from '@/constants'
-import BookTile from '@/components/bookTile'
-import { Book } from '@/models/book'
-import { CustomError, isCustomError } from '@/models/errors'
-import fetcher from '@/libs/swr/fetcher'
 import AddBookDiv from '@/app/books/register/addBookDiv'
 import RegisterBookDiv from '@/app/books/register/registerBookDiv'
+import BookTile from '@/components/bookTile'
+import { GOOGLE_BOOK_SEARCH_QUERY } from '@/constants'
+import fetcher from '@/libs/swr/fetcher'
+import type { Book } from '@/models/book'
+import { type CustomError, isCustomError } from '@/models/errors'
+import type { FC } from 'react'
+import useSWR from 'swr'
 
 type SearchedBookProps = {
   isbn: string

@@ -1,9 +1,9 @@
 'use client'
 
+import type { UrlObject } from 'node:url'
+import type { Route } from 'next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { Route } from 'next'
-import { UrlObject } from 'url'
 
 export default function NavigationBarItem<T extends string>({
   label,

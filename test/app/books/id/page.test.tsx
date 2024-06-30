@@ -1,29 +1,33 @@
 import { render, screen } from '@testing-library/react'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { user1, user2 } from '../../../__utils__/data/user'
 import { bookWithImage } from '../../../__utils__/data/book'
+import { user1, user2 } from '../../../__utils__/data/user'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 const BookDetailMock = jest.fn().mockReturnValue(<div>bookDetail</div>)
 jest.mock('@/app/books/[id]/bookDetail', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any) => BookDetailMock(...args),
 }))
 
 const LendingListMock = jest.fn().mockReturnValue(<div>lendingList</div>)
 jest.mock('@/app/books/[id]/lendingList', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any) => LendingListMock(...args),
 }))
 
 const ImpressionListMock = jest.fn().mockReturnValue(<div>impressionList</div>)
 jest.mock('@/app/books/[id]/impressionList', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any) => ImpressionListMock(...args),
 }))
 
 const ReturnListMock = jest.fn().mockReturnValue(<div>returnList</div>)
 jest.mock('@/app/books/[id]/returnList', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (...args: any) => ReturnListMock(...args),
 }))
 

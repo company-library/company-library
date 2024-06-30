@@ -1,6 +1,6 @@
 import UserAvatar from '@/components/userAvatar'
-import prisma from '@/libs/prisma/client'
 import { toJstFormat } from '@/libs/luxon/utils'
+import prisma from '@/libs/prisma/client'
 
 type Props = {
   bookId: number

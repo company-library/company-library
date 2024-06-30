@@ -1,5 +1,5 @@
-import { LendingHistory } from '@/models/lendingHistory'
-import { ReturnHistory } from '@/models/returnHistory'
+import type { LendingHistory } from '@/models/lendingHistory'
+import type { ReturnHistory } from '@/models/returnHistory'
 
 type LH = LendingHistory & {
   returnHistory: ReturnHistory | null
@@ -15,9 +15,11 @@ export const readingHistories = (lendingHistories: LH[]) => {
       }
     })
     .reduce<Array<{ bookId: number; dueDate: Date; isReturned: boolean }>>((acc, obj) => {
-      return acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned)
-        ? acc
-        : [...acc, obj]
+      if (acc.some((a) => a.bookId === obj.bookId && a.isReturned === obj.isReturned)) {
+        return acc
+      }
+      acc.push(obj)
+      return acc
     }, [])
 
   const readingBooks = uniqueLendingHistories.filter((h) => !h.isReturned)

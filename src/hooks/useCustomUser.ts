@@ -1,6 +1,6 @@
+import { type User, isUser } from '@/models/user'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { User, isUser } from '@/models/user'
 
 export const useCustomUser = () => {
   const { data: session, status } = useSession()

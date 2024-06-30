@@ -5,8 +5,8 @@
  */
 
 import { GET } from '@/app/api/books/search/route'
-import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 import { bookWithImage, bookWithoutImage } from '../../../../__utils__/data/book'
+import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 
 describe('books search api', () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
@@ -24,6 +24,7 @@ describe('books search api', () => {
     expect(result.status).toBe(200)
     const books = (await result.json()).books
     expect(books.length).toBe(2)
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     books.forEach((book: any, index: number) => {
       expect(book.id).toBe(expectedBooks[index].id)
       expect(book.title).toBe(expectedBooks[index].title)

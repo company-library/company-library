@@ -1,10 +1,10 @@
 'use client'
 
-import { FC, startTransition, useRef, useState } from 'react'
+import { lendBook } from '@/app/books/[id]/actions'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
-import { lendBook } from '@/app/books/[id]/actions'
 import { useRouter } from 'next/navigation'
+import { type FC, startTransition, useRef, useState } from 'react'
 
 type LendButtonProps = {
   bookId: number
@@ -15,8 +15,8 @@ type LendButtonProps = {
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const openModal = () => dialogRef.current && dialogRef.current.showModal()
-  const closeModal = () => dialogRef.current && dialogRef.current.close()
+  const openModal = () => dialogRef.current?.showModal()
+  const closeModal = () => dialogRef.current?.close()
 
   const [dueDate, setDueDate] = useState(getDaysLater(7))
   const onClick = () => {

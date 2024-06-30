@@ -1,4 +1,4 @@
-import { LendingHistory } from '@/models/lendingHistory'
+import type { LendingHistory } from '@/models/lendingHistory'
 import { book1, book2, book3, book4, book5, book6 } from './book'
 
 export const lendingHistory1: LendingHistory = {

@@ -1,5 +1,5 @@
 import BookList from '@/app/bookList'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'トップページ | company-library',

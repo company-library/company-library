@@ -3,6 +3,7 @@ import { user1 } from '../../__utils__/data/user'
 
 jest.mock('next/link', () => ({
   __esModule: true,
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   default: (props: any) => {
     return <a {...props} />
   },
@@ -14,6 +15,7 @@ describe('UserCard component', () => {
     .mockImplementation(() => <div data-testid="profileImage">userAvatar</div>)
   jest.mock('@/components/userAvatar', () => ({
     __esModule: true,
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

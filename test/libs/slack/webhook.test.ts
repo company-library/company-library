@@ -1,5 +1,5 @@
-import { describe } from '@jest/globals'
 import { notifySlack } from '@/libs/slack/webhook'
+import { describe } from '@jest/globals'
 
 describe('notifySlack function', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('notifySlack function', () => {
     const sendMock = jest.fn()
     jest.spyOn(require('@slack/webhook'), 'IncomingWebhook').mockImplementation(() => {
       return {
-        send: sendMock
+        send: sendMock,
       }
     })
 
@@ -21,7 +21,7 @@ describe('notifySlack function', () => {
     expect(sendMock).toBeCalledWith({
       username: 'company-librarian',
       icon_emoji: ':teacher:',
-      text: expectedText
+      text: expectedText,
     })
   })
 })
