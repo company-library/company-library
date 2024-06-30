@@ -1,6 +1,6 @@
 'use client'
 
-import type { UrlObject } from 'url'
+import type { UrlObject } from 'node:url'
 import type { Route } from 'next'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
