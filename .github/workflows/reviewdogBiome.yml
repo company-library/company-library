@@ -1,19 +1,17 @@
 name: reviewdogBiome
-on:
-  pull_request_target:
-    types: [labeled]
+on: pull_request
 
 jobs:
   biome:
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'biome check')
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - uses: mongolyy/reviewdog-action-biome@v1
-        with:
-          github_token: ${{ secrets.github_token }}
-          biome_flags: 'src/ test/'
-          fail_on_error: true
+      - uses: volta-cli/action@v4
+      - run: yarn install --immutable
+      - run: yarn lint:ci
+#      - uses: mongolyy/reviewdog-action-biome@v1
+#        with:
+#          github_token: ${{ secrets.github_token }}
+#          biome_flags: 'src/ test/'
+#          fail_on_error: true
