@@ -1,18 +1,14 @@
+import BookForm from '@/app/books/register/bookForm'
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-jest.mock('@/app/books/register/searchedBook', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => <>searched book component</>),
-}))
-
-describe('book form component', () => {
-  const BookFormComponent = require('@/app/books/register/bookForm').default
+describe('book form component', async () => {
+  vi.mock('@/app/books/register/searchedBook', () => ({
+    default: vi.fn().mockImplementation(() => <>searched book component</>),
+  }))
 
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
-    const { getByText, queryByText, getByLabelText } = render(
-      <BookFormComponent userId={user1.id} />,
-    )
+    const { getByText, queryByText, getByLabelText } = render(<BookForm userId={user1.id} />)
 
     const input = getByLabelText('ISBN（13桁）を入力してください')
     // 12桁だと表示されない

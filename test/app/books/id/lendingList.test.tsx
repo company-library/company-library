@@ -1,17 +1,20 @@
+import LendingList from '@/app/books/[id]/lendingList'
 import { render, screen } from '@testing-library/react'
 import { DateTime, Settings } from 'luxon'
+import { Suspense } from 'react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-describe('LendingList Component', () => {
-  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
-  jest.mock('@/components/userAvatar', () => ({
-    __esModule: true,
+describe('LendingList Component', async () => {
+  const { UserAvatarMock } = vi.hoisted(() => {
+    return {
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+    }
+  })
+  vi.mock('@/components/userAvatar', () => ({
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const LendingListComponent = require('@/app/books/[id]/lendingList').default
 
   const expectedLendingHistories = [
     {
@@ -38,12 +41,16 @@ describe('LendingList Component', () => {
 
   it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', async () => {
     // @ts-ignore
-    prismaLendingHistoryMock.mockResolvedValueOnce(expectedLendingHistories)
+    prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
-    render(await LendingListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <LendingList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(prismaLendingHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ lentAt: 'asc' }])
-    expect(screen.getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect((await screen.findByTestId(`dueDate-${0}`)).textContent).toBe('2022/10/30')
     expect(screen.getByTestId(`lendingUser-${0}`).textContent).toBe(
       expectedLendingHistories[0].user.name,
     )
@@ -55,17 +62,23 @@ describe('LendingList Component', () => {
     expect(screen.getByTestId(`lendingUser-${2}`).textContent).toBe(
       expectedLendingHistories[2].user.name,
     )
+    expect(prismaLendingHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ lentAt: 'asc' }])
   })
 
   it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', async () => {
     const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
     Settings.now = () => expectedNow.toMillis()
     // @ts-ignore
-    prismaLendingHistoryMock.mockResolvedValueOnce(expectedLendingHistories)
+    prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
-    render(await LendingListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <LendingList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(screen.getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect((await screen.findByTestId(`dueDate-${0}`)).textContent).toBe('2022/10/30')
     expect(screen.getByTestId(`dueDate-${0}`)).toHaveClass('text-red-400', 'font-bold')
     expect(screen.getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
     expect(screen.getByTestId(`dueDate-${1}`)).not.toHaveClass('text-red-400')
@@ -77,22 +90,32 @@ describe('LendingList Component', () => {
 
   it('貸出中のユーザーがいない場合、その旨のメッセージが表示される', async () => {
     // @ts-ignore
-    prismaLendingHistoryMock.mockResolvedValueOnce([])
+    prismaLendingHistoryMock.mockResolvedValue([])
 
-    render(await LendingListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <LendingList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('現在借りているユーザーはいません')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('現在借りているユーザーはいません')).toBeInTheDocument()
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
-    prismaLendingHistoryMock.mockRejectedValueOnce(expectedError)
-    console.error = jest.fn()
+    prismaLendingHistoryMock.mockRejectedValue(expectedError)
+    console.error = vi.fn()
 
-    render(await LendingListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <LendingList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('貸出履歴の取得に失敗しました。再読み込みしてみてください。'),
+      await screen.findByText('貸出履歴の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
   })

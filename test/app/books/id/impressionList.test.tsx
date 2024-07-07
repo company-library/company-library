@@ -1,16 +1,17 @@
+import ImpressionList from '@/app/books/[id]/impressionList'
 import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-describe('ImpressionList component', () => {
-  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
-  jest.mock('@/components/userAvatar', () => ({
-    __esModule: true,
+describe('ImpressionList component', async () => {
+  const UserAvatarMock = vi.hoisted(() =>
+    vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+  )
+  vi.mock('@/components/userAvatar', () => ({
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const ImpressionListComponent = require('@/app/books/[id]/impressionList').default
 
   const prismaImpressionsMock = prismaMock.impression.findMany
   const expectedImpressions = [
@@ -39,12 +40,17 @@ describe('ImpressionList component', () => {
 
   it('本の感想を更新日の新しい順に表示する', async () => {
     // @ts-ignore
-    prismaImpressionsMock.mockResolvedValueOnce(expectedImpressions)
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
-    render(await ImpressionListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ updatedAt: 'desc' }])
-    expect(screen.getByTestId(`postedDate-${0}`).textContent).toBe('2022/11/01')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    await screen.findByTestId(`postedDate-${0}`)
+    expect((await screen.findByTestId(`postedDate-${0}`)).textContent).toBe('2022/11/01')
     expect(screen.getByTestId(`postedUser-${0}`).textContent).toBe(expectedImpressions[0].user.name)
     expect(screen.getByTestId(`impression-${0}`).textContent).toBe('興味深い本でした')
     expect(screen.getByTestId(`postedDate-${1}`).textContent).toBe('2022/10/31')
@@ -55,37 +61,53 @@ describe('ImpressionList component', () => {
     expect(screen.getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/21')
     expect(screen.getByTestId(`postedUser-${2}`).textContent).toBe(expectedImpressions[2].user.name)
     expect(screen.getByTestId(`impression-${2}`).textContent).toBe('感想')
+    expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ updatedAt: 'desc' }])
   })
 
   it('感想は、改行を反映して表示する', async () => {
     // @ts-ignore
-    prismaImpressionsMock.mockResolvedValueOnce(expectedImpressions)
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
-    render(await ImpressionListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(screen.getByTestId(`impression-${0}`)).toHaveClass('whitespace-pre-wrap')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByTestId(`impression-${0}`)).toHaveClass('whitespace-pre-wrap')
     expect(screen.getByTestId(`impression-${1}`)).toHaveClass('whitespace-pre-wrap')
     expect(screen.getByTestId(`impression-${2}`)).toHaveClass('whitespace-pre-wrap')
   })
 
   it('感想が登録されていない場合、その旨のメッセージを表示する', async () => {
     // @ts-ignore
-    prismaImpressionsMock.mockResolvedValueOnce([])
+    prismaImpressionsMock.mockResolvedValue([])
 
-    render(await ImpressionListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('現在登録されている感想はありません')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('現在登録されている感想はありません')).toBeInTheDocument()
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
-    prismaImpressionsMock.mockRejectedValueOnce(expectedError)
-    console.error = jest.fn()
+    prismaImpressionsMock.mockRejectedValue(expectedError)
+    console.error = vi.fn()
 
-    render(await ImpressionListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('感想の取得に失敗しました。再読み込みしてみてください。'),
+      await screen.findByText('感想の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
   })

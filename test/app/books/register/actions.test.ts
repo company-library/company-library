@@ -1,36 +1,31 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { addBook, registerBook } from '@/app/books/register/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-const redirectMock = jest.fn()
-jest.mock('next/navigation', () => ({
-  __esModule: true,
-  redirect: () => redirectMock(),
-}))
-
-const notifySlackMock = jest.fn()
-jest.mock('@/libs/slack/webhook', () => ({
-  __esModule: true,
-  notifySlack: (msg: string) => notifySlackMock(msg),
-}))
-
-jest.mock('@/libs/vercel/downloadAndPutImage', () => ({
-  __esModule: true,
-  downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
-    if (imageUrl) {
-      return `https://example.com/books/${isbn}/internal/cover.jpg`
-    }
-    return undefined
-  },
-}))
-
 describe('server actions', () => {
+  const { redirectMock } = vi.hoisted(() => {
+    return { redirectMock: vi.fn() }
+  })
+  vi.mock('next/navigation', () => ({
+    redirect: redirectMock,
+  }))
+
+  const { notifySlackMock } = vi.hoisted(() => {
+    return { notifySlackMock: vi.fn() }
+  })
+  vi.mock('@/libs/slack/webhook', () => ({
+    notifySlack: notifySlackMock,
+  }))
+
+  vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
+    downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
+      if (imageUrl) {
+        return `https://example.com/books/${isbn}/internal/cover.jpg`
+      }
+      return undefined
+    },
+  }))
+
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
       const bookId = 1
@@ -83,7 +78,7 @@ describe('server actions', () => {
       const error = new Error('error has occurred')
       const userId = user1.id
       prismaMock.book.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await registerBook(title, isbn, undefined, userId)
 
@@ -114,7 +109,7 @@ describe('server actions', () => {
         createdAt: now,
       })
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await registerBook('testBook', '1234567890123', undefined, user1.id)
 
@@ -165,7 +160,7 @@ describe('server actions', () => {
       const userId = user1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await addBook(bookId, userId)
 

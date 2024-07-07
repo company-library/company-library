@@ -1,16 +1,19 @@
+import ReturnList from '@/app/books/[id]/returnList'
 import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-describe('ReturnList Component', () => {
-  const UserAvatarMock = jest.fn().mockImplementation(({ user }) => <div>{user.name}</div>)
-  jest.mock('@/components/userAvatar', () => ({
-    __esModule: true,
+describe('ReturnList Component', async () => {
+  const { UserAvatarMock } = vi.hoisted(() => {
+    return {
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+    }
+  })
+  vi.mock('@/components/userAvatar', () => ({
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
-
-  const ReturnListComponent = require('@/app/books/[id]/returnList').default
 
   const expectedReturnHistories = [
     {
@@ -49,10 +52,16 @@ describe('ReturnList Component', () => {
   prismaReturnHistoryMock.mockResolvedValue(expectedReturnHistories)
 
   it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', async () => {
-    render(await ReturnListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ReturnList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(prismaReturnHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ returnedAt: 'asc' }])
-    expect(screen.getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect((await screen.findByTestId(`returnedDate-${0}`)).textContent).toBe(
+      '2022/10/01〜2022/10/30',
+    )
     expect(screen.getByTestId(`returnedUser-${0}`).textContent).toBe(
       expectedReturnHistories[0].lendingHistory.user.name,
     )
@@ -64,26 +73,37 @@ describe('ReturnList Component', () => {
     expect(screen.getByTestId(`returnedUser-${2}`).textContent).toBe(
       expectedReturnHistories[2].lendingHistory.user.name,
     )
+    expect(prismaReturnHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ returnedAt: 'asc' }])
   })
 
   it('返却履歴が登録されていない場合、その旨のメッセージが表示される', async () => {
     // @ts-ignore
-    prismaReturnHistoryMock.mockResolvedValueOnce([])
+    prismaReturnHistoryMock.mockResolvedValue([])
 
-    render(await ReturnListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ReturnList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('これまで借りたユーザーはいません')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('これまで借りたユーザーはいません')).toBeInTheDocument()
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
-    prismaReturnHistoryMock.mockRejectedValueOnce(expectedError)
-    console.error = jest.fn()
+    prismaReturnHistoryMock.mockRejectedValue(expectedError)
+    console.error = vi.fn()
 
-    render(await ReturnListComponent({ bookId: lendableBook.id }))
+    render(
+      <Suspense>
+        <ReturnList bookId={lendableBook.id} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('返却履歴の取得に失敗しました。再読み込みしてみてください。'),
+      await screen.findByText('返却履歴の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
   })

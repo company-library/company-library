@@ -1,14 +1,12 @@
+import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
 
-const registerBookActionMock = jest.fn()
-jest.mock('@/app/books/register/actions', () => ({
-  __esModule: true,
-  registerBook: { bind: () => () => registerBookActionMock() },
-}))
-
-describe('register book div component', () => {
-  const RegisterBookDivComponent = require('@/app/books/register/registerBookDiv').default
+describe('register book div component', async () => {
+  const registerBookActionMock = vi.hoisted(() => vi.fn())
+  vi.mock('@/app/books/register/actions', () => ({
+    registerBook: { bind: () => () => registerBookActionMock() },
+  }))
 
   it('登録ボタンをクリックすると、server actionが実行される', () => {
     const title = 'testBook'
@@ -17,12 +15,7 @@ describe('register book div component', () => {
     const userId = user1.id
 
     render(
-      <RegisterBookDivComponent
-        title={title}
-        isbn={isbn}
-        thumbnailUrl={thumbnailUrl}
-        userId={userId}
-      />,
+      <RegisterBookDiv title={title} isbn={isbn} thumbnailUrl={thumbnailUrl} userId={userId} />,
     )
 
     expect(registerBookActionMock).not.toBeCalled()

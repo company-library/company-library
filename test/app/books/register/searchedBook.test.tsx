@@ -1,26 +1,30 @@
+import SearchedBook from '@/app/books/register/searchedBook'
 import { render } from '@testing-library/react'
 import useSWR from 'swr'
+import type { Mock } from 'vitest'
 import { user1 } from '../../../__utils__/data/user'
 
-const addRegisterBookDivMock = jest.fn().mockImplementation(() => <>add book div component</>)
-jest.mock('@/app/books/register/addBookDiv', () => ({
-  __esModule: true,
-  default: addRegisterBookDivMock,
-}))
-const registerBookDivMock = jest.fn().mockImplementation(() => <>register book div component</>)
-jest.mock('@/app/books/register/registerBookDiv', () => ({
-  __esModule: true,
-  default: registerBookDivMock,
-}))
-jest.mock('swr')
-
-describe('searched book component', () => {
-  const swrMock = useSWR as jest.Mock
+describe('searched book component', async () => {
+  const swrMock = useSWR as Mock
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
 
-  const SearchedBookComponent = require('@/app/books/register/searchedBook').default
+  vi.mock('swr')
+  const { addRegisterBookDivMock } = vi.hoisted(() => {
+    return { addRegisterBookDivMock: vi.fn().mockImplementation(() => <>add book div component</>) }
+  })
+  vi.mock('@/app/books/register/addBookDiv', () => ({
+    default: addRegisterBookDivMock,
+  }))
+  const { registerBookDivMock } = vi.hoisted(() => {
+    return {
+      registerBookDivMock: vi.fn().mockImplementation(() => <>register book div component</>),
+    }
+  })
+  vi.mock('@/app/books/register/registerBookDiv', () => ({
+    default: registerBookDivMock,
+  }))
 
   it('書籍情報が表示される', () => {
     swrMock
@@ -37,7 +41,7 @@ describe('searched book component', () => {
       })
       .mockReturnValueOnce({ data: { book: {} } })
 
-    const { getByText } = render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(getByText('こちらの本でしょうか？')).toBeInTheDocument()
     expect(getByText('testBook')).toBeInTheDocument()
@@ -60,7 +64,7 @@ describe('searched book component', () => {
       })
       .mockReturnValueOnce({ data: { book: companyBook } })
 
-    render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(addRegisterBookDivMock).toBeCalledWith(
       {
@@ -87,7 +91,7 @@ describe('searched book component', () => {
       })
       .mockReturnValueOnce({ data: { book: {} } })
 
-    render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(addRegisterBookDivMock).not.toBeCalled()
     expect(registerBookDivMock).toBeCalledWith(
@@ -104,7 +108,7 @@ describe('searched book component', () => {
   it('存在しない書籍の場合は書籍が見つからなかった旨のメッセージを表示する', () => {
     swrMock.mockReturnValueOnce({ data: undefined }).mockReturnValueOnce({ data: { book: {} } })
 
-    const { getByText } = render(<SearchedBookComponent isbn={isbn} userId={userId} />)
+    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
 
     expect(getByText('書籍は見つかりませんでした')).toBeInTheDocument()
   })

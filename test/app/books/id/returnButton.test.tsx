@@ -1,30 +1,28 @@
 import ReturnButton from '@/app/books/[id]/returnButton'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-const returnBookMock = jest.fn()
-jest.mock('@/app/books/[id]/actions', () => ({
-  __esModule: true,
-  returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
-}))
-
-const refreshMock = jest.fn()
-jest.mock('next/navigation', () => ({
-  __esModule: true,
-  useRouter: () => {
-    return { refresh: refreshMock }
-  },
-}))
-
 describe('returnButton component', () => {
   const bookId = 1
   const userId = 2
   const lendingHistoryId = 10
 
-  HTMLDialogElement.prototype.showModal = jest.fn().mockImplementation(() => {
+  const returnBookMock = vi.hoisted(() => vi.fn())
+  vi.mock('@/app/books/[id]/actions', () => ({
+    returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
+  }))
+
+  const refreshMock = vi.hoisted(() => vi.fn())
+  vi.mock('next/navigation', () => ({
+    useRouter: () => {
+      return { refresh: refreshMock }
+    },
+  }))
+
+  HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')
   })
-  HTMLDialogElement.prototype.close = jest.fn().mockImplementation(() => {
+  HTMLDialogElement.prototype.close = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].removeAttribute('open')
   })
@@ -118,7 +116,7 @@ describe('returnButton component', () => {
 
   it('返却処理でエラーが発生した場合、アラート表示する', async () => {
     returnBookMock.mockResolvedValueOnce(new Error('error occurred!'))
-    window.alert = jest.fn()
+    window.alert = vi.fn()
 
     render(
       <ReturnButton

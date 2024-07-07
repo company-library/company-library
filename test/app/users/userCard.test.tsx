@@ -1,30 +1,23 @@
+import UserCard from '@/app/users/userCard'
 import { fireEvent, render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
 import { user1 } from '../../__utils__/data/user'
 
-jest.mock('next/link', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (props: any) => {
-    return <a {...props} />
-  },
-}))
-
-describe('UserCard component', () => {
-  const UserAvatarMock = jest
-    .fn()
-    .mockImplementation(() => <div data-testid="profileImage">userAvatar</div>)
-  jest.mock('@/components/userAvatar', () => ({
-    __esModule: true,
+describe('UserCard component', async () => {
+  vi.mock('@/components/userAvatar', () => ({
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserAvatarMock(...args),
+    default: (...args: any) => <div data-testid="profileImage">userAvatar</div>,
   }))
 
-  const UserCard = require('@/app/users/userCard').default
-
   it('ユーザー情報が表示されていること', async () => {
-    render(await UserCard({ user: user1 }))
+    render(
+      <Suspense>
+        <UserCard user={user1} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText(user1.name)).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText(user1.name)).toBeInTheDocument()
     expect(screen.getByText(user1.email)).toBeInTheDocument()
     expect(screen.getByTestId('profileImage')).toBeInTheDocument()
     expect(screen.getByTestId('userProfileLink')).toHaveAttribute('href', `/users/${user1.id}`)

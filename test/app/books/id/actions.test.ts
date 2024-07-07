@@ -1,20 +1,15 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { lendBook, returnBook } from '@/app/books/[id]/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-const redirectMock = jest.fn()
-jest.mock('next/navigation', () => ({
-  __esModule: true,
-  redirect: () => redirectMock(),
-}))
-
 describe('server actions', () => {
+  const { redirectMock } = vi.hoisted(() => {
+    return { redirectMock: vi.fn() }
+  })
+  vi.mock('next/navigation', () => ({
+    redirect: () => redirectMock(),
+  }))
+
   describe('lendBook function', () => {
     it('貸し出し履歴の追加ができる', async () => {
       const bookId = 1
@@ -46,7 +41,7 @@ describe('server actions', () => {
       const dueDate = new Date()
       const error = 'DB error has occurred'
       prismaMock.lendingHistory.create.mockRejectedValueOnce(error)
-      const errorMock = jest.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       const result = await lendBook(bookId, userId, dueDate)
 
@@ -128,7 +123,7 @@ describe('server actions', () => {
     describe('返却処理に失敗した場合はエラーを返す', () => {
       it('返却履歴の追加に失敗した場合', async () => {
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
-        const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+        const errorMock = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockRejectedValueOnce(error)
 
@@ -145,7 +140,7 @@ describe('server actions', () => {
 
       it('感想の登録に失敗した場合', async () => {
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
-        const errorMock = jest.spyOn(console, 'error').mockImplementationOnce(() => {})
+        const errorMock = vi.spyOn(console, 'error').mockImplementationOnce(() => {})
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockResolvedValueOnce({
           lendingHistoryId: lendingHistoryId,

@@ -1,9 +1,3 @@
-/**
- * server側で実行されるコードのため、テスト環境をnodeに変更する
- * https://stackoverflow.com/questions/76379428/how-to-test-nextjs-app-router-api-route-with-jest
- * @jest-environment node
- */
-
 import { GET } from '@/app/api/books/searchByIsbn/route'
 import { bookWithImage } from '../../../../__utils__/data/book'
 import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
@@ -31,7 +25,7 @@ describe('books searchByIsbn api', () => {
   })
 
   it('本の詳細情報の取得に失敗した場合、既定のエラーを返す', async () => {
-    console.error = jest.fn()
+    console.error = vi.fn()
     const expectErrorMsg = 'query has errored!'
     prismaMock.book.findUnique.mockRejectedValueOnce(expectErrorMsg)
 

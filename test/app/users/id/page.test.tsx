@@ -1,53 +1,72 @@
+import UserDetailPage from '@/app/users/[id]/page'
 import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-describe('UserDetail page', () => {
+describe('UserDetail page', async () => {
   const expectedUser = user1
 
-  const UserDetailPage = require('@/app/users/[id]/page').default
-
-  jest.mock('@/app/users/[id]/bookList', () => ({
-    __esModule: true,
+  vi.mock('@/app/users/[id]/bookList', () => ({
     default: () => <div>BookList</div>,
   }))
-  jest.mock('@/app/users/[id]/readingBookList', () => ({
-    __esModule: true,
+  vi.mock('@/app/users/[id]/readingBookList', () => ({
     default: () => <div>ReadingBookList</div>,
   }))
 
   it('ユーザーの情報が表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(expectedUser)
 
-    const { getByText } = render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(getByText('テスト太郎さんの情報')).toBeInTheDocument()
-    expect(getByText('現在読んでいる書籍(3冊)'))
-    expect(getByText('今まで読んだ書籍(4冊)'))
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('テスト太郎さんの情報')).toBeInTheDocument()
+    expect(screen.getByText('現在読んでいる書籍(3冊)'))
+    expect(screen.getByText('今まで読んだ書籍(4冊)'))
   })
 
   it('クエリにidがない場合は、「Error!」と表示される', async () => {
-    render(await UserDetailPage({ params: {} }))
+    render(
+      <Suspense>
+        {/* @ts-ignore */}
+        <UserDetailPage params={{}} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
   })
 
   it('該当するidのユーザーがない場合は、「Error!」と表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(null)
 
-    render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
   })
 
   it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
     const expectErrorMsg = 'query has errored!'
-    console.error = jest.fn()
-    prismaMock.user.findUnique.mockRejectedValueOnce(expectErrorMsg)
+    console.error = vi.fn()
+    prismaMock.user.findUnique.mockRejectedValue(expectErrorMsg)
 
-    render(await UserDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <UserDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
-    expect(screen.getByText('Error!')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)
   })
 })

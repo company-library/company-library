@@ -1,94 +1,142 @@
+import BookDetailPage from '@/app/books/[id]/page'
 import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
 import { bookWithImage } from '../../../__utils__/data/book'
 import { user1, user2 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-const BookDetailMock = jest.fn().mockReturnValue(<div>bookDetail</div>)
-jest.mock('@/app/books/[id]/bookDetail', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (...args: any) => BookDetailMock(...args),
-}))
-
-const LendingListMock = jest.fn().mockReturnValue(<div>lendingList</div>)
-jest.mock('@/app/books/[id]/lendingList', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (...args: any) => LendingListMock(...args),
-}))
-
-const ImpressionListMock = jest.fn().mockReturnValue(<div>impressionList</div>)
-jest.mock('@/app/books/[id]/impressionList', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (...args: any) => ImpressionListMock(...args),
-}))
-
-const ReturnListMock = jest.fn().mockReturnValue(<div>returnList</div>)
-jest.mock('@/app/books/[id]/returnList', () => ({
-  __esModule: true,
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  default: (...args: any) => ReturnListMock(...args),
-}))
-
-const getServerSessionMock = jest.fn().mockReturnValue({ customUser: { id: user1.id } })
-jest.mock('next-auth', () => ({
-  __esModule: true,
-  getServerSession: () => getServerSessionMock(),
-}))
-
-jest.mock('@/app/api/auth/[...nextauth]/route', () => ({
-  __esModule: true,
-  authOptions: {},
-}))
-
-describe('BookDetail page', () => {
+describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
+  const { BookDetailMock } = vi.hoisted(() => {
+    return {
+      BookDetailMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/bookDetail', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    default: (...args: any) => BookDetailMock(...args),
+  }))
 
-  const BookDetailPage = require('@/app/books/[id]/page').default
+  const { LendingListMock } = vi.hoisted(() => {
+    return {
+      LendingListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/lendingList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    default: (...args: any) => LendingListMock(...args),
+  }))
+
+  const { ImpressionListMock } = vi.hoisted(() => {
+    return {
+      ImpressionListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/impressionList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    default: (...args: any) => ImpressionListMock(...args),
+  }))
+
+  const { ReturnListMock } = vi.hoisted(() => {
+    return {
+      ReturnListMock: vi.fn(),
+    }
+  })
+  vi.mock('@/app/books/[id]/returnList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    default: (...args: any) => ReturnListMock(...args),
+  }))
+
+  const { getServerSessionMock } = vi.hoisted(() => {
+    return {
+      getServerSessionMock: vi.fn(),
+    }
+  })
+  vi.mock('next-auth', () => ({
+    getServerSession: () => getServerSessionMock(),
+  }))
+
+  vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
+    authOptions: {},
+  }))
 
   const book = bookWithImage
 
-  it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
-    render(await BookDetailPage({ params: { id: book.id } }))
+  beforeEach(() => {
+    BookDetailMock.mockReturnValue(<div>BookDetail</div>)
+    LendingListMock.mockReturnValue(<div>LendingList</div>)
+    ImpressionListMock.mockReturnValue(<div>ImpressionList</div>)
+    ReturnListMock.mockReturnValue(<div>ReturnList</div>)
+    getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
+  })
 
-    expect(BookDetailMock).toBeCalled()
-    expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
-    const heading2s = screen.getAllByRole('heading', { level: 2 })
+  it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: book.id.toString() }} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    const heading2s = await screen.findAllByRole('heading', { level: 2 })
     expect(heading2s.length).toBe(3)
     expect(heading2s[0].textContent).toBe('借りているユーザー')
     expect(heading2s[1].textContent).toBe('感想')
     expect(heading2s[2].textContent).toBe('借りたユーザー')
+    expect(BookDetailMock).toBeCalled()
+    expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
     expect(LendingListMock).toBeCalledWith({ bookId: book.id }, undefined)
     expect(ImpressionListMock).toBeCalledWith({ bookId: book.id }, undefined)
     expect(ReturnListMock).toBeCalledWith({ bookId: book.id }, undefined)
   })
 
   it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
-    getServerSessionMock.mockReturnValueOnce(null)
+    getServerSessionMock.mockReturnValue(null)
 
-    render(await BookDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+      await screen.findByText('セッションが取得できませんでした。再読み込みしてみてください。'),
     ).toBeInTheDocument()
   })
 
   it('書籍のIDが数値でなかった場合は、エラーメッセージを表示する', async () => {
-    const { rerender } = render(await BookDetailPage({ params: { id: 'true' } }))
-    expect(screen.getByText('不正な書籍です。')).toBeInTheDocument()
+    const { rerender } = render(
+      <Suspense>
+        <BookDetailPage params={{ id: 'true' }} />
+      </Suspense>,
+    )
 
-    rerender(await BookDetailPage({ params: { id: '1n' } }))
-    expect(screen.getByText('不正な書籍です。')).toBeInTheDocument()
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('不正な書籍です。')).toBeInTheDocument()
+
+    rerender(
+      <Suspense>
+        <BookDetailPage params={{ id: '1n' }} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('不正な書籍です。')).toBeInTheDocument()
   })
 
   it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
-    getServerSessionMock.mockReturnValueOnce(null)
+    getServerSessionMock.mockReturnValue(null)
 
-    render(await BookDetailPage({ params: { id: '1' } }))
+    render(
+      <Suspense>
+        <BookDetailPage params={{ id: '1' }} />
+      </Suspense>,
+    )
 
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
+      await screen.findByText('セッションが取得できませんでした。再読み込みしてみてください。'),
     ).toBeInTheDocument()
   })
 })

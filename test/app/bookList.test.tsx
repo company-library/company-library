@@ -1,14 +1,13 @@
+import BookList from '@/app/bookList'
 import fetcher from '@/libs/swr/fetcher'
 import { fireEvent, render, screen } from '@testing-library/react'
 import useSWR from 'swr'
+import type { Mock } from 'vitest'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
-jest.mock('swr')
-
-describe('BookList page', () => {
-  const TopPage = require('@/app/bookList').default
-
-  const swrMock = useSWR as jest.Mock
+describe('BookList page', async () => {
+  vi.mock('swr')
+  const swrMock = useSWR as Mock
   swrMock.mockReturnValue({
     data: {
       books: [bookWithImage, bookWithoutImage],
@@ -18,7 +17,7 @@ describe('BookList page', () => {
   it.todo('ページタイトルが「トップページ | company-library」である')
 
   it('本の一覧が表示される', () => {
-    render(<TopPage />)
+    render(<BookList />)
 
     expect(screen.getByText(bookWithImage.title)).toBeInTheDocument()
     expect(screen.getByText(bookWithoutImage.title)).toBeInTheDocument()
@@ -27,7 +26,7 @@ describe('BookList page', () => {
   it('検索キーワードの入力フォームに入力があると、検索される', () => {
     const searchWord = 'testBook'
 
-    render(<TopPage />)
+    render(<BookList />)
     fireEvent.change(screen.getByPlaceholderText('書籍のタイトルで検索'), {
       target: { value: searchWord },
     })
@@ -38,21 +37,21 @@ describe('BookList page', () => {
   it('本の一覧の読み込み中は「Loading...」と表示される', () => {
     swrMock.mockReturnValueOnce({ data: undefined })
 
-    render(<TopPage />)
+    render(<BookList />)
 
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
 
   it('本の一覧の読み込みに失敗した場合、「Error!」と表示される', () => {
     const expectErrorMsg = 'query has errored!'
-    console.error = jest.fn()
+    console.error = vi.fn()
     swrMock.mockReturnValueOnce({ data: {}, error: expectErrorMsg })
-    const { rerender } = render(<TopPage />)
+    const { rerender } = render(<BookList />)
     expect(screen.getByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)
 
     swrMock.mockReturnValueOnce({ data: { errorCode: '123', message: expectErrorMsg } })
-    rerender(<TopPage />)
+    rerender(<BookList />)
     expect(screen.getByText('Error!')).toBeInTheDocument()
     // errorがfalsyの場合は、console.errorが呼び出されない
     expect(console.error).toBeCalledTimes(1)
