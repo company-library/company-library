@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "biome check src/ test/",
     "lint:fix": "biome check src/ test/ --write",
-    "lint:ci": "biome ci src/ test/",
+    "lint:ci": "biome ci src/ test/ --reporter=github",
     "test": "jest",
     "typeCheck": "tsc --pretty --noEmit",
     "db:generate": "npx prisma generate",
