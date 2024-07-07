@@ -1,7 +1,7 @@
 import prisma from '@/libs/prisma/client'
 import type { NextAuthOptions } from 'next-auth'
 import AzureAD from 'next-auth/providers/azure-ad'
-import AzureADB2CProvider from 'next-auth/providers/azure-ad-b2c'
+import AzureADB2CProvider from  'next-auth/providers/azure-ad-b2c'
 
 export const authOptions: NextAuthOptions = {
   providers: [
