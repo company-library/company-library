@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { expect } from 'vitest'
 
 describe('BookDetail component', async () => {
   const userId = 2
@@ -18,13 +19,6 @@ describe('BookDetail component', async () => {
     },
   }
   const prismaBookMock = prismaMock.book.findUnique
-
-  vi.mock('next/image', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (props: any) => {
-      return <img {...props} alt={props.alt ?? 'alt'} />
-    },
-  }))
 
   vi.mock('@/app/books/[id]/lendButton', () => ({
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -56,7 +50,7 @@ describe('BookDetail component', async () => {
 
     // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(await screen.findByAltText(book.title)).toBeInTheDocument()
-    expect(screen.getByAltText(book.title)).toHaveAttribute('src', book.imageUrl)
+    expect(screen.getByAltText(book.title)).toHaveAttribute('src', expect.stringContaining(encodeURIComponent(book.imageUrl)))
     expect(screen.getByText(book.title)).toBeInTheDocument()
     expect(screen.getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
     expect(screen.getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
@@ -81,7 +75,7 @@ describe('BookDetail component', async () => {
 
     // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(await screen.findByAltText(book.title)).toBeInTheDocument()
-    expect(screen.getByAltText(book.title)).toHaveAttribute('src', '/no_image.jpg')
+    expect(screen.getByAltText(book.title)).toHaveAttribute('src', expect.stringContaining(encodeURIComponent('/no_image.jpg')))
   })
 
   it('貸し出し可能数は、 登録履歴数 - 未返却の貸出履歴数 である', async () => {
