@@ -4,9 +4,9 @@ import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 describe('book component', () => {
   vi.mock('next/image', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (props: any) => {
-      // eslint-disable-next-line
-      return <img {...props} />
+      return <img {...props} alt={props.alt ?? 'alt'} />
     },
   }))
 

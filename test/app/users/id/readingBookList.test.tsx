@@ -1,10 +1,10 @@
+import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { toJstFormat } from '@/libs/luxon/utils'
 import { render, screen } from '@testing-library/react'
 import { DateTime, Settings } from 'luxon'
+import { Suspense } from 'react'
 import { bookWithImage, bookWithoutImage } from '../../../__utils__/data/book'
 import { lendingHistory1, lendingHistory2 } from '../../../__utils__/data/lendingHistory'
-import { Suspense } from 'react'
-import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('ReadingBookList component', async () => {

@@ -1,8 +1,8 @@
+import BookList from '@/app/users/[id]/bookList'
 import { render } from '@testing-library/react'
+import { Suspense } from 'react'
 import { bookWithImage, bookWithoutImage } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { Suspense } from 'react'
-import BookList from '@/app/users/[id]/bookList'
 
 describe('BookList component', async () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]

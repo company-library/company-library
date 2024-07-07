@@ -1,6 +1,6 @@
-import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
+import type { Provider, ProviderType } from 'next-auth/providers/index'
 import { user1, user2 } from '../../../../__utils__/data/user'
-import { Provider, ProviderType } from 'next-auth/providers/index'
+import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 
 describe('authOptions', async () => {
   vi.stubEnv('AZURE_AD_TENANT_ID', 'tenantIdAAD')
@@ -28,9 +28,9 @@ describe('authOptions', async () => {
         (provider: Provider) => provider.id === 'azure-ad',
       )
 
-      expect(providerAAD?.options['tenantId']).toBe('tenantIdAAD')
-      expect(providerAAD?.options['clientId']).toBe('clientIdAAD')
-      expect(providerAAD?.options['clientSecret']).toBe('clientSecretAAD')
+      expect(providerAAD?.options.tenantId).toBe('tenantIdAAD')
+      expect(providerAAD?.options.clientId).toBe('clientIdAAD')
+      expect(providerAAD?.options.clientSecret).toBe('clientSecretAAD')
     })
   })
 
@@ -48,11 +48,11 @@ describe('authOptions', async () => {
         (provider: Provider) => provider.id === 'azure-ad-b2c',
       )
 
-      expect(providerAadB2c?.options['tenantId']).toBe('tenantNameAADB2C')
-      expect(providerAadB2c?.options['clientId']).toBe('clientIdAADB2C')
-      expect(providerAadB2c?.options['clientSecret']).toBe('clientSecretAADB2C')
-      expect(providerAadB2c?.options['primaryUserFlow']).toBe('primaryUserFlowAADB2C')
-      expect(providerAadB2c?.options['authorization']).toStrictEqual({
+      expect(providerAadB2c?.options.tenantId).toBe('tenantNameAADB2C')
+      expect(providerAadB2c?.options.clientId).toBe('clientIdAADB2C')
+      expect(providerAadB2c?.options.clientSecret).toBe('clientSecretAADB2C')
+      expect(providerAadB2c?.options.primaryUserFlow).toBe('primaryUserFlowAADB2C')
+      expect(providerAadB2c?.options.authorization).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })
@@ -62,7 +62,7 @@ describe('authOptions', async () => {
         (provider: Provider) => provider.id === 'azure-ad-b2c',
       )
 
-      expect(providerAadB2c?.options['authorization']).toStrictEqual({
+      expect(providerAadB2c?.options.authorization).toStrictEqual({
         params: { scope: 'offline_access openid' },
       })
     })

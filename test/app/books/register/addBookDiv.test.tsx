@@ -1,6 +1,6 @@
+import AddBookDiv from '@/app/books/register/addBookDiv'
 import { fireEvent, render } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
-import AddBookDiv from '@/app/books/register/addBookDiv'
 
 describe('add book div component', async () => {
   const { addBookActionMock } = vi.hoisted(() => {

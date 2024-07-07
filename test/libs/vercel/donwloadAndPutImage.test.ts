@@ -5,6 +5,7 @@ describe('downloadAndPutImage function', () => {
     return { putMock: vi.fn() }
   })
   vi.mock('@vercel/blob', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     put: (...args: any[]) => putMock(...args),
   }))
 

@@ -1,6 +1,6 @@
+import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { user1 } from '../../../__utils__/data/user'
-import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 
 describe('register book div component', async () => {
   const registerBookActionMock = vi.hoisted(() => vi.fn())

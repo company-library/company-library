@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
-import { user1 } from '../__utils__/data/user'
-import { Suspense } from 'react'
 import NavigationBar from '@/app/navigationBar'
+import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
+import { user1 } from '../__utils__/data/user'
 
 describe('navigationBar component', async () => {
   const { pathnameMock } = vi.hoisted(() => {
@@ -27,6 +27,7 @@ describe('navigationBar component', async () => {
     return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
   })
   vi.mock('@/components/userAvatar', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

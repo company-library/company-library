@@ -1,7 +1,7 @@
-import { render, screen } from '@testing-library/react'
-import { bookWithImage } from '../../../__utils__/data/book'
-import { Suspense } from 'react'
 import BookDetailPage from '@/app/books/[id]/page'
+import { render, screen } from '@testing-library/react'
+import { Suspense } from 'react'
+import { bookWithImage } from '../../../__utils__/data/book'
 import { user1, user2 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
