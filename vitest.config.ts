@@ -8,5 +8,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts', './test/__utils__/libs/prisma/singleton.ts'],
+    clearMocks: true,
   },
 })
