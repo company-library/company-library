@@ -81,9 +81,7 @@ describe('authOptions', async () => {
         const user = { id: '1' }
 
         const jwt = authOptions.callbacks?.jwt
-        if (!jwt) {
-          throw new Error('jwt callback is not defined')
-        }
+        assert(!!jwt, 'jwt callback is not defined')
 
         const result = await jwt({ token, user, account })
 
@@ -96,9 +94,7 @@ describe('authOptions', async () => {
         const user = { id: '1' }
 
         const jwt = authOptions.callbacks?.jwt
-        if (!jwt) {
-          throw new Error('jwt callback is not defined')
-        }
+        assert(!!jwt, 'jwt callback is not defined')
 
         const result = await jwt({ token, user, account })
 
@@ -129,9 +125,7 @@ describe('authOptions', async () => {
           }
 
           const session = authOptions.callbacks?.session
-          if (!session) {
-            throw new Error('session callback is not defined')
-          }
+          assert(!!session, 'session callback is not defined')
 
           // @ts-ignore
           const result = await session({ session: argSession, token: argToken })
@@ -146,9 +140,7 @@ describe('authOptions', async () => {
         const argToken = { ...defaultToken }
 
         const session = authOptions.callbacks?.session
-        if (!session) {
-          throw new Error('session callback is not defined')
-        }
+        assert(!!session, 'session callback is not defined')
 
         // @ts-ignore
         const result = await session({ session: argSession, token: argToken })
@@ -167,9 +159,7 @@ describe('authOptions', async () => {
         const argToken = { ...defaultToken }
 
         const session = authOptions.callbacks?.session
-        if (!session) {
-          throw new Error('session callback is not defined')
-        }
+        assert(!!session, 'session callback is not defined')
 
         // @ts-ignore
         const result = await session({ session: argSession, token: argToken })
@@ -196,9 +186,7 @@ describe('authOptions', async () => {
         const argToken = { ...defaultToken }
 
         const session = authOptions.callbacks?.session
-        if (!session) {
-          throw new Error('session callback is not defined')
-        }
+        assert(!!session, 'session callback is not defined')
 
         // @ts-ignore
         const result = await session({ session: argSession, token: argToken })

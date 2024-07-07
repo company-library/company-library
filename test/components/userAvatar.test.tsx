@@ -1,7 +1,6 @@
 import UserAvatar from '@/components/userAvatar'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
-import { assert } from 'vitest'
 import { user1, user2 } from '../__utils__/data/user'
 
 describe('UserAvatar component', async () => {
