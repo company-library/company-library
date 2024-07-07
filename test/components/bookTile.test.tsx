@@ -7,7 +7,10 @@ describe('book component', () => {
     const { getByText, getByTestId } = render(<BookTile book={bookWithImage} />)
 
     expect(getByText(bookWithImage.title)).toBeInTheDocument()
-    expect(getByTestId('bookImg')).toHaveAttribute('src', expect.stringContaining(encodeURIComponent(bookWithImage.imageUrl)))
+    expect(getByTestId('bookImg')).toHaveAttribute(
+      'src',
+      expect.stringContaining(encodeURIComponent(bookWithImage.imageUrl)),
+    )
     expect(getByTestId('bookImg')).toHaveAttribute('alt', bookWithImage.title)
   })
 
@@ -15,7 +18,10 @@ describe('book component', () => {
     const { getByText, getByTestId } = render(<BookTile book={bookWithoutImage} />)
 
     expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
-    expect(getByTestId('bookImg')).toHaveAttribute('src', expect.stringContaining(encodeURIComponent('/no_image.jpg')))
+    expect(getByTestId('bookImg')).toHaveAttribute(
+      'src',
+      expect.stringContaining(encodeURIComponent('/no_image.jpg')),
+    )
     expect(getByTestId('bookImg')).toHaveAttribute('alt', bookWithoutImage.title)
   })
 
