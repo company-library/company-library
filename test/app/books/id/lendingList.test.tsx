@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react'
 import { DateTime, Settings } from 'luxon'
 import { Suspense } from 'react'
 import LendingList from '@/app/books/[id]/lendingList'
+import { lendableBook } from '../../../__utils__/data/book'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('LendingList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
@@ -10,6 +12,7 @@ describe('LendingList Component', async () => {
     }
   })
   vi.mock('@/components/userAvatar', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

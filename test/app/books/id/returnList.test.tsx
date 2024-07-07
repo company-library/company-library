@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
 import ReturnList from '@/app/books/[id]/returnList'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('ReturnList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
@@ -10,6 +11,7 @@ describe('ReturnList Component', async () => {
     }
   })
   vi.mock('@/components/userAvatar', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

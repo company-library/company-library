@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react'
 import { bookWithImage } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
 import BookDetailPage from '@/app/books/[id]/page'
+import { user1, user2 } from '../../../__utils__/data/user'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
@@ -11,6 +13,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/bookDetail', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => BookDetailMock(...args),
   }))
 
@@ -20,6 +23,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/lendingList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => LendingListMock(...args),
   }))
 
@@ -29,6 +33,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/impressionList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => ImpressionListMock(...args),
   }))
 
@@ -38,6 +43,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/returnList', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => ReturnListMock(...args),
   }))
 

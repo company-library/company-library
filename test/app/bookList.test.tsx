@@ -1,9 +1,9 @@
 import fetcher from '@/libs/swr/fetcher'
 import { fireEvent, render, screen } from '@testing-library/react'
 import useSWR from 'swr'
-import fetcher from '@/libs/swr/fetcher'
-import { Mock } from 'vitest'
+import type { Mock } from 'vitest'
 import BookList from '@/app/bookList'
+import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 describe('BookList page', async () => {
   vi.mock('swr')

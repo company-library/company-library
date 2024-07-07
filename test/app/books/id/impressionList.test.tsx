@@ -2,12 +2,14 @@ import { render, screen } from '@testing-library/react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { Suspense } from 'react'
 import ImpressionList from '@/app/books/[id]/impressionList'
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
     vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
   )
   vi.mock('@/components/userAvatar', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     default: (...args: any) => UserAvatarMock(...args),
   }))
 

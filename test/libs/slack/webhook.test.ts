@@ -1,5 +1,4 @@
 import { notifySlack } from '@/libs/slack/webhook'
-import { describe } from '@jest/globals'
 
 describe('notifySlack function', () => {
   beforeEach(() => {

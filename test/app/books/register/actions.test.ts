@@ -1,8 +1,6 @@
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 import { user1 } from '../../../__utils__/data/user'
 import { addBook, registerBook } from '@/app/books/register/actions'
-import { user1 } from '../../../__utils__/data/user'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {
