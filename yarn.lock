@@ -395,19 +395,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@headlessui/react@npm:^1.7.0":
-  version: 1.7.19
-  resolution: "@headlessui/react@npm:1.7.19"
-  dependencies:
-    "@tanstack/react-virtual": "npm:^3.0.0-beta.60"
-    client-only: "npm:^0.0.1"
-  peerDependencies:
-    react: ^16 || ^17 || ^18
-    react-dom: ^16 || ^17 || ^18
-  checksum: 10c0/c0ece0db6ca15092439177a5322de50b60fa5fd90354ae0f999b3e56abab0065ed54fa7b4b69994ec1bdc23adc6ae9919d7dd57f97922d0b9bb6515d27e3a7e5
-  languageName: node
-  linkType: hard
-
 "@humanwhocodes/module-importer@npm:^1.0.1":
   version: 1.0.1
   resolution: "@humanwhocodes/module-importer@npm:1.0.1"
@@ -964,25 +951,6 @@ __metadata:
   dependencies:
     "@swc/counter": "npm:^0.1.3"
   checksum: 10c0/e47db2a06189f100696837ac3d56feaf67e8e68541b236c2de497e066689230f5cbb538fc0ca77c04739ae7653c20a2d79c7ab57ecf7506e2d008cb5e523f724
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-virtual@npm:^3.0.0-beta.60":
-  version: 3.8.3
-  resolution: "@tanstack/react-virtual@npm:3.8.3"
-  dependencies:
-    "@tanstack/virtual-core": "npm:3.8.3"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/36a80c4fd1516d29a36ce4f97e0b1d05c0c715e779d12b70b9c9b7ebb8296e928fd5ca1d2a336467fa00d07721bb679845cdaa6f28de08b47402534d8bfed0d9
-  languageName: node
-  linkType: hard
-
-"@tanstack/virtual-core@npm:3.8.3":
-  version: 3.8.3
-  resolution: "@tanstack/virtual-core@npm:3.8.3"
-  checksum: 10c0/3509a578e7c8ced00eef5574ca16aae466a4d066204d3c558f027d13656b2950364fdb99c07a834557933b3b81d531e029f952766c36016e386c24e8be978af5
   languageName: node
   linkType: hard
 
@@ -1958,7 +1926,6 @@ __metadata:
   resolution: "company-library@workspace:."
   dependencies:
     "@biomejs/biome": "npm:1.8.3"
-    "@headlessui/react": "npm:^1.7.0"
     "@prisma/client": "npm:^5.16.1"
     "@slack/webhook": "npm:^7.0.2"
     "@testing-library/dom": "npm:^10.3.2"
