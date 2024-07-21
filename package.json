@@ -20,7 +20,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.0",
+    "@headlessui/react": "^2.1.2",
     "@prisma/client": "^5.16.1",
     "@slack/webhook": "^7.0.2",
     "@vercel/blob": "^0.23.4",
