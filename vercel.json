@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/overdue",
-      "schedule": "* * 17 ? * WED *"
+      "schedule": "* 17 * * 3"
     }
   ]
 }
