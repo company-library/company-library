@@ -45,7 +45,7 @@
     "autoprefixer": "^10.4.19",
     "daisyui": "^4.12.10",
     "dotenv-cli": "^7.4.2",
-    "eslint": "9.7.0",
+    "eslint": "9.8.0",
     "eslint-config-next": "14.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^24.1.0",
@@ -58,7 +58,7 @@
     "vitest-mock-extended": "^2.0.0"
   },
   "volta": {
-    "node": "20.15.1",
+    "node": "20.16.0",
     "yarn": "4.3.1"
   }
 }
