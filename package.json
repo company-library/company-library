@@ -40,7 +40,7 @@
     "@testing-library/react": "^16.0.0",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.15.0",
-    "@types/react": "18.3.3",
+    "@types/react": "18.3.4",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "autoprefixer": "^10.4.20",
@@ -59,7 +59,7 @@
     "vitest-mock-extended": "^2.0.0"
   },
   "volta": {
-    "node": "20.16.0",
-    "yarn": "4.4.0"
+    "node": "20.17.0",
+    "yarn": "4.4.1"
   }
 }
