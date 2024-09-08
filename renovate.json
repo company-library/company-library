@@ -6,6 +6,7 @@
   "schedule": "before 9am on Saturday",
   "timezone": "Asia/Tokyo",
   "rangeStrategy": "bump",
+  "updateLockFiles": false,
   "packageRules": [
     {
       "groupName": "all non-major dependencies",
