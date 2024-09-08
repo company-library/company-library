@@ -963,7 +963,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.3.2":
+"@testing-library/dom@npm:^10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
   dependencies:
@@ -994,7 +994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^16.0.0":
+"@testing-library/react@npm:^16.0.1":
   version: 16.0.1
   resolution: "@testing-library/react@npm:16.0.1"
   dependencies:
@@ -1917,9 +1917,9 @@ __metadata:
     "@biomejs/biome": "npm:1.8.3"
     "@prisma/client": "npm:^5.19.1"
     "@slack/webhook": "npm:^7.0.3"
-    "@testing-library/dom": "npm:^10.3.2"
+    "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.5.0"
-    "@testing-library/react": "npm:^16.0.0"
+    "@testing-library/react": "npm:^16.0.1"
     "@types/luxon": "npm:^3.4.2"
     "@types/node": "npm:^20.16.5"
     "@types/react": "npm:18.3.5"
@@ -1941,13 +1941,13 @@ __metadata:
     prisma: "npm:^5.19.1"
     react: "npm:canary"
     react-dom: "npm:canary"
-    swr: "npm:^2.0.0"
+    swr: "npm:^2.2.5"
     tailwindcss: "npm:^3.4.10"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.5.3"
-    vite-tsconfig-paths: "npm:^5.0.0"
+    typescript: "npm:^5.5.4"
+    vite-tsconfig-paths: "npm:^5.0.1"
     vitest: "npm:^2.0.5"
-    vitest-mock-extended: "npm:^2.0.0"
+    vitest-mock-extended: "npm:^2.0.2"
   languageName: unknown
   linkType: soft
 
@@ -5671,7 +5671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swr@npm:^2.0.0":
+"swr@npm:^2.2.5":
   version: 2.2.5
   resolution: "swr@npm:2.2.5"
   dependencies:
@@ -5987,7 +5987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.5.3":
+"typescript@npm:^5.5.4":
   version: 5.5.4
   resolution: "typescript@npm:5.5.4"
   bin:
@@ -5997,7 +5997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.5.4#optional!builtin<compat/typescript>":
   version: 5.5.4
   resolution: "typescript@patch:typescript@npm%3A5.5.4#optional!builtin<compat/typescript>::version=5.5.4&hash=379a07"
   bin:
@@ -6140,7 +6140,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-tsconfig-paths@npm:^5.0.0":
+"vite-tsconfig-paths@npm:^5.0.1":
   version: 5.0.1
   resolution: "vite-tsconfig-paths@npm:5.0.1"
   dependencies:
@@ -6199,7 +6199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-mock-extended@npm:^2.0.0":
+"vitest-mock-extended@npm:^2.0.2":
   version: 2.0.2
   resolution: "vitest-mock-extended@npm:2.0.2"
   dependencies:
