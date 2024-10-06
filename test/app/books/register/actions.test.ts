@@ -72,7 +72,7 @@ describe('server actions', () => {
       expect(redirectMock).toBeCalled()
     })
 
-    it('書籍の追加に失敗した場合はエラーを返す', async () => {
+    it('書籍の追加に失敗した場合はエラーをスローする', async () => {
       const title = 'testBook'
       const isbn = '1234567890123'
       const error = new Error('error has occurred')
@@ -80,9 +80,10 @@ describe('server actions', () => {
       prismaMock.book.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await registerBook(title, isbn, undefined, userId)
+      await expect(registerBook(title, isbn, undefined, userId)).rejects.toThrow(
+        'Book creation failed',
+      )
 
-      expect(result.message).toBe('Book creation failed')
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
@@ -111,9 +112,10 @@ describe('server actions', () => {
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await registerBook('testBook', '1234567890123', undefined, user1.id)
+      await expect(registerBook('testBook', '1234567890123', undefined, user1.id)).rejects.toThrow(
+        'Registration creation failed',
+      )
 
-      expect(result.message).toBe('Registration creation failed')
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
@@ -155,16 +157,15 @@ describe('server actions', () => {
       expect(redirectMock).toBeCalled()
     })
 
-    it('登録履歴の追加に失敗した場合はエラーを返す', async () => {
+    it('登録履歴の追加に失敗した場合はエラーをスローする', async () => {
       const bookId = 1
       const userId = user1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      const result = await addBook(bookId, userId)
+      await expect(addBook(bookId, userId)).rejects.toThrow('Registration creation failed')
 
-      expect(result.message).toBe('Registration creation failed')
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
           bookId: bookId,
