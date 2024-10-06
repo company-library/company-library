@@ -47,7 +47,7 @@
     "daisyui": "^4.12.10",
     "dotenv-cli": "^7.4.2",
     "eslint": "^9.10.0",
-    "eslint-config-next": "14.2.8",
+    "eslint-config-next": "14.2.10",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^25.0.0",
     "postcss": "^8.4.47",

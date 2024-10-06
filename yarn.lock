@@ -481,12 +481,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:14.2.8":
-  version: 14.2.8
-  resolution: "@next/eslint-plugin-next@npm:14.2.8"
+"@next/eslint-plugin-next@npm:14.2.10":
+  version: 14.2.10
+  resolution: "@next/eslint-plugin-next@npm:14.2.10"
   dependencies:
     glob: "npm:10.3.10"
-  checksum: 10c0/577b336feae3cd915af5befd6fd0e733e396b98dcdce792e406a7ebf020cc4a206e44f16d8cfb21416000086951c1f0eef37a6492551eae64c3e756c81356c95
+  checksum: 10c0/6efc2de33b749dd2340ead4facc83c0dc9ffc9de69a9c96665917b22767a5eff5bcf2e8f3d05607fc0daf5c370a7459ccbd01a82637113d9b131a7af5ee4bb9d
   languageName: node
   linkType: hard
 
@@ -2012,7 +2012,7 @@ __metadata:
     daisyui: "npm:^4.12.10"
     dotenv-cli: "npm:^7.4.2"
     eslint: "npm:^9.10.0"
-    eslint-config-next: "npm:14.2.8"
+    eslint-config-next: "npm:14.2.10"
     graphql: "npm:^16.9.0"
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^25.0.0"
@@ -2691,11 +2691,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:14.2.8":
-  version: 14.2.8
-  resolution: "eslint-config-next@npm:14.2.8"
+"eslint-config-next@npm:14.2.10":
+  version: 14.2.10
+  resolution: "eslint-config-next@npm:14.2.10"
   dependencies:
-    "@next/eslint-plugin-next": "npm:14.2.8"
+    "@next/eslint-plugin-next": "npm:14.2.10"
     "@rushstack/eslint-patch": "npm:^1.3.3"
     "@typescript-eslint/eslint-plugin": "npm:^5.4.2 || ^6.0.0 || 7.0.0 - 7.2.0"
     "@typescript-eslint/parser": "npm:^5.4.2 || ^6.0.0 || 7.0.0 - 7.2.0"
@@ -2711,7 +2711,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/932538864965157d94e6ad32f674afee40fb72d81070550e29bce1b5c8c52f5221f9ddbf483622a29507c760b6317ee7c660590ad8454d23e232a31e6371cc0b
+  checksum: 10c0/c7c5f9a6c03afb22b595313793c6b9637da9dec1d9501f878413b5b040f229190d99d3acb873f4551a4f913630ad586f4d17200da41e846f9994b55e9830ac74
   languageName: node
   linkType: hard
 
@@ -6038,11 +6038,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.6.2#optional!builtin<compat/typescript>":
   version: 5.6.2
-  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=5adc0c"
+  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/e6c1662e4852e22fe4bbdca471dca3e3edc74f6f1df043135c44a18a7902037023ccb0abdfb754595ca9028df8920f2f8492c00fc3cbb4309079aae8b7de71cd
+  checksum: 10c0/94eb47e130d3edd964b76da85975601dcb3604b0c848a36f63ac448d0104e93819d94c8bdf6b07c00120f2ce9c05256b8b6092d23cf5cf1c6fa911159e4d572f
   languageName: node
   linkType: hard
 
