@@ -11,7 +11,7 @@ import { redirect } from 'next/navigation'
  * @param {string} isbn
  * @param {string | undefined} imageUrl
  * @param {number} userId
- * @returns {Promise<Error>}
+ * @returns {Promise<void>}
  */
 export const registerBook = async (
   title: string,
@@ -56,7 +56,7 @@ export const registerBook = async (
  * 書籍追加をするServer Action
  * @param {number} bookId
  * @param {number} userId
- * @returns {Promise<Error>}
+ * @returns {Promise<void>}
  */
 export const addBook = async (bookId: number, userId: number): Promise<void> => {
   await prisma.registrationHistory
