@@ -1091,7 +1091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.15":
+"@types/json-schema@npm:^7.0.15":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
@@ -2029,7 +2029,7 @@ __metadata:
   resolution: "company-library@workspace:."
   dependencies:
     "@biomejs/biome": "npm:1.9.3"
-    "@prisma/client": "npm:^5.19.1"
+    "@prisma/client": "npm:^5.20.0"
     "@slack/webhook": "npm:^7.0.3"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.5.0"
@@ -2044,12 +2044,12 @@ __metadata:
     daisyui: "npm:^4.12.12"
     dotenv-cli: "npm:^7.4.2"
     eslint: "npm:^9.12.0"
-    eslint-config-next: "npm:14.2.10"
+    eslint-config-next: "npm:14.2.14"
     graphql: "npm:^16.9.0"
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^25.0.1"
     luxon: "npm:^3.5.0"
-    next: "npm:14.2.10"
+    next: "npm:14.2.14"
     next-auth: "npm:^4.24.8"
     postcss: "npm:^8.4.47"
     prisma: "npm:^5.20.0"
