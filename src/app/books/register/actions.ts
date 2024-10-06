@@ -11,14 +11,14 @@ import { redirect } from 'next/navigation'
  * @param {string} isbn
  * @param {string | undefined} imageUrl
  * @param {number} userId
- * @returns {Promise<Error>}
+ * @returns {Promise<void>}
  */
 export const registerBook = async (
   title: string,
   isbn: string,
   imageUrl: string | undefined,
   userId: number,
-): Promise<Error> => {
+): Promise<void> => {
   const vercelBlobUrl = await downloadAndPutImage(imageUrl, isbn)
 
   const book = await prisma.book
@@ -31,13 +31,10 @@ export const registerBook = async (
     })
     .catch((e) => {
       console.error(e)
-      return new Error('Book creation failed')
+      throw new Error('Book creation failed')
     })
-  if (book instanceof Error) {
-    return book
-  }
 
-  const registrationHistory = await prisma.registrationHistory
+  await prisma.registrationHistory
     .create({
       data: {
         bookId: book.id,
@@ -46,11 +43,8 @@ export const registerBook = async (
     })
     .catch((e) => {
       console.error(e)
-      return new Error('Registration creation failed')
+      throw new Error('Registration creation failed')
     })
-  if (registrationHistory instanceof Error) {
-    return registrationHistory
-  }
 
   // Slack通知処理の完了を待たない
   notifySlack(`「${title}」という書籍が登録されました。`)
@@ -62,18 +56,15 @@ export const registerBook = async (
  * 書籍追加をするServer Action
  * @param {number} bookId
  * @param {number} userId
- * @returns {Promise<Error>}
+ * @returns {Promise<void>}
  */
-export const addBook = async (bookId: number, userId: number): Promise<Error> => {
-  const history = await prisma.registrationHistory
+export const addBook = async (bookId: number, userId: number): Promise<void> => {
+  await prisma.registrationHistory
     .create({ data: { bookId: bookId, userId: userId } })
     .catch((e) => {
       console.error(e)
-      return new Error('Registration creation failed')
+      throw new Error('Registration creation failed')
     })
-  if (history instanceof Error) {
-    return history
-  }
 
   redirect(`/books/${bookId}`)
 }
