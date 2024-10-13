@@ -1,14 +1,10 @@
 'use client' // Error boundaries must be Client Components
 
-export default function ErrorPage({
-  _error,
-}: {
-  _error: Error & { digest?: string }
-}) {
+export default function ErrorPage() {
   return (
     <div>
-      <h2>Something went wrong!</h2>
-      <span>Try again</span>
+      <h2>書籍の登録に失敗しました</h2>
+      <p>管理者に問い合わせてください</p>
     </div>
   )
 }
