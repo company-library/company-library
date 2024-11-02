@@ -1,77 +1,88 @@
 'use server'
 
 import prisma from '@/libs/prisma/client'
+import { notifySlack } from '@/libs/slack/webhook'
+import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
+import { redirect } from 'next/navigation'
 
 /**
- * 書籍を貸し出すServer Action
+ * 書籍登録をするServer Action
+ * @param {string} title
+ * @param {string} isbn
+ * @param {string | undefined} imageUrl
+ * @param {number} userId
+ * @returns {Promise<void>}
+ */
+export const registerBook = async (
+  title: string,
+  isbn: string,
+  imageUrl: string | undefined,
+  userId: number,
+): Promise<void> => {
+  const vercelBlobUrl = await downloadAndPutImage(imageUrl, isbn)
+
+  const book = await prisma.book
+    .create({
+      data: {
+        title,
+        isbn,
+        imageUrl: vercelBlobUrl,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      throw new Error('Book creation failed')
+    })
+
+  await prisma.registrationHistory
+    .create({
+      data: {
+        bookId: book.id,
+        userId: userId,
+      },
+    })
+    .catch((e) => {
+      console.error(e)
+      throw new Error('Registration creation failed')
+    })
+
+  // Slack通知処理の完了を待たない
+  notifySlack(`「${title}」という書籍が登録されました。`)
+
+  redirect(`/books/${book.id}`)
+}
+
+/**
+ * 書籍追加をするServer Action
  * @param {number} bookId
  * @param {number} userId
- * @param {Date} dueDate
- * @returns {Promise<Error>}
+ * @returns {Promise<void>}
  */
-export const lendBook = async (
-  bookId: number,
-  userId: number,
-  dueDate: Date,
-): Promise<undefined | Error> => {
-  const history = await prisma.lendingHistory
-    .create({ data: { bookId, userId, dueDate } })
+export const addBook = async (bookId: number, userId: number): Promise<void> => {
+  await prisma.registrationHistory
+    .create({ data: { bookId: bookId, userId: userId } })
     .catch((e) => {
       console.error(e)
-      return new Error('貸し出しに失敗しました。もう一度試して見てください。')
+      throw new Error('Registration creation failed')
     })
-  if (history instanceof Error) {
-    return history
-  }
 
-  return undefined
+  redirect(`/books/${bookId}`)
 }
 
 /**
- * 書籍を返却するServer Action
- * @param {number} bookId 返却対象の書籍ID
- * @param {number} userId 返却を行うユーザーID
- * @param {number} lendingHistoryId 貸し出し履歴ID
- * @param {string} impression 感想の本文
- * @returns {Promise<void | Error>} 処理でエラーがあった場合はErrorオブジェクトを返す
+ * 感想を更新するServer Action
+ * @param {number} impressionId
+ * @param {string} newImpression
+ * @returns {Promise<void>}
  */
-export const returnBook = async ({
-  bookId,
-  userId,
-  lendingHistoryId,
-  impression,
-}: ReturnBookWithImpressionProps): Promise<undefined | Error> => {
-  const result = await prisma
-    .$transaction(async (prisma) => {
-      await prisma.returnHistory.create({
-        data: {
-          lendingHistoryId,
-        },
-      })
-
-      if (impression) {
-        await prisma.impression.create({
-          data: {
-            bookId,
-            userId,
-            impression,
-          },
-        })
-      }
+export const updateImpression = async (impressionId: number, newImpression: string): Promise<void> => {
+  await prisma.impression
+    .update({
+      where: { id: impressionId },
+      data: { impression: newImpression },
     })
     .catch((e) => {
       console.error(e)
-      return new Error('返却に失敗しました。もう一度試して見てください。')
+      throw new Error('Impression update failed')
     })
-  if (result instanceof Error) {
-    return result
-  }
-
-  return undefined
-}
-type ReturnBookWithImpressionProps = {
-  bookId: number
-  userId: number
-  lendingHistoryId: number
-  impression: string
 }

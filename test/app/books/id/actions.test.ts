@@ -1,4 +1,4 @@
-import { lendBook, returnBook } from '@/app/books/[id]/actions'
+import { lendBook, returnBook, updateImpression } from '@/app/books/[id]/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
@@ -158,6 +158,47 @@ describe('server actions', () => {
         })
         expect(errorMock).toHaveBeenCalledWith(error)
       })
+    })
+  })
+
+  describe('updateImpression function', () => {
+    it('感想の更新ができる', async () => {
+      const impressionId = 1
+      const newImpression = '新しい感想'
+      prismaMock.impression.update.mockResolvedValueOnce({
+        id: impressionId,
+        bookId: 1,
+        userId: user1.id,
+        impression: newImpression,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+
+      const result = await updateImpression(impressionId, newImpression)
+
+      expect(result).toBeUndefined()
+      expect(prismaMock.impression.update).toBeCalledWith({
+        where: { id: impressionId },
+        data: { impression: newImpression },
+      })
+    })
+
+    it('感想の更新に失敗した場合はエラーを返す', async () => {
+      const impressionId = 1
+      const newImpression = '新しい感想'
+      const error = 'DB error has occurred'
+      prismaMock.impression.update.mockRejectedValueOnce(error)
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+      const result = await updateImpression(impressionId, newImpression)
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toBe('感想の更新に失敗しました。もう一度試して見てください。')
+      expect(prismaMock.impression.update).toBeCalledWith({
+        where: { id: impressionId },
+        data: { impression: newImpression },
+      })
+      expect(errorMock).toBeCalledWith(error)
     })
   })
 })
