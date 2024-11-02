@@ -1,50 +1,81 @@
-import UserAvatar from '@/components/userAvatar'
-import { toJstFormat } from '@/libs/luxon/utils'
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import prisma from '@/libs/prisma/client'
+import UserAvatar from '@/components/userAvatar'
+import EditReviewModal from './editReviewModal'
 
-type Props = {
+type ImpressionListProps = {
   bookId: number
 }
 
-const ImpressionList = async ({ bookId }: Props) => {
-  const recentImpressions = await prisma.impression
-    .findMany({
-      where: { bookId: bookId },
+const ImpressionList = async ({ bookId }: ImpressionListProps) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [currentImpression, setCurrentImpression] = useState('')
+  const [impressions, setImpressions] = useState([])
+
+  const fetchImpressions = async () => {
+    const impressions = await prisma.impression.findMany({
+      where: { bookId },
+      orderBy: { updatedAt: 'desc' },
       include: { user: true },
-      orderBy: [{ updatedAt: 'desc' }],
     })
-    .catch((e) => {
-      console.error(e)
-      return new Error('Book fetch failed')
-    })
-  if (recentImpressions instanceof Error) {
-    return <p>感想の取得に失敗しました。再読み込みしてみてください。</p>
+    setImpressions(impressions)
   }
 
-  if (recentImpressions.length === 0) {
-    return <p>現在登録されている感想はありません</p>
+  const handleEditClick = (impression: string) => {
+    setCurrentImpression(impression)
+    setIsModalOpen(true)
+  }
+
+  const handleSave = async (newImpression: string) => {
+    // Save the edited impression to the database
+    await prisma.impression.update({
+      where: { id: currentImpression.id },
+      data: { impression: newImpression },
+    })
+    setIsModalOpen(false)
+    fetchImpressions()
   }
 
   return (
-    <table className="table w-full">
-      <tbody>
-        {recentImpressions.map((impression, index) => {
-          return (
-            <tr className="hover" key={impression.id}>
-              <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
-                {toJstFormat(impression.updatedAt)}
-              </td>
-              <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
-                <UserAvatar user={impression.user} />
-              </td>
-              <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
-                {impression.impression}
-              </td>
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
+    <div>
+      <h2>感想一覧</h2>
+      {impressions.length === 0 ? (
+        <p>現在登録されている感想はありません</p>
+      ) : (
+        impressions.map((impression, index) => (
+          <div key={impression.id} className="mb-4">
+            <div className="flex items-center mb-2">
+              <UserAvatar user={impression.user} />
+              <span className="ml-2">{impression.user.name}</span>
+              <span className="ml-2 text-gray-500" data-testid={`postedDate-${index}`}>
+                {new Date(impression.updatedAt).toLocaleDateString()}
+              </span>
+            </div>
+            <p className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
+              {impression.impression}
+            </p>
+            {impression.user.id === userId && (
+              <button
+                onClick={() => handleEditClick(impression)}
+                className="text-blue-500 hover:underline"
+              >
+                感想を編集
+              </button>
+            )}
+          </div>
+        ))
+      )}
+      <EditReviewModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        currentImpression={currentImpression}
+        onSave={handleSave}
+      />
+    </div>
   )
 }
 

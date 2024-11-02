@@ -1,8 +1,9 @@
 import ImpressionList from '@/app/books/[id]/impressionList'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Suspense } from 'react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { SessionProvider } from 'next-auth/react'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
@@ -110,5 +111,68 @@ describe('ImpressionList component', async () => {
       await screen.findByText('感想の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
+  })
+
+  it('自分の感想の周りに「感想を編集」ボタンが表示される', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(
+      <SessionProvider session={{ user: { id: 1, name: 'user01' } }}>
+        <Suspense>
+          <ImpressionList bookId={lendableBook.id} />
+        </Suspense>
+      </SessionProvider>,
+    )
+
+    await screen.findByTestId(`postedDate-${0}`)
+    expect(screen.getByText('感想を編集')).toBeInTheDocument()
+  })
+
+  it('「感想を編集」ボタンをクリックするとモーダルが開く', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(
+      <SessionProvider session={{ user: { id: 1, name: 'user01' } }}>
+        <Suspense>
+          <ImpressionList bookId={lendableBook.id} />
+        </Suspense>
+      </SessionProvider>,
+    )
+
+    await screen.findByTestId(`postedDate-${0}`)
+    fireEvent.click(screen.getByText('感想を編集'))
+    expect(screen.getByText('感想を編集')).toBeInTheDocument()
+  })
+
+  it('モーダルで感想を編集し、「保存」ボタンをクリックすると感想が更新される', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+    const updateImpressionMock = prismaMock.impression.update
+    updateImpressionMock.mockResolvedValue({
+      ...expectedImpressions[0],
+      impression: '更新された感想',
+    })
+
+    render(
+      <SessionProvider session={{ user: { id: 1, name: 'user01' } }}>
+        <Suspense>
+          <ImpressionList bookId={lendableBook.id} />
+        </Suspense>
+      </SessionProvider>,
+    )
+
+    await screen.findByTestId(`postedDate-${0}`)
+    fireEvent.click(screen.getByText('感想を編集'))
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: '更新された感想' } })
+    fireEvent.click(screen.getByText('保存'))
+
+    await waitFor(() => {
+      expect(updateImpressionMock).toHaveBeenCalledWith({
+        where: { id: expectedImpressions[0].id },
+        data: { impression: '更新された感想' },
+      })
+    })
   })
 })
