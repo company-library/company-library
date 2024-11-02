@@ -1,8 +1,9 @@
 import ImpressionList from '@/app/books/[id]/impressionList'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { Suspense } from 'react'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { user1 } from '../../../__utils__/data/user'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
@@ -110,5 +111,35 @@ describe('ImpressionList component', async () => {
       await screen.findByText('感想の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
+  })
+
+  it('自分の感想の横に「感想を編集」ボタンが表示される', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByText('感想を編集')).toBeInTheDocument()
+  })
+
+  it('「感想を編集」ボタンをクリックするとモーダルが開く', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    const editButton = await screen.findByText('感想を編集')
+    fireEvent.click(editButton)
+    expect(await screen.findByText('感想を編集')).toBeInTheDocument()
   })
 })
