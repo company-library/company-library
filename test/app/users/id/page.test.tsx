@@ -19,7 +19,7 @@ describe('UserDetail page', async () => {
 
     render(
       <Suspense>
-        <UserDetailPage params={{ id: '1' }} />
+        <UserDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 
@@ -46,7 +46,7 @@ describe('UserDetail page', async () => {
 
     render(
       <Suspense>
-        <UserDetailPage params={{ id: '1' }} />
+        <UserDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 
@@ -61,7 +61,7 @@ describe('UserDetail page', async () => {
 
     render(
       <Suspense>
-        <UserDetailPage params={{ id: '1' }} />
+        <UserDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 
