@@ -130,7 +130,7 @@ describe('BookDetail page', async () => {
 
     render(
       <Suspense>
-        <BookDetailPage params={new Promise((resolve) => resolve ({ id: '1' }))} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 
