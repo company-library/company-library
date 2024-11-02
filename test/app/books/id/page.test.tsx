@@ -73,7 +73,7 @@ describe('BookDetail page', async () => {
   it('本の情報の読み込みが完了した場合は、詳細情報を表示する', async () => {
     render(
       <Suspense>
-        <BookDetailPage params={{ id: book.id.toString() }} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: book.id.toString() }))} />
       </Suspense>,
     )
 
@@ -95,7 +95,7 @@ describe('BookDetail page', async () => {
 
     render(
       <Suspense>
-        <BookDetailPage params={{ id: '1' }} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 
@@ -108,7 +108,7 @@ describe('BookDetail page', async () => {
   it('書籍のIDが数値でなかった場合は、エラーメッセージを表示する', async () => {
     const { rerender } = render(
       <Suspense>
-        <BookDetailPage params={{ id: 'true' }} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: 'true' }))} />
       </Suspense>,
     )
 
@@ -117,7 +117,7 @@ describe('BookDetail page', async () => {
 
     rerender(
       <Suspense>
-        <BookDetailPage params={{ id: '1n' }} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: '1n' }))} />
       </Suspense>,
     )
 
@@ -130,7 +130,7 @@ describe('BookDetail page', async () => {
 
     render(
       <Suspense>
-        <BookDetailPage params={{ id: '1' }} />
+        <BookDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
       </Suspense>,
     )
 

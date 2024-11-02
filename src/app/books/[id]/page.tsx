@@ -7,7 +7,14 @@ import prisma from '@/libs/prisma/client'
 import { getServerSession } from 'next-auth'
 import React, { Suspense } from 'react'
 
-export const generateMetadata = async ({ params }: BookDetailPageParams) => {
+type BookDetailPageParams = {
+  params: Promise<{
+    id: string
+  }>
+}
+
+export const generateMetadata = async (props: BookDetailPageParams) => {
+  const params = await props.params
   const bookId = Number(params.id)
   if (Number.isNaN(bookId)) {
     return { title: '書籍詳細 | company-library' }
@@ -33,13 +40,8 @@ export const generateMetadata = async ({ params }: BookDetailPageParams) => {
   }
 }
 
-type BookDetailPageParams = {
-  params: {
-    id: string
-  }
-}
-
-const BookDetailPage = async ({ params }: BookDetailPageParams) => {
+const BookDetailPage = async (props: BookDetailPageParams) => {
+  const params = await props.params
   const bookId = Number(params.id)
   if (Number.isNaN(bookId)) {
     return <div>不正な書籍です。</div>

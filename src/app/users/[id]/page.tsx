@@ -3,7 +3,8 @@ import ReadingBookList from '@/app/users/[id]/readingBookList'
 import { readingHistories } from '@/hooks/server/readingHistories'
 import prisma from '@/libs/prisma/client'
 
-export const generateMetadata = async ({ params }: UserPageProps) => {
+export const generateMetadata = async (props: UserPageProps) => {
+  const params = await props.params
   const id = Number(params.id)
   if (Number.isNaN(id)) {
     return { title: '利用者情報 | company-library' }
@@ -28,12 +29,13 @@ export const generateMetadata = async ({ params }: UserPageProps) => {
 }
 
 type UserPageProps = {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-const UserPage = async ({ params }: UserPageProps) => {
+const UserPage = async (props: UserPageProps) => {
+  const params = await props.params
   const id = Number(params.id)
   if (Number.isNaN(id)) {
     return <div>Error!</div>
