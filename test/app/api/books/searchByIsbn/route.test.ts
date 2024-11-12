@@ -35,4 +35,39 @@ describe('books searchByIsbn api', () => {
     expect(await result.json()).toEqual({ errorCode: '500', message: 'Book fetch failed' })
     expect(console.error).toBeCalledWith(expectErrorMsg)
   })
+
+  it('Google Books APIが失敗した場合、openBDから書籍情報を取得する', async () => {
+    prismaMock.book.findUnique.mockResolvedValueOnce(null)
+
+    const openBdResponse = {
+      summary: {
+        title: 'openBD Book Title',
+        cover: 'openBD Book Cover URL',
+      },
+    }
+
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      json: vi.fn().mockResolvedValueOnce([openBdResponse]),
+    })
+
+    const result = await GET(req)
+
+    expect(result.status).toBe(200)
+    const book = (await result.json()).book
+    expect(book.title).toBe(openBdResponse.summary.title)
+    expect(book.imageUrl).toBe(openBdResponse.summary.cover)
+  })
+
+  it('両方のAPIが失敗した場合、カスタムエラーメッセージを返す', async () => {
+    prismaMock.book.findUnique.mockResolvedValueOnce(null)
+
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      json: vi.fn().mockResolvedValueOnce([]),
+    })
+
+    const result = await GET(req)
+
+    expect(result.status).toBe(404)
+    expect(await result.json()).toEqual({ errorCode: '404', message: 'Book not found' })
+  })
 })
