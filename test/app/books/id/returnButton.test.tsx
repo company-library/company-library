@@ -62,7 +62,7 @@ describe('returnButton component', () => {
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
 
-    expect(screen.getByRole('heading', { level: 3, name: '返却しますか？' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: '返却しますか?' })).toBeInTheDocument()
     expect(screen.getByPlaceholderText('感想を書いてください')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
