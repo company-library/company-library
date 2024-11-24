@@ -55,7 +55,7 @@ describe('LendButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
     expect(
-      screen.getByRole('heading', { level: 3, name: '何日まで借りますか？' }),
+      screen.getByRole('heading', { level: 3, name: '何日まで借りますか?' }),
     ).toBeInTheDocument()
     expect(screen.getByDisplayValue(initialDuDate)).toBeInTheDocument()
   })
