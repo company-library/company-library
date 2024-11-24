@@ -1,5 +1,7 @@
 'use server'
 
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import prisma from '@/libs/prisma/client'
 
 /**
@@ -74,4 +76,51 @@ type ReturnBookWithImpressionProps = {
   userId: number
   lendingHistoryId: number
   impression: string
+}
+
+/**
+ * 感想を編集するServer Action
+ * @param impressionId 感想ID
+ * @param editedImpression 編集した感想
+ * @returns 処理でエラーがあった場合はErrorオブジェクトを返す
+ */
+export const editImpression = async ({
+  impressionId,
+  editedImpression,
+}: {
+  impressionId: number
+  editedImpression: string
+}) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    console.error('セッションが取得できませんでした。')
+    return new Error('感想の編集に失敗しました。もう一度試して見てください。')
+  }
+  const userId = session.customUser.id
+
+  const result = await prisma
+    .$transaction(async (tx) => {
+      const updateResult = await tx.impression.updateMany({
+        where: {
+          id: impressionId,
+          userId: userId,
+        },
+        data: {
+          impression: editedImpression,
+        },
+      })
+
+      if (updateResult.count !== 1) {
+        throw new Error('自分の感想以外を編集しようとしています', { cause: updateResult })
+      }
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('感想の編集に失敗しました。もう一度試して見てください。')
+    })
+  if (result instanceof Error) {
+    return result
+  }
+
+  return undefined
 }

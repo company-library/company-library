@@ -1,12 +1,14 @@
+import EditImpressionButton from '@/app/books/[id]/editImpressionButton'
 import UserAvatar from '@/components/userAvatar'
 import { toJstFormat } from '@/libs/luxon/utils'
 import prisma from '@/libs/prisma/client'
 
 type Props = {
   bookId: number
+  userId: number
 }
 
-const ImpressionList = async ({ bookId }: Props) => {
+const ImpressionList = async ({ bookId, userId }: Props) => {
   const recentImpressions = await prisma.impression
     .findMany({
       where: { bookId: bookId },
@@ -39,6 +41,9 @@ const ImpressionList = async ({ bookId }: Props) => {
               </td>
               <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
                 {impression.impression}
+              </td>
+              <td data-testid={`edit-${index}`}>
+                {impression.user.id === userId && <EditImpressionButton impression={impression} />}
               </td>
             </tr>
           )

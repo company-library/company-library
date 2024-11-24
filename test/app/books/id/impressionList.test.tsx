@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { Suspense } from 'react'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import { lendableBook } from '../../../__utils__/data/book'
+import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('ImpressionList component', async () => {
@@ -10,6 +11,11 @@ describe('ImpressionList component', async () => {
   )
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: unknown[]) => UserAvatarMock(...args),
+  }))
+  vi.mock(import('@/app/books/[id]/editImpressionButton'), () => ({
+    default: () => {
+      return <button type="button">感想を編集</button>
+    },
   }))
 
   const prismaImpressionsMock = prismaMock.impression.findMany
@@ -43,7 +49,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionList bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
       </Suspense>,
     )
 
@@ -69,7 +75,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionList bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
       </Suspense>,
     )
 
@@ -79,13 +85,31 @@ describe('ImpressionList component', async () => {
     expect(screen.getByTestId(`impression-${2}`)).toHaveClass('whitespace-pre-wrap')
   })
 
+  it('自分の感想の場合、感想を編集ボタンが表示される', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(
+      <Suspense>
+        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(
+      within(await screen.findByTestId(`edit-${0}`)).queryByRole('button'),
+    ).not.toBeInTheDocument()
+    expect(within(screen.getByTestId(`edit-${1}`)).getByRole('button')).toBeInTheDocument()
+    expect(within(screen.getByTestId(`edit-${2}`)).queryByRole('button')).not.toBeInTheDocument()
+  })
+
   it('感想が登録されていない場合、その旨のメッセージを表示する', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue([])
 
     render(
       <Suspense>
-        <ImpressionList bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
       </Suspense>,
     )
 
@@ -100,7 +124,7 @@ describe('ImpressionList component', async () => {
 
     render(
       <Suspense>
-        <ImpressionList bookId={lendableBook.id} />
+        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
       </Suspense>,
     )
 
