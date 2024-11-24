@@ -70,7 +70,7 @@ const BookDetailPage = async (props: BookDetailPageParams) => {
         <div className="mt-10">
           <h2 className="text-lg">感想</h2>
           <Suspense fallback={<div>Loading...</div>}>
-            <ImpressionList bookId={bookId} />
+            <ImpressionList bookId={bookId} userId={userId} />
           </Suspense>
         </div>
 
