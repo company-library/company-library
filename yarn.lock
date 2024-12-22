@@ -2213,6 +2213,7 @@ __metadata:
   resolution: "company-library@workspace:."
   dependencies:
     "@biomejs/biome": "npm:1.9.4"
+    "@eslint/eslintrc": "npm:^3.2.0"
     "@prisma/client": "npm:^6.0.1"
     "@slack/webhook": "npm:^7.0.4"
     "@testing-library/dom": "npm:^10.4.0"
