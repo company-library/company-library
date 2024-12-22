@@ -21,14 +21,14 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.0.1",
     "@slack/webhook": "^7.0.4",
     "@vercel/blob": "^0.27.0",
     "graphql": "^16.9.0",
     "luxon": "^3.5.0",
     "next": "15.0.3",
     "next-auth": "^4.24.11",
-    "prisma": "^5.22.0",
+    "prisma": "^6.0.1",
     "react": "canary",
     "react-dom": "canary",
     "swr": "^2.2.5"
