@@ -41,14 +41,14 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@types/luxon": "^3.4.2",
-    "@types/node": "^22.10.7",
-    "@types/react": "19.0.7",
+    "@types/node": "^22.13.0",
+    "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "autoprefixer": "^10.4.20",
     "daisyui": "^4.12.23",
     "dotenv-cli": "^8.0.0",
-    "eslint": "^9.18.0",
+    "eslint": "^9.19.0",
     "eslint-config-next": "15.1.5",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^26.0.0",
@@ -57,11 +57,11 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.2",
+    "vitest": "^3.0.4",
     "vitest-mock-extended": "^2.0.2"
   },
   "volta": {
-    "node": "22.13.0",
+    "node": "22.13.1",
     "yarn": "4.6.0"
   }
 }
