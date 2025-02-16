@@ -2351,7 +2351,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.3"
     vite-tsconfig-paths: "npm:^5.1.4"
-    vitest: "npm:^3.0.4"
+    vitest: "npm:^3.0.5"
     vitest-mock-extended: "npm:^2.0.2"
   languageName: unknown
   linkType: soft
@@ -6626,7 +6626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^3.0.4":
+"vitest@npm:^3.0.5":
   version: 3.0.5
   resolution: "vitest@npm:3.0.5"
   dependencies:
