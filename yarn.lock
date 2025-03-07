@@ -2498,7 +2498,7 @@ __metadata:
     "@vercel/blob": "npm:^0.27.2"
     "@vitejs/plugin-react-swc": "npm:^3.8.0"
     autoprefixer: "npm:^10.4.20"
-    daisyui: "npm:^4.12.24"
+    daisyui: "npm:^5.0.0"
     dotenv-cli: "npm:^8.0.0"
     eslint: "npm:^9.21.0"
     eslint-config-next: "npm:15.2.1"
@@ -2554,16 +2554,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-selector-tokenizer@npm:^0.8":
-  version: 0.8.0
-  resolution: "css-selector-tokenizer@npm:0.8.0"
-  dependencies:
-    cssesc: "npm:^3.0.0"
-    fastparse: "npm:^1.1.2"
-  checksum: 10c0/86f68cc666d41f9d153351677694002a9d00e2609e6abc66fcfd7f580be3d6ecc0929e46a06c621ab28da5febbb54567db9709b819414edae4a36d9ff9133e16
-  languageName: node
-  linkType: hard
-
 "css.escape@npm:^1.5.1":
   version: 1.5.1
   resolution: "css.escape@npm:1.5.1"
@@ -2597,22 +2587,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"culori@npm:^3":
-  version: 3.3.0
-  resolution: "culori@npm:3.3.0"
-  checksum: 10c0/acd330a8f940dc22f36650ba722c9302a4745fee3c8fb40a27ac27228767e2cba4221c2dc414fce652b82cb264d28f65d8b76d505df402ecf94dbb9e440319e1
-  languageName: node
-  linkType: hard
-
-"daisyui@npm:^4.12.24":
-  version: 4.12.24
-  resolution: "daisyui@npm:4.12.24"
-  dependencies:
-    css-selector-tokenizer: "npm:^0.8"
-    culori: "npm:^3"
-    picocolors: "npm:^1"
-    postcss-js: "npm:^4"
-  checksum: 10c0/a5865e05b543965c21a934264da2c576f0760137344cb270e2d27183f03c9c51ae1b0af8ebe530fcd31ba4602711d57a5ddbf59c6c9461c53fdd73d53ed61375
+"daisyui@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "daisyui@npm:5.0.0"
+  checksum: 10c0/54251dbb768a92b6f476514f0ff728dd58fe854cb4ab5bab7f30e6e76dd3d8d8632fe5ffdb9c22aa31d71329188b9648e475090c3d61801f8eab365dc3a831b7
   languageName: node
   linkType: hard
 
@@ -3597,13 +3575,6 @@ __metadata:
   version: 2.0.6
   resolution: "fast-levenshtein@npm:2.0.6"
   checksum: 10c0/111972b37338bcb88f7d9e2c5907862c280ebf4234433b95bc611e518d192ccb2d38119c4ac86e26b668d75f7f3894f4ff5c4982899afced7ca78633b08287c4
-  languageName: node
-  linkType: hard
-
-"fastparse@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "fastparse@npm:1.1.2"
-  checksum: 10c0/c08d6e7ef10c0928426c1963dd4593e2baaf44d223ab1e5ba5d7b30470144b3a4ecb3605958b73754cea3f857ecef00b67c885f07ca2c312b38b67d9d88b84b5
   languageName: node
   linkType: hard
 
@@ -5291,7 +5262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1, picocolors@npm:^1.0.0, picocolors@npm:^1.0.1":
+"picocolors@npm:^1.0.0, picocolors@npm:^1.0.1":
   version: 1.0.1
   resolution: "picocolors@npm:1.0.1"
   checksum: 10c0/c63cdad2bf812ef0d66c8db29583802355d4ca67b9285d846f390cc15c2f6ccb94e8cb7eb6a6e97fc5990a6d3ad4ae42d86c84d3146e667c739a4234ed50d400
@@ -5353,7 +5324,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-js@npm:^4, postcss-js@npm:^4.0.1":
+"postcss-js@npm:^4.0.1":
   version: 4.0.1
   resolution: "postcss-js@npm:4.0.1"
   dependencies:
