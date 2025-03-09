@@ -9,5 +9,4 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [require('daisyui')],
 } satisfies Config
