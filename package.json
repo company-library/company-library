@@ -46,7 +46,7 @@
     "@types/react-dom": "19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "autoprefixer": "^10.4.20",
-    "daisyui": "^4.12.24",
+    "daisyui": "^5.0.0",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.21.0",
     "eslint-config-next": "15.2.1",
