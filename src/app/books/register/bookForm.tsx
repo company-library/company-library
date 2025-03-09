@@ -30,7 +30,7 @@ const BookForm: FC<BookFormProps> = ({ userId }) => {
           <input
             type="text"
             onChange={handleChange}
-            className="mt-1 block w-72 rounded-md border-2 border-gray-300 shadow-sm"
+            className="mt-1 block w-72 rounded-md border-2 border-gray-300 shadow-xs"
             defaultValue="9784"
           />
         </label>
