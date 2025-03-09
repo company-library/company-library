@@ -31,7 +31,7 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'n
           </div>
         </div>
       ) : (
-        <div className="avatar placeholder">
+        <div className="avatar avatar-placeholder">
           <div
             className={`${width} rounded-full bg-neutral text-neutral-content`}
             data-testid="width"

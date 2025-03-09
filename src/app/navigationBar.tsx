@@ -33,7 +33,7 @@ const NavigationBar: FC = async () => {
             <NavigationBarItem label="利用者一覧" href="/users" />
           </li>
         </ul>
-        <div className="pl-3">
+        <div className="pl-3 flex">
           {user && (
             <div className="">
               <UserAvatar user={user} size="sm" />
