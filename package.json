@@ -52,6 +52,7 @@
     "eslint-config-next": "15.2.1",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^26.0.0",
+    "plantuml-parser": "^0.4.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.0.12",
     "ts-node": "^10.9.2",
