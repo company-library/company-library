@@ -1,6 +1,9 @@
 name: reviewdogBiome
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   biome:
     runs-on: ubuntu-latest
