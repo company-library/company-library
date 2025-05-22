@@ -27,6 +27,9 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'n
               fill={true}
               className="rounded-full"
               data-testid="profileImage"
+              sizes={
+                size === 'sm' ? '32px' : size === 'md' ? '48px' : size === 'lg' ? '64px' : '100vw'
+              }
             />
           </div>
         </div>
