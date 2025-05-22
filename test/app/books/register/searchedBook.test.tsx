@@ -1,5 +1,5 @@
 import SearchedBook from '@/app/books/register/searchedBook'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import useSWR from 'swr'
 import type { Mock } from 'vitest'
 import { user1 } from '../../../__utils__/data/user'
@@ -26,46 +26,49 @@ describe('searched book component', async () => {
     default: registerBookDivMock,
   }))
 
-  it('書籍情報が表示される', () => {
+  const companyBook = { title: bookTitle, _count: { registrationHistories: 1 } }
+
+  it.each([
+    {
+      testcase: 'Google Books',
+      google: { items: [{ volumeInfo: { title: bookTitle } }] },
+      openbd: [null],
+      registered: { book: {} },
+    },
+    {
+      testcase: 'OpenBD',
+      google: undefined,
+      openbd: [{ summary: { title: bookTitle } }],
+      registered: { book: {} },
+    },
+    {
+      testcase: '登録済書籍',
+      google: undefined,
+      openbd: [null],
+      registered: { book: companyBook },
+    },
+  ])('$testcaseから取得した書籍情報が表示される', ({ google, openbd, registered }) => {
     swrMock
-      .mockReturnValueOnce({
-        data: {
-          items: [
-            {
-              volumeInfo: {
-                title: bookTitle,
-              },
-            },
-          ],
-        },
-      })
-      .mockReturnValueOnce({ data: { book: {} } })
+      .mockReturnValueOnce({ data: google })
+      .mockReturnValueOnce({ data: openbd })
+      .mockReturnValueOnce({ data: registered })
 
-    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
-    expect(getByText('こちらの本でしょうか？')).toBeInTheDocument()
-    expect(getByText('testBook')).toBeInTheDocument()
-    expect(getByText('register book div component')).toBeInTheDocument()
+    expect(screen.getByText('こちらの本でしょうか？')).toBeInTheDocument()
+    expect(screen.getByText('testBook')).toBeInTheDocument()
   })
 
   it('登録済みの書籍の場合は書籍を追加するためのコンポーネントを表示する', () => {
-    const companyBook = { _count: { registrationHistories: 1 } }
+    const companyBook = { title: bookTitle, _count: { registrationHistories: 1 } }
     swrMock
-      .mockReturnValueOnce({
-        data: {
-          items: [
-            {
-              volumeInfo: {
-                title: bookTitle,
-              },
-            },
-          ],
-        },
-      })
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: undefined })
       .mockReturnValueOnce({ data: { book: companyBook } })
 
     render(<SearchedBook isbn={isbn} userId={userId} />)
 
+    expect(screen.getByText('add book div component')).toBeInTheDocument()
     expect(addRegisterBookDivMock).toBeCalledWith(
       {
         companyBook,
@@ -76,40 +79,49 @@ describe('searched book component', async () => {
     expect(registerBookDivMock).not.toBeCalled()
   })
 
-  it('登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する', () => {
-    swrMock
-      .mockReturnValueOnce({
-        data: {
-          items: [
-            {
-              volumeInfo: {
-                title: bookTitle,
-              },
-            },
-          ],
+  it.each([
+    {
+      testcase: 'Google Books',
+      google: { items: [{ volumeInfo: { title: bookTitle } }] },
+      openbd: [null],
+    },
+    {
+      testcase: 'OpenBD',
+      google: undefined,
+      openbd: [{ summary: { title: bookTitle } }],
+    },
+  ])(
+    '登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する($testcase)',
+    ({ google, openbd }) => {
+      swrMock
+        .mockReturnValueOnce({ data: google })
+        .mockReturnValueOnce({ data: openbd })
+        .mockReturnValueOnce({ data: { book: {} } })
+
+      render(<SearchedBook isbn={isbn} userId={userId} />)
+
+      expect(screen.getByText('register book div component')).toBeInTheDocument()
+      expect(addRegisterBookDivMock).not.toBeCalled()
+      expect(registerBookDivMock).toBeCalledWith(
+        {
+          title: bookTitle,
+          isbn: isbn,
+          thumbnailUrl: undefined,
+          userId: userId,
         },
-      })
+        undefined,
+      )
+    },
+  )
+
+  it('存在しない書籍の場合は書籍が見つからなかった旨のメッセージを表示する', () => {
+    swrMock
+      .mockReturnValueOnce({ data: undefined })
+      .mockReturnValueOnce({ data: [null] })
       .mockReturnValueOnce({ data: { book: {} } })
 
     render(<SearchedBook isbn={isbn} userId={userId} />)
 
-    expect(addRegisterBookDivMock).not.toBeCalled()
-    expect(registerBookDivMock).toBeCalledWith(
-      {
-        title: bookTitle,
-        isbn: isbn,
-        thumbnailUrl: undefined,
-        userId: userId,
-      },
-      undefined,
-    )
-  })
-
-  it('存在しない書籍の場合は書籍が見つからなかった旨のメッセージを表示する', () => {
-    swrMock.mockReturnValueOnce({ data: undefined }).mockReturnValueOnce({ data: { book: {} } })
-
-    const { getByText } = render(<SearchedBook isbn={isbn} userId={userId} />)
-
-    expect(getByText('書籍は見つかりませんでした')).toBeInTheDocument()
+    expect(screen.getByText('書籍は見つかりませんでした')).toBeInTheDocument()
   })
 })
