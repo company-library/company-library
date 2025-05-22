@@ -24,13 +24,13 @@ const UserCard: FC<UserCardProps> = async ({ user }) => {
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="py-3 w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">現在読んでいる冊数</span>
-            <span className="ml-1 text-sm" data-testid="readingBookCount">
+            <span className="ml-1 text-black text-sm" data-testid="readingBookCount">
               {readingBooks.length}
             </span>
           </div>
           <div className="py-3 -ml-px w-0 flex-1 flex">
             <span className="ml-3 text-gray-500 text-sm">今まで借りた冊数</span>
-            <span className="ml-1 text-sm" data-testid="haveReadBookCount">
+            <span className="ml-1 text-black text-sm" data-testid="haveReadBookCount">
               {haveReadBooks.length}
             </span>
           </div>
