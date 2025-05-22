@@ -56,6 +56,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
           alt={bookDetail.title}
           width={300}
           height={400}
+          className="w-[300px] h-[400px]"
         />
       </div>
 

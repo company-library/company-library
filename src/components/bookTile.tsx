@@ -31,6 +31,7 @@ const Tile: FC<BookProps> = ({ book }) => {
           alt={book.title}
           width={300}
           height={400}
+          className="w-[300px] h-[400px]"
           data-testid="bookImg"
         />
       </div>
