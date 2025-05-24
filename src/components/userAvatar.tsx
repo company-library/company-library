@@ -20,13 +20,16 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'n
     <div className={`${tooltipPosition}`} data-tip={user.name} data-testid="name-tooltip">
       {imageUrl ? (
         <div className="avatar">
-          <div className={`${width}`} data-testid="width">
+          <div className={`${width} relative`} data-testid="width">
             <Image
               src={imageUrl}
               alt={`${user.name}のプロフィール画像`}
               fill={true}
               className="rounded-full"
               data-testid="profileImage"
+              sizes={
+                size === 'sm' ? '32px' : size === 'md' ? '48px' : size === 'lg' ? '64px' : '100vw'
+              }
             />
           </div>
         </div>
