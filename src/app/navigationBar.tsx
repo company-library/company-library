@@ -16,7 +16,7 @@ const NavigationBar: FC = async () => {
       <nav className="navbar max-w-7xl mx-auto flex">
         <div className="flex-1">
           <Link href="/" className="text-2xl">
-            company-library
+            company-library-beta
           </Link>
         </div>
         <ul className="menu menu-horizontal px-1">
