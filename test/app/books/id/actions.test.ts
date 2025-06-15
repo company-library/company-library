@@ -1,4 +1,4 @@
-import { lendBook, returnBook } from '@/app/books/[id]/actions'
+import { editImpression, lendBook, returnBook } from '@/app/books/[id]/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
@@ -158,6 +158,69 @@ describe('server actions', () => {
         })
         expect(errorMock).toHaveBeenCalledWith(error)
       })
+    })
+  })
+
+  describe('editImpression function', () => {
+    const { getServerSessionMock } = vi.hoisted(() => {
+      return { getServerSessionMock: vi.fn() }
+    })
+    vi.mock('next-auth', () => ({
+      getServerSession: () => getServerSessionMock(),
+    }))
+    getServerSessionMock.mockResolvedValue({ customUser: { id: user1.id } })
+
+    const mockConsoleError = vi.spyOn(console, 'error')
+
+    it('自身が投稿した感想の編集ができる', async () => {
+      prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
+      prismaMock.impression.updateMany.mockResolvedValueOnce({
+        count: 1,
+      })
+
+      const result = await editImpression({ impressionId: 72, editedImpression: '編集した感想' })
+
+      expect(result).toBeUndefined()
+      expect(prismaMock.impression.updateMany).toHaveBeenCalledWith({
+        where: {
+          id: 72,
+          userId: user1.id,
+        },
+        data: {
+          impression: '編集した感想',
+        },
+      })
+    })
+
+    it('セッションが取得できなかった場合はエラーを返す', async () => {
+      mockConsoleError.mockImplementationOnce(() => {})
+      getServerSessionMock.mockResolvedValueOnce(null)
+
+      const result = await editImpression({ impressionId: 1, editedImpression: 'セッションなし' })
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toBe(
+        '感想の編集に失敗しました。もう一度試して見てください。',
+      )
+      expect(mockConsoleError).toHaveBeenCalledWith('セッションが取得できませんでした')
+    })
+
+    it('他のユーザーの感想を更新しようとした場合はエラーを返す', async () => {
+      mockConsoleError.mockImplementationOnce(() => {})
+      prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
+      prismaMock.impression.updateMany.mockResolvedValueOnce({
+        count: 0,
+      })
+
+      const result = await editImpression({ impressionId: 1, editedImpression: '他人の感想' })
+
+      expect(result).toBeInstanceOf(Error)
+      expect((result as Error).message).toBe(
+        '感想の編集に失敗しました。もう一度試して見てください。',
+      )
+      expect(mockConsoleError).toHaveBeenCalledWith(
+        new Error('自分の感想以外を編集しようとしています', { cause: { count: 0 } }),
+      )
     })
   })
 })
