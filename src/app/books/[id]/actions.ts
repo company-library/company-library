@@ -93,7 +93,7 @@ export const editImpression = async ({
 }) => {
   const session = await getServerSession(authOptions)
   if (!session) {
-    console.error('セッションが取得できませんでした。')
+    console.error('セッションが取得できませんでした')
     return new Error('感想の編集に失敗しました。もう一度試して見てください。')
   }
   const userId = session.customUser.id
