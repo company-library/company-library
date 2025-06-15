@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.9.1",
+  "packageManager": "yarn@4.9.2",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -37,31 +37,31 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4.1.7",
+    "@tailwindcss/postcss": "^4.1.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/luxon": "^3.6.2",
-    "@types/node": "^22.15.21",
-    "@types/react": "19.1.5",
-    "@types/react-dom": "19.1.5",
-    "@vitejs/plugin-react-swc": "^3.10.0",
-    "daisyui": "^5.0.37",
+    "@types/node": "^22.15.31",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@vitejs/plugin-react-swc": "^3.10.2",
+    "daisyui": "^5.0.43",
     "dotenv-cli": "^8.0.0",
-    "eslint": "^9.27.0",
+    "eslint": "^9.29.0",
     "eslint-config-next": "15.3.2",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^26.1.0",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.7",
+    "postcss": "^8.5.5",
+    "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.4",
+    "vitest": "^3.2.3",
     "vitest-mock-extended": "^3.1.0"
   },
   "volta": {
     "node": "22.16.0",
-    "yarn": "4.9.1"
+    "yarn": "4.9.2"
   }
 }
