@@ -40,7 +40,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled }) => {
 
       <dialog className="modal" ref={dialogRef}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">何日まで借りますか？</h3>
+          <h3 className="font-bold text-lg">何日まで借りますか?</h3>
 
           <div className="mt-4">
             <input
