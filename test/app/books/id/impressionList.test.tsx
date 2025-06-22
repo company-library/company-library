@@ -9,8 +9,7 @@ describe('ImpressionList component', async () => {
     vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
   )
   vi.mock('@/components/userAvatar', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserAvatarMock(...args),
+    default: (...args: unknown[]) => UserAvatarMock(...args),
   }))
 
   const prismaImpressionsMock = prismaMock.impression.findMany

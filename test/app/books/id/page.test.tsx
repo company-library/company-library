@@ -13,8 +13,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/bookDetail', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => BookDetailMock(...args),
+    default: (...args: unknown[]) => BookDetailMock(...args),
   }))
 
   const { LendingListMock } = vi.hoisted(() => {
@@ -23,8 +22,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/lendingList', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => LendingListMock(...args),
+    default: (...args: unknown[]) => LendingListMock(...args),
   }))
 
   const { ImpressionListMock } = vi.hoisted(() => {
@@ -33,8 +31,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/impressionList', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => ImpressionListMock(...args),
+    default: (...args: unknown[]) => ImpressionListMock(...args),
   }))
 
   const { ReturnListMock } = vi.hoisted(() => {
@@ -43,8 +40,7 @@ describe('BookDetail page', async () => {
     }
   })
   vi.mock('@/app/books/[id]/returnList', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => ReturnListMock(...args),
+    default: (...args: unknown[]) => ReturnListMock(...args),
   }))
 
   const { getServerSessionMock } = vi.hoisted(() => {

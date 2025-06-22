@@ -13,8 +13,7 @@ describe('users page', async () => {
     }
   })
   vi.mock('@/app/users/userCard', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserCardMock(...args),
+    default: (...args: unknown[]) => UserCardMock(...args),
   }))
 
   it('利用者一覧が表示される', async () => {

@@ -27,8 +27,7 @@ describe('navigationBar component', async () => {
     return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
   })
   vi.mock('@/components/userAvatar', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserAvatarMock(...args),
+    default: (...args: unknown[]) => UserAvatarMock(...args),
   }))
 
   beforeEach(() => {
