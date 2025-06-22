@@ -1,6 +1,6 @@
+import type { Metadata } from 'next'
 import UserCard from '@/app/users/userCard'
 import prisma from '@/libs/prisma/client'
-import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: '利用者一覧 | company-library',

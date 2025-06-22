@@ -1,8 +1,8 @@
+import Image from 'next/image'
+import type { FC } from 'react'
 import LendButton from '@/app/books/[id]/lendButton'
 import ReturnButton from '@/app/books/[id]/returnButton'
 import prisma from '@/libs/prisma/client'
-import Image from 'next/image'
-import type { FC } from 'react'
 
 type BookDetailProps = {
   bookId: number

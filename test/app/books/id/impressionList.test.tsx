@@ -1,6 +1,6 @@
-import ImpressionList from '@/app/books/[id]/impressionList'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import ImpressionList from '@/app/books/[id]/impressionList'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 

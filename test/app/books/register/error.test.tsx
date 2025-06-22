@@ -1,5 +1,5 @@
-import ErrorPage from '@/app/books/register/error'
 import { render, screen } from '@testing-library/react'
+import ErrorPage from '@/app/books/register/error'
 
 describe('register error page', async () => {
   it('書籍登録のエラーページが表示される', () => {

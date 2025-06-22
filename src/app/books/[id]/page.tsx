@@ -1,11 +1,11 @@
+import { getServerSession } from 'next-auth'
+import React, { Suspense } from 'react'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import LendingList from '@/app/books/[id]/lendingList'
 import ReturnList from '@/app/books/[id]/returnList'
 import prisma from '@/libs/prisma/client'
-import { getServerSession } from 'next-auth'
-import React, { Suspense } from 'react'
 
 type BookDetailPageParams = {
   params: Promise<{

@@ -1,6 +1,6 @@
-import UserCard from '@/app/users/userCard'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import UserCard from '@/app/users/userCard'
 import { user1 } from '../../__utils__/data/user'
 
 describe('UserCard component', async () => {

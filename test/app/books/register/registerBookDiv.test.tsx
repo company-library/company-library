@@ -1,5 +1,5 @@
-import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { fireEvent, render, screen } from '@testing-library/react'
+import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { user1 } from '../../../__utils__/data/user'
 
 describe('register book div component', async () => {

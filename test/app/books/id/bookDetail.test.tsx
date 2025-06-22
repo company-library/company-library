@@ -1,7 +1,7 @@
-import BookDetail from '@/app/books/[id]/bookDetail'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
 import { expect } from 'vitest'
+import BookDetail from '@/app/books/[id]/bookDetail'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 

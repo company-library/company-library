@@ -1,7 +1,7 @@
-import SearchedBook from '@/app/books/register/searchedBook'
 import { render, screen } from '@testing-library/react'
 import useSWR from 'swr'
 import type { Mock } from 'vitest'
+import SearchedBook from '@/app/books/register/searchedBook'
 import { user1 } from '../../../__utils__/data/user'
 
 describe('searched book component', async () => {

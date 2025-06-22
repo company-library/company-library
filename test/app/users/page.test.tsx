@@ -1,6 +1,6 @@
-import UsersPage from '@/app/users/page'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import UsersPage from '@/app/users/page'
 import { user1, user2 } from '../../__utils__/data/user'
 import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 

@@ -1,7 +1,7 @@
-import LendingList from '@/app/books/[id]/lendingList'
 import { render, screen } from '@testing-library/react'
 import { DateTime, Settings } from 'luxon'
 import { Suspense } from 'react'
+import LendingList from '@/app/books/[id]/lendingList'
 import { lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 

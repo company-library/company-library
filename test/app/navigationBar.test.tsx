@@ -1,6 +1,6 @@
-import NavigationBar from '@/app/navigationBar'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import NavigationBar from '@/app/navigationBar'
 import { user1 } from '../__utils__/data/user'
 
 describe('navigationBar component', async () => {
