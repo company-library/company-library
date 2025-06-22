@@ -1,6 +1,6 @@
-import NavigationBar from '@/app/navigationBar'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import NavigationBar from '@/app/navigationBar'
 import { user1 } from '../__utils__/data/user'
 
 describe('navigationBar component', async () => {
@@ -27,8 +27,7 @@ describe('navigationBar component', async () => {
     return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
   })
   vi.mock('@/components/userAvatar', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserAvatarMock(...args),
+    default: (...args: unknown[]) => UserAvatarMock(...args),
   }))
 
   beforeEach(() => {

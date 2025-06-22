@@ -1,6 +1,6 @@
-import RegisterPage from '@/app/books/register/page'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import RegisterPage from '@/app/books/register/page'
 import { user1 } from '../../../__utils__/data/user'
 
 describe('register page', async () => {

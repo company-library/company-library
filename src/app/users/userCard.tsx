@@ -1,8 +1,8 @@
+import Link from 'next/link'
+import type { FC } from 'react'
 import UserAvatar from '@/components/userAvatar'
 import { readingHistories } from '@/hooks/server/readingHistories'
 import type { UserSummary } from '@/models/user'
-import Link from 'next/link'
-import type { FC } from 'react'
 
 type UserCardProps = {
   user: UserSummary

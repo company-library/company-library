@@ -1,5 +1,5 @@
-import BookTile from '@/components/bookTile'
 import { render } from '@testing-library/react'
+import BookTile from '@/components/bookTile'
 import { bookWithImage, bookWithoutImage } from '../__utils__/data/book'
 
 describe('book component', () => {

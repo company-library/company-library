@@ -1,6 +1,6 @@
+import { DateTime, Settings } from 'luxon'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, isOverdue, toJstFormat } from '@/libs/luxon/utils'
-import { DateTime, Settings } from 'luxon'
 
 describe('Luxon utils', () => {
   describe('toJstFormat', () => {

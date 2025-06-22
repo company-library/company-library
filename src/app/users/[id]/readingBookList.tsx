@@ -1,7 +1,7 @@
+import type { FC } from 'react'
 import BookTile from '@/components/bookTile'
 import { isOverdue, toJstFormat } from '@/libs/luxon/utils'
 import prisma from '@/libs/prisma/client'
-import type { FC } from 'react'
 
 type ReadingBookListProps = {
   readingBooks: {

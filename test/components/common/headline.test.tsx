@@ -1,5 +1,5 @@
-import Headline from '@/components/common/headline'
 import { render } from '@testing-library/react'
+import Headline from '@/components/common/headline'
 
 describe('headline component', () => {
   it('見出しの文言が表示される', () => {

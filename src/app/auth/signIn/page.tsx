@@ -1,8 +1,8 @@
 'use client'
 
 import type { NextPage } from 'next'
-import { SessionProvider, signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { SessionProvider, signIn, useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 
 const defaultProvider = process.env.NEXT_PUBLIC_DEFAULT_PROVIDER ?? ''

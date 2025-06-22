@@ -1,7 +1,7 @@
-import BookDetail from '@/app/books/[id]/bookDetail'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
 import { expect } from 'vitest'
+import BookDetail from '@/app/books/[id]/bookDetail'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
@@ -21,18 +21,22 @@ describe('BookDetail component', async () => {
   const prismaBookMock = prismaMock.book.findUnique
 
   vi.mock('@/app/books/[id]/lendButton', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any[]) => {
-      // biome-ignore lint/a11y/useButtonType: <explanation>
-      return <button disabled={args[0].disabled}>借りる</button>
+    default: (...args: { disabled: boolean }[]) => {
+      return (
+        <button disabled={args[0].disabled} type="button">
+          借りる
+        </button>
+      )
     },
   }))
 
   vi.mock('@/app/books/[id]/returnButton', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any[]) => {
-      // biome-ignore lint/a11y/useButtonType: <explanation>
-      return <button disabled={args[0].disabled}>返却する</button>
+    default: (...args: { disabled: boolean }[]) => {
+      return (
+        <button disabled={args[0].disabled} type="button">
+          返却する
+        </button>
+      )
     },
   }))
 

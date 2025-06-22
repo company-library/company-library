@@ -1,9 +1,9 @@
+import Link from 'next/link'
+import { getServerSession } from 'next-auth'
+import type { FC } from 'react'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import NavigationBarItem from '@/app/navigationBarItem'
 import UserAvatar from '@/components/userAvatar'
-import { getServerSession } from 'next-auth'
-import Link from 'next/link'
-import type { FC } from 'react'
 
 const NavigationBar: FC = async () => {
   const session = await getServerSession(authOptions)

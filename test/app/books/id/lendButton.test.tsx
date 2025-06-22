@@ -1,7 +1,7 @@
-import LendButton from '@/app/books/[id]/lendButton'
-import { dateStringToDate } from '@/libs/luxon/utils'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
+import LendButton from '@/app/books/[id]/lendButton'
+import { dateStringToDate } from '@/libs/luxon/utils'
 
 describe('LendButton component', () => {
   const bookId = 1

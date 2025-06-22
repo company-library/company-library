@@ -1,6 +1,6 @@
-import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 import Image from 'next/image'
 import type { FC } from 'react'
+import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 
 type UserAvatarProps = {
   user: {

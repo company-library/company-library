@@ -1,6 +1,6 @@
-import UsersPage from '@/app/users/page'
 import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
+import UsersPage from '@/app/users/page'
 import { user1, user2 } from '../../__utils__/data/user'
 import { prismaMock } from '../../__utils__/libs/prisma/singleton'
 
@@ -13,8 +13,7 @@ describe('users page', async () => {
     }
   })
   vi.mock('@/app/users/userCard', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => UserCardMock(...args),
+    default: (...args: unknown[]) => UserCardMock(...args),
   }))
 
   it('利用者一覧が表示される', async () => {

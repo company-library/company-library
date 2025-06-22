@@ -1,7 +1,7 @@
+import type { NextRequest } from 'next/server'
 import { toJstFormat } from '@/libs/luxon/utils'
 import prisma from '@/libs/prisma/client'
 import { notifySlack } from '@/libs/slack/webhook'
-import type { NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization')
