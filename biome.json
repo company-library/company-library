@@ -1,11 +1,9 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.2/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
+  "$schema": "https://biomejs.dev/schemas/2.0.4/schema.json",
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {
     "enabled": true,
-    "ignore": [".next", "node_modules"],
+    "includes": ["**", "!**/.next", "!**/node_modules"],
     "formatWithErrors": false,
     "indentStyle": "space",
     "indentWidth": 2,
@@ -29,7 +27,19 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
+      }
     }
   }
 }
