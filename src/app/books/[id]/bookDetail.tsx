@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { FC } from 'react'
+import AddImpressionButton from '@/app/books/[id]/addImpressionButton'
 import LendButton from '@/app/books/[id]/lendButton'
 import ReturnButton from '@/app/books/[id]/returnButton'
 import prisma from '@/libs/prisma/client'
@@ -69,15 +70,17 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
           )
         </p>
 
-        <div className="mt-auto">
+        <div className="mt-auto flex gap-5">
           <LendButton bookId={bookId} userId={userId} disabled={!isLendable} />
-          <span className="ml-5" />
+
           <ReturnButton
             bookId={bookId}
             userId={userId}
             lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
             disabled={!isLending}
           />
+
+          <AddImpressionButton bookId={bookId} />
         </div>
       </div>
     </div>

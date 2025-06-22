@@ -1,6 +1,8 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { getServerSession } from 'next-auth'
+import * as z from 'zod/v4'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import prisma from '@/libs/prisma/client'
 
@@ -123,4 +125,88 @@ export const editImpression = async ({
   }
 
   return undefined
+}
+
+const AddImpressionSchema = z.object({
+  impression: z.string().min(1, {
+    message: '1文字以上入力してください',
+  }),
+})
+type AddImpression = z.infer<typeof AddImpressionSchema>
+
+export type AddImpressionResult = {
+  success: boolean
+  value: AddImpression
+  errors?: Partial<Record<keyof AddImpression, string[]>>
+  apiError: Error | null
+}
+
+/**
+ * 感想を追加するServer Actions
+ * @param {AddImpressionResult} _
+ * @param {FormData} formData 追加する感想のデータ
+ * @param {number} bookId 対象書籍ID
+ * @returns {Promise<AddImpressionResult>} 感想の追加結果
+ */
+export const addImpression = async (
+  _: AddImpressionResult,
+  formData: FormData,
+  bookId: number,
+): Promise<AddImpressionResult> => {
+  const rawValues = {
+    impression: formData.get('impression') ?? '',
+  } as unknown as AddImpression
+
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    console.error('セッションが取得できませんでした')
+    return {
+      success: false,
+      value: rawValues,
+      apiError: new Error('感想の追加に失敗しました。もう一度試して見てください。'),
+    }
+  }
+  const userId = session.customUser.id
+
+  const validationResult = AddImpressionSchema.safeParse(rawValues)
+  if (!validationResult.success) {
+    const errors = z.flattenError(validationResult.error).fieldErrors
+
+    return {
+      success: false,
+      value: rawValues as unknown as AddImpression,
+      errors,
+      apiError: null,
+    }
+  }
+
+  const result = await prisma
+    .$transaction(async (tx) => {
+      await tx.impression.create({
+        data: {
+          bookId,
+          userId,
+          ...validationResult.data,
+        },
+      })
+    })
+    .catch((e) => {
+      console.error(e)
+      return new Error('感想の追加に失敗しました。もう一度試して見てください。')
+    })
+  if (result instanceof Error) {
+    return {
+      success: false,
+      value: validationResult.data,
+      apiError: result,
+    }
+  }
+
+  revalidatePath(`/books/${bookId}`)
+
+  return {
+    success: true,
+    value: { impression: '' },
+    apiError: null,
+  }
 }
