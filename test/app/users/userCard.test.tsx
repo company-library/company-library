@@ -5,8 +5,7 @@ import { user1 } from '../../__utils__/data/user'
 
 describe('UserCard component', async () => {
   vi.mock('@/components/userAvatar', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    default: (...args: any) => <div data-testid="profileImage">userAvatar</div>,
+    default: () => <div data-testid="profileImage">userAvatar</div>,
   }))
 
   it('ユーザー情報が表示されていること', async () => {

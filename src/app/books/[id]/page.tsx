@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import React, { Suspense } from 'react'
+import { Suspense } from 'react'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import ImpressionList from '@/app/books/[id]/impressionList'
