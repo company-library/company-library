@@ -1,5 +1,6 @@
 import EditImpressionButton from '@/app/books/[id]/editImpressionButton'
 import UserAvatar from '@/components/userAvatar'
+import { DATE_TIME_DISPLAY_FORMAT } from '@/constants'
 import { toJstFormat } from '@/libs/luxon/utils'
 import prisma from '@/libs/prisma/client'
 
@@ -34,7 +35,7 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
           return (
             <tr className="hover" key={impression.id}>
               <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
-                {toJstFormat(impression.updatedAt)}
+                {toJstFormat(impression.createdAt, DATE_TIME_DISPLAY_FORMAT)}
               </td>
               <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
                 <UserAvatar user={impression.user} />

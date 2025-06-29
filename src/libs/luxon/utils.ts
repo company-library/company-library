@@ -1,7 +1,10 @@
 import { DateTime } from 'luxon'
-import { DATE_DISPLAY_FORMAT, DATE_SYSTEM_FORMAT } from '@/constants'
+import { DATE_DISPLAY_FORMAT, DATE_SYSTEM_FORMAT, type DATE_TIME_DISPLAY_FORMAT } from '@/constants'
 
-type Format = typeof DATE_DISPLAY_FORMAT | typeof DATE_SYSTEM_FORMAT
+type Format =
+  | typeof DATE_DISPLAY_FORMAT
+  | typeof DATE_SYSTEM_FORMAT
+  | typeof DATE_TIME_DISPLAY_FORMAT
 
 /**
  * 指定のフォーマットでJST日時文字列にする
