@@ -10,6 +10,7 @@ import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
  * @param {string} title
  * @param {string} isbn
  * @param {string | undefined} imageUrl
+ * @param {number} locationId
  * @param {number} userId
  * @returns {Promise<void>}
  */
@@ -17,6 +18,7 @@ export const registerBook = async (
   title: string,
   isbn: string,
   imageUrl: string | undefined,
+  locationId: number,
   userId: number,
 ): Promise<void> => {
   const vercelBlobUrl = await downloadAndPutImage(imageUrl, isbn)
@@ -39,6 +41,7 @@ export const registerBook = async (
       data: {
         bookId: book.id,
         userId: userId,
+        locationId: locationId,
       },
     })
     .catch((e) => {
@@ -56,11 +59,16 @@ export const registerBook = async (
  * 書籍追加をするServer Action
  * @param {number} bookId
  * @param {number} userId
+ * @param {number} locationId
  * @returns {Promise<void>}
  */
-export const addBook = async (bookId: number, userId: number): Promise<void> => {
+export const addBook = async (
+  bookId: number,
+  userId: number,
+  locationId: number,
+): Promise<void> => {
   await prisma.registrationHistory
-    .create({ data: { bookId: bookId, userId: userId } })
+    .create({ data: { bookId: bookId, userId: userId, locationId: locationId } })
     .catch((e) => {
       console.error(e)
       throw new Error('Registration creation failed')

@@ -58,12 +58,14 @@ model ReturnHistory {
 }
 
 model RegistrationHistory {
-  id        Int      @id @default(autoincrement())
-  bookId    Int      @map("book_id")
-  userId    Int      @map("user_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  book      Book     @relation(fields: [bookId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  id         Int      @id @default(autoincrement())
+  bookId     Int      @map("book_id")
+  userId     Int      @map("user_id")
+  locationId Int?     @map("location_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  book       Book     @relation(fields: [bookId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  location   Location? @relation(fields: [locationId], references: [id])
 
   @@map("registration_histories")
 }
@@ -91,4 +93,13 @@ model Reservation {
   user            User     @relation(fields: [userId], references: [id])
 
   @@map("reservations")
+}
+
+model Location {
+  id                    Int                   @id @default(autoincrement())
+  name                  String                @unique
+  createdAt             DateTime              @default(now()) @map("created_at")
+  registrationHistories RegistrationHistory[]
+
+  @@map("locations")
 }

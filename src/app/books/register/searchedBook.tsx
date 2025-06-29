@@ -67,11 +67,7 @@ const SearchedBook: FC<SearchedBookProps> = ({ isbn, userId }) => {
     )
   }
 
-  return (
-    <>
-      <p>書籍は見つかりませんでした</p>
-    </>
-  )
+  return <p>書籍は見つかりませんでした</p>
 }
 
 export default SearchedBook

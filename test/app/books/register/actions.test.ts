@@ -44,6 +44,7 @@ describe('server actions', () => {
         id: 1,
         bookId: bookId,
         userId: userId,
+        locationId: 1,
         createdAt: new Date(),
       })
 
@@ -51,6 +52,7 @@ describe('server actions', () => {
         title,
         isbn,
         `https://example.com/books/${isbn}/external/cover.jpg`,
+        1,
         userId,
       )
 
@@ -80,7 +82,7 @@ describe('server actions', () => {
       prismaMock.book.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(registerBook(title, isbn, undefined, userId)).rejects.toThrow(
+      await expect(registerBook(title, isbn, undefined, 1, userId)).rejects.toThrow(
         'Book creation failed',
       )
 
@@ -112,9 +114,9 @@ describe('server actions', () => {
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(registerBook('testBook', '1234567890123', undefined, user1.id)).rejects.toThrow(
-        'Registration creation failed',
-      )
+      await expect(
+        registerBook('testBook', '1234567890123', undefined, 1, user1.id),
+      ).rejects.toThrow('Registration creation failed')
 
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
@@ -142,10 +144,11 @@ describe('server actions', () => {
         id: 1,
         bookId: bookId,
         userId: userId,
+        locationId: 1,
         createdAt: new Date(),
       })
 
-      const result = await addBook(bookId, userId)
+      const result = await addBook(bookId, userId, 1)
 
       expect(result).toBeUndefined()
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
@@ -164,7 +167,7 @@ describe('server actions', () => {
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(addBook(bookId, userId)).rejects.toThrow('Registration creation failed')
+      await expect(addBook(bookId, userId, 1)).rejects.toThrow('Registration creation failed')
 
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {

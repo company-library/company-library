@@ -10,6 +10,39 @@ async function main() {
   await prisma.reservation.deleteMany({})
   await prisma.book.deleteMany({})
   await prisma.user.deleteMany({})
+  await prisma.location.deleteMany({})
+
+  // 保管場所データを作成
+  const location1 = await prisma.location.create({
+    data: {
+      name: '1階 エントランス',
+    },
+  })
+  const location2 = await prisma.location.create({
+    data: {
+      name: '2階 開発室',
+    },
+  })
+  const location3 = await prisma.location.create({
+    data: {
+      name: '3階 会議室',
+    },
+  })
+  const location4 = await prisma.location.create({
+    data: {
+      name: '4階 役員室',
+    },
+  })
+  const location5 = await prisma.location.create({
+    data: {
+      name: '書庫A',
+    },
+  })
+  const location6 = await prisma.location.create({
+    data: {
+      name: '書庫B',
+    },
+  })
 
   const alice = await prisma.user.create({
     data: {
