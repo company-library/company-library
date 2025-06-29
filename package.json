@@ -32,7 +32,8 @@
     "prisma": "^6.10.1",
     "react": "canary",
     "react-dom": "canary",
-    "swr": "^2.3.3"
+    "swr": "^2.3.3",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
