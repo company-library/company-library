@@ -43,7 +43,7 @@ describe('ImpressionList component', async () => {
     },
   ]
 
-  it('本の感想を更新日の新しい順に表示する', async () => {
+  it('本の感想を作成日の新しい順に表示する', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
@@ -66,7 +66,7 @@ describe('ImpressionList component', async () => {
     expect(screen.getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/21')
     expect(screen.getByTestId(`postedUser-${2}`).textContent).toBe(expectedImpressions[2].user.name)
     expect(screen.getByTestId(`impression-${2}`).textContent).toBe('感想')
-    expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ updatedAt: 'desc' }])
+    expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ createdAt: 'desc' }])
   })
 
   it('感想は、改行を反映して表示する', async () => {

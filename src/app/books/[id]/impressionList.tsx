@@ -13,7 +13,7 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
     .findMany({
       where: { bookId: bookId },
       include: { user: true },
-      orderBy: [{ updatedAt: 'desc' }],
+      orderBy: [{ createdAt: 'desc' }],
     })
     .catch((e) => {
       console.error(e)
