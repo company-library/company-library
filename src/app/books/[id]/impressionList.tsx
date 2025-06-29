@@ -35,7 +35,12 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
           return (
             <tr className="hover" key={impression.id}>
               <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
-                {toJstFormat(impression.createdAt, DATE_TIME_DISPLAY_FORMAT)}
+                <p>{toJstFormat(impression.createdAt, DATE_TIME_DISPLAY_FORMAT)}</p>
+                {impression.createdAt.getTime() !== impression.updatedAt.getTime() && (
+                  <p className="text-xs text-gray-500">
+                    {` (更新: ${toJstFormat(impression.updatedAt, DATE_TIME_DISPLAY_FORMAT)})`}
+                  </p>
+                )}
               </td>
               <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
                 <UserAvatar user={impression.user} />

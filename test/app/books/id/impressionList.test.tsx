@@ -31,7 +31,7 @@ describe('ImpressionList component', async () => {
       id: 1,
       impression: '本の感想です。\n面白かったです。',
       createdAt: new Date('2022-10-30T10:00:00+09:00'),
-      updatedAt: new Date('2022-10-31T10:00:00+09:00'),
+      updatedAt: new Date('2022-10-30T10:00:00+09:00'),
       user: { id: 1, name: 'user01' },
     },
     {
@@ -43,7 +43,7 @@ describe('ImpressionList component', async () => {
     },
   ]
 
-  it('本の感想を作成日の新しい順に、作成日時、投稿者、感想を表示する', async () => {
+  it('本の感想を作成日の新しい順に、作成日時(更新されていらたら更新日時も)、投稿者、感想を表示する', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
@@ -55,7 +55,9 @@ describe('ImpressionList component', async () => {
 
     // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     await screen.findByTestId(`postedDate-${0}`)
-    expect((await screen.findByTestId(`postedDate-${0}`)).textContent).toBe('2022/11/01 10:22:33')
+    expect((await screen.findByTestId(`postedDate-${0}`)).textContent).toBe(
+      '2022/11/01 10:22:33 (更新: 2022/11/01 11:44:55)',
+    )
     expect(screen.getByTestId(`postedUser-${0}`).textContent).toBe(expectedImpressions[0].user.name)
     expect(screen.getByTestId(`impression-${0}`).textContent).toBe('興味深い本でした')
     expect(screen.getByTestId(`postedDate-${1}`).textContent).toBe('2022/10/30 10:00:00')
@@ -63,7 +65,9 @@ describe('ImpressionList component', async () => {
     expect(screen.getByTestId(`impression-${1}`).textContent).toBe(
       '本の感想です。\n面白かったです。',
     )
-    expect(screen.getByTestId(`postedDate-${2}`).textContent).toBe('2022/10/20 10:00:00')
+    expect(screen.getByTestId(`postedDate-${2}`).textContent).toBe(
+      '2022/10/20 10:00:00 (更新: 2022/10/21 10:00:00)',
+    )
     expect(screen.getByTestId(`postedUser-${2}`).textContent).toBe(expectedImpressions[2].user.name)
     expect(screen.getByTestId(`impression-${2}`).textContent).toBe('感想')
     expect(prismaImpressionsMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ createdAt: 'desc' }])
