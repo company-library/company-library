@@ -13,6 +13,7 @@ export const lendBook = async (
   bookId: number,
   userId: number,
   dueDate: Date,
+  locationId?: number,
 ): Promise<undefined | Error> => {
   const history = await prisma.lendingHistory
     .create({ data: { bookId, userId, dueDate } })

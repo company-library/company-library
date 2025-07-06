@@ -320,4 +320,139 @@ describe('BookDetail component', async () => {
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith('対象のIDの本は存在しません。bookId:', book.id)
   })
+
+  it('全体情報が保管場所別在庫状況の上に表示される', async () => {
+    const mockBookWithLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        {
+          locationId: 1,
+          location: { id: 1, name: '本社' },
+        },
+        {
+          locationId: 2,
+          location: { id: 2, name: '支社' },
+        },
+      ],
+      _count: {
+        reservations: 1,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookWithLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+
+    const allElements = screen.getAllByText(/全体|保管場所別在庫状況/)
+    const globalInfo = screen.getByText('全体')
+    const locationLabel = screen.getByText('保管場所別在庫状況')
+
+    // 全体情報が保管場所別在庫状況より前に表示されていることを確認
+    const globalPosition = Array.from(document.body.querySelectorAll('*')).indexOf(
+      globalInfo.closest('div')!,
+    )
+    const locationPosition = Array.from(document.body.querySelectorAll('*')).indexOf(
+      locationLabel.closest('h3')!,
+    )
+
+    expect(globalPosition).toBeLessThan(locationPosition)
+  })
+
+  it('保管場所がある場合、保管場所別在庫状況が表示される', async () => {
+    const mockBookWithLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        {
+          locationId: 1,
+          location: { id: 1, name: '本社' },
+        },
+        {
+          locationId: 2,
+          location: { id: 2, name: '支社' },
+        },
+      ],
+      _count: {
+        reservations: 1,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookWithLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    expect(await screen.findByText('保管場所別在庫状況')).toBeInTheDocument()
+    expect(screen.getByText('本社')).toBeInTheDocument()
+    expect(screen.getByText('支社')).toBeInTheDocument()
+  })
+
+  it('保管場所がない場合、保管場所別在庫状況のラベルが表示されない', async () => {
+    const mockBookWithoutLocation = {
+      ...bookDetail,
+      registrationHistories: [],
+      _count: {
+        reservations: 1,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookWithoutLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    expect(screen.queryByText('保管場所別在庫状況')).not.toBeInTheDocument()
+  })
+
+  it('保管場所ごとの在庫情報が正しく計算・表示される', async () => {
+    const mockBookWithLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 2, location: { id: 2, name: '支社' } },
+        { locationId: 2, location: { id: 2, name: '支社' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+      ],
+      _count: {
+        reservations: 1,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookWithLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    
+    // 本社: 3冊登録、貸出2冊の60%（1.2冊）なので1冊貸出、2冊利用可能
+    expect(screen.getByText('本社')).toBeInTheDocument()
+    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 3冊)')).toBeInTheDocument()
+    
+    // 支社: 2冊登録、貸出2冊の40%（0.8冊）なので1冊貸出、1冊利用可能
+    expect(screen.getByText('支社')).toBeInTheDocument()
+    expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
+  })
 })

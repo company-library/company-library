@@ -10,14 +10,19 @@ describe('LendButton component', () => {
   const dateFormat = 'yyyy-MM-dd'
   const today = DateTime.local().setZone('Asia/Tokyo')
   const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
+  
+  const mockLocationStats = new Map([
+    [1, { name: '本社', totalCount: 5, lendableCount: 3 }],
+    [2, { name: '支社', totalCount: 3, lendableCount: 2 }],
+  ])
   const { lendBookMock } = vi.hoisted(() => {
     return {
       lendBookMock: vi.fn(),
     }
   })
   vi.mock('@/app/books/[id]/actions', () => ({
-    lendBook: (bookId: string, userId: string, dueDate: Date) =>
-      lendBookMock(bookId, userId, dueDate),
+    lendBook: (bookId: string, userId: string, dueDate: Date, locationId: number) =>
+      lendBookMock(bookId, userId, dueDate, locationId),
   }))
 
   const { refreshMock } = vi.hoisted(() => {
@@ -41,29 +46,32 @@ describe('LendButton component', () => {
   })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
-    const { rerender } = render(<LendButton bookId={bookId} userId={userId} disabled={true} />)
+    const { rerender } = render(<LendButton bookId={bookId} userId={userId} disabled={true} locationStats={mockLocationStats} />)
 
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
 
-    rerender(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+    rerender(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
 
     expect(screen.getByRole('button', { name: '借りる' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、返却予定日の初期値を表示したダイアログが表示される', async () => {
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
     expect(
-      screen.getByRole('heading', { level: 3, name: '何日まで借りますか？' }),
+      screen.getByRole('heading', { level: 3, name: '借りる設定' }),
     ).toBeInTheDocument()
     expect(screen.getByDisplayValue(initialDuDate)).toBeInTheDocument()
   })
 
   it('ダイアログのOkボタンをクリックすると、貸出処理が実行される', async () => {
     const expectedDueDate = today.plus({ days: 14 })
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
+
+    // 保管場所を選択
+    fireEvent.click(screen.getByLabelText('本社 (3冊利用可能)'))
 
     fireEvent.change(screen.getByDisplayValue(initialDuDate), {
       target: { value: expectedDueDate.toFormat(dateFormat) },
@@ -73,13 +81,14 @@ describe('LendButton component', () => {
 
     await waitFor(() => {
       expect(
-        screen.queryByRole('heading', { level: 3, name: '何日まで借りますか？' }),
+        screen.queryByRole('heading', { level: 3, name: '借りる設定' }),
       ).not.toBeInTheDocument()
     })
     expect(lendBookMock).toBeCalledWith(
       bookId,
       userId,
       dateStringToDate(expectedDueDate.toISODate() ?? ''),
+      1,
     )
     expect(refreshMock).toBeCalled()
   })
@@ -88,9 +97,12 @@ describe('LendButton component', () => {
     lendBookMock.mockResolvedValueOnce(new Error('error occurred'))
     window.alert = vi.fn()
 
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
 
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
+
+    // 保管場所を選択
+    fireEvent.click(screen.getByLabelText('本社 (3冊利用可能)'))
 
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
@@ -101,13 +113,13 @@ describe('LendButton component', () => {
   })
 
   it('ダイアログのCancelボタンをクリックすると、貸出処理は実行されない', async () => {
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} />)
+    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await waitFor(() => {
       expect(
-        screen.queryByRole('heading', { level: 3, name: '何日まで借りますか？' }),
+        screen.queryByRole('heading', { level: 3, name: '借りる設定' }),
       ).not.toBeInTheDocument()
       expect(lendBookMock).not.toBeCalled()
     })

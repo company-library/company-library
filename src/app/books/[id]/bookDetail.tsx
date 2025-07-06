@@ -120,18 +120,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
         <h1 className="text-3xl font-bold">{bookDetail.title}</h1>
 
         <div className="mt-3">
-          <h3 className="text-lg font-medium mb-2">保管場所別在庫状況</h3>
-          {Array.from(locationStats.entries()).map(([locationId, stats]) => (
-            <div key={locationId} className="mb-2 p-3 border rounded-md bg-gray-50">
-              <p className="font-medium">{stats.name}</p>
-              <p className="text-sm text-gray-600">
-                <span>{`${stats.lendableCount}冊貸し出し可能`}</span>
-                <span className="ml-2">{`(所蔵数: ${stats.totalCount}冊)`}</span>
-              </p>
-            </div>
-          ))}
-
-          <div className="mt-4 p-3 border-2 border-blue-200 rounded-md bg-blue-50">
+          <div className="mb-4 p-3 border-2 border-blue-200 rounded-md bg-blue-50">
             <p className="font-medium text-blue-800">全体</p>
             <p className="text-sm text-blue-700">
               <span>{`${totalLendableCount}冊貸し出し可能`}</span>
@@ -139,10 +128,30 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
               <span className="ml-1">{`, 予約数: ${reservationCount}件)`}</span>
             </p>
           </div>
+
+          {Array.from(locationStats.entries()).length > 0 && (
+            <>
+              <h3 className="text-lg font-medium mb-2">保管場所別在庫状況</h3>
+              {Array.from(locationStats.entries()).map(([locationId, stats]) => (
+                <div key={locationId} className="mb-2 p-3 border rounded-md bg-gray-50">
+                  <p className="font-medium">{stats.name}</p>
+                  <p className="text-sm text-gray-600">
+                    <span>{`${stats.lendableCount}冊貸し出し可能`}</span>
+                    <span className="ml-2">{`(所蔵数: ${stats.totalCount}冊)`}</span>
+                  </p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
 
         <div className="mt-auto">
-          <LendButton bookId={bookId} userId={userId} disabled={!isLendable} />
+          <LendButton 
+            bookId={bookId} 
+            userId={userId} 
+            disabled={!isLendable} 
+            locationStats={locationStats}
+          />
           <span className="ml-5" />
           <ReturnButton
             bookId={bookId}
