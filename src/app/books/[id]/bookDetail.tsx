@@ -76,7 +76,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
       locationStats.set(locationId, {
         name: locationName,
         totalCount: 1,
-        lendableCount: 1,
+        lendableCount: 0,
       })
     }
   }

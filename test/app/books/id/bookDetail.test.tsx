@@ -455,4 +455,157 @@ describe('BookDetail component', async () => {
     expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
   })
+
+  it('同一保管場所の複数登録で在庫数が正しく集計される', async () => {
+    const mockBookSameLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '東京オフィス' } },
+        { locationId: 1, location: { id: 1, name: '東京オフィス' } },
+        { locationId: 1, location: { id: 1, name: '東京オフィス' } },
+        { locationId: 1, location: { id: 1, name: '東京オフィス' } },
+        { locationId: 1, location: { id: 1, name: '東京オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+      ],
+      _count: {
+        reservations: 0,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookSameLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    
+    // 東京オフィス: 5冊登録、2冊貸出なので3冊利用可能
+    expect(screen.getByText('東京オフィス')).toBeInTheDocument()
+    expect(screen.getByText('3冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 5冊)')).toBeInTheDocument()
+  })
+
+  it('貸出数が在庫数を上回る場合、貸し出し可能数は0になる', async () => {
+    const mockBookOverLent = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '小規模オフィス' } },
+        { locationId: 1, location: { id: 1, name: '小規模オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+        { id: 3, userId: 12 },
+        { id: 4, userId: 13 },
+        { id: 5, userId: 14 },
+      ],
+      _count: {
+        reservations: 0,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookOverLent)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    
+    // 小規模オフィス: 2冊登録、5冊貸出なので0冊利用可能
+    expect(screen.getByText('小規模オフィス')).toBeInTheDocument()
+    expect(screen.getByText('0冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
+  })
+
+  it('複数保管場所での比例配分計算が正確に行われる', async () => {
+    const mockBookMultiLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: 'A拠点' } },
+        { locationId: 1, location: { id: 1, name: 'A拠点' } },
+        { locationId: 1, location: { id: 1, name: 'A拠点' } },
+        { locationId: 1, location: { id: 1, name: 'A拠点' } },
+        { locationId: 2, location: { id: 2, name: 'B拠点' } },
+        { locationId: 2, location: { id: 2, name: 'B拠点' } },
+        { locationId: 3, location: { id: 3, name: 'C拠点' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+        { id: 3, userId: 12 },
+      ],
+      _count: {
+        reservations: 2,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookMultiLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    
+    // A拠点: 4冊(4/7)、貸出3冊の4/7 = 1.7 → 2冊貸出、2冊利用可能
+    expect(screen.getByText('A拠点')).toBeInTheDocument()
+    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 4冊)')).toBeInTheDocument()
+    
+    // B拠点: 2冊(2/7)、貸出3冊の2/7 = 0.86 → 1冊貸出、1冊利用可能
+    expect(screen.getByText('B拠点')).toBeInTheDocument()
+    expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
+    
+    // C拠点: 1冊(1/7)、貸出3冊の1/7 = 0.43 → 0冊貸出、1冊利用可能
+    expect(screen.getByText('C拠点')).toBeInTheDocument()
+    expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 1冊)')).toBeInTheDocument()
+  })
+
+  it('保管場所情報が不完全な場合は無視される', async () => {
+    const mockBookIncompleteLocation = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '正常な拠点' } },
+        { locationId: null, location: null }, // 不完全なデータ
+        { locationId: 2, location: null }, // locationが欠落
+        { locationId: null, location: { id: 3, name: '不完全' } }, // locationIdが欠落
+        { locationId: 1, location: { id: 1, name: '正常な拠点' } },
+      ],
+      lendingHistories: [],
+      _count: {
+        reservations: 0,
+      },
+    }
+    // @ts-ignore
+    prismaBookMock.mockResolvedValue(mockBookIncompleteLocation)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+    
+    // 正常な拠点のみが表示される（2冊登録）
+    expect(screen.getByText('正常な拠点')).toBeInTheDocument()
+    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
+    
+    // 不完全なデータは表示されない
+    expect(screen.queryByText('不完全')).not.toBeInTheDocument()
+  })
 })
