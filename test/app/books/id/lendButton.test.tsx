@@ -10,7 +10,7 @@ describe('LendButton component', () => {
   const dateFormat = 'yyyy-MM-dd'
   const today = DateTime.local().setZone('Asia/Tokyo')
   const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
-  
+
   const mockLocationStats = new Map([
     [1, { name: '本社', totalCount: 5, lendableCount: 3 }],
     [2, { name: '支社', totalCount: 3, lendableCount: 2 }],
@@ -46,28 +46,54 @@ describe('LendButton component', () => {
   })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
-    const { rerender } = render(<LendButton bookId={bookId} userId={userId} disabled={true} locationStats={mockLocationStats} />)
+    const { rerender } = render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={true}
+        locationStats={mockLocationStats}
+      />,
+    )
 
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
 
-    rerender(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
+    rerender(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStats}
+      />,
+    )
 
     expect(screen.getByRole('button', { name: '借りる' })).not.toBeDisabled()
   })
 
   it('ボタンをクリックすると、返却予定日の初期値を表示したダイアログが表示される', async () => {
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
+    render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStats}
+      />,
+    )
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
-    expect(
-      screen.getByRole('heading', { level: 3, name: '何日まで借りますか?' }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 3, name: '借りますか?' })).toBeInTheDocument()
     expect(screen.getByDisplayValue(initialDuDate)).toBeInTheDocument()
   })
 
   it('ダイアログのOkボタンをクリックすると、貸出処理が実行される', async () => {
     const expectedDueDate = today.plus({ days: 14 })
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
+    render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStats}
+      />,
+    )
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
     // 保管場所を選択
@@ -97,7 +123,14 @@ describe('LendButton component', () => {
     lendBookMock.mockResolvedValueOnce(new Error('error occurred'))
     window.alert = vi.fn()
 
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
+    render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStats}
+      />,
+    )
 
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
@@ -113,7 +146,14 @@ describe('LendButton component', () => {
   })
 
   it('ダイアログのCancelボタンをクリックすると、貸出処理は実行されない', async () => {
-    render(<LendButton bookId={bookId} userId={userId} disabled={false} locationStats={mockLocationStats} />)
+    render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStats}
+      />,
+    )
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 

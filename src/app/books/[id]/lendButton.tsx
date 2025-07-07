@@ -21,7 +21,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
 
   const [dueDate, setDueDate] = useState(getDaysLater(7))
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null)
-  
+
   const availableLocations = Array.from(locationStats.entries())
     .filter(([_, stats]) => stats.lendableCount > 0)
     .sort(([_, a], [__, b]) => b.lendableCount - a.lendableCount)
@@ -52,7 +52,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
 
       <dialog className="modal" ref={dialogRef}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">何日まで借りますか?</h3>
+          <h3 className="font-bold text-lg">借りますか?</h3>
 
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">保管場所を選択してください</label>
