@@ -145,20 +145,21 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
           )}
         </div>
 
-        <div className="mt-auto">
-          <LendButton 
-            bookId={bookId} 
-            userId={userId} 
-            disabled={!isLendable} 
+        <div className="mt-auto flex gap-5">
+          <LendButton
+            bookId={bookId}
+            userId={userId}
+            disabled={!isLendable}
             locationStats={locationStats}
           />
-          <span className="ml-5" />
           <ReturnButton
             bookId={bookId}
             userId={userId}
             lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
             disabled={!isLending}
           />
+
+          <AddImpressionButton bookId={bookId} />
         </div>
       </div>
     </div>

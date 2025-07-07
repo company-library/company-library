@@ -52,7 +52,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
 
       <dialog className="modal" ref={dialogRef}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">借りる設定</h3>
+          <h3 className="font-bold text-lg">何日まで借りますか?</h3>
 
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">保管場所を選択してください</label>

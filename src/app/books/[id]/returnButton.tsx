@@ -48,7 +48,7 @@ const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId,
 
       <dialog className="modal" ref={dialogRef}>
         <div className="modal-box">
-          <h3 className="font-bold text-lg">返却しますか？</h3>
+          <h3 className="font-bold text-lg">返却しますか?</h3>
 
           <div className="mt-4">
             <textarea

@@ -82,7 +82,7 @@ describe('BookDetail page', async () => {
     expect(BookDetailMock).toBeCalled()
     expect(BookDetailMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
     expect(LendingListMock).toBeCalledWith({ bookId: book.id }, undefined)
-    expect(ImpressionListMock).toBeCalledWith({ bookId: book.id }, undefined)
+    expect(ImpressionListMock).toBeCalledWith({ bookId: book.id, userId: user1.id }, undefined)
     expect(ReturnListMock).toBeCalledWith({ bookId: book.id }, undefined)
   })
 

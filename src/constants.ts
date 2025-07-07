@@ -2,3 +2,4 @@ export const GOOGLE_BOOK_SEARCH_QUERY = 'https://www.googleapis.com/books/v1/vol
 export const OPENBD_SEARCH_QUERY = 'https://api.openbd.jp/v1/get?isbn='
 export const DATE_DISPLAY_FORMAT = 'yyyy/MM/dd'
 export const DATE_SYSTEM_FORMAT = 'yyyy-MM-dd'
+export const DATE_TIME_DISPLAY_FORMAT = 'yyyy/MM/dd HH:mm:ss'

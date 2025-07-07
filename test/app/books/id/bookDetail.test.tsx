@@ -65,6 +65,7 @@ describe('BookDetail component', async () => {
 
     expect(screen.getByRole('button', { name: '借りる' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '返却する' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '感想を書く' })).toBeInTheDocument()
   })
 
   it('本の書影が無い場合はno_imageが表示される', async () => {
