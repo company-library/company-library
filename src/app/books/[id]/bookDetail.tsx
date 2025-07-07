@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { FC } from 'react'
+import AddImpressionButton from '@/app/books/[id]/addImpressionButton'
 import LendButton from '@/app/books/[id]/lendButton'
 import ReturnButton from '@/app/books/[id]/returnButton'
 import prisma from '@/libs/prisma/client'
@@ -101,6 +102,11 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
   const lendingHistory = bookDetail.lendingHistories.find((h) => h.userId === userId)
   const isLending = !!lendingHistory
 
+  // 返却先の場所を取得（最初の登録場所を使用）
+  const returnLocation = bookDetail.registrationHistories.find(
+    (history) => history.location
+  )?.location?.name
+
   const isLendable = !isLending && totalLendableCount > 0
 
   return (
@@ -157,6 +163,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
             userId={userId}
             lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
             disabled={!isLending}
+            location={returnLocation}
           />
 
           <AddImpressionButton bookId={bookId} />
