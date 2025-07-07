@@ -13,6 +13,7 @@ describe('BookDetail component', async () => {
     title: book.title,
     imageUrl: book.imageUrl,
     lendingHistories: book.lendingHistories,
+    registrationHistories: book.registrationHistories,
     _count: {
       registrationHistories: book.registrationHistories.length,
       reservations: book.reservations.length,
@@ -350,16 +351,15 @@ describe('BookDetail component', async () => {
 
     await screen.findByText(book.title)
 
-    const allElements = screen.getAllByText(/全体|保管場所別在庫状況/)
     const globalInfo = screen.getByText('全体')
     const locationLabel = screen.getByText('保管場所別在庫状況')
 
     // 全体情報が保管場所別在庫状況より前に表示されていることを確認
     const globalPosition = Array.from(document.body.querySelectorAll('*')).indexOf(
-      globalInfo.closest('div')!,
+      globalInfo.closest('div') as Element,
     )
     const locationPosition = Array.from(document.body.querySelectorAll('*')).indexOf(
-      locationLabel.closest('h3')!,
+      locationLabel.closest('h3') as Element,
     )
 
     expect(globalPosition).toBeLessThan(locationPosition)
@@ -445,12 +445,12 @@ describe('BookDetail component', async () => {
     )
 
     await screen.findByText(book.title)
-    
+
     // 本社: 3冊登録、貸出2冊の60%（1.2冊）なので1冊貸出、2冊利用可能
     expect(screen.getByText('本社')).toBeInTheDocument()
     expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 3冊)')).toBeInTheDocument()
-    
+
     // 支社: 2冊登録、貸出2冊の40%（0.8冊）なので1冊貸出、1冊利用可能
     expect(screen.getByText('支社')).toBeInTheDocument()
     expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
@@ -485,7 +485,7 @@ describe('BookDetail component', async () => {
     )
 
     await screen.findByText(book.title)
-    
+
     // 東京オフィス: 5冊登録、2冊貸出なので3冊利用可能
     expect(screen.getByText('東京オフィス')).toBeInTheDocument()
     expect(screen.getByText('3冊貸し出し可能')).toBeInTheDocument()
@@ -520,7 +520,7 @@ describe('BookDetail component', async () => {
     )
 
     await screen.findByText(book.title)
-    
+
     // 小規模オフィス: 2冊登録、5冊貸出なので0冊利用可能
     expect(screen.getByText('小規模オフィス')).toBeInTheDocument()
     expect(screen.getByText('0冊貸し出し可能')).toBeInTheDocument()
@@ -558,17 +558,17 @@ describe('BookDetail component', async () => {
     )
 
     await screen.findByText(book.title)
-    
+
     // A拠点: 4冊(4/7)、貸出3冊の4/7 = 1.7 → 2冊貸出、2冊利用可能
     expect(screen.getByText('A拠点')).toBeInTheDocument()
     expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 4冊)')).toBeInTheDocument()
-    
+
     // B拠点: 2冊(2/7)、貸出3冊の2/7 = 0.86 → 1冊貸出、1冊利用可能
     expect(screen.getByText('B拠点')).toBeInTheDocument()
     expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
-    
+
     // C拠点: 1冊(1/7)、貸出3冊の1/7 = 0.43 → 0冊貸出、1冊利用可能
     expect(screen.getByText('C拠点')).toBeInTheDocument()
     expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
@@ -600,12 +600,12 @@ describe('BookDetail component', async () => {
     )
 
     await screen.findByText(book.title)
-    
+
     // 正常な拠点のみが表示される（2冊登録）
     expect(screen.getByText('正常な拠点')).toBeInTheDocument()
     expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
-    
+
     // 不完全なデータは表示されない
     expect(screen.queryByText('不完全')).not.toBeInTheDocument()
   })

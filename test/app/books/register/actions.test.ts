@@ -1,6 +1,7 @@
 import { addBook, registerBook } from '@/app/books/register/actions'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { location1 } from '../../../__utils__/data/location'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {
@@ -33,6 +34,7 @@ describe('server actions', () => {
       const isbn = '1234567890123'
       const now = new Date()
       const userId = user1.id
+      const locationId = location1.id
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
         title,
@@ -52,7 +54,7 @@ describe('server actions', () => {
         title,
         isbn,
         `https://example.com/books/${isbn}/external/cover.jpg`,
-        1,
+        locationId,
         userId,
       )
 
@@ -66,8 +68,9 @@ describe('server actions', () => {
       })
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
-          bookId: bookId,
-          userId: userId,
+          bookId,
+          userId,
+          locationId
         },
       })
       expect(notifySlackMock).toBeCalledWith(`「${title}」という書籍が登録されました。`)
@@ -77,12 +80,15 @@ describe('server actions', () => {
     it('書籍の追加に失敗した場合はエラーをスローする', async () => {
       const title = 'testBook'
       const isbn = '1234567890123'
-      const error = new Error('error has occurred')
       const userId = user1.id
-      prismaMock.book.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const locationId = location1.id
 
-      await expect(registerBook(title, isbn, undefined, 1, userId)).rejects.toThrow(
+      const error = new Error('error has occurred')
+      prismaMock.book.create.mockRejectedValueOnce(error)
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
+      })
+
+      await expect(registerBook(title, isbn, undefined, locationId, userId)).rejects.toThrow(
         'Book creation failed',
       )
 
@@ -103,6 +109,9 @@ describe('server actions', () => {
       const title = 'testBook'
       const isbn = '1234567890123'
       const now = new Date()
+      const userId = user1.id
+      const locationId = location1.id
+
       const error = new Error('error has occurred')
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
@@ -112,7 +121,8 @@ describe('server actions', () => {
         createdAt: now,
       })
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
+      })
 
       await expect(
         registerBook('testBook', '1234567890123', undefined, 1, user1.id),
@@ -127,8 +137,9 @@ describe('server actions', () => {
       })
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
-          bookId: bookId,
-          userId: user1.id,
+          bookId,
+          userId,
+          locationId
         },
       })
       expect(errorMock).toBeCalledWith(error)
@@ -165,7 +176,8 @@ describe('server actions', () => {
       const userId = user1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
+      })
 
       await expect(addBook(bookId, userId, 1)).rejects.toThrow('Registration creation failed')
 

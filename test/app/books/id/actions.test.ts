@@ -2,6 +2,7 @@ import { addImpression, editImpression, lendBook, returnBook } from '@/app/books
 import { book1 } from '../../../__utils__/data/book'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
+import { location1 } from '../../../__utils__/data/location'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {
@@ -25,11 +26,13 @@ describe('server actions', () => {
     it('貸し出し履歴の追加ができる', async () => {
       const bookId = 1
       const userId = user1.id
+      const locationId = location1.id
       const dueDate = new Date()
       prismaMock.lendingHistory.create.mockResolvedValueOnce({
         id: 1,
         bookId: bookId,
         userId: userId,
+        locationId: locationId,
         dueDate: dueDate,
         lentAt: new Date(),
       })
@@ -42,6 +45,7 @@ describe('server actions', () => {
           bookId,
           userId,
           dueDate,
+          locationId,
         },
       })
     })
@@ -52,7 +56,8 @@ describe('server actions', () => {
       const dueDate = new Date()
       const error = 'DB error has occurred'
       prismaMock.lendingHistory.create.mockRejectedValueOnce(error)
-      consoleErrorSpy.mockImplementationOnce(() => {})
+      consoleErrorSpy.mockImplementationOnce(() => {
+      })
 
       const result = await lendBook(bookId, userId, dueDate)
 
@@ -133,7 +138,8 @@ describe('server actions', () => {
 
     describe('返却処理に失敗した場合はエラーを返す', () => {
       it('返却履歴の追加に失敗した場合', async () => {
-        consoleErrorSpy.mockImplementationOnce(() => {})
+        consoleErrorSpy.mockImplementationOnce(() => {
+        })
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockRejectedValueOnce(error)
@@ -150,7 +156,8 @@ describe('server actions', () => {
       })
 
       it('感想の登録に失敗した場合', async () => {
-        consoleErrorSpy.mockImplementationOnce(() => {})
+        consoleErrorSpy.mockImplementationOnce(() => {
+        })
         prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
         const error = 'DB error has occurred'
         prismaMock.returnHistory.create.mockResolvedValueOnce({
@@ -194,7 +201,8 @@ describe('server actions', () => {
     })
 
     it('セッションが取得できなかった場合はエラーを返す', async () => {
-      consoleErrorSpy.mockImplementationOnce(() => {})
+      consoleErrorSpy.mockImplementationOnce(() => {
+      })
       getServerSessionMock.mockResolvedValueOnce(null)
 
       const result = await editImpression({ impressionId: 1, editedImpression: 'セッションなし' })
@@ -207,7 +215,8 @@ describe('server actions', () => {
     })
 
     it('他のユーザーの感想を更新しようとした場合はエラーを返す', async () => {
-      consoleErrorSpy.mockImplementationOnce(() => {})
+      consoleErrorSpy.mockImplementationOnce(() => {
+      })
       prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
       prismaMock.impression.updateMany.mockResolvedValueOnce({
         count: 0,
@@ -271,7 +280,8 @@ describe('server actions', () => {
     })
 
     it('セッションが取得できなかった場合はエラーを返す', async () => {
-      consoleErrorSpy.mockImplementationOnce(() => {})
+      consoleErrorSpy.mockImplementationOnce(() => {
+      })
       getServerSessionMock.mockResolvedValueOnce(null)
 
       const result = await addImpression(
@@ -314,7 +324,8 @@ describe('server actions', () => {
     })
 
     it('DB操作に失敗した場合はエラーを返す', async () => {
-      consoleErrorSpy.mockImplementationOnce(() => {})
+      consoleErrorSpy.mockImplementationOnce(() => {
+      })
       prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
       const expectedError = new Error('DB error has occurred')
       prismaMock.impression.create.mockRejectedValueOnce(expectedError)

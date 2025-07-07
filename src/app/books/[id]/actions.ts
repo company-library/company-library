@@ -11,6 +11,7 @@ import prisma from '@/libs/prisma/client'
  * @param {number} bookId
  * @param {number} userId
  * @param {Date} dueDate
+ * @param {number} locationId 貸し出し場所ID（オプション）
  * @returns {Promise<Error>}
  */
 export const lendBook = async (
@@ -41,11 +42,11 @@ export const lendBook = async (
  * @returns {Promise<void | Error>} 処理でエラーがあった場合はErrorオブジェクトを返す
  */
 export const returnBook = async ({
-  bookId,
-  userId,
-  lendingHistoryId,
-  impression,
-}: ReturnBookWithImpressionProps): Promise<undefined | Error> => {
+                                   bookId,
+                                   userId,
+                                   lendingHistoryId,
+                                   impression,
+                                 }: ReturnBookWithImpressionProps): Promise<undefined | Error> => {
   const result = await prisma
     .$transaction(async (prisma) => {
       await prisma.returnHistory.create({
@@ -88,9 +89,9 @@ type ReturnBookWithImpressionProps = {
  * @returns 処理でエラーがあった場合はErrorオブジェクトを返す
  */
 export const editImpression = async ({
-  impressionId,
-  editedImpression,
-}: {
+                                       impressionId,
+                                       editedImpression,
+                                     }: {
   impressionId: number
   editedImpression: string
 }) => {

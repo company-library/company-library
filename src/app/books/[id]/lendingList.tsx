@@ -10,9 +10,9 @@ const LendingList = async ({ bookId }: Props) => {
   const lendingHistories = await prisma.lendingHistory
     .findMany({
       where: { bookId: bookId, returnHistory: null },
-      include: { 
+      include: {
         user: true,
-        location: true
+        location: true,
       },
       orderBy: [{ lentAt: 'asc' }],
     })
