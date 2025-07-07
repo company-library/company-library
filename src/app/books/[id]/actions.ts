@@ -20,7 +20,7 @@ export const lendBook = async (
   locationId?: number,
 ): Promise<undefined | Error> => {
   const history = await prisma.lendingHistory
-    .create({ data: { bookId, userId, dueDate } })
+    .create({ data: { bookId, userId, dueDate, locationId } })
     .catch((e) => {
       console.error(e)
       return new Error('貸し出しに失敗しました。もう一度試して見てください。')

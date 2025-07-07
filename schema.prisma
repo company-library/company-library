@@ -40,10 +40,12 @@ model LendingHistory {
   id            Int            @id @default(autoincrement())
   bookId        Int            @map("book_id")
   userId        Int            @map("user_id")
+  locationId    Int?           @map("location_id")
   dueDate       DateTime       @map("due_date")
   lentAt        DateTime       @default(now()) @map("lent_at")
   book          Book           @relation(fields: [bookId], references: [id])
   user          User           @relation(fields: [userId], references: [id])
+  location      Location?      @relation(fields: [locationId], references: [id])
   returnHistory ReturnHistory?
 
   @@map("lending_histories")
@@ -100,6 +102,7 @@ model Location {
   name                  String                @unique
   createdAt             DateTime              @default(now()) @map("created_at")
   registrationHistories RegistrationHistory[]
+  lendingHistories      LendingHistory[]
 
   @@map("locations")
 }
