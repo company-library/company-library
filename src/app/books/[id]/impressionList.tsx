@@ -34,7 +34,7 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
         {recentImpressions.map((impression, index) => {
           return (
             <tr className="hover" key={impression.id}>
-              <td className="w-[15rem]" data-testid={`postedDate-${index}`}>
+              <td className="w-60" data-testid={`postedDate-${index}`}>
                 <p>{toJstFormat(impression.createdAt, DATE_TIME_DISPLAY_FORMAT)}</p>
                 {impression.createdAt.getTime() !== impression.updatedAt.getTime() && (
                   <p className="text-xs text-gray-500">
@@ -42,13 +42,13 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
                   </p>
                 )}
               </td>
-              <td className="w-[5rem]" data-testid={`postedUser-${index}`}>
+              <td className="w-20" data-testid={`postedUser-${index}`}>
                 <UserAvatar user={impression.user} />
               </td>
               <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
                 {impression.impression}
               </td>
-              <td data-testid={`edit-${index}`}>
+              <td className="w-24" data-testid={`edit-${index}`}>
                 {impression.user.id === userId && <EditImpressionButton impression={impression} />}
               </td>
             </tr>
