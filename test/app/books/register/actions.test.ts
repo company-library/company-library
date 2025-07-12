@@ -1,7 +1,7 @@
 import { addBook, registerBook } from '@/app/books/register/actions'
+import { location1 } from '../../../__utils__/data/location'
 import { user1 } from '../../../__utils__/data/user'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
-import { location1 } from '../../../__utils__/data/location'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {
@@ -70,7 +70,7 @@ describe('server actions', () => {
         data: {
           bookId,
           userId,
-          locationId
+          locationId,
         },
       })
       expect(notifySlackMock).toBeCalledWith(`「${title}」という書籍が登録されました。`)
@@ -85,8 +85,7 @@ describe('server actions', () => {
 
       const error = new Error('error has occurred')
       prismaMock.book.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
-      })
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(registerBook(title, isbn, undefined, locationId, userId)).rejects.toThrow(
         'Book creation failed',
@@ -121,8 +120,7 @@ describe('server actions', () => {
         createdAt: now,
       })
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
-      })
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(
         registerBook('testBook', '1234567890123', undefined, 1, user1.id),
@@ -139,7 +137,7 @@ describe('server actions', () => {
         data: {
           bookId,
           userId,
-          locationId
+          locationId,
         },
       })
       expect(errorMock).toBeCalledWith(error)
@@ -176,8 +174,7 @@ describe('server actions', () => {
       const userId = user1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
-      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {
-      })
+      const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(addBook(bookId, userId, 1)).rejects.toThrow('Registration creation failed')
 
