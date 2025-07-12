@@ -60,7 +60,7 @@ describe('BookDetail component', async () => {
       expect.stringContaining(encodeURIComponent(book.imageUrl)),
     )
     expect(screen.getByText(book.title)).toBeInTheDocument()
-    expect(screen.getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
+    expect(screen.getAllByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
     expect(screen.getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
     expect(screen.getByText(`予約数: ${1}件`)).toBeInTheDocument()
 
@@ -540,9 +540,7 @@ describe('BookDetail component', async () => {
         { locationId: 3, location: { id: 3, name: 'C拠点' } },
       ],
       lendingHistories: [
-        { id: 1, userId: 10 },
-        { id: 2, userId: 11 },
-        { id: 3, userId: 12 },
+        { id: 1, userId: 10, locationId: 1 },
       ],
       _count: {
         reservations: 2,
@@ -559,17 +557,14 @@ describe('BookDetail component', async () => {
 
     await screen.findByText(book.title)
 
-    // A拠点: 4冊(4/7)、貸出3冊の4/7 = 1.7 → 2冊貸出、2冊利用可能
     expect(screen.getByText('A拠点')).toBeInTheDocument()
-    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('3冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 4冊)')).toBeInTheDocument()
 
-    // B拠点: 2冊(2/7)、貸出3冊の2/7 = 0.86 → 1冊貸出、1冊利用可能
     expect(screen.getByText('B拠点')).toBeInTheDocument()
-    expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
 
-    // C拠点: 1冊(1/7)、貸出3冊の1/7 = 0.43 → 0冊貸出、1冊利用可能
     expect(screen.getByText('C拠点')).toBeInTheDocument()
     expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByText('(所蔵数: 1冊)')).toBeInTheDocument()

@@ -149,21 +149,23 @@ describe('server actions', () => {
     it('登録履歴の追加ができる', async () => {
       const bookId = 1
       const userId = user1.id
+      const locationId = location1.id
       prismaMock.registrationHistory.create.mockResolvedValueOnce({
         id: 1,
-        bookId: bookId,
-        userId: userId,
-        locationId: 1,
+        bookId,
+        userId,
+        locationId,
         createdAt: new Date(),
       })
 
-      const result = await addBook(bookId, userId, 1)
+      const result = await addBook(bookId, userId, locationId)
 
       expect(result).toBeUndefined()
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
-          bookId: bookId,
-          userId: userId,
+          bookId,
+          userId,
+          locationId,
         },
       })
       expect(redirectMock).toBeCalled()
@@ -172,16 +174,20 @@ describe('server actions', () => {
     it('登録履歴の追加に失敗した場合はエラーをスローする', async () => {
       const bookId = 1
       const userId = user1.id
+      const locationId = location1.id
       const error = new Error('error has occurred')
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(addBook(bookId, userId, 1)).rejects.toThrow('Registration creation failed')
+      await expect(addBook(bookId, userId, locationId)).rejects.toThrow(
+        'Registration creation failed',
+      )
 
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
           bookId: bookId,
           userId: userId,
+          locationId: locationId,
         },
       })
       expect(redirectMock).not.toBeCalled()
