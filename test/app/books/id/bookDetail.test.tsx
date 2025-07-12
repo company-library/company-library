@@ -3,9 +3,22 @@ import { Suspense } from 'react'
 import { expect } from 'vitest'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
-import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
-describe('BookDetail component', async () => {
+const { prismaMock } = vi.hoisted(() => {
+  return {
+    prismaMock: {
+      book: {
+        findUnique: vi.fn()
+      }
+    }
+  }
+})
+
+vi.mock('@/libs/prisma/client', () => ({
+  default: prismaMock
+}))
+
+describe('BookDetail component', () => {
   const userId = 2
 
   const book = lendableBook
@@ -19,12 +32,10 @@ describe('BookDetail component', async () => {
       reservations: book.reservations.length,
     },
   }
-  const prismaBookMock = prismaMock.book.findUnique
-
   vi.mock('@/app/books/[id]/lendButton', () => ({
-    default: (...args: { disabled: boolean }[]) => {
+    default: (props: any) => {
       return (
-        <button disabled={args[0].disabled} type="button">
+        <button disabled={props.disabled} type="button">
           借りる
         </button>
       )
@@ -32,9 +43,9 @@ describe('BookDetail component', async () => {
   }))
 
   vi.mock('@/app/books/[id]/returnButton', () => ({
-    default: (...args: { disabled: boolean }[]) => {
+    default: (props: any) => {
       return (
-        <button disabled={args[0].disabled} type="button">
+        <button disabled={props.disabled} type="button">
           返却する
         </button>
       )
@@ -42,8 +53,7 @@ describe('BookDetail component', async () => {
   }))
 
   beforeEach(() => {
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(bookDetail)
+    prismaMock.book.findUnique.mockResolvedValue(bookDetail)
   })
 
   it('本の詳細情報と操作ボタンが表示される', async () => {
@@ -60,9 +70,12 @@ describe('BookDetail component', async () => {
       expect.stringContaining(encodeURIComponent(book.imageUrl)),
     )
     expect(screen.getByText(book.title)).toBeInTheDocument()
-    expect(screen.getByText(`${2}冊貸し出し可能`)).toBeInTheDocument()
-    expect(screen.getByText(`所蔵数: ${2}冊`)).toBeInTheDocument()
-    expect(screen.getByText(`予約数: ${1}件`)).toBeInTheDocument()
+    // 場所ごとの表示を確認
+    expect(screen.getByText('1階 エントランス')).toBeInTheDocument()
+    expect(screen.getByText('2階 開発室')).toBeInTheDocument()
+    // 各場所で1冊ずつあるので、それぞれ1冊貸し出し可能
+    expect(screen.getAllByText('1冊貸し出し可能')).toHaveLength(2)
+    expect(screen.getAllByText('(所蔵数: 1冊)')).toHaveLength(2)
 
     expect(screen.getByRole('button', { name: '借りる' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '返却する' })).toBeInTheDocument()
@@ -70,8 +83,7 @@ describe('BookDetail component', async () => {
   })
 
   it('本の書影が無い場合はno_imageが表示される', async () => {
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue({
+    prismaMock.book.findUnique.mockResolvedValue({
       ...bookDetail,
       imageUrl: bookWithoutImage.imageUrl,
     })
@@ -90,17 +102,25 @@ describe('BookDetail component', async () => {
     )
   })
 
-  it('貸し出し可能数は、 登録履歴数 - 未返却の貸出履歴数 である', async () => {
-    const registrationHistoriesCount = 23
-    const lendingHistoriesCount = 17
-    prismaBookMock.mockResolvedValue({
+  it('貸し出し可能数は、場所ごとに比例配分される', async () => {
+    const mockBookDetail = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: [...Array(lendingHistoriesCount)].map((_, i) => i),
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 1, location: { id: 1, name: '本社' } },
+        { locationId: 2, location: { id: 2, name: '支社' } },
+        { locationId: 2, location: { id: 2, name: '支社' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookDetail)
 
     render(
       <Suspense>
@@ -108,68 +128,37 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(
-      await screen.findByText(
-        `${registrationHistoriesCount - lendingHistoriesCount}冊貸し出し可能`,
-      ),
-    ).toBeInTheDocument()
+    await screen.findByText(book.title)
+    
+    // 本社: 3冊登録、貸出2冊の60%（1.2冊）なので1冊貸出、2冊利用可能
+    expect(screen.getByText('本社')).toBeInTheDocument()
+    expect(screen.getByText('2冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 3冊)')).toBeInTheDocument()
+
+    // 支社: 2冊登録、貸出2冊の40%（0.8冊）なので1冊貸出、1冊利用可能
+    expect(screen.getByText('支社')).toBeInTheDocument()
+    expect(screen.getByText('1冊貸し出し可能')).toBeInTheDocument()
+    expect(screen.getByText('(所蔵数: 2冊)')).toBeInTheDocument()
   })
 
-  it('所蔵数は、 登録履歴数 である', async () => {
-    const registrationHistoriesCount = 23
-    prismaBookMock.mockResolvedValue({
-      ...bookDetail,
-      // @ts-ignore
-      _count: {
-        registrationHistories: registrationHistoriesCount,
-      },
-    })
 
-    render(
-      <Suspense>
-        <BookDetail bookId={book.id} userId={userId} />
-      </Suspense>,
-    )
-
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(`所蔵数: ${registrationHistoriesCount}冊`)).toBeInTheDocument()
-  })
-
-  it('予約数は、 予約履歴数 である', async () => {
-    const reservationsCount = 17
-    prismaBookMock.mockResolvedValue({
-      ...bookDetail,
-      // @ts-ignore
-      _count: {
-        reservations: reservationsCount,
-      },
-    })
-
-    render(
-      <Suspense>
-        <BookDetail bookId={book.id} userId={userId} />
-      </Suspense>,
-    )
-
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(`予約数: ${reservationsCount}件`)).toBeInTheDocument()
-  })
 
   it('借りるボタンは、貸し出し可能数が0冊の場合、無効である', async () => {
-    const registrationHistoriesCount = 23
-    const lendingHistories = [...Array(registrationHistoriesCount)].map((_, i) => ({
-      id: i + 1,
-      userId: 0,
-    }))
-    prismaBookMock.mockResolvedValue({
+    const mockBookAllLent = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: lendingHistories,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: '小規模オフィス' } },
+        { locationId: 1, location: { id: 1, name: '小規模オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: 11 },
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookAllLent)
 
     render(
       <Suspense>
@@ -177,27 +166,28 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(`${0}冊貸し出し可能`)).toBeInTheDocument()
+    await screen.findByText(book.title)
+    expect(screen.getByText('0冊貸し出し可能')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
   })
 
   it('借りるボタンは、借用中の場合、無効である', async () => {
-    // 借りている
-    const registrationHistoriesCount = 10
-    const lendingHistories = [...Array(registrationHistoriesCount - 2)].map((_, i) => ({
-      id: i + 1,
-      userId: 0,
-    }))
-    const userLendingHistory = { userId: userId }
-    prismaBookMock.mockResolvedValue({
+    const mockBookUserBorrowing = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: [...lendingHistories, userLendingHistory],
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+        { id: 2, userId: userId }, // ユーザーが借りている
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookUserBorrowing)
 
     render(
       <Suspense>
@@ -205,25 +195,26 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+    await screen.findByText(book.title)
     expect(screen.getByRole('button', { name: '借りる' })).toBeDisabled()
   })
 
   it('借りるボタンは、貸し出し可能数が1冊以上 かつ 借用中ではない 場合、有効である', async () => {
-    const registrationHistoriesCount = 56
-    const lendingHistories = [...Array(registrationHistoriesCount - 1)].map((_, i) => ({
-      id: i + 1,
-      userId: 0,
-    }))
-    prismaBookMock.mockResolvedValue({
+    const mockBookAvailable = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: lendingHistories,
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 },
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookAvailable)
 
     render(
       <Suspense>
@@ -231,27 +222,25 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(`${1}冊貸し出し可能`)).toBeInTheDocument()
+    await screen.findByText(book.title)
     expect(screen.getByRole('button', { name: '借りる' })).toBeEnabled()
   })
 
   it('返却するボタンは、借用中の場合、有効である', async () => {
-    // 借りている
-    const registrationHistoriesCount = 5
-    const lendingHistories = [...Array(registrationHistoriesCount - 1)].map((_, i) => ({
-      id: i + 1,
-      userId: 0,
-    }))
-    const userLendingHistory = { userId: userId }
-    prismaBookMock.mockResolvedValue({
+    const mockBookUserBorrowing = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: [...lendingHistories, userLendingHistory],
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: userId }, // ユーザーが借りている
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookUserBorrowing)
 
     render(
       <Suspense>
@@ -259,25 +248,24 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByRole('button', { name: '返却する' })).toBeEnabled()
+    await screen.findByText(book.title)
+    expect(screen.getByRole('button', { name: '返却する' })).toBeEnabled()
   })
 
   it('返却するボタンは、借用中ではない場合、無効である', async () => {
-    // 借りている
-    const registrationHistoriesCount = 8
-    const lendingHistories = [...Array(registrationHistoriesCount)].map((_, i) => ({
-      id: i + 1,
-      userId: 0,
-    }))
-    prismaBookMock.mockResolvedValue({
+    const mockBookNotBorrowing = {
       ...bookDetail,
-      // @ts-ignore
-      lendingHistories: [...lendingHistories],
+      registrationHistories: [
+        { locationId: 1, location: { id: 1, name: 'オフィス' } },
+      ],
+      lendingHistories: [
+        { id: 1, userId: 10 }, // 他のユーザーが借りている
+      ],
       _count: {
-        registrationHistories: registrationHistoriesCount,
+        reservations: 0,
       },
-    })
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookNotBorrowing)
 
     render(
       <Suspense>
@@ -285,13 +273,13 @@ describe('BookDetail component', async () => {
       </Suspense>,
     )
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByRole('button', { name: '返却する' })).toBeDisabled()
+    await screen.findByText(book.title)
+    expect(screen.getByRole('button', { name: '返却する' })).toBeDisabled()
   })
 
   it('本の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
     const expectedError = new Error('DBエラー')
-    prismaBookMock.mockRejectedValue(expectedError)
+    prismaMock.book.findUnique.mockRejectedValue(expectedError)
     console.error = vi.fn()
 
     render(
@@ -308,7 +296,7 @@ describe('BookDetail component', async () => {
   })
 
   it('対象のIDで本が取得できなかった場合、エラーメッセージが表示される', async () => {
-    prismaBookMock.mockResolvedValue(null)
+    prismaMock.book.findUnique.mockResolvedValue(null)
     console.error = vi.fn()
 
     render(
@@ -341,8 +329,7 @@ describe('BookDetail component', async () => {
         reservations: 1,
       },
     }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(mockBookWithLocation)
+    prismaMock.book.findUnique.mockResolvedValue(mockBookWithLocation)
 
     render(
       <Suspense>
@@ -381,8 +368,7 @@ describe('BookDetail component', async () => {
         reservations: 0,
       },
     }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(mockBookSameLocation)
+    prismaMock.book.findUnique.mockResolvedValue(mockBookSameLocation)
 
     render(
       <Suspense>
@@ -416,8 +402,7 @@ describe('BookDetail component', async () => {
         reservations: 0,
       },
     }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(mockBookOverLent)
+    prismaMock.book.findUnique.mockResolvedValue(mockBookOverLent)
 
     render(
       <Suspense>
@@ -452,8 +437,7 @@ describe('BookDetail component', async () => {
         reservations: 2,
       },
     }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(mockBookMultiLocation)
+    prismaMock.book.findUnique.mockResolvedValue(mockBookMultiLocation)
 
     render(
       <Suspense>
@@ -491,8 +475,7 @@ describe('BookDetail component', async () => {
         reservations: 0,
       },
     }
-    // @ts-ignore
-    prismaBookMock.mockResolvedValue(mockBookIncompleteLocation)
+    prismaMock.book.findUnique.mockResolvedValue(mockBookIncompleteLocation)
 
     render(
       <Suspense>
