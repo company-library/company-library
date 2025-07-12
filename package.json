@@ -33,7 +33,7 @@
     "react": "canary",
     "react-dom": "canary",
     "swr": "^2.3.4",
-    "zod": "^3.25.76"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
