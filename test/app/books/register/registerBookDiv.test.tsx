@@ -1,14 +1,22 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { user1 } from '../../../__utils__/data/user'
 
 describe('register book div component', async () => {
   const registerBookActionMock = vi.hoisted(() => vi.fn())
   vi.mock('@/app/books/register/actions', () => ({
-    registerBook: { bind: () => () => registerBookActionMock() },
+    registerBook: registerBookActionMock,
   }))
 
-  it('登録ボタンをクリックすると、server actionが実行される', () => {
+  // SWRのモック
+  vi.mock('swr', () => ({
+    default: () => ({
+      data: { locations: [{ id: 1, name: 'テスト場所' }] },
+      error: null,
+    }),
+  }))
+
+  it('登録ボタンをクリックすると、server actionが実行される', async () => {
     const title = 'testBook'
     const isbn = '1234567890123'
     const thumbnailUrl = 'https://example.com/test.jpg'
@@ -20,8 +28,15 @@ describe('register book div component', async () => {
 
     expect(registerBookActionMock).not.toBeCalled()
 
+    // 保管場所を選択
+    const locationSelect = screen.getByRole('combobox')
+    fireEvent.change(locationSelect, { target: { value: '1' } })
+
     fireEvent.click(screen.getByRole('button', { name: '登録する' }))
 
-    expect(registerBookActionMock).toBeCalledTimes(1)
+    await waitFor(() => {
+      expect(registerBookActionMock).toBeCalledTimes(1)
+      expect(registerBookActionMock).toHaveBeenCalledWith(title, isbn, thumbnailUrl, 1, userId)
+    })
   })
 })
