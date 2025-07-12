@@ -132,21 +132,9 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
         <h1 className="text-3xl font-bold">{bookDetail.title}</h1>
 
         <div className="mt-3">
-          <div
-            className={`mb-4 p-3 border-2 rounded-md ${isLendable ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}
-          >
-            <p className={`font-medium ${isLendable ? 'text-green-800' : 'text-gray-800'}`}>全体</p>
-            <p className={`text-sm ${isLendable ? 'text-green-700' : 'text-gray-600'}`}>
-              <span>{`${totalLendableCount}冊貸し出し可能`}</span>
-              <span className="ml-2">{`(総所蔵数: ${totalRegistrationCount}冊`}</span>
-              <span className="ml-1">{`, 予約数: ${reservationCount}件)`}</span>
-            </p>
-          </div>
-
           {Array.from(locationStats.entries()).length > 0 && (
             <>
-              <h3 className="text-lg font-medium mb-2">保管場所別在庫状況</h3>
-              {Array.from(locationStats.entries()).map(([locationId, stats]) => {
+              {Array.from(locationStats.entries()).sort((a, b) => a[0] - b[0]).map(([locationId, stats]) => {
                 const isLocationLendable = !isLending && stats.lendableCount > 0
                 return (
                   <div
