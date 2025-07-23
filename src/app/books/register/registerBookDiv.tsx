@@ -1,7 +1,6 @@
 'use client'
 
-import type { FC } from 'react'
-import { useState } from 'react'
+import { type FC, useState } from 'react'
 import useSWR from 'swr'
 import { registerBook } from '@/app/books/register/actions'
 import fetcher from '@/libs/swr/fetcher'
