@@ -59,10 +59,12 @@ const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, isbn, thumbnailUrl, 
           id="location-select"
           value={selectedLocationId || ''}
           onChange={(e) => setSelectedLocationId(Number(e.target.value))}
-          className="w-48 rounded-md border-2 border-gray-300 px-3 py-2"
+          className="select select-bordered w-full"
           required
         >
-          <option value="">-- 保管場所を選択 --</option>
+          <option value="" disabled>
+            保管場所を選択
+          </option>
           {locations.map((location) => (
             <option key={location.id} value={location.id}>
               {location.name}
@@ -70,11 +72,7 @@ const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, isbn, thumbnailUrl, 
           ))}
         </select>
       </div>
-      <button
-        type="submit"
-        disabled={selectedLocationId === null}
-        className="rounded-md px-3 py-2 bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
+      <button type="submit" disabled={selectedLocationId === null} className="btn btn-primary">
         登録する
       </button>
     </form>

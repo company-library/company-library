@@ -67,10 +67,12 @@ const AddBookDiv: FC<AddBookDivProps> = ({ companyBook, userId }) => {
             id="location-select-add"
             value={selectedLocationId || ''}
             onChange={(e) => setSelectedLocationId(Number(e.target.value))}
-            className="w-48 rounded-md border-2 border-gray-300 px-3 py-2"
+            className="select select-bordered w-full"
             required
           >
-            <option value="">-- 保管場所を選択 --</option>
+            <option value="" disabled>
+              保管場所を選択
+            </option>
             {locations.map((location) => (
               <option key={location.id} value={location.id}>
                 {location.name}
@@ -78,11 +80,7 @@ const AddBookDiv: FC<AddBookDivProps> = ({ companyBook, userId }) => {
             ))}
           </select>
         </div>
-        <button
-          type="submit"
-          disabled={selectedLocationId === null}
-          className="rounded-md my-auto px-3 py-2 bg-gray-400 text-white hover:bg-gray-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
-        >
+        <button type="submit" disabled={selectedLocationId === null} className="btn btn-primary">
           追加する
         </button>
       </form>
