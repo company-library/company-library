@@ -28,21 +28,6 @@ async function main() {
       name: '3階 会議室',
     },
   })
-  const location4 = await prisma.location.create({
-    data: {
-      name: '4階 役員室',
-    },
-  })
-  const location5 = await prisma.location.create({
-    data: {
-      name: '書庫A',
-    },
-  })
-  const location6 = await prisma.location.create({
-    data: {
-      name: '書庫B',
-    },
-  })
 
   const alice = await prisma.user.create({
     data: {
@@ -55,19 +40,6 @@ async function main() {
     data: {
       email: 'bob@company.com',
       name: 'ボブ',
-    },
-  })
-  const charlie = await prisma.user.create({
-    data: {
-      email: 'charlie@company.com',
-      name: 'チャーリー',
-      imageUrl: 'https://picsum.photos/id/338/200',
-    },
-  })
-  const diana = await prisma.user.create({
-    data: {
-      email: 'diana@company.com',
-      name: 'ダイアナ',
     },
   })
 
@@ -148,26 +120,26 @@ async function main() {
     },
   })
 
-  // book4 (データベース設計の基礎) - 3冊、書庫に配置
+  // book4 (データベース設計の基礎) - 3冊、既存の場所に配置
   await prisma.registrationHistory.create({
     data: {
       bookId: book4.id,
       userId: bob.id,
-      locationId: location5.id, // 書庫A
+      locationId: location1.id, // 1階 エントランス
     },
   })
   await prisma.registrationHistory.create({
     data: {
       bookId: book4.id,
       userId: alice.id,
-      locationId: location6.id, // 書庫B
+      locationId: location2.id, // 2階 開発室
     },
   })
   await prisma.registrationHistory.create({
     data: {
       bookId: book4.id,
-      userId: charlie.id,
-      locationId: location4.id, // 4階 役員室
+      userId: alice.id,
+      locationId: location3.id, // 3階 会議室
     },
   })
 
@@ -204,12 +176,12 @@ async function main() {
     },
   })
 
-  // 現在貸出中（book4をCharlieが借りている）
+  // 現在貸出中（book4をBobが借りている）
   await prisma.lendingHistory.create({
     data: {
       bookId: book4.id,
-      userId: charlie.id,
-      locationId: location5.id, // 書庫Aから借りた
+      userId: bob.id,
+      locationId: location1.id, // 1階 エントランスから借りた
       lentAt: new Date('2024-01-18'),
       dueDate: new Date('2024-02-01'),
     },
@@ -261,7 +233,7 @@ async function main() {
   await prisma.impression.create({
     data: {
       bookId: book2.id,
-      userId: charlie.id,
+      userId: bob.id,
       impression: 'TypeScriptの型システムについて理解が深まりました。特にジェネリクスの章が秀逸でした。',
     },
   })
@@ -270,7 +242,7 @@ async function main() {
   await prisma.reservation.create({
     data: {
       bookId: book1.id,
-      userId: diana.id,
+      userId: alice.id,
       reservationDate: new Date('2024-01-25'),
     },
   })
@@ -278,7 +250,7 @@ async function main() {
   await prisma.reservation.create({
     data: {
       bookId: book3.id,
-      userId: alice.id,
+      userId: bob.id,
       reservationDate: new Date('2024-01-26'),
     },
   })
