@@ -2,28 +2,7 @@ import { addImpression, editImpression, lendBook, returnBook } from '@/app/books
 import { book1 } from '../../../__utils__/data/book'
 import { location1 } from '../../../__utils__/data/location'
 import { user1 } from '../../../__utils__/data/user'
-
-const { prismaMock } = vi.hoisted(() => {
-  return {
-    prismaMock: {
-      lendingHistory: {
-        create: vi.fn(),
-      },
-      returnHistory: {
-        create: vi.fn(),
-      },
-      impression: {
-        create: vi.fn(),
-        updateMany: vi.fn(),
-      },
-      $transaction: vi.fn(),
-    },
-  }
-})
-
-vi.mock('@/libs/prisma/client', () => ({
-  default: prismaMock,
-}))
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('server actions', () => {
   const { redirectMock } = vi.hoisted(() => {

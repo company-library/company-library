@@ -97,7 +97,9 @@ describe('LendButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
     // 保管場所を選択
-    fireEvent.click(screen.getByLabelText('本社 (3冊利用可能)'))
+    fireEvent.change(screen.getByLabelText('保管場所を選択してください'), {
+      target: { value: '1' },
+    })
 
     fireEvent.change(screen.getByDisplayValue(initialDuDate), {
       target: { value: expectedDueDate.toFormat(dateFormat) },
@@ -135,7 +137,9 @@ describe('LendButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: '借りる' }))
 
     // 保管場所を選択
-    fireEvent.click(screen.getByLabelText('本社 (3冊利用可能)'))
+    fireEvent.change(screen.getByLabelText('保管場所を選択してください'), {
+      target: { value: '1' },
+    })
 
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
