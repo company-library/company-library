@@ -165,7 +165,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
             userId={userId}
             lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
             disabled={!isLending}
-            location={returnLocation}
+            locationName={returnLocation}
           />
 
           <AddImpressionButton bookId={bookId} />

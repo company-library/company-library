@@ -33,6 +33,7 @@ describe('BookDetail component', () => {
     },
   }
   vi.mock('@/app/books/[id]/lendButton', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: テスト用のモック関数の型なのでany型を許容する
     default: (props: any) => {
       return (
         <button disabled={props.disabled} type="button">
@@ -43,6 +44,7 @@ describe('BookDetail component', () => {
   }))
 
   vi.mock('@/app/books/[id]/returnButton', () => ({
+    // biome-ignore lint/suspicious/noExplicitAny: テスト用のモック関数の型なのでany型を許容する
     default: (props: any) => {
       return (
         <button disabled={props.disabled} type="button">
