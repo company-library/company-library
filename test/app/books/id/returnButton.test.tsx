@@ -34,6 +34,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={true}
+        locationName="1階 エントランス"
       />,
     )
 
@@ -45,6 +46,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName="1階 エントランス"
       />,
     )
 
@@ -52,17 +54,20 @@ describe('returnButton component', () => {
   })
 
   it('ボタンをクリックすると、ダイアログが表示される', () => {
+    const locationName = '1階 エントランス'
     render(
       <ReturnButton
         bookId={bookId}
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName={locationName}
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
 
     expect(screen.getByRole('heading', { level: 3, name: '返却しますか?' })).toBeInTheDocument()
+    expect(screen.getByText(`返却先: ${locationName}`)).toBeInTheDocument()
     expect(screen.getByPlaceholderText('感想を書いてください')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Ok' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
@@ -75,6 +80,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName="1階 エントランス"
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
@@ -92,6 +98,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName="1階 エントランス"
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
@@ -124,6 +131,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName="1階 エントランス"
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
@@ -142,6 +150,7 @@ describe('returnButton component', () => {
         userId={userId}
         lendingHistoryId={lendingHistoryId}
         disabled={false}
+        locationName="1階 エントランス"
       />,
     )
     fireEvent.click(screen.getByRole('button', { name: '返却する' }))
@@ -153,5 +162,20 @@ describe('returnButton component', () => {
         screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
       ).not.toBeInTheDocument()
     })
+  })
+
+  it('locationNameがundefinedの場合、返却先は表示されない', () => {
+    render(
+      <ReturnButton
+        bookId={bookId}
+        userId={userId}
+        lendingHistoryId={lendingHistoryId}
+        disabled={false}
+        locationName={undefined}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: '返却する' }))
+
+    expect(screen.queryByText(/返却先:/)).not.toBeInTheDocument()
   })
 })

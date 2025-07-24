@@ -3,32 +3,21 @@ import { Suspense } from 'react'
 import { expect } from 'vitest'
 import BookDetail from '@/app/books/[id]/bookDetail'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
-
-const { prismaMock } = vi.hoisted(() => {
-  return {
-    prismaMock: {
-      book: {
-        findUnique: vi.fn(),
-      },
-    },
-  }
-})
-
-vi.mock('@/libs/prisma/client', () => ({
-  default: prismaMock,
-}))
+import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
 describe('BookDetail component', () => {
   const userId = 2
 
   const book = lendableBook
   const bookDetail = {
+    id: book.id,
+    createdAt: book.createdAt,
     title: book.title,
+    isbn: book.isbn,
     imageUrl: book.imageUrl,
-    lendingHistories: book.lendingHistories,
     registrationHistories: book.registrationHistories,
+    lendingHistories: book.lendingHistories,
     _count: {
-      registrationHistories: book.registrationHistories.length,
       reservations: book.reservations.length,
     },
   }
