@@ -12,8 +12,8 @@ describe('LendButton component', () => {
   const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
 
   const mockLocationStats = new Map([
-    [1, { name: '本社', totalCount: 5, lendableCount: 3 }],
-    [2, { name: '支社', totalCount: 3, lendableCount: 2 }],
+    [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
+    [2, { name: '支社', order: 2, totalCount: 3, lendableCount: 2 }],
   ])
   const { lendBookMock } = vi.hoisted(() => {
     return {
@@ -167,5 +167,34 @@ describe('LendButton component', () => {
       ).not.toBeInTheDocument()
       expect(lendBookMock).not.toBeCalled()
     })
+  })
+
+  it('保管場所はorder順で表示される', async () => {
+    const mockLocationStatsWithDifferentOrder = new Map([
+      [3, { name: '支社B', order: 3, totalCount: 2, lendableCount: 1 }],
+      [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
+      [2, { name: '支社A', order: 2, totalCount: 3, lendableCount: 2 }],
+    ])
+
+    render(
+      <LendButton
+        bookId={bookId}
+        userId={userId}
+        disabled={false}
+        locationStats={mockLocationStatsWithDifferentOrder}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: '借りる' }))
+
+    const selectElement = screen.getByLabelText('保管場所を選択してください')
+    const options = Array.from(selectElement.children).slice(1) as HTMLOptionElement[]
+
+    expect(options[0].textContent).toBe('本社 (3冊利用可能)')
+    expect(options[0].value).toBe('1')
+    expect(options[1].textContent).toBe('支社A (2冊利用可能)')
+    expect(options[1].value).toBe('2')
+    expect(options[2].textContent).toBe('支社B (1冊利用可能)')
+    expect(options[2].value).toBe('3')
   })
 })

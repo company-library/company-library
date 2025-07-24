@@ -252,4 +252,33 @@ describe('BookDetail component', () => {
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith('対象のIDの本は存在しません。bookId:', book.id)
   })
+
+  it('場所がorderの昇順で表示される', async () => {
+    const mockBookDetail = {
+      ...bookDetail,
+      registrationHistories: [
+        { locationId: 3, location: { id: 3, name: '3階 会議室', order: 3 } },
+        { locationId: 1, location: { id: 1, name: '1階 エントランス', order: 1 } },
+        { locationId: 2, location: { id: 2, name: '2階 開発室', order: 2 } },
+      ],
+      lendingHistories: [],
+      _count: {
+        reservations: 0,
+      },
+    }
+    prismaMock.book.findUnique.mockResolvedValue(mockBookDetail)
+
+    render(
+      <Suspense>
+        <BookDetail bookId={book.id} userId={userId} />
+      </Suspense>,
+    )
+
+    await screen.findByText(book.title)
+
+    const locationElements = screen.getAllByText(/階/)
+    expect(locationElements[0]).toHaveTextContent('1階 エントランス')
+    expect(locationElements[1]).toHaveTextContent('2階 開発室')
+    expect(locationElements[2]).toHaveTextContent('3階 会議室')
+  })
 })

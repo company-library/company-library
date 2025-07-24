@@ -6,7 +6,7 @@ export async function GET() {
   const locations = await prisma.location
     .findMany({
       orderBy: {
-        name: 'asc',
+        order: 'asc',
       },
     })
     .catch((e) => {

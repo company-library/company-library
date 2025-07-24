@@ -16,16 +16,19 @@ async function main() {
   const location1 = await prisma.location.create({
     data: {
       name: '1階 エントランス',
+      order: 1,
     },
   })
   const location2 = await prisma.location.create({
     data: {
       name: '2階 開発室',
+      order: 2,
     },
   })
   const location3 = await prisma.location.create({
     data: {
       name: '3階 会議室',
+      order: 3,
     },
   })
 

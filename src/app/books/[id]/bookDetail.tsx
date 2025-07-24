@@ -23,6 +23,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
             location: {
               select: {
                 name: true,
+                order: true,
               },
             },
           },
@@ -63,13 +64,15 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
 
     const locationId = regHistory.locationId
     const locationName = regHistory.location.name
+    const locationOrder = regHistory.location.order
     const existing = acc.get(locationId)
 
     return new Map(acc).set(locationId, {
       name: locationName,
+      order: locationOrder,
       totalCount: (existing?.totalCount ?? 0) + 1,
     })
-  }, new Map<number, { name: string; totalCount: number }>())
+  }, new Map<number, { name: string; order: number; totalCount: number }>())
 
   // 保管場所毎の貸出数
   const locationLendingCountsMap = bookDetail.lendingHistories.reduce((acc, lendingHistory) => {
@@ -129,7 +132,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
 
         <div className="mt-3">
           {Array.from(locationStats.entries())
-            .sort((a, b) => a[0] - b[0])
+            .sort((a, b) => a[1].order - b[1].order)
             .map(([locationId, stats]) => {
               const isLocationLendable = !isLending && stats.lendableCount > 0
               return (

@@ -10,7 +10,10 @@ type LendButtonProps = {
   bookId: number
   userId: number
   disabled: boolean
-  locationStats: Map<number, { name: string; totalCount: number; lendableCount: number }>
+  locationStats: Map<
+    number,
+    { name: string; order: number; totalCount: number; lendableCount: number }
+  >
 }
 
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationStats }) => {
@@ -24,7 +27,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
 
   const availableLocations = Array.from(locationStats.entries())
     .filter(([_, stats]) => stats.lendableCount > 0)
-    .sort(([_, a], [__, b]) => b.lendableCount - a.lendableCount)
+    .sort(([_, a], [__, b]) => a.order - b.order)
 
   const onClick = () => {
     if (!selectedLocationId || selectedLocationId === '') {
