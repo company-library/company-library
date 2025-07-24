@@ -21,18 +21,21 @@ describe('LendingList Component', async () => {
       dueDate: new Date('2022-10-30'),
       lentAt: new Date('2022-10-01'),
       user: { id: 2, name: 'user02' },
+      location: { id: 1, name: '図書館' },
     },
     {
       id: 3,
       dueDate: new Date('2022-10-31'),
       lentAt: new Date('2022-10-01'),
       user: { id: 3, name: 'user03' },
+      location: { id: 2, name: 'オフィス' },
     },
     {
       id: 1,
       dueDate: new Date('2022-11-01'),
       lentAt: new Date('2022-10-01'),
       user: { id: 1, name: 'user01' },
+      location: null,
     },
   ]
 
@@ -61,6 +64,9 @@ describe('LendingList Component', async () => {
     expect(screen.getByTestId(`lendingUser-${2}`).textContent).toBe(
       expectedLendingHistories[2].user.name,
     )
+    expect(screen.getByTestId(`location-${0}`).textContent).toBe('図書館')
+    expect(screen.getByTestId(`location-${1}`).textContent).toBe('オフィス')
+    expect(screen.getByTestId(`location-${2}`).textContent).toBe('場所不明')
     expect(prismaLendingHistoryMock.mock.calls[0][0]?.orderBy).toStrictEqual([{ lentAt: 'asc' }])
   })
 
@@ -117,5 +123,37 @@ describe('LendingList Component', async () => {
       await screen.findByText('貸出履歴の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
+  })
+
+  it('貸し出し場所が正しく表示される', async () => {
+    const lendingHistoriesWithLocation = [
+      {
+        id: 1,
+        dueDate: new Date('2022-11-01'),
+        lentAt: new Date('2022-10-01'),
+        user: { id: 1, name: 'user01' },
+        location: { id: 1, name: '図書館' },
+      },
+      {
+        id: 2,
+        dueDate: new Date('2022-11-02'),
+        lentAt: new Date('2022-10-02'),
+        user: { id: 2, name: 'user02' },
+        location: null,
+      },
+    ]
+
+    // @ts-ignore
+    prismaLendingHistoryMock.mockResolvedValue(lendingHistoriesWithLocation)
+
+    render(
+      <Suspense>
+        <LendingList bookId={lendableBook.id} />
+      </Suspense>,
+    )
+
+    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
+    expect(await screen.findByTestId('location-0')).toHaveTextContent('図書館')
+    expect(screen.getByTestId('location-1')).toHaveTextContent('場所不明')
   })
 })
