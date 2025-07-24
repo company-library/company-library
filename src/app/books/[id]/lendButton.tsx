@@ -20,20 +20,20 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
   const closeModal = () => dialogRef.current?.close()
 
   const [dueDate, setDueDate] = useState(getDaysLater(7))
-  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null)
+  const [selectedLocationId, setSelectedLocationId] = useState<number | string>('')
 
   const availableLocations = Array.from(locationStats.entries())
     .filter(([_, stats]) => stats.lendableCount > 0)
     .sort(([_, a], [__, b]) => b.lendableCount - a.lendableCount)
 
   const onClick = () => {
-    if (!selectedLocationId) {
+    if (!selectedLocationId || selectedLocationId === '') {
       window.alert('保管場所を選択してください。')
       return
     }
 
     startTransition(async () => {
-      const result = await lendBook(bookId, userId, dueDate, selectedLocationId)
+      const result = await lendBook(bookId, userId, dueDate, Number(selectedLocationId))
       if (result instanceof Error) {
         window.alert('貸し出しに失敗しました。もう一度試してみてください。')
         return
@@ -55,24 +55,24 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
           <h3 className="font-bold text-lg">借りますか?</h3>
 
           <div className="mt-4">
-            <legend className="block text-sm font-medium mb-2">保管場所を選択してください</legend>
-            <div className="space-y-2">
+            <label className="block text-sm font-medium mb-2" htmlFor="locationSelect">
+              保管場所を選択してください
+            </label>
+            <select
+              id="locationSelect"
+              className="select select-bordered w-full"
+              value={selectedLocationId}
+              onChange={(e) => setSelectedLocationId(e.target.value)}
+            >
+              <option value="" disabled>
+                保管場所を選択
+              </option>
               {availableLocations.map(([locationId, stats]) => (
-                <label key={locationId} className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="location"
-                    value={locationId}
-                    checked={selectedLocationId === locationId}
-                    onChange={(e) => setSelectedLocationId(Number(e.target.value))}
-                    className="radio radio-primary"
-                  />
-                  <span className="flex-1">
-                    {stats.name} ({stats.lendableCount}冊利用可能)
-                  </span>
-                </label>
+                <option key={locationId} value={locationId}>
+                  {stats.name} ({stats.lendableCount}冊利用可能)
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
           <div className="mt-4">

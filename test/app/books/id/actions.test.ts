@@ -7,22 +7,22 @@ const { prismaMock } = vi.hoisted(() => {
   return {
     prismaMock: {
       lendingHistory: {
-        create: vi.fn()
+        create: vi.fn(),
       },
       returnHistory: {
-        create: vi.fn()
+        create: vi.fn(),
       },
       impression: {
         create: vi.fn(),
-        updateMany: vi.fn()
+        updateMany: vi.fn(),
       },
-      $transaction: vi.fn()
-    }
+      $transaction: vi.fn(),
+    },
   }
 })
 
 vi.mock('@/libs/prisma/client', () => ({
-  default: prismaMock
+  default: prismaMock,
 }))
 
 describe('server actions', () => {

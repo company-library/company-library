@@ -11,7 +11,7 @@ import prisma from '@/libs/prisma/client'
  * @param {number} bookId
  * @param {number} userId
  * @param {Date} dueDate
- * @param {number} locationId 貸し出し場所ID
+ * @param {number} locationId
  * @returns {Promise<Error>}
  */
 export const lendBook = async (

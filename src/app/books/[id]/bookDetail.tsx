@@ -17,11 +17,8 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
       select: {
         title: true,
         imageUrl: true,
-        lendingHistories: {
-          where: { returnHistory: null },
+        registrationHistories: {
           select: {
-            id: true,
-            userId: true,
             locationId: true,
             location: {
               select: {
@@ -30,15 +27,12 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
             },
           },
         },
-        registrationHistories: {
+        lendingHistories: {
+          where: { returnHistory: null },
           select: {
+            id: true,
+            userId: true,
             locationId: true,
-            location: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
           },
         },
         _count: {
@@ -61,57 +55,59 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
     return <div>本の取得に失敗しました。再読み込みしてみてください。</div>
   }
 
-  // 保管場所毎の在庫数を集計
-  const locationStats = new Map<
-    number,
-    { name: string; totalCount: number; lendableCount: number }
-  >()
-
-  // 登録履歴から保管場所毎の総数を集計
-  for (const regHistory of bookDetail.registrationHistories) {
-    if (!regHistory.locationId || !regHistory.location) continue
+  // 保管場所毎の在庫数
+  const locationCountsMap = bookDetail.registrationHistories.reduce((acc, regHistory) => {
+    if (!regHistory.locationId || !regHistory.location) {
+      return acc
+    }
 
     const locationId = regHistory.locationId
     const locationName = regHistory.location.name
+    const existing = acc.get(locationId)
 
-    if (locationStats.has(locationId)) {
-      const existing = locationStats.get(locationId)
-      if (existing) {
-        existing.totalCount += 1
-      }
-    } else {
-      locationStats.set(locationId, {
-        name: locationName,
-        totalCount: 1,
-        lendableCount: 0,
-      })
+    return new Map(acc).set(locationId, {
+      name: locationName,
+      totalCount: (existing?.totalCount ?? 0) + 1,
+    })
+  }, new Map<number, { name: string; totalCount: number }>())
+
+  // 保管場所毎の貸出数
+  const locationLendingCountsMap = bookDetail.lendingHistories.reduce((acc, lendingHistory) => {
+    if (!lendingHistory.locationId) {
+      return acc
     }
-  }
 
-  // 貸出中の数を保管場所毎から引く（簡易的に全貸出を均等に分散と仮定）
-  const totalLendingCount = bookDetail.lendingHistories.length
-  const totalRegistrationCount = bookDetail.registrationHistories.length
+    const locationId = lendingHistory.locationId
+    const existing = acc.get(locationId)
 
-  Array.from(locationStats.values()).forEach((stats) => {
-    const locationRatio = stats.totalCount / totalRegistrationCount
-    const locationLendingCount = Math.round(totalLendingCount * locationRatio)
-    stats.lendableCount = Math.max(0, stats.totalCount - locationLendingCount)
-  })
+    return new Map(acc).set(locationId, (existing ?? 0) + 1)
+  }, new Map<number, number>())
 
-  const reservationCount = bookDetail._count.reservations
+  // 貸出可能数
+  const locationStats = new Map(
+    Array.from(locationCountsMap.entries()).map(([locationId, location]) => {
+      const lendingCount = locationLendingCountsMap.get(locationId) ?? 0
+      const lendableCount = location.totalCount - lendingCount
+
+      return [
+        locationId,
+        {
+          ...location,
+          lendableCount,
+        },
+      ]
+    }),
+  )
+
   const totalLendableCount = Array.from(locationStats.values()).reduce(
     (sum, stats) => sum + stats.lendableCount,
     0,
   )
 
-  // 借りているか = 返却履歴のない自分の貸出履歴がある
   const lendingHistory = bookDetail.lendingHistories.find((h) => h.userId === userId)
   const isLending = !!lendingHistory
-
-  // 返却先の場所を取得（貸し出し履歴から取得、なければ最初の登録場所を使用）
-  const returnLocation =
-    lendingHistory?.location?.name ||
-    bookDetail.registrationHistories.find((history) => history.location)?.location?.name
+  const returnLocationId = lendingHistory?.locationId
+  const returnLocation = returnLocationId ? locationStats.get(returnLocationId)?.name : undefined
 
   const isLendable = !isLending && totalLendableCount > 0
 
@@ -132,31 +128,29 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
         <h1 className="text-3xl font-bold">{bookDetail.title}</h1>
 
         <div className="mt-3">
-          {Array.from(locationStats.entries()).length > 0 && (
-            <>
-              {Array.from(locationStats.entries()).sort((a, b) => a[0] - b[0]).map(([locationId, stats]) => {
-                const isLocationLendable = !isLending && stats.lendableCount > 0
-                return (
-                  <div
-                    key={locationId}
-                    className={`mb-2 p-3 border-2 rounded-md ${isLocationLendable ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}
+          {Array.from(locationStats.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(([locationId, stats]) => {
+              const isLocationLendable = !isLending && stats.lendableCount > 0
+              return (
+                <div
+                  key={locationId}
+                  className={`mb-2 p-3 border-2 rounded-md ${isLocationLendable ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}
+                >
+                  <p
+                    className={`font-medium ${isLocationLendable ? 'text-green-800' : 'text-gray-800'}`}
                   >
-                    <p
-                      className={`font-medium ${isLocationLendable ? 'text-green-800' : 'text-gray-800'}`}
-                    >
-                      {stats.name}
-                    </p>
-                    <p
-                      className={`text-sm ${isLocationLendable ? 'text-green-700' : 'text-gray-600'}`}
-                    >
-                      <span>{`${stats.lendableCount}冊貸し出し可能`}</span>
-                      <span className="ml-2">{`(所蔵数: ${stats.totalCount}冊)`}</span>
-                    </p>
-                  </div>
-                )
-              })}
-            </>
-          )}
+                    {stats.name}
+                  </p>
+                  <p
+                    className={`text-sm ${isLocationLendable ? 'text-green-700' : 'text-gray-600'}`}
+                  >
+                    <span>{`${stats.lendableCount}冊貸し出し可能`}</span>
+                    <span className="ml-2">{`(所蔵数: ${stats.totalCount}冊)`}</span>
+                  </p>
+                </div>
+              )
+            })}
         </div>
 
         <div className="mt-auto flex gap-5">
