@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server'
 import { GET } from '@/app/api/books/search/route'
 import type { Book } from '@/models/book'
 import { bookWithImage, bookWithoutImage } from '../../../../../test/__utils__/data/book'
@@ -6,9 +7,7 @@ import { prismaMock } from '../../../../../test/__utils__/libs/prisma/singleton'
 describe('books search api', () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
 
-  const req = {
-    url: 'http://localhost:3000/api/books/search',
-  } as Request
+  const req = new NextRequest('http://localhost:3000/api/books/search')
 
   it('本の一覧を取得し、それを返す', async () => {
     prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
@@ -29,9 +28,9 @@ describe('books search api', () => {
 
   it('検索キーワードを用いて絞り込みを行う', async () => {
     const searchWord = 'testBook'
-    const reqWithSearchWord = {
-      url: `http://localhost:3000/api/books/search?q=${searchWord}`,
-    } as Request
+    const reqWithSearchWord = new NextRequest(
+      `http://localhost:3000/api/books/search?q=${searchWord}`,
+    )
 
     prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
 

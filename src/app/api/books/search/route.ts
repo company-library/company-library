@@ -1,10 +1,9 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma/client'
 import type { CustomError } from '@/models/errors'
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const q = searchParams.get('q') ?? ''
+export async function GET(req: NextRequest) {
+  const q = req.nextUrl.searchParams.get('q') ?? ''
 
   const books = await prisma.book
     .findMany({
