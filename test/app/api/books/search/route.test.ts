@@ -6,9 +6,8 @@ import { prismaMock } from '../../../../__utils__/libs/prisma/singleton'
 describe('books search api', () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
 
-  const searchWord = 'testBook'
   const req = {
-    url: `http://localhost:3000/api/books/search?q=${searchWord}`,
+    url: 'http://localhost:3000/api/books/search',
   } as Request
 
   it('本の一覧を取得し、それを返す', async () => {
@@ -29,12 +28,29 @@ describe('books search api', () => {
   })
 
   it('検索キーワードを用いて絞り込みを行う', async () => {
+    const searchWord = 'testBook'
+    const reqWithSearchWord = {
+      url: `http://localhost:3000/api/books/search?q=${searchWord}`,
+    } as Request
+
+    prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
+
+    await GET(reqWithSearchWord)
+
+    expect(prismaMock.book.findMany).toBeCalledWith({
+      where: { title: { contains: searchWord, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+    })
+  })
+
+  it('作成日時の降順でソートされている', async () => {
     prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
 
     await GET(req)
 
     expect(prismaMock.book.findMany).toBeCalledWith({
-      where: { title: { contains: searchWord, mode: 'insensitive' } },
+      where: { title: { contains: '', mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
     })
   })
 
