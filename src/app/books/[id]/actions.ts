@@ -11,15 +11,17 @@ import prisma from '@/libs/prisma/client'
  * @param {number} bookId
  * @param {number} userId
  * @param {Date} dueDate
+ * @param {number} locationId
  * @returns {Promise<Error>}
  */
 export const lendBook = async (
   bookId: number,
   userId: number,
   dueDate: Date,
+  locationId: number,
 ): Promise<undefined | Error> => {
   const history = await prisma.lendingHistory
-    .create({ data: { bookId, userId, dueDate } })
+    .create({ data: { bookId, userId, dueDate, locationId } })
     .catch((e) => {
       console.error(e)
       return new Error('貸し出しに失敗しました。もう一度試して見てください。')

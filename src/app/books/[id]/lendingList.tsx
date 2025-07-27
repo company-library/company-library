@@ -10,7 +10,10 @@ const LendingList = async ({ bookId }: Props) => {
   const lendingHistories = await prisma.lendingHistory
     .findMany({
       where: { bookId: bookId, returnHistory: null },
-      include: { user: true },
+      include: {
+        user: true,
+        location: true,
+      },
       orderBy: [{ lentAt: 'asc' }],
     })
     .catch((e) => {
@@ -41,6 +44,11 @@ const LendingList = async ({ bookId }: Props) => {
               </td>
               <td data-testid={`lendingUser-${index}`}>
                 <UserAvatar user={lendingHistory.user} />
+              </td>
+              <td data-testid={`location-${index}`}>
+                <span className="text-sm text-gray-600">
+                  {lendingHistory.location?.name || '場所不明'}
+                </span>
               </td>
             </tr>
           )

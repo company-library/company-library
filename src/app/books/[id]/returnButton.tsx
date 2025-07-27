@@ -9,9 +9,16 @@ type ReturnButtonProps = {
   userId: number
   lendingHistoryId: number
   disabled: boolean
+  locationName: string | undefined
 }
 
-const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId, disabled }) => {
+const ReturnButton: FC<ReturnButtonProps> = ({
+  bookId,
+  userId,
+  lendingHistoryId,
+  disabled,
+  locationName,
+}) => {
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openModal = () => dialogRef.current?.showModal()
   const closeModal = () => dialogRef.current?.close()
@@ -49,6 +56,7 @@ const ReturnButton: FC<ReturnButtonProps> = ({ bookId, userId, lendingHistoryId,
       <dialog className="modal" ref={dialogRef}>
         <div className="modal-box">
           <h3 className="font-bold text-lg">返却しますか?</h3>
+          {locationName && <p className="mt-2 text-sm text-gray-600">返却先: {locationName}</p>}
 
           <div className="mt-4">
             <textarea

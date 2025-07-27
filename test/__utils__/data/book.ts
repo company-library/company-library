@@ -1,3 +1,5 @@
+import { location1, location2 } from './location'
+
 export const bookWithImage = {
   id: 1,
   title: '画像有りのタイトル',
@@ -21,8 +23,8 @@ export const lendableBook = {
   ...bookWithImage,
   isbn: '1111111111111',
   registrationHistories: [
-    { userId: 1, createdAt: now },
-    { userId: 2, createdAt: now },
+    { userId: 1, createdAt: now, locationId: location1.id, location: location1 },
+    { userId: 2, createdAt: now, locationId: location2.id, location: location2 },
   ],
   lendingHistories: [],
   reservations: [{ userId: 1, reservationDate: now, createdAt: now }],
