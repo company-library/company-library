@@ -6,7 +6,7 @@ import { lendBook } from '@/app/books/[id]/actions'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
 
-type LendButtonProps = {
+export type LendButtonProps = {
   bookId: number
   userId: number
   disabled: boolean

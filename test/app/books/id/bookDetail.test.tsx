@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { Suspense } from 'react'
 import { expect } from 'vitest'
 import BookDetail from '@/app/books/[id]/bookDetail'
+import type { LendButtonProps } from '@/app/books/[id]/lendButton'
 import { bookWithoutImage, lendableBook } from '../../../__utils__/data/book'
 import { prismaMock } from '../../../__utils__/libs/prisma/singleton'
 
@@ -22,8 +23,7 @@ describe('BookDetail component', () => {
     },
   }
   vi.mock('@/app/books/[id]/lendButton', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: テスト用のモック関数の型なのでany型を許容する
-    default: (props: any) => {
+    default: (props: LendButtonProps) => {
       return (
         <button disabled={props.disabled} type="button">
           借りる
