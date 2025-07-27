@@ -21,7 +21,7 @@ describe('LendButton component', () => {
     }
   })
   vi.mock('@/app/books/[id]/actions', () => ({
-    lendBook: (bookId: string, userId: string, dueDate: Date, locationId: number) =>
+    lendBook: (bookId: number, userId: string, dueDate: Date, locationId: number) =>
       lendBookMock(bookId, userId, dueDate, locationId),
   }))
 
