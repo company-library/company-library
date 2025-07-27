@@ -34,7 +34,7 @@ describe('editImpressionButton component', () => {
 
   it('ボタンをクリックすると、ダイアログが表示される', () => {
     render(<EditImpressionButton impression={impression} />)
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
 
     expect(screen.getByRole('heading', { level: 3, name: '感想を編集' })).toBeInTheDocument()
     expect(screen.getByPlaceholderText('感想を書いてください')).toHaveValue(impression.impression)
@@ -44,7 +44,7 @@ describe('editImpressionButton component', () => {
 
   it('ダイアログで感想を編集することができる', async () => {
     render(<EditImpressionButton impression={impression} />)
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を編集したよ' },
     })
@@ -54,7 +54,7 @@ describe('editImpressionButton component', () => {
 
   it('ダイアログのOkボタンをクリックすると、編集処理が実行され、リロードされる', async () => {
     render(<EditImpressionButton impression={impression} />)
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を編集したよ' },
     })
@@ -77,7 +77,7 @@ describe('editImpressionButton component', () => {
     window.alert = vi.fn()
 
     render(<EditImpressionButton impression={impression} />)
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を編集したよ' },
     })
@@ -91,7 +91,7 @@ describe('editImpressionButton component', () => {
 
   it('ダイアログのCancelボタンをクリックすると、返却処理は実行されない', async () => {
     render(<EditImpressionButton impression={impression} />)
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
     expect(screen.getByPlaceholderText('感想を書いてください')).toHaveValue(impression.impression)
     fireEvent.change(screen.getByPlaceholderText('感想を書いてください'), {
       target: { value: '感想を編集したよ' },
@@ -105,7 +105,7 @@ describe('editImpressionButton component', () => {
       ).not.toBeInTheDocument()
     })
 
-    fireEvent.click(screen.getByRole('button', { name: '感想を編集' }))
+    fireEvent.click(screen.getByRole('button', { name: '編集' }))
     expect(screen.getByPlaceholderText('感想を書いてください')).toHaveValue(impression.impression)
   })
 })
