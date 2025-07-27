@@ -7,10 +7,22 @@ import fetcher from '@/libs/swr/fetcher'
 import type { Book } from '@/models/book'
 import { type CustomError, isCustomError } from '@/models/errors'
 
+type Location = {
+  id: number
+  name: string
+}
+
 const BookList = () => {
+  const [searchLocation, setSearchLocation] = useState('')
+  const { data: locationsData } = useSWR<{ locations: Location[] } | CustomError>(
+    '/api/locations',
+    fetcher,
+  )
+  const locations = isCustomError(locationsData) ? [] : locationsData?.locations || []
+
   const [searchKeyword, setSearchKeyword] = useState('')
   const { data, error } = useSWR<{ books: Book[] } | CustomError>(
-    `/api/books/search?q=${searchKeyword}`,
+    `/api/books/search?q=${searchKeyword}&locationId=${searchLocation}`,
     fetcher,
   )
   if (error) {
@@ -20,11 +32,22 @@ const BookList = () => {
   return (
     <>
       <div>
-        <form>
-          <div className="relative">
+        <form className="flex gap-4">
+          <div>
+            <select className="select" onChange={(e) => setSearchLocation(e.target.value)}>
+              <option value="">全ての保管場所</option>
+              {locations.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex-1">
             <input
               type="search"
-              className="block p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-blue-500"
+              className="input w-full"
               placeholder="書籍のタイトルで検索"
               onChange={(event) => setSearchKeyword(event.target.value)}
             />

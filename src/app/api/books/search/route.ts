@@ -4,6 +4,7 @@ import type { CustomError } from '@/models/errors'
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q') ?? ''
+  const locationId = req.nextUrl.searchParams.get('locationId') ?? ''
 
   const books = await prisma.book
     .findMany({
@@ -11,6 +12,13 @@ export async function GET(req: NextRequest) {
         title: {
           contains: q,
           mode: 'insensitive',
+        },
+        registrationHistories: {
+          some: {
+            location: {
+              id: locationId ? Number(locationId) : undefined,
+            },
+          },
         },
       },
       orderBy: {
