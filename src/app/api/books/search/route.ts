@@ -14,6 +14,9 @@ export async function GET(req: Request) {
           mode: 'insensitive',
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
     .catch((e) => {
       console.error(e)
