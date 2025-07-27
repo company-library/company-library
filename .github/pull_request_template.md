@@ -16,6 +16,6 @@
 [ask]  
 [fyi]
 -->
-<!-- for GitHub Copilot review  rule-->
+<!-- for GitHub Copilot review  rules-->
 
 <!-- I want to review in Japanese. -->
