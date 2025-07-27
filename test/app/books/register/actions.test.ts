@@ -185,9 +185,9 @@ describe('server actions', () => {
 
       expect(prismaMock.registrationHistory.create).toBeCalledWith({
         data: {
-          bookId: bookId,
-          userId: userId,
-          locationId: locationId,
+          bookId,
+          userId,
+          locationId,
         },
       })
       expect(redirectMock).not.toBeCalled()
