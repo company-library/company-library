@@ -48,7 +48,7 @@ const EditImpressionButton: FC<Props> = ({ impression }) => {
   return (
     <>
       <button type="button" className="btn" onClick={openModal}>
-        感想を編集
+        編集
       </button>
 
       <dialog className="modal" ref={dialogRef}>
@@ -58,8 +58,8 @@ const EditImpressionButton: FC<Props> = ({ impression }) => {
           <div className="mt-4">
             <textarea
               className="
-               textarea textarea-bordered textarea-md
-               w-full
+                textarea textarea-bordered textarea-md
+                w-full
               "
               placeholder="感想を書いてください"
               value={impressionText}
