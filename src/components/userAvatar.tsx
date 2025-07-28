@@ -5,6 +5,7 @@ import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 
 type UserAvatarProps = {
   user: {
+    id: number
     name: string
     email: string
   }
@@ -55,11 +56,7 @@ const UserAvatar: FC<UserAvatarProps> = async ({
 
   return (
     <div className={`${tooltipPosition}`} data-tip={user.name} data-testid="name-tooltip">
-      {linkToProfile ? (
-        <Link href={`/users/${encodeURIComponent(user.email)}`}>{avatarContent}</Link>
-      ) : (
-        avatarContent
-      )}
+      {linkToProfile ? <Link href={`/users/${user.id}`}>{avatarContent}</Link> : avatarContent}
     </div>
   )
 }
