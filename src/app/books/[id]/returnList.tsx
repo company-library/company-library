@@ -36,7 +36,7 @@ const ReturnList = async ({ bookId }: Props) => {
                 {toJstFormat(returnHistory.returnedAt)}
               </td>
               <td data-testid={`returnedUser-${index}`}>
-                <UserAvatar user={returnHistory.lendingHistory.user} />
+                <UserAvatar user={returnHistory.lendingHistory.user} linkToProfile={true} />
               </td>
             </tr>
           )

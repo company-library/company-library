@@ -1,5 +1,4 @@
 import { render, screen, within } from '@testing-library/react'
-import { Suspense } from 'react'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import { lendableBook } from '../../../../test/__utils__/data/book'
 import { user1 } from '../../../../test/__utils__/data/user'
@@ -7,7 +6,11 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
-    vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+    vi.fn().mockImplementation(({ user, linkToProfile }) => (
+      linkToProfile ? 
+        <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a> :
+        <div>{user.name}</div>
+    )),
   )
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: unknown[]) => UserAvatarMock(...args),
@@ -25,21 +28,21 @@ describe('ImpressionList component', async () => {
       impression: '興味深い本でした',
       createdAt: new Date('2022-11-01T10:22:33+09:00'),
       updatedAt: new Date('2022-11-01T11:44:55+09:00'),
-      user: { id: 2, name: 'user02' },
+      user: { id: 2, name: 'user02', email: 'user02@example.com' },
     },
     {
       id: 1,
       impression: '本の感想です。\n面白かったです。',
       createdAt: new Date('2022-10-30T10:00:00+09:00'),
       updatedAt: new Date('2022-10-30T10:00:00+09:00'),
-      user: { id: 1, name: 'user01' },
+      user: { id: 1, name: 'user01', email: 'user01@example.com' },
     },
     {
       id: 3,
       impression: '感想',
       createdAt: new Date('2022-10-20T10:00:00+09:00'),
       updatedAt: new Date('2022-10-21T10:00:00+09:00'),
-      user: { id: 3, name: 'user03' },
+      user: { id: 3, name: 'user03', email: 'user03@example.com' },
     },
   ]
 
@@ -47,15 +50,9 @@ describe('ImpressionList component', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
-    render(
-      <Suspense>
-        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
-      </Suspense>,
-    )
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    await screen.findByTestId(`postedDate-${0}`)
-    expect((await screen.findByTestId(`postedDate-${0}`)).textContent).toBe(
+    expect(screen.getByTestId(`postedDate-${0}`).textContent).toBe(
       '2022/11/01 10:22:33 (更新: 2022/11/01 11:44:55)',
     )
     expect(screen.getByTestId(`postedUser-${0}`).textContent).toBe(expectedImpressions[0].user.name)
@@ -77,14 +74,9 @@ describe('ImpressionList component', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
-    render(
-      <Suspense>
-        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
-      </Suspense>,
-    )
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByTestId(`impression-${0}`)).toHaveClass('whitespace-pre-wrap')
+    expect(screen.getByTestId(`impression-${0}`)).toHaveClass('whitespace-pre-wrap')
     expect(screen.getByTestId(`impression-${1}`)).toHaveClass('whitespace-pre-wrap')
     expect(screen.getByTestId(`impression-${2}`)).toHaveClass('whitespace-pre-wrap')
   })
@@ -93,15 +85,10 @@ describe('ImpressionList component', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
-    render(
-      <Suspense>
-        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
-      </Suspense>,
-    )
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      within(await screen.findByTestId(`edit-${0}`)).queryByRole('button'),
+      within(screen.getByTestId(`edit-${0}`)).queryByRole('button'),
     ).not.toBeInTheDocument()
     expect(within(screen.getByTestId(`edit-${1}`)).getByRole('button')).toBeInTheDocument()
     expect(within(screen.getByTestId(`edit-${2}`)).queryByRole('button')).not.toBeInTheDocument()
@@ -111,14 +98,9 @@ describe('ImpressionList component', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue([])
 
-    render(
-      <Suspense>
-        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
-      </Suspense>,
-    )
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText('現在登録されている感想はありません')).toBeInTheDocument()
+    expect(screen.getByText('現在登録されている感想はありません')).toBeInTheDocument()
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
@@ -126,16 +108,25 @@ describe('ImpressionList component', async () => {
     prismaImpressionsMock.mockRejectedValue(expectedError)
     console.error = vi.fn()
 
-    render(
-      <Suspense>
-        <ImpressionList bookId={lendableBook.id} userId={user1.id} />
-      </Suspense>,
-    )
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      await screen.findByText('感想の取得に失敗しました。再読み込みしてみてください。'),
+      screen.getByText('感想の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
+  })
+
+  it('各ユーザーアバターがリンクになっている', async () => {
+    // @ts-ignore
+    prismaImpressionsMock.mockResolvedValue(expectedImpressions)
+
+    render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
+
+    const userLinks = screen.getAllByRole('link')
+    
+    expect(userLinks).toHaveLength(3)
+    expect(userLinks[0]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[0].user.email)}`)
+    expect(userLinks[1]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[1].user.email)}`)
+    expect(userLinks[2]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[2].user.email)}`)
   })
 })
