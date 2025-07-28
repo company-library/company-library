@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import { Suspense } from 'react'
 import UserAvatar from '@/components/userAvatar'
 import { user1, user2 } from '../../test/__utils__/data/user'
 
@@ -16,38 +15,53 @@ describe('UserAvatar component', async () => {
   it('ユーザー画像が表示されること', async () => {
     getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
 
-    render(
-      <Suspense>
-        <UserAvatar user={user1} />
-      </Suspense>,
-    )
+    render(await UserAvatar({ user: user1 }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByTestId('profileImage')).toBeInTheDocument()
+    expect(screen.getByTestId('profileImage')).toBeInTheDocument()
   })
 
   it('ユーザー画像が存在しない場合は、ユーザー名先頭1文字のアイコンが表示されること', async () => {
     getAvatarUrlMock.mockResolvedValue(undefined)
 
-    render(
-      <Suspense>
-        <UserAvatar user={user2} />
-      </Suspense>,
-    )
+    render(await UserAvatar({ user: user2 }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(user2.name.substring(0, 1))).toBeInTheDocument()
+    expect(screen.getByText(user2.name.substring(0, 1))).toBeInTheDocument()
     expect(screen.queryByTestId('profileImage')).not.toBeInTheDocument()
+  })
+
+  it('linkToProfile が true の場合、リンクが表示されること', async () => {
+    getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
+
+    render(await UserAvatar({ user: user1, linkToProfile: true }))
+
+    const link = screen.getByRole('link')
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', `/users/${encodeURIComponent(user1.email)}`)
+  })
+
+  it.each([
+    {
+      case: 'linkToProfile が false の場合',
+      linkToProfile: false,
+      expectLink: false,
+    },
+    {
+      case: 'linkToProfile が undefined（デフォルト）の場合',
+      linkToProfile: undefined,
+      expectLink: false,
+    },
+  ])('$case、リンクが表示されないこと', async ({ linkToProfile }) => {
+    getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
+
+    render(await UserAvatar({ user: user1, linkToProfile }))
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
 
   describe.each([
     { case: 'ユーザー画像が存在する場合', avatarUrl: user1.imageUrl },
     { case: 'ユーザー画像が存在しない場合', avatarUrl: undefined },
   ])('$case', ({ avatarUrl }) => {
-    beforeEach(() => {
-      getAvatarUrlMock.mockResolvedValue(avatarUrl)
-    })
-
     it.each([
       {
         size: undefined,
@@ -69,15 +83,11 @@ describe('UserAvatar component', async () => {
       'sizeプロップスが $size の場合、 widthが $expectedWidth であること',
       async ({ size, expectedWidth }) => {
         assert(size === 'sm' || size === 'md' || size === 'lg' || size === undefined)
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-        render(
-          <Suspense>
-            <UserAvatar user={user1} size={size} />
-          </Suspense>,
-        )
+        render(await UserAvatar({ user: user1, size }))
 
-        // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-        expect(await screen.findByTestId('width')).toHaveClass(expectedWidth)
+        expect(screen.getByTestId('width')).toHaveClass(expectedWidth)
       },
     )
 
@@ -85,15 +95,11 @@ describe('UserAvatar component', async () => {
       'tooltipプロップスが $tooltip の場合、 ツールチップが表示されないこと',
       async ({ tooltip }) => {
         assert(tooltip === undefined || tooltip === 'none')
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-        render(
-          <Suspense>
-            <UserAvatar user={user1} tooltip={tooltip} />
-          </Suspense>,
-        )
+        render(await UserAvatar({ user: user1, tooltip }))
 
-        // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-        expect(await screen.findByTestId('name-tooltip')).not.toHaveClass('tooltip')
+        expect(screen.getByTestId('name-tooltip')).not.toHaveClass('tooltip')
       },
     )
 
@@ -120,17 +126,12 @@ describe('UserAvatar component', async () => {
         assert(
           tooltip === 'top' || tooltip === 'bottom' || tooltip === 'left' || tooltip === 'right',
         )
-        const user = user1
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-        render(
-          <Suspense>
-            <UserAvatar user={user} tooltip={tooltip} />
-          </Suspense>,
-        )
+        render(await UserAvatar({ user: user1, tooltip }))
 
-        // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-        expect(await screen.findByTestId('name-tooltip')).toHaveClass(...expectedClasses)
-        expect(screen.getByTestId('name-tooltip')).toHaveAttribute('data-tip', user.name)
+        expect(screen.getByTestId('name-tooltip')).toHaveClass(...expectedClasses)
+        expect(screen.getByTestId('name-tooltip')).toHaveAttribute('data-tip', user1.name)
       },
     )
   })
