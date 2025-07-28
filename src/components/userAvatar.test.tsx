@@ -36,7 +36,7 @@ describe('UserAvatar component', async () => {
 
     const link = screen.getByRole('link')
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', `/users/${encodeURIComponent(user1.email)}`)
+    expect(link).toHaveAttribute('href', `/users/${user1.id}`)
   })
 
   it.each([
