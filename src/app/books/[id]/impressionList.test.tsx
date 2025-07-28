@@ -6,11 +6,15 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
-    vi.fn().mockImplementation(({ user, linkToProfile }) => (
-      linkToProfile ? 
-        <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a> :
-        <div>{user.name}</div>
-    )),
+    vi
+      .fn()
+      .mockImplementation(({ user, linkToProfile }) =>
+        linkToProfile ? (
+          <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
+        ) : (
+          <div>{user.name}</div>
+        ),
+      ),
   )
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: unknown[]) => UserAvatarMock(...args),
@@ -87,9 +91,7 @@ describe('ImpressionList component', async () => {
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
-    expect(
-      within(screen.getByTestId(`edit-${0}`)).queryByRole('button'),
-    ).not.toBeInTheDocument()
+    expect(within(screen.getByTestId(`edit-${0}`)).queryByRole('button')).not.toBeInTheDocument()
     expect(within(screen.getByTestId(`edit-${1}`)).getByRole('button')).toBeInTheDocument()
     expect(within(screen.getByTestId(`edit-${2}`)).queryByRole('button')).not.toBeInTheDocument()
   })
@@ -123,10 +125,19 @@ describe('ImpressionList component', async () => {
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
 
     const userLinks = screen.getAllByRole('link')
-    
+
     expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[0].user.email)}`)
-    expect(userLinks[1]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[1].user.email)}`)
-    expect(userLinks[2]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedImpressions[2].user.email)}`)
+    expect(userLinks[0]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedImpressions[0].user.email)}`,
+    )
+    expect(userLinks[1]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedImpressions[1].user.email)}`,
+    )
+    expect(userLinks[2]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedImpressions[2].user.email)}`,
+    )
   })
 })

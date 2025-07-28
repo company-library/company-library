@@ -6,11 +6,15 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 describe('ReturnList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
     return {
-      UserAvatarMock: vi.fn().mockImplementation(({ user, linkToProfile }) => (
-        linkToProfile ? 
-          <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a> :
-          <div>{user.name}</div>
-      )),
+      UserAvatarMock: vi
+        .fn()
+        .mockImplementation(({ user, linkToProfile }) =>
+          linkToProfile ? (
+            <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
+          ) : (
+            <div>{user.name}</div>
+          ),
+        ),
     }
   })
   vi.mock('@/components/userAvatar', () => ({
@@ -56,9 +60,7 @@ describe('ReturnList Component', async () => {
   it('返却済の貸出履歴がある場合、その一覧が返却日の昇順で表示される', async () => {
     render(await ReturnList({ bookId: lendableBook.id }))
 
-    expect(screen.getByTestId(`returnedDate-${0}`).textContent).toBe(
-      '2022/10/01〜2022/10/30',
-    )
+    expect(screen.getByTestId(`returnedDate-${0}`).textContent).toBe('2022/10/01〜2022/10/30')
     expect(screen.getByTestId(`returnedUser-${0}`).textContent).toBe(
       expectedReturnHistories[0].lendingHistory.user.name,
     )
@@ -102,10 +104,19 @@ describe('ReturnList Component', async () => {
     render(await ReturnList({ bookId: lendableBook.id }))
 
     const userLinks = screen.getAllByRole('link')
-    
+
     expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedReturnHistories[0].lendingHistory.user.email)}`)
-    expect(userLinks[1]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedReturnHistories[1].lendingHistory.user.email)}`)
-    expect(userLinks[2]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedReturnHistories[2].lendingHistory.user.email)}`)
+    expect(userLinks[0]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedReturnHistories[0].lendingHistory.user.email)}`,
+    )
+    expect(userLinks[1]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedReturnHistories[1].lendingHistory.user.email)}`,
+    )
+    expect(userLinks[2]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedReturnHistories[2].lendingHistory.user.email)}`,
+    )
   })
 })

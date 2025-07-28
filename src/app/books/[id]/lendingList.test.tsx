@@ -7,11 +7,15 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 describe('LendingList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
     return {
-      UserAvatarMock: vi.fn().mockImplementation(({ user, linkToProfile }) => (
-        linkToProfile ? 
-          <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a> :
-          <div>{user.name}</div>
-      )),
+      UserAvatarMock: vi
+        .fn()
+        .mockImplementation(({ user, linkToProfile }) =>
+          linkToProfile ? (
+            <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
+          ) : (
+            <div>{user.name}</div>
+          ),
+        ),
     }
   })
   vi.mock('@/components/userAvatar', () => ({
@@ -142,10 +146,19 @@ describe('LendingList Component', async () => {
     render(await LendingList({ bookId: lendableBook.id }))
 
     const userLinks = screen.getAllByRole('link')
-    
+
     expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedLendingHistories[0].user.email)}`)
-    expect(userLinks[1]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedLendingHistories[1].user.email)}`)
-    expect(userLinks[2]).toHaveAttribute('href', `/users/${encodeURIComponent(expectedLendingHistories[2].user.email)}`)
+    expect(userLinks[0]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedLendingHistories[0].user.email)}`,
+    )
+    expect(userLinks[1]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedLendingHistories[1].user.email)}`,
+    )
+    expect(userLinks[2]).toHaveAttribute(
+      'href',
+      `/users/${encodeURIComponent(expectedLendingHistories[2].user.email)}`,
+    )
   })
 })
