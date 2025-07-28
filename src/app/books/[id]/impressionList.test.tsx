@@ -6,15 +6,7 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
 describe('ImpressionList component', async () => {
   const UserAvatarMock = vi.hoisted(() =>
-    vi
-      .fn()
-      .mockImplementation(({ user, linkToProfile }) =>
-        linkToProfile ? (
-          <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
-        ) : (
-          <div>{user.name}</div>
-        ),
-      ),
+    vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
   )
   vi.mock('@/components/userAvatar', () => ({
     default: (...args: unknown[]) => UserAvatarMock(...args),
@@ -32,21 +24,21 @@ describe('ImpressionList component', async () => {
       impression: '興味深い本でした',
       createdAt: new Date('2022-11-01T10:22:33+09:00'),
       updatedAt: new Date('2022-11-01T11:44:55+09:00'),
-      user: { id: 2, name: 'user02', email: 'user02@example.com' },
+      user: { id: 2, name: 'user02' },
     },
     {
       id: 1,
       impression: '本の感想です。\n面白かったです。',
       createdAt: new Date('2022-10-30T10:00:00+09:00'),
       updatedAt: new Date('2022-10-30T10:00:00+09:00'),
-      user: { id: 1, name: 'user01', email: 'user01@example.com' },
+      user: { id: 1, name: 'user01' },
     },
     {
       id: 3,
       impression: '感想',
       createdAt: new Date('2022-10-20T10:00:00+09:00'),
       updatedAt: new Date('2022-10-21T10:00:00+09:00'),
-      user: { id: 3, name: 'user03', email: 'user03@example.com' },
+      user: { id: 3, name: 'user03' },
     },
   ]
 
@@ -118,26 +110,32 @@ describe('ImpressionList component', async () => {
     expect(console.error).toBeCalledWith(expectedError)
   })
 
-  it('各ユーザーアバターがリンクになっている', async () => {
+  it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
     // @ts-ignore
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
-
-    const userLinks = screen.getAllByRole('link')
-
-    expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedImpressions[0].user.email)}`,
+    
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedImpressions[0].user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[1]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedImpressions[1].user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedImpressions[1].user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[2]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedImpressions[2].user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedImpressions[2].user,
+        linkToProfile: true
+      }),
+      undefined
     )
   })
 })

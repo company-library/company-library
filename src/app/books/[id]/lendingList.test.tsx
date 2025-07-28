@@ -7,15 +7,7 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 describe('LendingList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
     return {
-      UserAvatarMock: vi
-        .fn()
-        .mockImplementation(({ user, linkToProfile }) =>
-          linkToProfile ? (
-            <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
-          ) : (
-            <div>{user.name}</div>
-          ),
-        ),
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
     }
   })
   vi.mock('@/components/userAvatar', () => ({
@@ -27,21 +19,21 @@ describe('LendingList Component', async () => {
       id: 2,
       dueDate: new Date('2022-10-30'),
       lentAt: new Date('2022-10-01'),
-      user: { id: 2, name: 'user02', email: 'user02@example.com' },
+      user: { id: 2, name: 'user02' },
       location: { id: 1, name: '図書館' },
     },
     {
       id: 3,
       dueDate: new Date('2022-10-31'),
       lentAt: new Date('2022-10-01'),
-      user: { id: 3, name: 'user03', email: 'user03@example.com' },
+      user: { id: 3, name: 'user03' },
       location: { id: 2, name: 'オフィス' },
     },
     {
       id: 1,
       dueDate: new Date('2022-11-01'),
       lentAt: new Date('2022-10-01'),
-      user: { id: 1, name: 'user01', email: 'user01@example.com' },
+      user: { id: 1, name: 'user01' },
       location: null,
     },
   ]
@@ -118,14 +110,14 @@ describe('LendingList Component', async () => {
         id: 1,
         dueDate: new Date('2022-11-01'),
         lentAt: new Date('2022-10-01'),
-        user: { id: 1, name: 'user01', email: 'user01@example.com' },
+        user: { id: 1, name: 'user01' },
         location: { id: 1, name: '図書館' },
       },
       {
         id: 2,
         dueDate: new Date('2022-11-02'),
         lentAt: new Date('2022-10-02'),
-        user: { id: 2, name: 'user02', email: 'user02@example.com' },
+        user: { id: 2, name: 'user02' },
         location: null,
       },
     ]
@@ -139,26 +131,32 @@ describe('LendingList Component', async () => {
     expect(screen.getByTestId('location-1')).toHaveTextContent('場所不明')
   })
 
-  it('各ユーザーアバターがリンクになっている', async () => {
+  it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
     // @ts-ignore
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
     render(await LendingList({ bookId: lendableBook.id }))
-
-    const userLinks = screen.getAllByRole('link')
-
-    expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedLendingHistories[0].user.email)}`,
+    
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[0].user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[1]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedLendingHistories[1].user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[1].user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[2]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedLendingHistories[2].user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[2].user,
+        linkToProfile: true
+      }),
+      undefined
     )
   })
 })

@@ -6,15 +6,7 @@ import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 describe('ReturnList Component', async () => {
   const { UserAvatarMock } = vi.hoisted(() => {
     return {
-      UserAvatarMock: vi
-        .fn()
-        .mockImplementation(({ user, linkToProfile }) =>
-          linkToProfile ? (
-            <a href={`/users/${encodeURIComponent(user.email)}`}>{user.name}</a>
-          ) : (
-            <div>{user.name}</div>
-          ),
-        ),
+      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
     }
   })
   vi.mock('@/components/userAvatar', () => ({
@@ -29,7 +21,7 @@ describe('ReturnList Component', async () => {
         id: 2,
         dueDate: new Date('2022-10-08'),
         lentAt: new Date('2022-10-01'),
-        user: { id: 2, name: 'user02', email: 'user02@example.com' },
+        user: { id: 2, name: 'user02' },
       },
     },
     {
@@ -39,7 +31,7 @@ describe('ReturnList Component', async () => {
         id: 3,
         dueDate: new Date('2022-10-15'),
         lentAt: new Date('2022-10-01'),
-        user: { id: 3, name: 'user03', email: 'user03@example.com' },
+        user: { id: 3, name: 'user03' },
       },
     },
     {
@@ -49,7 +41,7 @@ describe('ReturnList Component', async () => {
         id: 1,
         dueDate: new Date('2022-10-24'),
         lentAt: new Date('2022-10-01'),
-        user: { id: 1, name: 'user01', email: 'user01@example.com' },
+        user: { id: 1, name: 'user01' },
       },
     },
   ]
@@ -97,26 +89,32 @@ describe('ReturnList Component', async () => {
     expect(console.error).toBeCalledWith(expectedError)
   })
 
-  it('各ユーザーアバターがリンクになっている', async () => {
+  it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
     // @ts-ignore
     prismaReturnHistoryMock.mockResolvedValue(expectedReturnHistories)
 
     render(await ReturnList({ bookId: lendableBook.id }))
-
-    const userLinks = screen.getAllByRole('link')
-
-    expect(userLinks).toHaveLength(3)
-    expect(userLinks[0]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedReturnHistories[0].lendingHistory.user.email)}`,
+    
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedReturnHistories[0].lendingHistory.user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[1]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedReturnHistories[1].lendingHistory.user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedReturnHistories[1].lendingHistory.user,
+        linkToProfile: true
+      }),
+      undefined
     )
-    expect(userLinks[2]).toHaveAttribute(
-      'href',
-      `/users/${encodeURIComponent(expectedReturnHistories[2].lendingHistory.user.email)}`,
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedReturnHistories[2].lendingHistory.user,
+        linkToProfile: true
+      }),
+      undefined
     )
   })
 })
