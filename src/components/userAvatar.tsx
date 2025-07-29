@@ -1,23 +1,31 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { FC } from 'react'
 import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 
 type UserAvatarProps = {
   user: {
+    id: number
     name: string
     email: string
   }
   size?: Size
   tooltip?: Tooltip
+  linkToProfile?: boolean
 }
 
-const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'none' }) => {
+const UserAvatar: FC<UserAvatarProps> = async ({
+  user,
+  size = 'md',
+  tooltip = 'none',
+  linkToProfile = false,
+}) => {
   const imageUrl = await getAvatarUrl(user.email)
   const width = getWidth(size)
   const tooltipPosition = getTooltipPosition(tooltip)
 
-  return (
-    <div className={`${tooltipPosition}`} data-tip={user.name} data-testid="name-tooltip">
+  const avatarContent = (
+    <>
       {imageUrl ? (
         <div className="avatar">
           <div className={`${width} relative`} data-testid="width">
@@ -43,6 +51,12 @@ const UserAvatar: FC<UserAvatarProps> = async ({ user, size = 'md', tooltip = 'n
           </div>
         </div>
       )}
+    </>
+  )
+
+  return (
+    <div className={`${tooltipPosition}`} data-tip={user.name} data-testid="name-tooltip">
+      {linkToProfile ? <Link href={`/users/${user.id}`}>{avatarContent}</Link> : avatarContent}
     </div>
   )
 }
