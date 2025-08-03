@@ -43,7 +43,7 @@ const LendingList = async ({ bookId }: Props) => {
                 </span>
               </td>
               <td data-testid={`lendingUser-${index}`}>
-                <UserAvatar user={lendingHistory.user} />
+                <UserAvatar user={lendingHistory.user} linkToProfile={true} />
               </td>
               <td data-testid={`location-${index}`}>
                 <span className="text-sm text-gray-600">

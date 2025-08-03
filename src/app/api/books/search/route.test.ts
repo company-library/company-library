@@ -1,3 +1,4 @@
+import { NextRequest } from 'next/server'
 import { GET } from '@/app/api/books/search/route'
 import type { Book } from '@/models/book'
 import { bookWithImage, bookWithoutImage } from '../../../../../test/__utils__/data/book'
@@ -6,9 +7,7 @@ import { prismaMock } from '../../../../../test/__utils__/libs/prisma/singleton'
 describe('books search api', () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
 
-  const req = {
-    url: 'http://localhost:3000/api/books/search',
-  } as Request
+  const req = new NextRequest('http://localhost:3000/api/books/search')
 
   it('本の一覧を取得し、それを返す', async () => {
     prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
@@ -29,16 +28,76 @@ describe('books search api', () => {
 
   it('検索キーワードを用いて絞り込みを行う', async () => {
     const searchWord = 'testBook'
-    const reqWithSearchWord = {
-      url: `http://localhost:3000/api/books/search?q=${searchWord}`,
-    } as Request
+    const reqWithSearchWord = new NextRequest(
+      `http://localhost:3000/api/books/search?q=${searchWord}`,
+    )
 
     prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
 
     await GET(reqWithSearchWord)
 
     expect(prismaMock.book.findMany).toBeCalledWith({
-      where: { title: { contains: searchWord, mode: 'insensitive' } },
+      where: {
+        title: { contains: searchWord, mode: 'insensitive' },
+        registrationHistories: {
+          some: {
+            location: {
+              id: undefined,
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+  })
+
+  it('保管場所IDで絞り込みを行う', async () => {
+    const locationId = '1'
+    const reqWithLocationId = new NextRequest(
+      `http://localhost:3000/api/books/search?locationId=${locationId}`,
+    )
+
+    prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
+
+    await GET(reqWithLocationId)
+
+    expect(prismaMock.book.findMany).toBeCalledWith({
+      where: {
+        title: { contains: '', mode: 'insensitive' },
+        registrationHistories: {
+          some: {
+            location: {
+              id: 1,
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    })
+  })
+
+  it('検索キーワードと保管場所IDの両方で絞り込みを行う', async () => {
+    const searchWord = 'testBook'
+    const locationId = '2'
+    const reqWithBothParams = new NextRequest(
+      `http://localhost:3000/api/books/search?q=${searchWord}&locationId=${locationId}`,
+    )
+
+    prismaMock.book.findMany.mockResolvedValueOnce(expectedBooks)
+
+    await GET(reqWithBothParams)
+
+    expect(prismaMock.book.findMany).toBeCalledWith({
+      where: {
+        title: { contains: searchWord, mode: 'insensitive' },
+        registrationHistories: {
+          some: {
+            location: {
+              id: 2,
+            },
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     })
   })
@@ -49,7 +108,16 @@ describe('books search api', () => {
     await GET(req)
 
     expect(prismaMock.book.findMany).toBeCalledWith({
-      where: { title: { contains: '', mode: 'insensitive' } },
+      where: {
+        title: { contains: '', mode: 'insensitive' },
+        registrationHistories: {
+          some: {
+            location: {
+              id: undefined,
+            },
+          },
+        },
+      },
       orderBy: { createdAt: 'desc' },
     })
   })
