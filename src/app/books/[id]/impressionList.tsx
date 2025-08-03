@@ -43,7 +43,7 @@ const ImpressionList = async ({ bookId, userId }: Props) => {
                 )}
               </td>
               <td className="w-20" data-testid={`postedUser-${index}`}>
-                <UserAvatar user={impression.user} />
+                <UserAvatar user={impression.user} linkToProfile={true} />
               </td>
               <td className="whitespace-pre-wrap" data-testid={`impression-${index}`}>
                 {impression.impression}
