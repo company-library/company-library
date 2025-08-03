@@ -1,11 +1,11 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
@@ -25,6 +25,7 @@ model User {
 model Book {
   id                    Int                   @id @default(autoincrement())
   title                 String
+  description           String                @default("")
   isbn                  String                @unique
   imageUrl              String?               @map("image_url")
   createdAt             DateTime              @default(now()) @map("created_at")
@@ -60,13 +61,13 @@ model ReturnHistory {
 }
 
 model RegistrationHistory {
-  id         Int      @id @default(autoincrement())
-  bookId     Int      @map("book_id")
-  userId     Int      @map("user_id")
-  locationId Int?     @map("location_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  book       Book     @relation(fields: [bookId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  id         Int       @id @default(autoincrement())
+  bookId     Int       @map("book_id")
+  userId     Int       @map("user_id")
+  locationId Int?      @map("location_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  book       Book      @relation(fields: [bookId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
   location   Location? @relation(fields: [locationId], references: [id])
 
   @@map("registration_histories")
@@ -89,7 +90,7 @@ model Reservation {
   id              Int      @id @default(autoincrement())
   bookId          Int      @map("book_id")
   userId          Int      @map("user_id")
-  reservationDate DateTime @db.Date @map("reservation_date")
+  reservationDate DateTime @map("reservation_date") @db.Date
   createdAt       DateTime @default(now()) @map("created_at")
   book            Book     @relation(fields: [bookId], references: [id])
   user            User     @relation(fields: [userId], references: [id])
