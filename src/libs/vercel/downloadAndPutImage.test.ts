@@ -38,21 +38,6 @@ describe('downloadAndPutImage function', () => {
     })
   })
 
-  it('ワイルドカードで許可されたホストからの画像URLでファイルをアップロードできる', async () => {
-    const externalImageUrl = 'https://test.example.org/image.jpg'
-    const isbn = '1234567890'
-    const imageFile = new Blob()
-    global.fetch = vi.fn().mockResolvedValue({ blob: () => imageFile })
-
-    const result = await downloadAndPutImage(externalImageUrl, isbn)
-
-    expect(result).toBe(`https://example.com/cover/${isbn}.jpg`)
-    expect(putMock).toBeCalledWith(`cover/${isbn}.jpg`, imageFile, {
-      access: 'public',
-      contentType: 'image/jpeg',
-    })
-  })
-
   it('externalImageUrlがundefinedの場合、undefinedを返す', async () => {
     const externalImageUrl = undefined
     const isbn = '1234567890'
@@ -75,8 +60,8 @@ describe('downloadAndPutImage function', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
   })
 
-  it('サブドメインは許可されていないホスト名として拒否される', async () => {
-    const externalImageUrl = 'https://invalid-books.example.net/image.jpg'
+  it('ワイルドカードのホストからの画像URLは拒否される', async () => {
+    const externalImageUrl = 'https://test.example.org/image.jpg'
     const isbn = '1234567890'
 
     const result = await downloadAndPutImage(externalImageUrl, isbn)

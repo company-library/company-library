@@ -22,16 +22,7 @@ const isAllowedImageUrl = (url: string): boolean => {
     const hostname = parsedUrl.hostname
     const allowedHosts = getAllowedHosts()
 
-    // Next.jsのremotePatternsで許可されたホストをチェック
-    return allowedHosts.some((allowedHost) => {
-      // ワイルドカード（*.example.com）の場合
-      if (allowedHost.startsWith('*.')) {
-        const domain = allowedHost.slice(2)
-        return hostname.endsWith(domain)
-      }
-      // 完全一致の場合
-      return hostname === allowedHost
-    })
+    return allowedHosts.includes(hostname)
   } catch {
     return false
   }
