@@ -3,8 +3,9 @@ import prisma from '@/libs/prisma/client'
 import type { CustomError } from '@/models/errors'
 
 export async function GET(req: NextRequest) {
-  const q = req.nextUrl.searchParams.get('q') ?? ''
-  const locationId = req.nextUrl.searchParams.get('locationId') ?? ''
+  const searchParams = req.nextUrl.searchParams
+  const q = searchParams.get('q') ?? ''
+  const locationId = searchParams.get('locationId') ?? ''
 
   const books = await prisma.book
     .findMany({
