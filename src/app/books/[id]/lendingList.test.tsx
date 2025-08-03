@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import { DateTime, Settings } from 'luxon'
-import { Suspense } from 'react'
 import LendingList from '@/app/books/[id]/lendingList'
 import { lendableBook } from '../../../../test/__utils__/data/book'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
@@ -45,14 +44,9 @@ describe('LendingList Component', async () => {
     // @ts-ignore
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
-    render(
-      <Suspense>
-        <LendingList bookId={lendableBook.id} />
-      </Suspense>,
-    )
+    render(await LendingList({ bookId: lendableBook.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect((await screen.findByTestId(`dueDate-${0}`)).textContent).toBe('2022/10/30')
+    expect(screen.getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
     expect(screen.getByTestId(`lendingUser-${0}`).textContent).toBe(
       expectedLendingHistories[0].user.name,
     )
@@ -76,14 +70,9 @@ describe('LendingList Component', async () => {
     // @ts-ignore
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
-    render(
-      <Suspense>
-        <LendingList bookId={lendableBook.id} />
-      </Suspense>,
-    )
+    render(await LendingList({ bookId: lendableBook.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect((await screen.findByTestId(`dueDate-${0}`)).textContent).toBe('2022/10/30')
+    expect(screen.getByTestId(`dueDate-${0}`).textContent).toBe('2022/10/30')
     expect(screen.getByTestId(`dueDate-${0}`)).toHaveClass('text-red-400', 'font-bold')
     expect(screen.getByTestId(`dueDate-${1}`).textContent).toBe('2022/10/31')
     expect(screen.getByTestId(`dueDate-${1}`)).not.toHaveClass('text-red-400')
@@ -97,14 +86,9 @@ describe('LendingList Component', async () => {
     // @ts-ignore
     prismaLendingHistoryMock.mockResolvedValue([])
 
-    render(
-      <Suspense>
-        <LendingList bookId={lendableBook.id} />
-      </Suspense>,
-    )
+    render(await LendingList({ bookId: lendableBook.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText('現在借りているユーザーはいません')).toBeInTheDocument()
+    expect(screen.getByText('現在借りているユーザーはいません')).toBeInTheDocument()
   })
 
   it('返却履歴の取得時にエラーが発生した場合、エラーメッセージが表示される', async () => {
@@ -112,15 +96,10 @@ describe('LendingList Component', async () => {
     prismaLendingHistoryMock.mockRejectedValue(expectedError)
     console.error = vi.fn()
 
-    render(
-      <Suspense>
-        <LendingList bookId={lendableBook.id} />
-      </Suspense>,
-    )
+    render(await LendingList({ bookId: lendableBook.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
     expect(
-      await screen.findByText('貸出履歴の取得に失敗しました。再読み込みしてみてください。'),
+      screen.getByText('貸出履歴の取得に失敗しました。再読み込みしてみてください。'),
     ).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectedError)
   })
@@ -146,14 +125,38 @@ describe('LendingList Component', async () => {
     // @ts-ignore
     prismaLendingHistoryMock.mockResolvedValue(lendingHistoriesWithLocation)
 
-    render(
-      <Suspense>
-        <LendingList bookId={lendableBook.id} />
-      </Suspense>,
-    )
+    render(await LendingList({ bookId: lendableBook.id }))
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByTestId('location-0')).toHaveTextContent('図書館')
+    expect(screen.getByTestId('location-0')).toHaveTextContent('図書館')
     expect(screen.getByTestId('location-1')).toHaveTextContent('場所不明')
+  })
+
+  it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
+    // @ts-ignore
+    prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
+
+    render(await LendingList({ bookId: lendableBook.id }))
+
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[0].user,
+        linkToProfile: true,
+      }),
+      undefined,
+    )
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[1].user,
+        linkToProfile: true,
+      }),
+      undefined,
+    )
+    expect(UserAvatarMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        user: expectedLendingHistories[2].user,
+        linkToProfile: true,
+      }),
+      undefined,
+    )
   })
 })
