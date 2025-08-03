@@ -6,20 +6,16 @@ import BookTile from '@/components/bookTile'
 import fetcher from '@/libs/swr/fetcher'
 import type { Book } from '@/models/book'
 import { type CustomError, isCustomError } from '@/models/errors'
-
-type Location = {
-  id: number
-  name: string
-}
+import type { Location } from '@/models/location'
 
 const BookList = () => {
-  const [searchLocation, setSearchLocation] = useState('')
   const { data: locationsData } = useSWR<{ locations: Location[] } | CustomError>(
     '/api/locations',
     fetcher,
   )
   const locations = isCustomError(locationsData) ? [] : locationsData?.locations || []
 
+  const [searchLocation, setSearchLocation] = useState('')
   const [searchKeyword, setSearchKeyword] = useState('')
   const { data, error } = useSWR<{ books: Book[] } | CustomError>(
     `/api/books/search?q=${searchKeyword}&locationId=${searchLocation}`,
