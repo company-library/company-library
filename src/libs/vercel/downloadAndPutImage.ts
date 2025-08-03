@@ -22,6 +22,7 @@ const isAllowedImageUrl = (url: string): boolean => {
     const hostname = parsedUrl.hostname
     const allowedHosts = getAllowedHosts()
 
+    // セキュリティの観点で、現在の実装ではワイルドカード（*.example.org）はサポートしない
     return allowedHosts.includes(hostname)
   } catch {
     return false

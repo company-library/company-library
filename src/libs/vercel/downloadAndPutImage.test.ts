@@ -48,7 +48,8 @@ describe('downloadAndPutImage function', () => {
   })
 
   it('許可されていないホストからの画像URLは拒否される', async () => {
-    const externalImageUrl = 'https://example.jp/image.jpg'
+    // 許可されるのはドメイン名が完全に一致するもののみであり、サブドメインがある場合は拒否される
+    const externalImageUrl = 'https://invalid.example.net/image.jpg'
     const isbn = '1234567890'
 
     const result = await downloadAndPutImage(externalImageUrl, isbn)
