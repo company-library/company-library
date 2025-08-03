@@ -75,7 +75,7 @@ describe('downloadAndPutImage function', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
   })
 
-  it('部分的に一致するホスト名は拒否される', async () => {
+  it('サブドメインは許可されていないホスト名として拒否される', async () => {
     const externalImageUrl = 'https://invalid-books.example.net/image.jpg'
     const isbn = '1234567890'
 
