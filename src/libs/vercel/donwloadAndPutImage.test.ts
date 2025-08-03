@@ -1,5 +1,14 @@
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
+// next.config.mjsをモック
+vi.mock('../../../next.config.mjs', () => ({
+  default: {
+    images: {
+      remotePatterns: [{ hostname: '*.example.org' }, { hostname: 'example.net' }],
+    },
+  },
+}))
+
 describe('downloadAndPutImage function', () => {
   const { putMock } = vi.hoisted(() => {
     return { putMock: vi.fn() }
@@ -8,12 +17,29 @@ describe('downloadAndPutImage function', () => {
     put: (...args: unknown[]) => putMock(...args),
   }))
 
+  const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
   beforeEach(() => {
     putMock.mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
   })
 
-  it('ファイルをアップロードした場合、URLを消す', async () => {
-    const externalImageUrl = 'https://example.com/image.jpg'
+  it('許可されたホストからの画像URLでファイルをアップロードした場合、URLを返す', async () => {
+    const externalImageUrl = 'https://example.net/image.jpg'
+    const isbn = '1234567890'
+    const imageFile = new Blob()
+    global.fetch = vi.fn().mockResolvedValue({ blob: () => imageFile })
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBe(`https://example.com/cover/${isbn}.jpg`)
+    expect(putMock).toBeCalledWith(`cover/${isbn}.jpg`, imageFile, {
+      access: 'public',
+      contentType: 'image/jpeg',
+    })
+  })
+
+  it('ワイルドカードで許可されたホストからの画像URLでファイルをアップロードできる', async () => {
+    const externalImageUrl = 'https://test.example.org/image.jpg'
     const isbn = '1234567890'
     const imageFile = new Blob()
     global.fetch = vi.fn().mockResolvedValue({ blob: () => imageFile })
@@ -34,5 +60,29 @@ describe('downloadAndPutImage function', () => {
     const result = await downloadAndPutImage(externalImageUrl, isbn)
 
     expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).not.toHaveBeenCalled()
+  })
+
+  it('許可されていないホストからの画像URLは拒否される', async () => {
+    const externalImageUrl = 'https://example.jp/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('部分的に一致するホスト名は拒否される', async () => {
+    const externalImageUrl = 'https://invalid-books.example.net/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
   })
 })
