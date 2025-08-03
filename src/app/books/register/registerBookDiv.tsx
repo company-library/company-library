@@ -5,17 +5,13 @@ import useSWR from 'swr'
 import { registerBook } from '@/app/books/register/actions'
 import fetcher from '@/libs/swr/fetcher'
 import { type CustomError, isCustomError } from '@/models/errors'
+import type { Location } from '@/models/location'
 
 type RegisterBookDivProps = {
   title: string
   isbn: string
   thumbnailUrl: string | undefined
   userId: number
-}
-
-type Location = {
-  id: number
-  name: string
 }
 
 /**
