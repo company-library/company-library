@@ -8,6 +8,7 @@ import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 /**
  * 書籍登録をするServer Action
  * @param {string} title
+ * @param description
  * @param {string} isbn
  * @param {string | undefined} imageUrl
  * @param {number} locationId
@@ -16,6 +17,7 @@ import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
  */
 export const registerBook = async (
   title: string,
+  description: string,
   isbn: string,
   imageUrl: string | undefined,
   locationId: number,
@@ -27,6 +29,7 @@ export const registerBook = async (
     .create({
       data: {
         title,
+        description,
         isbn,
         imageUrl: vercelBlobUrl,
       },

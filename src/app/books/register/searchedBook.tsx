@@ -20,6 +20,7 @@ type SearchedBook = {
     {
       volumeInfo?: {
         title?: string
+        description?: string
         subtitle?: string
         imageLinks?: {
           thumbnail?: string
@@ -57,12 +58,22 @@ const SearchedBook: FC<SearchedBookProps> = ({ isbn, userId }) => {
   }
 
   if (publicBook != null) {
-    const book = { title: publicBook.title, imageUrl: publicBook.imageUrl }
-    const { title, imageUrl: thumbnailUrl } = publicBook
+    const book = {
+      title: publicBook.title,
+      description: publicBook.description,
+      imageUrl: publicBook.imageUrl,
+    }
+    const { title, description, imageUrl: thumbnailUrl } = publicBook
     return (
       <>
         <FoundBookDiv book={book} />
-        <RegisterBookDiv title={title} isbn={isbn} thumbnailUrl={thumbnailUrl} userId={userId} />
+        <RegisterBookDiv
+          title={title}
+          description={description}
+          isbn={isbn}
+          thumbnailUrl={thumbnailUrl}
+          userId={userId}
+        />
       </>
     )
   }
@@ -112,8 +123,10 @@ const usePublicBookData = (isbn: string) => {
   const openbdBook = useOpenBDData(isbn)
 
   let title = googleBook?.items?.[0].volumeInfo?.title
+  let description = googleBook?.items?.[0].volumeInfo?.description
   let thumbnailUrl = googleBook?.items?.[0].volumeInfo?.imageLinks?.thumbnail
   title ??= openbdBook?.[0]?.summary?.title
+  description ??= ''
   thumbnailUrl ??= openbdBook?.[0]?.summary?.cover
 
   if (!title) {
@@ -122,6 +135,7 @@ const usePublicBookData = (isbn: string) => {
 
   return {
     title: title,
+    description: description,
     imageUrl: thumbnailUrl,
   }
 }

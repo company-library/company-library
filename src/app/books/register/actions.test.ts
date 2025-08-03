@@ -31,6 +31,7 @@ describe('server actions', () => {
     it('書籍と登録履歴の追加ができる', async () => {
       const bookId = 1
       const title = 'testBook'
+      const description = 'テスト書籍の概要'
       const isbn = '1234567890123'
       const now = new Date()
       const userId = user1.id
@@ -38,6 +39,7 @@ describe('server actions', () => {
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
         title,
+        description,
         isbn,
         imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         createdAt: now,
@@ -52,6 +54,7 @@ describe('server actions', () => {
 
       const result = await registerBook(
         title,
+        description,
         isbn,
         `https://example.com/books/${isbn}/external/cover.jpg`,
         locationId,
@@ -62,6 +65,7 @@ describe('server actions', () => {
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
+          description,
           isbn,
           imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         },
@@ -79,6 +83,7 @@ describe('server actions', () => {
 
     it('書籍の追加に失敗した場合はエラーをスローする', async () => {
       const title = 'testBook'
+      const description = 'テスト書籍の概要'
       const isbn = '1234567890123'
       const userId = user1.id
       const locationId = location1.id
@@ -87,13 +92,14 @@ describe('server actions', () => {
       prismaMock.book.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(registerBook(title, isbn, undefined, locationId, userId)).rejects.toThrow(
-        'Book creation failed',
-      )
+      await expect(
+        registerBook(title, description, isbn, undefined, locationId, userId),
+      ).rejects.toThrow('Book creation failed')
 
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
+          description,
           isbn,
           imageUrl: undefined,
         },
@@ -106,6 +112,7 @@ describe('server actions', () => {
     it('登録履歴の追加に失敗した場合はエラーを返す', async () => {
       const bookId = 1
       const title = 'testBook'
+      const description = 'テスト書籍の概要'
       const isbn = '1234567890123'
       const now = new Date()
       const userId = user1.id
@@ -115,6 +122,7 @@ describe('server actions', () => {
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
         title,
+        description,
         isbn,
         imageUrl: null,
         createdAt: now,
@@ -123,12 +131,13 @@ describe('server actions', () => {
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(
-        registerBook('testBook', '1234567890123', undefined, 1, user1.id),
+        registerBook('testBook', 'テスト書籍の概要', '1234567890123', undefined, 1, user1.id),
       ).rejects.toThrow('Registration creation failed')
 
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
+          description,
           isbn,
           imageUrl: undefined,
         },

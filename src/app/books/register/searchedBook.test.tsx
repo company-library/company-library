@@ -9,6 +9,7 @@ describe('searched book component', async () => {
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
+  const bookDescription = 'テスト書籍の概要'
 
   vi.mock('swr')
   const { addRegisterBookDivMock } = vi.hoisted(() => {
@@ -105,6 +106,7 @@ describe('searched book component', async () => {
       expect(registerBookDivMock).toBeCalledWith(
         {
           title: bookTitle,
+          description: bookDescription,
           isbn: isbn,
           thumbnailUrl: undefined,
           userId: userId,

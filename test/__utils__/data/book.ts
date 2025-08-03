@@ -3,6 +3,7 @@ import { location1, location2 } from './location'
 export const bookWithImage = {
   id: 1,
   title: '画像有りのタイトル',
+  description: '画像有りの書籍の概要',
   isbn: '1111111111111',
   imageUrl:
     'https://books.google.com/books/content?id=QlmenQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
@@ -12,6 +13,7 @@ export const bookWithImage = {
 export const bookWithoutImage = {
   id: 2,
   title: '画像無しのタイトル',
+  description: '画像無しの書籍の概要',
   isbn: '2222222222222',
   imageUrl: '',
   createdAt: new Date('2023-07-22T06:12:24.118Z'),

@@ -14,6 +14,7 @@ describe('BookDetail component', () => {
     id: book.id,
     createdAt: book.createdAt,
     title: book.title,
+    description: book.description,
     isbn: book.isbn,
     imageUrl: book.imageUrl,
     registrationHistories: book.registrationHistories,
