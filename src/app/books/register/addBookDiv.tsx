@@ -6,6 +6,7 @@ import useSWR from 'swr'
 import { addBook } from '@/app/books/register/actions'
 import fetcher from '@/libs/swr/fetcher'
 import { type CustomError, isCustomError } from '@/models/errors'
+import type { Location } from '@/models/location'
 
 type AddBookDivProps = {
   companyBook: {
@@ -15,11 +16,6 @@ type AddBookDivProps = {
     }
   }
   userId: number
-}
-
-type Location = {
-  id: number
-  name: string
 }
 
 /**
