@@ -94,27 +94,27 @@ describe('ReturnList Component', async () => {
     prismaReturnHistoryMock.mockResolvedValue(expectedReturnHistories)
 
     render(await ReturnList({ bookId: lendableBook.id }))
-    
+
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedReturnHistories[0].lendingHistory.user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedReturnHistories[1].lendingHistory.user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedReturnHistories[2].lendingHistory.user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
   })
 })

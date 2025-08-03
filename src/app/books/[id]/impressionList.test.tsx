@@ -115,27 +115,27 @@ describe('ImpressionList component', async () => {
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
-    
+
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedImpressions[0].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedImpressions[1].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedImpressions[2].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
   })
 })

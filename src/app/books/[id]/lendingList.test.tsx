@@ -136,27 +136,27 @@ describe('LendingList Component', async () => {
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
     render(await LendingList({ bookId: lendableBook.id }))
-    
+
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedLendingHistories[0].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedLendingHistories[1].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
     expect(UserAvatarMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user: expectedLendingHistories[2].user,
-        linkToProfile: true
+        linkToProfile: true,
       }),
-      undefined
+      undefined,
     )
   })
 })
