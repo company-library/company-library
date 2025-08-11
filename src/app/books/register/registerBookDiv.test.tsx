@@ -18,12 +18,19 @@ describe('register book div component', async () => {
 
   it('登録ボタンをクリックすると、server actionが実行される', async () => {
     const title = 'testBook'
+    const description = 'テスト書籍の概要'
     const isbn = '1234567890123'
     const thumbnailUrl = 'https://example.com/test.jpg'
     const userId = user1.id
 
     render(
-      <RegisterBookDiv title={title} isbn={isbn} thumbnailUrl={thumbnailUrl} userId={userId} />,
+      <RegisterBookDiv
+        title={title}
+        description={description}
+        isbn={isbn}
+        thumbnailUrl={thumbnailUrl}
+        userId={userId}
+      />,
     )
 
     expect(registerBookActionMock).not.toBeCalled()
@@ -36,7 +43,14 @@ describe('register book div component', async () => {
 
     await waitFor(() => {
       expect(registerBookActionMock).toBeCalledTimes(1)
-      expect(registerBookActionMock).toHaveBeenCalledWith(title, isbn, thumbnailUrl, 1, userId)
+      expect(registerBookActionMock).toHaveBeenCalledWith(
+        title,
+        description,
+        isbn,
+        thumbnailUrl,
+        1,
+        userId,
+      )
     })
   })
 })

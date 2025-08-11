@@ -26,7 +26,7 @@ describe('books search api', () => {
     })
   })
 
-  it('検索キーワードを用いて絞り込みを行う', async () => {
+  it('検索キーワード(タイトル、概要)を用いて絞り込みを行う', async () => {
     const searchWord = 'testBook'
     const reqWithSearchWord = new NextRequest(
       `http://localhost:3000/api/books/search?q=${searchWord}`,
@@ -38,7 +38,10 @@ describe('books search api', () => {
 
     expect(prismaMock.book.findMany).toBeCalledWith({
       where: {
-        title: { contains: searchWord, mode: 'insensitive' },
+        OR: [
+          { title: { contains: searchWord, mode: 'insensitive' } },
+          { description: { contains: searchWord, mode: 'insensitive' } },
+        ],
         registrationHistories: {
           some: {
             location: {
@@ -63,7 +66,10 @@ describe('books search api', () => {
 
     expect(prismaMock.book.findMany).toBeCalledWith({
       where: {
-        title: { contains: '', mode: 'insensitive' },
+        OR: [
+          { title: { contains: '', mode: 'insensitive' } },
+          { description: { contains: '', mode: 'insensitive' } },
+        ],
         registrationHistories: {
           some: {
             location: {
@@ -89,7 +95,10 @@ describe('books search api', () => {
 
     expect(prismaMock.book.findMany).toBeCalledWith({
       where: {
-        title: { contains: searchWord, mode: 'insensitive' },
+        OR: [
+          { title: { contains: searchWord, mode: 'insensitive' } },
+          { description: { contains: searchWord, mode: 'insensitive' } },
+        ],
         registrationHistories: {
           some: {
             location: {
@@ -109,7 +118,10 @@ describe('books search api', () => {
 
     expect(prismaMock.book.findMany).toBeCalledWith({
       where: {
-        title: { contains: '', mode: 'insensitive' },
+        OR: [
+          { title: { contains: '', mode: 'insensitive' } },
+          { description: { contains: '', mode: 'insensitive' } },
+        ],
         registrationHistories: {
           some: {
             location: {

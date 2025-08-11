@@ -9,6 +9,7 @@ describe('searched book component', async () => {
   const userId = user1.id
   const isbn = '1234567890123'
   const bookTitle = 'testBook'
+  const bookDescription = 'テスト書籍の概要'
 
   vi.mock('swr')
   const { addRegisterBookDivMock } = vi.hoisted(() => {
@@ -82,17 +83,19 @@ describe('searched book component', async () => {
   it.each([
     {
       testcase: 'Google Books',
-      google: { items: [{ volumeInfo: { title: bookTitle } }] },
+      google: { items: [{ volumeInfo: { title: bookTitle, description: bookDescription } }] },
       openbd: [null],
+      expectedDescription: bookDescription,
     },
     {
       testcase: 'OpenBD',
       google: undefined,
       openbd: [{ summary: { title: bookTitle } }],
+      expectedDescription: '',
     },
   ])(
     '登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する($testcase)',
-    ({ google, openbd }) => {
+    ({ google, openbd, expectedDescription }) => {
       swrMock
         .mockReturnValueOnce({ data: google })
         .mockReturnValueOnce({ data: openbd })
@@ -105,6 +108,7 @@ describe('searched book component', async () => {
       expect(registerBookDivMock).toBeCalledWith(
         {
           title: bookTitle,
+          description: expectedDescription,
           isbn: isbn,
           thumbnailUrl: undefined,
           userId: userId,

@@ -10,10 +10,13 @@ export async function GET(req: NextRequest) {
   const books = await prisma.book
     .findMany({
       where: {
-        title: {
-          contains: q,
-          mode: 'insensitive',
-        },
+        // キーワード検索
+        OR: [
+          { title: { contains: q, mode: 'insensitive' } },
+          { description: { contains: q, mode: 'insensitive' } },
+        ],
+
+        // 保管場所
         registrationHistories: {
           some: {
             location: {

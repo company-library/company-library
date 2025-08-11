@@ -9,6 +9,7 @@ import type { Location } from '@/models/location'
 
 type RegisterBookDivProps = {
   title: string
+  description: string
   isbn: string
   thumbnailUrl: string | undefined
   userId: number
@@ -17,13 +18,20 @@ type RegisterBookDivProps = {
 /**
  * 書籍登録のためのdiv
  * @param {string} title
+ * @param {string} description
  * @param {string} isbn
  * @param {string | undefined} thumbnailUrl
  * @param {number} userId
  * @returns {JSX.Element}
  * @constructor
  */
-const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, isbn, thumbnailUrl, userId }) => {
+const RegisterBookDiv: FC<RegisterBookDivProps> = ({
+  title,
+  description,
+  isbn,
+  thumbnailUrl,
+  userId,
+}) => {
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null)
 
   const { data: locationsData, error } = useSWR<{ locations: Location[] } | CustomError>(
@@ -42,7 +50,7 @@ const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, isbn, thumbnailUrl, 
       alert('保管場所を選択してください')
       return
     }
-    await registerBook(title, isbn, thumbnailUrl, selectedLocationId, userId)
+    await registerBook(title, description, isbn, thumbnailUrl, selectedLocationId, userId)
   }
 
   return (
