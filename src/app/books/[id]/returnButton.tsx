@@ -1,8 +1,16 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { type ChangeEvent, type FC, startTransition, useRef, useState } from 'react'
-import { returnBook } from '@/app/books/[id]/actions'
+import {
+  type ChangeEvent,
+  type FC,
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { returnBookAction } from '@/app/books/[id]/actions'
 
 type ReturnButtonProps = {
   bookId: number
@@ -19,33 +27,38 @@ const ReturnButton: FC<ReturnButtonProps> = ({
   disabled,
   locationName,
 }) => {
+  const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openModal = () => dialogRef.current?.showModal()
-  const closeModal = () => dialogRef.current?.close()
+  const closeModal = useCallback(() => dialogRef.current?.close(), [])
 
   const [impression, setImpression] = useState('')
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setImpression(e.target.value)
   }
 
-  const router = useRouter()
-  const onClick = () => {
-    startTransition(async () => {
-      const result = await returnBook({
-        bookId,
-        userId,
-        lendingHistoryId,
-        impression,
-      })
-      if (result instanceof Error) {
-        window.alert('返却に失敗しました。もう一度試してみてください。')
-        return
-      }
+  const [state, formAction, isPending] = useActionState(returnBookAction, {
+    success: false,
+    error: null,
+  })
 
+  const onSubmit = (formData: FormData) => {
+    formData.set('bookId', bookId.toString())
+    formData.set('userId', userId.toString())
+    formData.set('lendingHistoryId', lendingHistoryId.toString())
+    formData.set('impression', impression)
+
+    formAction(formData)
+  }
+
+  useEffect(() => {
+    if (state.success) {
       closeModal()
       router.refresh()
-    })
-  }
+    } else if (state.error) {
+      window.alert(state.error)
+    }
+  }, [state, router, closeModal])
 
   return (
     <>
@@ -71,11 +84,20 @@ const ReturnButton: FC<ReturnButtonProps> = ({
           </div>
 
           <div className="modal-action">
-            <button type="submit" className="btn btn-primary" onClick={onClick}>
-              Ok
-            </button>
+            <form action={onSubmit}>
+              <button type="submit" className="btn btn-primary" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm" />
+                    処理中...
+                  </>
+                ) : (
+                  'Ok'
+                )}
+              </button>
+            </form>
 
-            <button type="button" className="btn ml-5" onClick={closeModal}>
+            <button type="button" className="btn ml-5" onClick={closeModal} disabled={isPending}>
               Cancel
             </button>
           </div>

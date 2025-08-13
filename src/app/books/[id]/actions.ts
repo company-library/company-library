@@ -65,6 +65,43 @@ export const lendBookAction = async (
   }
 }
 
+type ReturnBookState = {
+  success: boolean
+  error: string | null
+}
+
+/**
+ * useActionState用の書籍返却アクション
+ */
+export const returnBookAction = async (
+  _prevState: ReturnBookState,
+  formData: FormData,
+): Promise<ReturnBookState> => {
+  const bookId = Number(formData.get('bookId'))
+  const userId = Number(formData.get('userId'))
+  const lendingHistoryId = Number(formData.get('lendingHistoryId'))
+  const impression = (formData.get('impression') as string) || ''
+
+  const result = await returnBook({
+    bookId,
+    userId,
+    lendingHistoryId,
+    impression,
+  })
+
+  if (result instanceof Error) {
+    return {
+      success: false,
+      error: result.message,
+    }
+  }
+
+  return {
+    success: true,
+    error: null,
+  }
+}
+
 /**
  * 書籍を返却するServer Action
  * @param {number} bookId 返却対象の書籍ID

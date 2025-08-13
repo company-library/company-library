@@ -4,6 +4,7 @@ import {
   lendBook,
   lendBookAction,
   returnBook,
+  returnBookAction,
 } from '@/app/books/[id]/actions'
 import { book1 } from '../../../../test/__utils__/data/book'
 import { location1 } from '../../../../test/__utils__/data/location'
@@ -136,6 +137,61 @@ describe('server actions', () => {
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('貸し出しに失敗しました。もう一度試して見てください。')
+    })
+  })
+
+  describe('returnBookAction function', () => {
+    it('正常な場合、FormDataから値を取得して返却処理を実行し、成功状態を返す', async () => {
+      const bookId = 1
+      const userId = user1.id
+      const lendingHistoryId = 10
+      const impression = '読書感想'
+
+      prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
+      prismaMock.returnHistory.create.mockResolvedValueOnce({
+        lendingHistoryId: lendingHistoryId,
+        returnedAt: new Date(),
+      })
+      prismaMock.impression.create.mockResolvedValueOnce({
+        id: 1,
+        bookId: bookId,
+        userId: userId,
+        impression: impression,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+
+      const formData = new FormData()
+      formData.set('bookId', bookId.toString())
+      formData.set('userId', userId.toString())
+      formData.set('lendingHistoryId', lendingHistoryId.toString())
+      formData.set('impression', impression)
+
+      const result = await returnBookAction({ success: false, error: null }, formData)
+
+      expect(result.success).toBe(true)
+      expect(result.error).toBeNull()
+    })
+
+    it('返却処理に失敗した場合、エラー状態を返す', async () => {
+      const bookId = 1
+      const userId = user1.id
+      const lendingHistoryId = 10
+
+      prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
+      prismaMock.returnHistory.create.mockRejectedValueOnce(new Error('DB error'))
+      consoleErrorSpy.mockImplementationOnce(() => {})
+
+      const formData = new FormData()
+      formData.set('bookId', bookId.toString())
+      formData.set('userId', userId.toString())
+      formData.set('lendingHistoryId', lendingHistoryId.toString())
+      formData.set('impression', '')
+
+      const result = await returnBookAction({ success: false, error: null }, formData)
+
+      expect(result.success).toBe(false)
+      expect(result.error).toBe('返却に失敗しました。もう一度試して見てください。')
     })
   })
 
