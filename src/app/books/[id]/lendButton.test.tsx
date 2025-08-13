@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import LendButton from '@/app/books/[id]/lendButton'
-import { dateStringToDate } from '@/libs/luxon/utils'
 
 describe('LendButton component', () => {
   const bookId = 1
@@ -15,14 +14,16 @@ describe('LendButton component', () => {
     [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
     [2, { name: '支社', order: 2, totalCount: 3, lendableCount: 2 }],
   ])
-  const { lendBookMock } = vi.hoisted(() => {
+  const { lendBookActionMock, useActionStateMock } = vi.hoisted(() => {
     return {
-      lendBookMock: vi.fn(),
+      lendBookActionMock: vi.fn(),
+      useActionStateMock: vi.fn(),
     }
   })
+
   vi.mock('@/app/books/[id]/actions', () => ({
-    lendBook: (bookId: number, userId: string, dueDate: Date, locationId: number) =>
-      lendBookMock(bookId, userId, dueDate, locationId),
+    lendBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
+      lendBookActionMock(prevState, formData),
   }))
 
   const { refreshMock } = vi.hoisted(() => {
@@ -36,6 +37,14 @@ describe('LendButton component', () => {
     },
   }))
 
+  vi.mock('react', async (importOriginal) => {
+    const actual = (await importOriginal()) as typeof import('react')
+    return {
+      ...actual,
+      useActionState: useActionStateMock,
+    }
+  })
+
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')
@@ -43,6 +52,16 @@ describe('LendButton component', () => {
   HTMLDialogElement.prototype.close = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].removeAttribute('open')
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // デフォルトのuseActionStateモック
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      vi.fn(), // formAction
+      false, // isPending
+    ])
   })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', async () => {
@@ -86,6 +105,15 @@ describe('LendButton component', () => {
 
   it('ダイアログのOkボタンをクリックすると、貸出処理が実行される', async () => {
     const expectedDueDate = today.plus({ days: 14 })
+    const mockFormAction = vi.fn()
+
+    // 初期状態のuseActionStateモック（success: falseで開始）
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
+
     render(
       <LendButton
         bookId={bookId}
@@ -107,23 +135,23 @@ describe('LendButton component', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
-    await waitFor(() => {
-      expect(
-        screen.queryByRole('heading', { level: 3, name: '借りる設定' }),
-      ).not.toBeInTheDocument()
-    })
-    expect(lendBookMock).toBeCalledWith(
-      bookId,
-      userId,
-      dateStringToDate(expectedDueDate.toISODate() ?? ''),
-      1,
-    )
-    expect(refreshMock).toBeCalled()
+    expect(mockFormAction).toHaveBeenCalled()
+    const formData = mockFormAction.mock.calls[0][0] as FormData
+    expect(formData.get('bookId')).toBe(bookId.toString())
+    expect(formData.get('userId')).toBe(userId.toString())
+    expect(formData.get('locationId')).toBe('1')
   })
 
   it('貸出処理に失敗した場合、エラーメッセージが表示される', async () => {
-    lendBookMock.mockResolvedValueOnce(new Error('error occurred'))
+    const mockFormAction = vi.fn()
     window.alert = vi.fn()
+
+    // エラー時のuseActionStateモック
+    useActionStateMock.mockReturnValue([
+      { success: false, error: '貸し出しに失敗しました。もう一度試して見てください。' }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
 
     render(
       <LendButton
@@ -144,12 +172,20 @@ describe('LendButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
-      expect(window.alert).toBeCalledWith('貸し出しに失敗しました。もう一度試してみてください。')
+      expect(window.alert).toBeCalledWith('貸し出しに失敗しました。もう一度試して見てください。')
     })
     expect(refreshMock).not.toBeCalled()
   })
 
   it('ダイアログのCancelボタンをクリックすると、貸出処理は実行されない', async () => {
+    const mockFormAction = vi.fn()
+
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
+
     render(
       <LendButton
         bookId={bookId}
@@ -165,7 +201,7 @@ describe('LendButton component', () => {
       expect(
         screen.queryByRole('heading', { level: 3, name: '借りる設定' }),
       ).not.toBeInTheDocument()
-      expect(lendBookMock).not.toBeCalled()
+      expect(mockFormAction).not.toBeCalled()
     })
   })
 

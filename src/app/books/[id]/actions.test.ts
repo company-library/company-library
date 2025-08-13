@@ -1,4 +1,10 @@
-import { addImpression, editImpression, lendBook, returnBook } from '@/app/books/[id]/actions'
+import {
+  addImpression,
+  editImpression,
+  lendBook,
+  lendBookAction,
+  returnBook,
+} from '@/app/books/[id]/actions'
 import { book1 } from '../../../../test/__utils__/data/book'
 import { location1 } from '../../../../test/__utils__/data/location'
 import { user1 } from '../../../../test/__utils__/data/user'
@@ -72,6 +78,64 @@ describe('server actions', () => {
         },
       })
       expect(consoleErrorSpy).toBeCalledWith(error)
+    })
+  })
+
+  describe('lendBookAction function', () => {
+    it('正常な場合、FormDataから値を取得して貸出処理を実行し、成功状態を返す', async () => {
+      const bookId = 1
+      const userId = user1.id
+      const locationId = location1.id
+      const dueDate = new Date()
+
+      prismaMock.lendingHistory.create.mockResolvedValueOnce({
+        id: 1,
+        bookId: bookId,
+        userId: userId,
+        locationId: locationId,
+        dueDate: dueDate,
+        lentAt: new Date(),
+      })
+
+      const formData = new FormData()
+      formData.set('bookId', bookId.toString())
+      formData.set('userId', userId.toString())
+      formData.set('dueDate', dueDate.toISOString())
+      formData.set('locationId', locationId.toString())
+
+      const result = await lendBookAction({ success: false, error: null }, formData)
+
+      expect(result.success).toBe(true)
+      expect(result.error).toBeNull()
+      expect(prismaMock.lendingHistory.create).toBeCalledWith({
+        data: {
+          bookId,
+          userId,
+          dueDate,
+          locationId,
+        },
+      })
+    })
+
+    it('貸出処理に失敗した場合、エラー状態を返す', async () => {
+      const bookId = 1
+      const userId = user1.id
+      const locationId = location1.id
+      const dueDate = new Date()
+
+      prismaMock.lendingHistory.create.mockRejectedValueOnce(new Error('DB error'))
+      consoleErrorSpy.mockImplementationOnce(() => {})
+
+      const formData = new FormData()
+      formData.set('bookId', bookId.toString())
+      formData.set('userId', userId.toString())
+      formData.set('dueDate', dueDate.toISOString())
+      formData.set('locationId', locationId.toString())
+
+      const result = await lendBookAction({ success: false, error: null }, formData)
+
+      expect(result.success).toBe(false)
+      expect(result.error).toBe('貸し出しに失敗しました。もう一度試して見てください。')
     })
   })
 
