@@ -33,6 +33,38 @@ export const lendBook = async (
   return undefined
 }
 
+type LendBookState = {
+  success: boolean
+  error: string | null
+}
+
+/**
+ * useActionState用の書籍貸出アクション
+ */
+export const lendBookAction = async (
+  _prevState: LendBookState,
+  formData: FormData,
+): Promise<LendBookState> => {
+  const bookId = Number(formData.get('bookId'))
+  const userId = Number(formData.get('userId'))
+  const dueDate = new Date(formData.get('dueDate') as string)
+  const locationId = Number(formData.get('locationId'))
+
+  const result = await lendBook(bookId, userId, dueDate, locationId)
+
+  if (result instanceof Error) {
+    return {
+      success: false,
+      error: result.message,
+    }
+  }
+
+  return {
+    success: true,
+    error: null,
+  }
+}
+
 /**
  * 書籍を返却するServer Action
  * @param {number} bookId 返却対象の書籍ID
