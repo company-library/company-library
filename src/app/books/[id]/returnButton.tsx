@@ -40,6 +40,12 @@ const ReturnButton: FC<ReturnButtonProps> = ({
   const [state, formAction, isPending] = useActionState(returnBookAction, {
     success: false,
     error: null,
+    value: {
+      bookId: 0,
+      userId: 0,
+      lendingHistoryId: 0,
+      impression: '',
+    },
   })
 
   const onSubmit = (formData: FormData) => {
@@ -57,6 +63,9 @@ const ReturnButton: FC<ReturnButtonProps> = ({
       router.refresh()
     } else if (state.error) {
       window.alert(state.error)
+    } else if (state.errors) {
+      const errorMessages = Object.values(state.errors).flat().join('\n')
+      window.alert(`入力エラー:\n${errorMessages}`)
     }
   }, [state, router, closeModal])
 

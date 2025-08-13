@@ -167,7 +167,11 @@ describe('server actions', () => {
       formData.set('lendingHistoryId', lendingHistoryId.toString())
       formData.set('impression', impression)
 
-      const result = await returnBookAction({ success: false, error: null }, formData)
+      const result = await returnBookAction({ 
+        success: false, 
+        error: null, 
+        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
+      }, formData)
 
       expect(result.success).toBe(true)
       expect(result.error).toBeNull()
@@ -188,10 +192,35 @@ describe('server actions', () => {
       formData.set('lendingHistoryId', lendingHistoryId.toString())
       formData.set('impression', '')
 
-      const result = await returnBookAction({ success: false, error: null }, formData)
+      const result = await returnBookAction({ 
+        success: false, 
+        error: null, 
+        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
+      }, formData)
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('返却に失敗しました。もう一度試して見てください。')
+    })
+
+    it('不正なformDataの場合、バリデーションエラーを返す', async () => {
+      const formData = new FormData()
+      formData.set('bookId', 'invalid')
+      formData.set('userId', '-1')
+      formData.set('lendingHistoryId', '0')
+      formData.set('impression', '')
+
+      const result = await returnBookAction({ 
+        success: false, 
+        error: null, 
+        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
+      }, formData)
+
+      expect(result.success).toBe(false)
+      expect(result.error).toBeNull()
+      expect(result.errors).toBeDefined()
+      expect(result.errors?.bookId).toBeDefined()
+      expect(result.errors?.userId).toBeDefined()
+      expect(result.errors?.lendingHistoryId).toBeDefined()
     })
   })
 
