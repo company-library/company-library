@@ -20,17 +20,12 @@ const handler = createMcpHandler(
     )
 
     // コイントスツール
-    server.tool(
-      'coin_flip',
-      'コインを投げて表か裏かを返します',
-      {},
-      async () => {
-        const result = Math.random() < 0.5 ? '表' : '裏'
-        return {
-          content: [{ type: 'text', text: `🪙 コインの結果: ${result}` }],
-        }
-      },
-    )
+    server.tool('coin_flip', 'コインを投げて表か裏かを返します', {}, async () => {
+      const result = Math.random() < 0.5 ? '表' : '裏'
+      return {
+        content: [{ type: 'text', text: `🪙 コインの結果: ${result}` }],
+      }
+    })
 
     // ランダム数値生成ツール
     server.tool(
@@ -155,23 +150,44 @@ const handler = createMcpHandler(
           // 結果をフォーマット
           const currentLendings = book.lendingHistories.filter((l) => !l.returnHistory)
           const pastLendings = book.lendingHistories.filter((l) => l.returnHistory)
-          
-          const locationInfo = Array.from(locationStats.entries()).map(([locationId, stats]) => {
-            const lendableCount = stats.totalCount - stats.lendingCount
-            return `${stats.name}: ${lendableCount}冊利用可能 (所蔵: ${stats.totalCount}冊, 貸出中: ${stats.lendingCount}冊)`
-          }).join('\\n')
 
-          const currentLendingInfo = currentLendings.length > 0 
-            ? currentLendings.map(l => `- ${l.user.name} (期限: ${new Date(l.dueDate).toLocaleDateString('ja-JP')})`).join('\\n')
-            : 'なし'
+          const locationInfo = Array.from(locationStats.entries())
+            .map(([_locationId, stats]) => {
+              const lendableCount = stats.totalCount - stats.lendingCount
+              return `${stats.name}: ${lendableCount}冊利用可能 (所蔵: ${stats.totalCount}冊, 貸出中: ${stats.lendingCount}冊)`
+            })
+            .join('\\n')
 
-          const impressionInfo = book.impressions.length > 0
-            ? book.impressions.slice(0, 5).map(i => `- ${i.user.name}: "${i.impression.substring(0, 50)}${i.impression.length > 50 ? '...' : ''}"`).join('\\n')
-            : 'なし'
+          const currentLendingInfo =
+            currentLendings.length > 0
+              ? currentLendings
+                  .map(
+                    (l) =>
+                      `- ${l.user.name} (期限: ${new Date(l.dueDate).toLocaleDateString('ja-JP')})`,
+                  )
+                  .join('\\n')
+              : 'なし'
 
-          const reservationInfo = book.reservations.length > 0
-            ? book.reservations.map(r => `- ${r.user.name} (予約日: ${new Date(r.reservationDate).toLocaleDateString('ja-JP')})`).join('\\n')
-            : 'なし'
+          const impressionInfo =
+            book.impressions.length > 0
+              ? book.impressions
+                  .slice(0, 5)
+                  .map(
+                    (i) =>
+                      `- ${i.user.name}: "${i.impression.substring(0, 50)}${i.impression.length > 50 ? '...' : ''}"`,
+                  )
+                  .join('\\n')
+              : 'なし'
+
+          const reservationInfo =
+            book.reservations.length > 0
+              ? book.reservations
+                  .map(
+                    (r) =>
+                      `- ${r.user.name} (予約日: ${new Date(r.reservationDate).toLocaleDateString('ja-JP')})`,
+                  )
+                  .join('\\n')
+              : 'なし'
 
           const totalLendingCount = book.lendingHistories.length
           const totalReturnCount = pastLendings.length
@@ -220,13 +236,16 @@ ${impressionInfo}`
       '貸出回数に基づく人気書籍ランキングを取得します',
       {
         limit: z.number().min(1).max(50).default(10).describe('取得する書籍数'),
-        period: z.enum(['all', 'month', 'year']).default('all').describe('集計期間 (all: 全期間, month: 過去1ヶ月, year: 過去1年)'),
+        period: z
+          .enum(['all', 'month', 'year'])
+          .default('all')
+          .describe('集計期間 (all: 全期間, month: 過去1ヶ月, year: 過去1年)'),
       },
       async ({ limit, period }) => {
         try {
           let dateFilter = {}
           const now = new Date()
-          
+
           if (period === 'month') {
             const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
             dateFilter = { lentAt: { gte: oneMonthAgo } }
@@ -273,21 +292,23 @@ ${impressionInfo}`
             }
           }
 
-          const periodText = period === 'all' ? '全期間' : period === 'month' ? '過去1ヶ月' : '過去1年'
-          
+          const periodText =
+            period === 'all' ? '全期間' : period === 'month' ? '過去1ヶ月' : '過去1年'
+
           const rankingText = popularBooks
-            .filter(book => book.lendingHistories.length > 0)
+            .filter((book) => book.lendingHistories.length > 0)
             .map((book, index) => {
               const rank = index + 1
               const lendingCount = book.lendingHistories.length
               const totalLendingCount = book._count.lendingHistories
               const impressionCount = book.impressions.length
-              
+
               return `${rank}位. **${book.title}**
    - 貸出回数: ${lendingCount}回 (累計: ${totalLendingCount}回)
    - 感想数: ${impressionCount}件
    - ISBN: ${book.isbn}`
-            }).join('\n\n')
+            })
+            .join('\n\n')
 
           const result = `📊 人気書籍ランキング (${periodText})
 
@@ -310,7 +331,10 @@ ${rankingText || '該当する書籍がありません'}`
       'get_lending_statistics',
       '貸出に関する統計情報を取得します（月別、ユーザー別、場所別など）',
       {
-        type: z.enum(['monthly', 'user', 'location', 'overdue']).default('monthly').describe('統計の種類'),
+        type: z
+          .enum(['monthly', 'user', 'location', 'overdue'])
+          .default('monthly')
+          .describe('統計の種類'),
         period: z.number().min(1).max(24).default(12).describe('過去何ヶ月分のデータを取得するか'),
         limit: z.number().min(5).max(50).default(10).describe('ユーザー・場所別統計での表示件数'),
       },
@@ -320,7 +344,7 @@ ${rankingText || '該当する書籍がありません'}`
           const startDate = new Date(now.getFullYear(), now.getMonth() - period, 1)
 
           if (type === 'monthly') {
-            const monthlyStats = await prisma.$queryRaw`
+            const monthlyStats = (await prisma.$queryRaw`
               SELECT 
                 DATE_TRUNC('month', lent_at) as month,
                 COUNT(*) as lending_count,
@@ -330,26 +354,33 @@ ${rankingText || '該当する書籍がありません'}`
               WHERE lent_at >= ${startDate}
               GROUP BY DATE_TRUNC('month', lent_at)
               ORDER BY month DESC
-            ` as Array<{
+            `) as Array<{
               month: Date
               lending_count: bigint
               unique_users: bigint
               unique_books: bigint
             }>
 
-            const statsText = monthlyStats.map(stat => {
-              const month = new Date(stat.month).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long' })
-              return `**${month}**
+            const statsText = monthlyStats
+              .map((stat) => {
+                const month = new Date(stat.month).toLocaleDateString('ja-JP', {
+                  year: 'numeric',
+                  month: 'long',
+                })
+                return `**${month}**
    - 貸出数: ${stat.lending_count}件
    - 利用者数: ${stat.unique_users}人
    - 利用書籍数: ${stat.unique_books}冊`
-            }).join('\n\n')
+              })
+              .join('\n\n')
 
             return {
-              content: [{ type: 'text', text: `📈 月別貸出統計 (過去${period}ヶ月)\n\n${statsText}` }],
+              content: [
+                { type: 'text', text: `📈 月別貸出統計 (過去${period}ヶ月)\n\n${statsText}` },
+              ],
             }
-
-          } else if (type === 'user') {
+          }
+          if (type === 'user') {
             const userStats = await prisma.user.findMany({
               select: {
                 name: true,
@@ -371,7 +402,7 @@ ${rankingText || '該当する書籍がありません'}`
             })
 
             const userStatsText = userStats
-              .filter(user => user.lendingHistories.length > 0)
+              .filter((user) => user.lendingHistories.length > 0)
               .map((user, index) => {
                 const rank = index + 1
                 const recentCount = user.lendingHistories.length
@@ -379,13 +410,19 @@ ${rankingText || '該当する書籍がありません'}`
                 return `${rank}位. **${user.name}**
    - 過去${period}ヶ月: ${recentCount}冊
    - 累計: ${totalCount}冊`
-              }).join('\n\n')
+              })
+              .join('\n\n')
 
             return {
-              content: [{ type: 'text', text: `👥 ユーザー別貸出統計 (過去${period}ヶ月, トップ${limit})\n\n${userStatsText}` }],
+              content: [
+                {
+                  type: 'text',
+                  text: `👥 ユーザー別貸出統計 (過去${period}ヶ月, トップ${limit})\n\n${userStatsText}`,
+                },
+              ],
             }
-
-          } else if (type === 'location') {
+          }
+          if (type === 'location') {
             const locationStats = await prisma.location.findMany({
               select: {
                 name: true,
@@ -402,23 +439,31 @@ ${rankingText || '該当する書籍がありません'}`
               },
             })
 
-            const locationStatsText = locationStats.map((location, index) => {
-              const rank = index + 1
-              const lendingCount = location.lendingHistories.length
-              const totalBooks = location.registrationHistories.length
-              const utilizationRate = totalBooks > 0 ? ((lendingCount / totalBooks) * 100).toFixed(1) : '0.0'
-              
-              return `${rank}位. **${location.name}**
+            const locationStatsText = locationStats
+              .map((location, index) => {
+                const rank = index + 1
+                const lendingCount = location.lendingHistories.length
+                const totalBooks = location.registrationHistories.length
+                const utilizationRate =
+                  totalBooks > 0 ? ((lendingCount / totalBooks) * 100).toFixed(1) : '0.0'
+
+                return `${rank}位. **${location.name}**
    - 貸出数: ${lendingCount}件
    - 所蔵数: ${totalBooks}冊
    - 利用率: ${utilizationRate}%`
-            }).join('\n\n')
+              })
+              .join('\n\n')
 
             return {
-              content: [{ type: 'text', text: `📍 場所別貸出統計 (過去${period}ヶ月)\n\n${locationStatsText}` }],
+              content: [
+                {
+                  type: 'text',
+                  text: `📍 場所別貸出統計 (過去${period}ヶ月)\n\n${locationStatsText}`,
+                },
+              ],
             }
-
-          } else if (type === 'overdue') {
+          }
+          if (type === 'overdue') {
             const overdueBooks = await prisma.lendingHistory.findMany({
               where: {
                 returnHistory: null,
@@ -444,17 +489,26 @@ ${rankingText || '該当する書籍がありません'}`
               }
             }
 
-            const overdueText = overdueBooks.map(lending => {
-              const overdueDays = Math.ceil((now.getTime() - lending.dueDate.getTime()) / (1000 * 60 * 60 * 24))
-              return `📕 **${lending.book.title}**
+            const overdueText = overdueBooks
+              .map((lending) => {
+                const overdueDays = Math.ceil(
+                  (now.getTime() - lending.dueDate.getTime()) / (1000 * 60 * 60 * 24),
+                )
+                return `📕 **${lending.book.title}**
    - 借用者: ${lending.user.name}
    - 場所: ${lending.location?.name || '不明'}
    - 期限: ${lending.dueDate.toLocaleDateString('ja-JP')}
    - 延滞日数: ${overdueDays}日`
-            }).join('\n\n')
+              })
+              .join('\n\n')
 
             return {
-              content: [{ type: 'text', text: `⚠️  返却期限超過書籍 (${overdueBooks.length}件)\n\n${overdueText}` }],
+              content: [
+                {
+                  type: 'text',
+                  text: `⚠️  返却期限超過書籍 (${overdueBooks.length}件)\n\n${overdueText}`,
+                },
+              ],
             }
           }
 
@@ -541,26 +595,37 @@ ${rankingText || '該当する書籍がありません'}`
             take: 3,
           })
 
-          const locationStatsText = locationStats.map(location => {
-            const totalCount = location.registrationHistories.length
-            const lendingCount = location.lendingHistories.length
-            const availableCount = totalCount - lendingCount
-            const utilizationRate = totalCount > 0 ? ((lendingCount / totalCount) * 100).toFixed(1) : '0.0'
-            
-            return `  • ${location.name}: ${availableCount}冊利用可能 / ${totalCount}冊 (利用率: ${utilizationRate}%)`
-          }).join('\n')
+          const locationStatsText = locationStats
+            .map((location) => {
+              const totalCount = location.registrationHistories.length
+              const lendingCount = location.lendingHistories.length
+              const availableCount = totalCount - lendingCount
+              const utilizationRate =
+                totalCount > 0 ? ((lendingCount / totalCount) * 100).toFixed(1) : '0.0'
 
-          const topBooksText = topBooks
-            .filter(book => book._count.lendingHistories > 0)
-            .map((book, index) => `  ${index + 1}. ${book.title} (${book._count.lendingHistories}回)`)
-            .join('\n') || '  データなし'
+              return `  • ${location.name}: ${availableCount}冊利用可能 / ${totalCount}冊 (利用率: ${utilizationRate}%)`
+            })
+            .join('\n')
 
-          const activeUsersText = activeUsers
-            .filter(user => user.lendingHistories.length > 0)
-            .map((user, index) => `  ${index + 1}. ${user.name} (${user.lendingHistories.length}冊)`)
-            .join('\n') || '  データなし'
+          const topBooksText =
+            topBooks
+              .filter((book) => book._count.lendingHistories > 0)
+              .map(
+                (book, index) =>
+                  `  ${index + 1}. ${book.title} (${book._count.lendingHistories}回)`,
+              )
+              .join('\n') || '  データなし'
 
-          const utilizationRate = totalBooks > 0 ? ((currentLendings / totalBooks) * 100).toFixed(1) : '0.0'
+          const activeUsersText =
+            activeUsers
+              .filter((user) => user.lendingHistories.length > 0)
+              .map(
+                (user, index) => `  ${index + 1}. ${user.name} (${user.lendingHistories.length}冊)`,
+              )
+              .join('\n') || '  データなし'
+
+          const utilizationRate =
+            totalBooks > 0 ? ((currentLendings / totalBooks) * 100).toFixed(1) : '0.0'
 
           const result = `📊 図書館ダッシュボード
 
@@ -583,7 +648,7 @@ ${activeUsersText}
 
 **📈 システム状況**
 • 全体利用率: ${utilizationRate}%
-• 月間利用者: ${activeUsers.filter(u => u.lendingHistories.length > 0).length}人
+• 月間利用者: ${activeUsers.filter((u) => u.lendingHistories.length > 0).length}人
 ${overdueCount > 0 ? `• 要注意: ${overdueCount}件の期限超過あり` : '• 正常: 期限超過なし'}`
 
           return {
@@ -592,7 +657,9 @@ ${overdueCount > 0 ? `• 要注意: ${overdueCount}件の期限超過あり` : 
         } catch (error) {
           console.error('ダッシュボード取得エラー:', error)
           return {
-            content: [{ type: 'text', text: '❌ ダッシュボード情報の取得中にエラーが発生しました' }],
+            content: [
+              { type: 'text', text: '❌ ダッシュボード情報の取得中にエラーが発生しました' },
+            ],
           }
         }
       },
