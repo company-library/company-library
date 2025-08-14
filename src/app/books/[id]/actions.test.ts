@@ -167,11 +167,14 @@ describe('server actions', () => {
       formData.set('lendingHistoryId', lendingHistoryId.toString())
       formData.set('impression', impression)
 
-      const result = await returnBookAction({ 
-        success: false, 
-        error: null, 
-        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
-      }, formData)
+      const result = await returnBookAction(
+        {
+          success: false,
+          error: null,
+          value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' },
+        },
+        formData,
+      )
 
       expect(result.success).toBe(true)
       expect(result.error).toBeNull()
@@ -192,11 +195,14 @@ describe('server actions', () => {
       formData.set('lendingHistoryId', lendingHistoryId.toString())
       formData.set('impression', '')
 
-      const result = await returnBookAction({ 
-        success: false, 
-        error: null, 
-        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
-      }, formData)
+      const result = await returnBookAction(
+        {
+          success: false,
+          error: null,
+          value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' },
+        },
+        formData,
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBe('返却に失敗しました。もう一度試して見てください。')
@@ -209,11 +215,14 @@ describe('server actions', () => {
       formData.set('lendingHistoryId', '0')
       formData.set('impression', '')
 
-      const result = await returnBookAction({ 
-        success: false, 
-        error: null, 
-        value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' } 
-      }, formData)
+      const result = await returnBookAction(
+        {
+          success: false,
+          error: null,
+          value: { bookId: 0, userId: 0, lendingHistoryId: 0, impression: '' },
+        },
+        formData,
+      )
 
       expect(result.success).toBe(false)
       expect(result.error).toBeNull()
