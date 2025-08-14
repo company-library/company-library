@@ -22,22 +22,25 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.2",
     "@prisma/client": "^6.13.0",
     "@slack/webhook": "^7.0.5",
     "@vercel/blob": "^1.1.1",
     "graphql": "^16.11.0",
     "luxon": "^3.7.1",
+    "mcp-handler": "^1.0.1",
     "next": "15.4.6",
     "next-auth": "^4.24.11",
     "prisma": "^6.13.0",
     "react": "canary",
     "react-dom": "canary",
     "swr": "^2.3.5",
-    "zod": "^4.0.17"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.4",
     "@eslint/eslintrc": "^3.3.1",
+    "@modelcontextprotocol/inspector": "^0.16.3",
     "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
