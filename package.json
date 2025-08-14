@@ -40,6 +40,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.1.4",
     "@eslint/eslintrc": "^3.3.1",
+    "@modelcontextprotocol/inspector": "^0.16.3",
     "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
