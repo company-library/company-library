@@ -33,6 +33,93 @@ export const lendBook = async (
   return undefined
 }
 
+type LendBookState = {
+  success: boolean
+  error: string | null
+}
+
+/**
+ * useActionState用の書籍貸出アクション
+ */
+export const lendBookAction = async (
+  _prevState: LendBookState,
+  formData: FormData,
+): Promise<LendBookState> => {
+  const bookId = Number(formData.get('bookId'))
+  const userId = Number(formData.get('userId'))
+  const dueDate = new Date(formData.get('dueDate') as string)
+  const locationId = Number(formData.get('locationId'))
+
+  const result = await lendBook(bookId, userId, dueDate, locationId)
+
+  if (result instanceof Error) {
+    return {
+      success: false,
+      error: result.message,
+    }
+  }
+
+  return {
+    success: true,
+    error: null,
+  }
+}
+
+type ReturnBookState = {
+  success: boolean
+  error: string | null
+  value: ReturnBook
+  errors?: Partial<Record<keyof ReturnBook, string[]>>
+}
+
+/**
+ * useActionState用の書籍返却アクション
+ */
+export const returnBookAction = async (
+  _prevState: ReturnBookState,
+  formData: FormData,
+): Promise<ReturnBookState> => {
+  const rawValues = {
+    bookId: formData.get('bookId'),
+    userId: formData.get('userId'),
+    lendingHistoryId: formData.get('lendingHistoryId'),
+    impression: formData.get('impression') || '',
+  } as unknown as ReturnBook
+
+  const validationResult = ReturnBookSchema.safeParse(rawValues)
+  if (!validationResult.success) {
+    const errors = z.flattenError(validationResult.error).fieldErrors
+
+    return {
+      success: false,
+      error: null,
+      value: rawValues,
+      errors,
+    }
+  }
+
+  const result = await returnBook({
+    bookId: validationResult.data.bookId,
+    userId: validationResult.data.userId,
+    lendingHistoryId: validationResult.data.lendingHistoryId,
+    impression: validationResult.data.impression || '',
+  })
+
+  if (result instanceof Error) {
+    return {
+      success: false,
+      error: result.message,
+      value: validationResult.data,
+    }
+  }
+
+  return {
+    success: true,
+    error: null,
+    value: validationResult.data,
+  }
+}
+
 /**
  * 書籍を返却するServer Action
  * @param {number} bookId 返却対象の書籍ID
@@ -128,6 +215,14 @@ export const editImpression = async ({
 
   return undefined
 }
+
+const ReturnBookSchema = z.object({
+  bookId: z.coerce.number().positive({ message: '有効な書籍IDを入力してください' }),
+  userId: z.coerce.number().positive({ message: '有効なユーザーIDを入力してください' }),
+  lendingHistoryId: z.coerce.number().positive({ message: '有効な貸出履歴IDを入力してください' }),
+  impression: z.string().optional(),
+})
+type ReturnBook = z.infer<typeof ReturnBookSchema>
 
 const AddImpressionSchema = z.object({
   impression: z.string().min(1, {
