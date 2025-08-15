@@ -22,14 +22,14 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.13.0",
+    "@prisma/client": "^6.14.0",
     "@slack/webhook": "^7.0.5",
     "@vercel/blob": "^1.1.1",
     "graphql": "^16.11.0",
     "luxon": "^3.7.1",
     "next": "15.4.6",
     "next-auth": "^4.24.11",
-    "prisma": "^6.13.0",
+    "prisma": "^6.14.0",
     "react": "canary",
     "react-dom": "canary",
     "swr": "^2.3.5",
