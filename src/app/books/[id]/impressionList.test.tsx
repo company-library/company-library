@@ -43,7 +43,7 @@ describe('ImpressionList component', async () => {
   ]
 
   it('本の感想を作成日の新しい順に、作成日時(更新されていらたら更新日時も)、投稿者、感想を表示する', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
@@ -67,7 +67,7 @@ describe('ImpressionList component', async () => {
   })
 
   it('感想は、改行を反映して表示する', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
@@ -78,7 +78,7 @@ describe('ImpressionList component', async () => {
   })
 
   it('自分の感想の場合、感想を編集ボタンが表示される', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
@@ -89,7 +89,7 @@ describe('ImpressionList component', async () => {
   })
 
   it('感想が登録されていない場合、その旨のメッセージを表示する', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue([])
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
@@ -111,7 +111,7 @@ describe('ImpressionList component', async () => {
   })
 
   it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue(expectedImpressions)
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))

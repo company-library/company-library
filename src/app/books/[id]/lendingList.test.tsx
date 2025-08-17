@@ -41,7 +41,7 @@ describe('LendingList Component', async () => {
   const prismaLendingHistoryMock = prismaMock.lendingHistory.findMany
 
   it('貸出中のユーザーがいる場合、その一覧が返却予定日の昇順で表示される', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
     render(await LendingList({ bookId: lendableBook.id }))
@@ -67,7 +67,7 @@ describe('LendingList Component', async () => {
   it('返却予定日は、表示した日を過ぎていた場合、赤太字になる', async () => {
     const expectedNow = DateTime.local(2022, 10, 31, 10, 0, 0)
     Settings.now = () => expectedNow.toMillis()
-    // @ts-ignore
+    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
     render(await LendingList({ bookId: lendableBook.id }))
@@ -83,7 +83,7 @@ describe('LendingList Component', async () => {
   })
 
   it('貸出中のユーザーがいない場合、その旨のメッセージが表示される', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue([])
 
     render(await LendingList({ bookId: lendableBook.id }))
@@ -122,7 +122,7 @@ describe('LendingList Component', async () => {
       },
     ]
 
-    // @ts-ignore
+    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue(lendingHistoriesWithLocation)
 
     render(await LendingList({ bookId: lendableBook.id }))
@@ -132,7 +132,7 @@ describe('LendingList Component', async () => {
   })
 
   it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue(expectedLendingHistories)
 
     render(await LendingList({ bookId: lendableBook.id }))
