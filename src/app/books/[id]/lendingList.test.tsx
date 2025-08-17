@@ -83,7 +83,6 @@ describe('LendingList Component', async () => {
   })
 
   it('貸出中のユーザーがいない場合、その旨のメッセージが表示される', async () => {
-    // @ts-expect-error
     prismaLendingHistoryMock.mockResolvedValue([])
 
     render(await LendingList({ bookId: lendableBook.id }))

@@ -89,7 +89,6 @@ describe('ImpressionList component', async () => {
   })
 
   it('感想が登録されていない場合、その旨のメッセージを表示する', async () => {
-    // @ts-expect-error
     prismaImpressionsMock.mockResolvedValue([])
 
     render(await ImpressionList({ bookId: lendableBook.id, userId: user1.id }))
