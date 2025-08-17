@@ -127,7 +127,7 @@ describe('authOptions', async () => {
           const session = authOptions.callbacks?.session
           assert(!!session, 'session callback is not defined')
 
-          // @ts-ignore
+          // @ts-expect-error
           const result = await session({ session: argSession, token: argToken })
 
           expect(result).toStrictEqual(defaultSession)
@@ -142,7 +142,7 @@ describe('authOptions', async () => {
         const session = authOptions.callbacks?.session
         assert(!!session, 'session callback is not defined')
 
-        // @ts-ignore
+        // @ts-expect-error
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -161,7 +161,7 @@ describe('authOptions', async () => {
         const session = authOptions.callbacks?.session
         assert(!!session, 'session callback is not defined')
 
-        // @ts-ignore
+        // @ts-expect-error
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual({
@@ -188,7 +188,7 @@ describe('authOptions', async () => {
         const session = authOptions.callbacks?.session
         assert(!!session, 'session callback is not defined')
 
-        // @ts-ignore
+        // @ts-expect-error
         const result = await session({ session: argSession, token: argToken })
 
         expect(result).toStrictEqual(defaultSession)

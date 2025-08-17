@@ -68,7 +68,6 @@ describe('ReturnList Component', async () => {
   })
 
   it('返却履歴が登録されていない場合、その旨のメッセージが表示される', async () => {
-    // @ts-ignore
     prismaReturnHistoryMock.mockResolvedValue([])
 
     render(await ReturnList({ bookId: lendableBook.id }))
@@ -90,7 +89,6 @@ describe('ReturnList Component', async () => {
   })
 
   it('UserAvatarがlinkToProfile=trueで呼び出される', async () => {
-    // @ts-ignore
     prismaReturnHistoryMock.mockResolvedValue(expectedReturnHistories)
 
     render(await ReturnList({ bookId: lendableBook.id }))
