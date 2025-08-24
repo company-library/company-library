@@ -1,3 +1,3 @@
-import type { LendingHistory as PrismaLendingHistory } from '@prisma/client'
+import type { LendingHistoryModel as PrismaLendingHistory } from '@/generated/prisma/models'
 
 export type LendingHistory = PrismaLendingHistory
