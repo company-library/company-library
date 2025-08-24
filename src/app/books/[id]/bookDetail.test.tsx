@@ -13,7 +13,6 @@ describe('BookDetail component', () => {
   const bookDetail = {
     id: book.id,
     createdAt: book.createdAt,
-    updatedAt: book.updatedAt,
     title: book.title,
     description: book.description,
     isbn: book.isbn,
