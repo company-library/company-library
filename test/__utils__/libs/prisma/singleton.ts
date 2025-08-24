@@ -1,5 +1,5 @@
-import type { PrismaClient } from '@/generated/prisma'
 import { type DeepMockProxy, mockDeep, mockReset } from 'vitest-mock-extended'
+import type { PrismaClient } from '@/generated/prisma/client'
 
 import prisma from '@/libs/prisma/client'
 
