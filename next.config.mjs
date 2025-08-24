@@ -10,9 +10,7 @@ const nextConfig = {
       { hostname: '*.public.blob.vercel-storage.com' },
     ],
   },
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: true,
 }
 
 export default nextConfig

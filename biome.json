@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "files": {
-    "includes": ["**", "!**/.next", "!**/node_modules"]
+    "includes": ["**", "!**/.next", "!**/node_modules", "!**/generated/prisma"]
   },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {

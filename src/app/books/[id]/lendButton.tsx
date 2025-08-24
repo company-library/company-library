@@ -1,8 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { type FC, startTransition, useRef, useState } from 'react'
-import { lendBook } from '@/app/books/[id]/actions'
+import { type FC, useActionState, useCallback, useEffect, useRef, useState } from 'react'
+import { lendBookAction } from '@/app/books/[id]/actions'
 import { DATE_SYSTEM_FORMAT } from '@/constants'
 import { dateStringToDate, getDaysLater, toJstFormat } from '@/libs/luxon/utils'
 
@@ -20,32 +20,42 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
   const router = useRouter()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const openModal = () => dialogRef.current?.showModal()
-  const closeModal = () => dialogRef.current?.close()
+  const closeModal = useCallback(() => dialogRef.current?.close(), [])
 
   const [dueDate, setDueDate] = useState(getDaysLater(7))
   const [selectedLocationId, setSelectedLocationId] = useState<number | string>('')
+
+  const [state, formAction, isPending] = useActionState(lendBookAction, {
+    success: false,
+    error: null,
+  })
 
   const availableLocations = Array.from(locationStats.entries())
     .filter(([_, stats]) => stats.lendableCount > 0)
     .sort(([_, a], [__, b]) => a.order - b.order)
 
-  const onClick = () => {
+  const onSubmit = (formData: FormData) => {
     if (!selectedLocationId || selectedLocationId === '') {
       window.alert('保管場所を選択してください。')
       return
     }
 
-    startTransition(async () => {
-      const result = await lendBook(bookId, userId, dueDate, Number(selectedLocationId))
-      if (result instanceof Error) {
-        window.alert('貸し出しに失敗しました。もう一度試してみてください。')
-        return
-      }
+    formData.set('bookId', bookId.toString())
+    formData.set('userId', userId.toString())
+    formData.set('dueDate', dueDate.toISOString())
+    formData.set('locationId', selectedLocationId.toString())
 
+    formAction(formData)
+  }
+
+  useEffect(() => {
+    if (state.success) {
       closeModal()
       router.refresh()
-    })
-  }
+    } else if (state.error) {
+      window.alert(state.error)
+    }
+  }, [state, router, closeModal])
 
   return (
     <>
@@ -96,11 +106,20 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
           </div>
 
           <div className="modal-action">
-            <button type="submit" className="btn btn-primary" onClick={onClick}>
-              Ok
-            </button>
+            <form action={onSubmit}>
+              <button type="submit" className="btn btn-primary" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm" />
+                    処理中...
+                  </>
+                ) : (
+                  'Ok'
+                )}
+              </button>
+            </form>
 
-            <button type="button" className="btn ml-5" onClick={closeModal}>
+            <button type="button" className="btn ml-5" onClick={closeModal} disabled={isPending}>
               Cancel
             </button>
           </div>

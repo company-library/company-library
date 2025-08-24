@@ -6,9 +6,16 @@ describe('returnButton component', () => {
   const userId = 2
   const lendingHistoryId = 10
 
-  const returnBookMock = vi.hoisted(() => vi.fn())
+  const { returnBookActionMock, useActionStateMock } = vi.hoisted(() => {
+    return {
+      returnBookActionMock: vi.fn(),
+      useActionStateMock: vi.fn(),
+    }
+  })
+
   vi.mock('@/app/books/[id]/actions', () => ({
-    returnBook: (lendingHistoryId: number) => returnBookMock(lendingHistoryId),
+    returnBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
+      returnBookActionMock(prevState, formData),
   }))
 
   const refreshMock = vi.hoisted(() => vi.fn())
@@ -18,6 +25,14 @@ describe('returnButton component', () => {
     },
   }))
 
+  vi.mock('react', async (importOriginal) => {
+    const actual = (await importOriginal()) as typeof import('react')
+    return {
+      ...actual,
+      useActionState: useActionStateMock,
+    }
+  })
+
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')
@@ -25,6 +40,16 @@ describe('returnButton component', () => {
   HTMLDialogElement.prototype.close = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].removeAttribute('open')
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // デフォルトのuseActionStateモック
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      vi.fn(), // formAction
+      false, // isPending
+    ])
   })
 
   it('propsのdisabledがtrueの場合、無効化して表示される', () => {
@@ -92,6 +117,15 @@ describe('returnButton component', () => {
   })
 
   it('ダイアログのOkボタンをクリックすると、返却処理が実行され、リロードされる', async () => {
+    const mockFormAction = vi.fn()
+
+    // 初期状態のuseActionStateモック
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
+
     render(
       <ReturnButton
         bookId={bookId}
@@ -107,23 +141,24 @@ describe('returnButton component', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
-    await waitFor(() => {
-      expect(returnBookMock).toHaveBeenCalledWith({
-        bookId,
-        userId,
-        lendingHistoryId,
-        impression: '感想を書いたよ',
-      })
-      expect(
-        screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
-      ).not.toBeInTheDocument()
-      expect(refreshMock).toBeCalled()
-    })
+    expect(mockFormAction).toHaveBeenCalled()
+    const formData = mockFormAction.mock.calls[0][0] as FormData
+    expect(formData.get('bookId')).toBe(bookId.toString())
+    expect(formData.get('userId')).toBe(userId.toString())
+    expect(formData.get('lendingHistoryId')).toBe(lendingHistoryId.toString())
+    expect(formData.get('impression')).toBe('感想を書いたよ')
   })
 
   it('返却処理でエラーが発生した場合、アラート表示する', async () => {
-    returnBookMock.mockResolvedValueOnce(new Error('error occurred!'))
+    const mockFormAction = vi.fn()
     window.alert = vi.fn()
+
+    // エラー時のuseActionStateモック
+    useActionStateMock.mockReturnValue([
+      { success: false, error: '返却に失敗しました。もう一度試して見てください。' }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
 
     render(
       <ReturnButton
@@ -138,12 +173,20 @@ describe('returnButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Ok' }))
 
     await waitFor(() => {
-      expect(window.alert).toBeCalledWith('返却に失敗しました。もう一度試してみてください。')
+      expect(window.alert).toBeCalledWith('返却に失敗しました。もう一度試して見てください。')
     })
     expect(refreshMock).not.toBeCalled()
   })
 
   it('ダイアログのCancelボタンをクリックすると、返却処理は実行されない', async () => {
+    const mockFormAction = vi.fn()
+
+    useActionStateMock.mockReturnValue([
+      { success: false, error: null }, // state
+      mockFormAction, // formAction
+      false, // isPending
+    ])
+
     render(
       <ReturnButton
         bookId={bookId}
@@ -157,7 +200,7 @@ describe('returnButton component', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await waitFor(() => {
-      expect(returnBookMock).not.toBeCalled()
+      expect(mockFormAction).not.toBeCalled()
       expect(
         screen.queryByRole('heading', { level: 3, name: '返却しますか？' }),
       ).not.toBeInTheDocument()
