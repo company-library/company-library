@@ -63,8 +63,12 @@ export default function UpdateBookInfoPage() {
     if (result.success) {
       // クライアントサイドでソート
       const sortedBooks = [...result.books].sort((a, b) => {
-        const dateA = new Date(sortBy === 'createdAt' ? a.createdAt : (a.updatedAt || new Date(0))).getTime()
-        const dateB = new Date(sortBy === 'createdAt' ? b.createdAt : (b.updatedAt || new Date(0))).getTime()
+        const dateA = new Date(
+          sortBy === 'createdAt' ? a.createdAt : a.updatedAt || new Date(0),
+        ).getTime()
+        const dateB = new Date(
+          sortBy === 'createdAt' ? b.createdAt : b.updatedAt || new Date(0),
+        ).getTime()
         return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
       })
       setBooks(sortedBooks)
@@ -380,10 +384,14 @@ export default function UpdateBookInfoPage() {
           <div className="flex items-center text-sm text-gray-600 space-x-4">
             <div className="flex items-center space-x-1">
               <span>📋 ソート:</span>
-              <span className={`px-2 py-1 rounded ${sortBy === 'createdAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}>
+              <span
+                className={`px-2 py-1 rounded ${sortBy === 'createdAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
+              >
                 作成日 {sortBy === 'createdAt' && (sortOrder === 'desc' ? '↓' : '↑')}
               </span>
-              <span className={`px-2 py-1 rounded ${sortBy === 'updatedAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}>
+              <span
+                className={`px-2 py-1 rounded ${sortBy === 'updatedAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
+              >
                 更新日 {sortBy === 'updatedAt' && (sortOrder === 'desc' ? '↓' : '↑')}
               </span>
             </div>
@@ -482,10 +490,7 @@ export default function UpdateBookInfoPage() {
                       {new Date(book.createdAt).toLocaleDateString('ja-JP')}
                     </td>
                     <td className="text-sm text-gray-600">
-                      {book.updatedAt 
-                        ? new Date(book.updatedAt).toLocaleDateString('ja-JP')
-                        : '-'
-                      }
+                      {book.updatedAt ? new Date(book.updatedAt).toLocaleDateString('ja-JP') : '-'}
                     </td>
                     <td>
                       <button
