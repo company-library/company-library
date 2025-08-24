@@ -3,14 +3,16 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  await prisma.returnHistory.deleteMany({})
-  await prisma.lendingHistory.deleteMany({})
-  await prisma.registrationHistory.deleteMany({})
-  await prisma.impression.deleteMany({})
-  await prisma.reservation.deleteMany({})
-  await prisma.book.deleteMany({})
-  await prisma.user.deleteMany({})
-  await prisma.location.deleteMany({})
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "return_histories" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "lending_histories" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(
+    `TRUNCATE TABLE "registration_histories" RESTART IDENTITY CASCADE;`,
+  )
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "impressions" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "reservations" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "books" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "users" RESTART IDENTITY CASCADE;`)
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "locations" RESTART IDENTITY CASCADE;`)
 
   // 保管場所データを作成
   const location1 = await prisma.location.create({
@@ -221,7 +223,8 @@ async function main() {
     data: {
       bookId: book1.id,
       userId: alice.id,
-      impression: 'JavaScriptの基礎から応用まで詳しく説明されており、とても参考になりました。実際のプロジェクトで活用できる内容が多くありました。',
+      impression:
+        'JavaScriptの基礎から応用まで詳しく説明されており、とても参考になりました。実際のプロジェクトで活用できる内容が多くありました。',
     },
   })
 
@@ -229,7 +232,8 @@ async function main() {
     data: {
       bookId: book3.id,
       userId: bob.id,
-      impression: 'Reactの概念が分かりやすく解説されていて、実践的な内容でした。コンポーネント設計の参考になります。',
+      impression:
+        'Reactの概念が分かりやすく解説されていて、実践的な内容でした。コンポーネント設計の参考になります。',
     },
   })
 
@@ -237,7 +241,8 @@ async function main() {
     data: {
       bookId: book2.id,
       userId: bob.id,
-      impression: 'TypeScriptの型システムについて理解が深まりました。特にジェネリクスの章が秀逸でした。',
+      impression:
+        'TypeScriptの型システムについて理解が深まりました。特にジェネリクスの章が秀逸でした。',
     },
   })
 
