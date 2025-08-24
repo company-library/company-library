@@ -52,8 +52,6 @@ async function main() {
     data: {
       title: 'JavaScript 完全ガイド',
       isbn: '1111111111111',
-      imageUrl:
-        'https://books.google.com/books/content?id=fyvwzgEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
     },
   })
   const book2 = await prisma.book.create({
@@ -66,8 +64,6 @@ async function main() {
     data: {
       title: 'React開発入門',
       isbn: '3333333333333',
-      imageUrl:
-        'https://books.google.com/books/content?id=example&printsec=frontcover&img=1&zoom=1&source=gbs_api',
     },
   })
   const book4 = await prisma.book.create({
