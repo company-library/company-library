@@ -249,7 +249,9 @@ describe('admin books actions', () => {
       expect(result.count).toBe(2)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          OR: [{ description: '' }, { imageUrl: null }],
+          AND: [
+            { OR: [{ description: '' }, { imageUrl: null }] },
+          ],
         },
         take: 50,
         orderBy: {
@@ -266,7 +268,9 @@ describe('admin books actions', () => {
       expect(result.success).toBe(true)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          description: '',
+          AND: [
+            { description: '' },
+          ],
         },
         take: 10,
         orderBy: {
@@ -285,7 +289,9 @@ describe('admin books actions', () => {
       expect(result.books[1].title).toBe('書籍2')
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          imageUrl: null,
+          AND: [
+            { imageUrl: null },
+          ],
         },
         take: 20,
         orderBy: {
@@ -304,6 +310,132 @@ describe('admin books actions', () => {
           take: 100,
         }),
       )
+    })
+
+    it('作成日フィルタで書籍一覧を取得する', async () => {
+      prismaMock.book.findMany.mockResolvedValue(mockBooks)
+
+      const result = await getBooksWithMissingInfo(
+        50,
+        'both',
+        '2023-01-15',
+        '2023-02-28',
+      )
+
+      expect(result.success).toBe(true)
+      expect(prismaMock.book.findMany).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            { OR: [{ description: '' }, { imageUrl: null }] },
+            {
+              createdAt: {
+                gte: new Date('2023-01-15'),
+                lt: new Date('2023-03-01'),
+              },
+            },
+          ],
+        },
+        take: 50,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+    })
+
+    it('更新日フィルタで書籍一覧を取得する', async () => {
+      prismaMock.book.findMany.mockResolvedValue(mockBooks)
+
+      const result = await getBooksWithMissingInfo(
+        50,
+        'both',
+        undefined,
+        undefined,
+        '2023-01-15',
+        '2023-02-28',
+      )
+
+      expect(result.success).toBe(true)
+      expect(prismaMock.book.findMany).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            { OR: [{ description: '' }, { imageUrl: null }] },
+            {
+              updatedAt: {
+                gte: new Date('2023-01-15'),
+                lt: new Date('2023-03-01'),
+              },
+            },
+          ],
+        },
+        take: 50,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+    })
+
+    it('作成日と更新日の両方でフィルタした書籍一覧を取得する', async () => {
+      prismaMock.book.findMany.mockResolvedValue(mockBooks)
+
+      const result = await getBooksWithMissingInfo(
+        50,
+        'both',
+        '2023-01-01',
+        '2023-01-31',
+        '2023-02-01',
+        '2023-02-28',
+      )
+
+      expect(result.success).toBe(true)
+      expect(prismaMock.book.findMany).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            { OR: [{ description: '' }, { imageUrl: null }] },
+            {
+              createdAt: {
+                gte: new Date('2023-01-01'),
+                lt: new Date('2023-02-01'),
+              },
+            },
+            {
+              updatedAt: {
+                gte: new Date('2023-02-01'),
+                lt: new Date('2023-03-01'),
+              },
+            },
+          ],
+        },
+        take: 50,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+    })
+
+    it('無効な日付フォーマットは無視される', async () => {
+      prismaMock.book.findMany.mockResolvedValue(mockBooks)
+
+      const result = await getBooksWithMissingInfo(
+        50,
+        'both',
+        'invalid-date',
+        '2023-12-32',
+        'not-a-date',
+        '2023-13-01',
+      )
+
+      expect(result.success).toBe(true)
+      expect(prismaMock.book.findMany).toHaveBeenCalledWith({
+        where: {
+          AND: [
+            { OR: [{ description: '' }, { imageUrl: null }] },
+          ],
+        },
+        take: 50,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
     })
 
     it('エラーが発生した場合', async () => {

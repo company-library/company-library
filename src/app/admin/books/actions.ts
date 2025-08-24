@@ -93,6 +93,8 @@ export async function updateSingleBookInfo(bookId: number) {
  * @param filter フィルタ条件 ('description', 'image', 'both')
  * @param createdAfter 作成日開始日
  * @param createdBefore 作成日終了日
+ * @param updatedAfter 更新日開始日
+ * @param updatedBefore 更新日終了日
  * @returns 書籍一覧（作成日の新しい順）
  */
 export async function getBooksWithMissingInfo(
@@ -100,6 +102,8 @@ export async function getBooksWithMissingInfo(
   filter: 'description' | 'image' | 'both' = 'both',
   createdAfter?: string,
   createdBefore?: string,
+  updatedAfter?: string,
+  updatedBefore?: string,
 ) {
   try {
     // フィルタ条件を構築
@@ -142,6 +146,35 @@ export async function getBooksWithMissingInfo(
     }
     if (Object.keys(dateConditions).length > 0) {
       whereConditions.push({ createdAt: dateConditions })
+    }
+
+    // 更新日フィルタ
+    const updatedDateConditions: Record<string, Date> = {}
+    if (updatedAfter) {
+      try {
+        const date = new Date(updatedAfter)
+        if (!Number.isNaN(date.getTime())) {
+          updatedDateConditions.gte = date
+        }
+      } catch {
+        // 無効な日付は無視
+      }
+    }
+    if (updatedBefore) {
+      try {
+        const date = new Date(updatedBefore)
+        if (!Number.isNaN(date.getTime())) {
+          // 終了日は翌日の00:00:00を指定（その日の23:59:59まで含む）
+          const endDate = new Date(date)
+          endDate.setDate(endDate.getDate() + 1)
+          updatedDateConditions.lt = endDate
+        }
+      } catch {
+        // 無効な日付は無視
+      }
+    }
+    if (Object.keys(updatedDateConditions).length > 0) {
+      whereConditions.push({ updatedAt: updatedDateConditions })
     }
 
     const books = await prisma.book.findMany({

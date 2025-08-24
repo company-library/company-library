@@ -41,10 +41,13 @@ export default function UpdateBookInfoPage() {
   const [filter, setFilter] = useState('both')
   const [createdAfter, setCreatedAfter] = useState('')
   const [createdBefore, setCreatedBefore] = useState('')
+  const [updatedAfter, setUpdatedAfter] = useState('')
+  const [updatedBefore, setUpdatedBefore] = useState('')
   const [books, setBooks] = useState<BookWithMissingInfo[]>([])
   const [loadingBooks, setLoadingBooks] = useState(true)
   const [updatingBookId, setUpdatingBookId] = useState<number | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
+  const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt'>('createdAt')
 
   // 不足情報のある書籍一覧を読み込み
   const loadBooks = useCallback(async () => {
@@ -54,18 +57,20 @@ export default function UpdateBookInfoPage() {
       filter as 'description' | 'image' | 'both',
       createdAfter || undefined,
       createdBefore || undefined,
+      updatedAfter || undefined,
+      updatedBefore || undefined,
     )
     if (result.success) {
       // クライアントサイドでソート
       const sortedBooks = [...result.books].sort((a, b) => {
-        const dateA = new Date(a.createdAt).getTime()
-        const dateB = new Date(b.createdAt).getTime()
+        const dateA = new Date(sortBy === 'createdAt' ? a.createdAt : (a.updatedAt || new Date(0))).getTime()
+        const dateB = new Date(sortBy === 'createdAt' ? b.createdAt : (b.updatedAt || new Date(0))).getTime()
         return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
       })
       setBooks(sortedBooks)
     }
     setLoadingBooks(false)
-  }, [filter, limit, sortOrder, createdAfter, createdBefore])
+  }, [filter, limit, sortOrder, sortBy, createdAfter, createdBefore, updatedAfter, updatedBefore])
 
   useEffect(() => {
     loadBooks()
@@ -90,6 +95,14 @@ export default function UpdateBookInfoPage() {
 
       if (createdBefore) {
         params.append('createdBefore', createdBefore)
+      }
+
+      if (updatedAfter) {
+        params.append('updatedAfter', updatedAfter)
+      }
+
+      if (updatedBefore) {
+        params.append('updatedBefore', updatedBefore)
       }
 
       const response = await fetch(`/api/books/update-missing-info?${params.toString()}`, {
@@ -151,7 +164,7 @@ export default function UpdateBookInfoPage() {
           APIから情報を取得して更新します。
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
           <div>
             <label htmlFor="limit" className="block text-sm font-medium text-gray-700 mb-2">
               更新件数上限
@@ -211,6 +224,34 @@ export default function UpdateBookInfoPage() {
               id="createdBefore"
               value={createdBefore}
               onChange={(e) => setCreatedBefore(e.target.value)}
+              className="input input-bordered w-full"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="updatedAfter" className="block text-sm font-medium text-gray-700 mb-2">
+              更新日（開始）
+            </label>
+            <input
+              type="date"
+              id="updatedAfter"
+              value={updatedAfter}
+              onChange={(e) => setUpdatedAfter(e.target.value)}
+              className="input input-bordered w-full"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="updatedBefore" className="block text-sm font-medium text-gray-700 mb-2">
+              更新日（終了）
+            </label>
+            <input
+              type="date"
+              id="updatedBefore"
+              value={updatedBefore}
+              onChange={(e) => setUpdatedBefore(e.target.value)}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
@@ -329,12 +370,28 @@ export default function UpdateBookInfoPage() {
 
       {/* 不足情報のある書籍一覧 */}
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">
-          不足情報のある書籍一覧
-          {!loadingBooks && (
-            <span className="text-sm font-normal text-gray-600 ml-2">（{books.length}件）</span>
-          )}
-        </h3>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold mb-2">
+            不足情報のある書籍一覧
+            {!loadingBooks && (
+              <span className="text-sm font-normal text-gray-600 ml-2">（{books.length}件）</span>
+            )}
+          </h3>
+          <div className="flex items-center text-sm text-gray-600 space-x-4">
+            <div className="flex items-center space-x-1">
+              <span>📋 ソート:</span>
+              <span className={`px-2 py-1 rounded ${sortBy === 'createdAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}>
+                作成日 {sortBy === 'createdAt' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </span>
+              <span className={`px-2 py-1 rounded ${sortBy === 'updatedAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}>
+                更新日 {sortBy === 'updatedAt' && (sortOrder === 'desc' ? '↓' : '↑')}
+              </span>
+            </div>
+            <div className="text-xs text-gray-500">
+              ※ カラムヘッダーをクリックして並び順を変更できます
+            </div>
+          </div>
+        </div>
 
         {loadingBooks ? (
           <div className="flex justify-center items-center py-8">
@@ -357,12 +414,45 @@ export default function UpdateBookInfoPage() {
                   <th>
                     <button
                       type="button"
-                      onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                      className="flex items-center space-x-1 hover:text-blue-600"
+                      onClick={() => {
+                        if (sortBy === 'createdAt') {
+                          setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+                        } else {
+                          setSortBy('createdAt')
+                          setSortOrder('desc')
+                        }
+                      }}
+                      className={`flex items-center space-x-1 hover:text-blue-600 ${
+                        sortBy === 'createdAt' ? 'text-blue-600 font-semibold' : ''
+                      }`}
                       disabled={loadingBooks}
                     >
                       <span>作成日</span>
-                      <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                      {sortBy === 'createdAt' && (
+                        <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                      )}
+                    </button>
+                  </th>
+                  <th>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (sortBy === 'updatedAt') {
+                          setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+                        } else {
+                          setSortBy('updatedAt')
+                          setSortOrder('desc')
+                        }
+                      }}
+                      className={`flex items-center space-x-1 hover:text-blue-600 ${
+                        sortBy === 'updatedAt' ? 'text-blue-600 font-semibold' : ''
+                      }`}
+                      disabled={loadingBooks}
+                    >
+                      <span>更新日</span>
+                      {sortBy === 'updatedAt' && (
+                        <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                      )}
                     </button>
                   </th>
                   <th>操作</th>
@@ -390,6 +480,12 @@ export default function UpdateBookInfoPage() {
                     </td>
                     <td className="text-sm text-gray-600">
                       {new Date(book.createdAt).toLocaleDateString('ja-JP')}
+                    </td>
+                    <td className="text-sm text-gray-600">
+                      {book.updatedAt 
+                        ? new Date(book.updatedAt).toLocaleDateString('ja-JP')
+                        : '-'
+                      }
                     </td>
                     <td>
                       <button
