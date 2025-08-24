@@ -398,6 +398,7 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '9784123456792',
         imageUrl: null,
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         id: 5,
@@ -406,6 +407,7 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '9784123456793',
         imageUrl: null,
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ]
 
@@ -417,6 +419,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '',
       imageUrl: '',
       createdAt: new Date(),
+      updatedAt: new Date(),
     })
 
     mockFetch.mockResolvedValue({
@@ -452,6 +455,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784123456795',
       imageUrl: null,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])

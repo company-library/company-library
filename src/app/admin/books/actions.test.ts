@@ -249,9 +249,7 @@ describe('admin books actions', () => {
       expect(result.count).toBe(2)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          AND: [
-            { OR: [{ description: '' }, { imageUrl: null }] },
-          ],
+          AND: [{ OR: [{ description: '' }, { imageUrl: null }] }],
         },
         take: 50,
         orderBy: {
@@ -268,9 +266,7 @@ describe('admin books actions', () => {
       expect(result.success).toBe(true)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          AND: [
-            { description: '' },
-          ],
+          AND: [{ description: '' }],
         },
         take: 10,
         orderBy: {
@@ -289,9 +285,7 @@ describe('admin books actions', () => {
       expect(result.books[1].title).toBe('書籍2')
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          AND: [
-            { imageUrl: null },
-          ],
+          AND: [{ imageUrl: null }],
         },
         take: 20,
         orderBy: {
@@ -315,12 +309,7 @@ describe('admin books actions', () => {
     it('作成日フィルタで書籍一覧を取得する', async () => {
       prismaMock.book.findMany.mockResolvedValue(mockBooks)
 
-      const result = await getBooksWithMissingInfo(
-        50,
-        'both',
-        '2023-01-15',
-        '2023-02-28',
-      )
+      const result = await getBooksWithMissingInfo(50, 'both', '2023-01-15', '2023-02-28')
 
       expect(result.success).toBe(true)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
@@ -427,9 +416,7 @@ describe('admin books actions', () => {
       expect(result.success).toBe(true)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          AND: [
-            { OR: [{ description: '' }, { imageUrl: null }] },
-          ],
+          AND: [{ OR: [{ description: '' }, { imageUrl: null }] }],
         },
         take: 50,
         orderBy: {

@@ -1,7 +1,7 @@
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import UpdateBookInfoPage from './page'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as actions from './actions'
+import UpdateBookInfoPage from './page'
 
 // actions モジュールをモック
 vi.mock('./actions', () => ({
@@ -110,7 +110,7 @@ describe('UpdateBookInfoPage', () => {
         undefined,
         undefined,
         '2023-01-01',
-        '2023-12-31'
+        '2023-12-31',
       )
     })
   })
@@ -135,7 +135,7 @@ describe('UpdateBookInfoPage', () => {
         '2023-01-01',
         '2023-06-30',
         '2023-07-01',
-        '2023-12-31'
+        '2023-12-31',
       )
     })
   })
@@ -170,14 +170,12 @@ describe('UpdateBookInfoPage', () => {
     fireEvent.click(updateButton)
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('updatedAfter=2023-01-01'),
-        { method: 'GET' }
-      )
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('updatedBefore=2023-12-31'),
-        { method: 'GET' }
-      )
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('updatedAfter=2023-01-01'), {
+        method: 'GET',
+      })
+      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('updatedBefore=2023-12-31'), {
+        method: 'GET',
+      })
     })
   })
 
@@ -246,9 +244,13 @@ describe('UpdateBookInfoPage', () => {
   it('更新日でソートできる', async () => {
     render(<UpdateBookInfoPage />)
 
+    // テーブルヘッダーの更新日ボタンをクリック
     await waitFor(() => {
-      const sortButton = screen.getByText('更新日')
-      fireEvent.click(sortButton)
+      const updatedAtButtons = screen.getAllByText('更新日')
+      const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
+      if (tableHeaderButton?.closest('button')) {
+        fireEvent.click(tableHeaderButton.closest('button')!)
+      }
     })
 
     // 更新日でのソートに切り替わることを確認
@@ -263,14 +265,19 @@ describe('UpdateBookInfoPage', () => {
       expect(screen.getByText('作成日')).toBeInTheDocument()
     })
 
-    // 更新日をクリックして更新日ソートに切り替え
-    const updatedAtButton = screen.getByText('更新日')
-    fireEvent.click(updatedAtButton)
+    // テーブルヘッダーの更新日ボタンをクリック
+    const updatedAtButtons = screen.getAllByText('更新日')
+    const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
+    if (tableHeaderButton?.closest('button')) {
+      fireEvent.click(tableHeaderButton.closest('button')!)
+    }
 
     // 作成日をもう一度クリックして作成日ソートに戻す
     await waitFor(() => {
-      const createdAtButton = screen.getByText('作成日')
-      fireEvent.click(createdAtButton)
+      const createdAtButton = screen.getByText('作成日').closest('button')
+      if (createdAtButton) {
+        fireEvent.click(createdAtButton)
+      }
     })
 
     expect(mockGetBooksWithMissingInfo).toHaveBeenCalled()
@@ -364,8 +371,11 @@ describe('UpdateBookInfoPage', () => {
 
     // 更新日でソートボタンをクリック
     await waitFor(() => {
-      const updatedAtButton = screen.getByText('更新日')
-      fireEvent.click(updatedAtButton)
+      const updatedAtButtons = screen.getAllByText('更新日')
+      const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
+      if (tableHeaderButton?.closest('button')) {
+        fireEvent.click(tableHeaderButton.closest('button')!)
+      }
     })
 
     await waitFor(() => {
@@ -381,21 +391,32 @@ describe('UpdateBookInfoPage', () => {
 
     // デフォルトでは作成日がアクティブ
     await waitFor(() => {
-      const createdAtButton = screen.getByText('作成日').closest('button')
+      const createdAtButtons = screen.getAllByText('作成日')
+      const createdAtButton = createdAtButtons
+        .find((el) => el.closest('button') !== null)
+        ?.closest('button')
       expect(createdAtButton).toHaveClass('text-blue-600')
     })
 
-    // 更新日をクリック
-    const updatedAtButton = screen.getByText('更新日')
-    fireEvent.click(updatedAtButton)
+    // テーブルヘッダーの更新日ボタンをクリック
+    const updatedAtButtons = screen.getAllByText('更新日')
+    const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
+    if (tableHeaderButton?.closest('button')) {
+      fireEvent.click(tableHeaderButton.closest('button')!)
+    }
 
     await waitFor(() => {
       // 更新日がアクティブになる
-      const updatedAtButtonEl = screen.getByText('更新日').closest('button')
+      const updatedAtButtonEl = updatedAtButtons
+        .find((el) => el.closest('button') !== null)
+        ?.closest('button')
       expect(updatedAtButtonEl).toHaveClass('text-blue-600')
-      
+
       // 作成日はアクティブでなくなる
-      const createdAtButtonEl = screen.getByText('作成日').closest('button')
+      const createdAtButtons = screen.getAllByText('作成日')
+      const createdAtButtonEl = createdAtButtons
+        .find((el) => el.closest('button') !== null)
+        ?.closest('button')
       expect(createdAtButtonEl).not.toHaveClass('text-blue-600')
     })
   })
@@ -418,8 +439,11 @@ describe('UpdateBookInfoPage', () => {
     })
 
     // 更新日をクリックして更新日ソートに変更
-    const updatedAtButton = screen.getByText('更新日')
-    fireEvent.click(updatedAtButton)
+    const updatedAtButtons = screen.getAllByText('更新日')
+    const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
+    if (tableHeaderButton?.closest('button')) {
+      fireEvent.click(tableHeaderButton.closest('button')!)
+    }
 
     await waitFor(() => {
       // 更新日は降順で開始するので下向き矢印
@@ -440,14 +464,14 @@ describe('UpdateBookInfoPage', () => {
         undefined,
         undefined,
         undefined,
-        undefined
+        undefined,
       )
     })
   })
 
   it('ローディング状態が正しく表示される', () => {
     mockGetBooksWithMissingInfo.mockImplementation(
-      () => new Promise((resolve) => setTimeout(resolve, 1000))
+      () => new Promise((resolve) => setTimeout(resolve, 1000)),
     )
 
     render(<UpdateBookInfoPage />)
