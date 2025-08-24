@@ -6,7 +6,7 @@ export const bookWithImage = {
   description: '画像有りの書籍の概要',
   isbn: '1111111111111',
   imageUrl:
-    'https://example.com/books/content?id=QlmenQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
+    'https://books.google.com/books/content?id=QlmenQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
   createdAt: new Date('2023-07-22T06:12:23.527Z'),
   updatedAt: new Date('2023-07-22T06:12:23.527Z'),
 }

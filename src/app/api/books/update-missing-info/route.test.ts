@@ -64,6 +64,12 @@ describe('GET /api/books/update-missing-info', () => {
 
     prismaMock.book.findMany.mockResolvedValueOnce(books)
 
+    // Mock fetch to prevent external API calls
+    mockFetch.mockResolvedValue({
+      json: () => Promise.resolve({}),
+      ok: true,
+    })
+
     const request = new NextRequest(
       'http://localhost:3000/api/books/update-missing-info?limit=10',
       {
@@ -187,9 +193,9 @@ describe('GET /api/books/update-missing-info', () => {
     })
   })
 
-  it('ISBN指定フィルタが正しく適用される', async () => {
+  it('不正なフィルタパラメータは無視される', async () => {
     const request = new NextRequest(
-      'http://localhost:3000/api/books/update-missing-info?limit=10&isbn=9784567890123',
+      'http://localhost:3000/api/books/update-missing-info?limit=10&invalidParam=test',
       {
         method: 'GET',
       },
@@ -201,7 +207,7 @@ describe('GET /api/books/update-missing-info', () => {
 
     expect(prismaMock.book.findMany).toHaveBeenCalledWith({
       where: {
-        AND: [{ OR: [{ description: '' }, { imageUrl: null }] }, { isbn: '9784567890123' }],
+        AND: [{ OR: [{ description: '' }, { imageUrl: null }] }],
       },
       take: 10,
       orderBy: {
