@@ -248,16 +248,9 @@ describe('admin books actions', () => {
         where: {
           OR: [{ description: '' }, { imageUrl: null }],
         },
-        take: 20,
+        take: 50,
         orderBy: {
-          createdAt: 'asc',
-        },
-        include: {
-          _count: {
-            select: {
-              registrationHistories: true,
-            },
-          },
+          createdAt: 'desc',
         },
       })
     })
@@ -265,46 +258,35 @@ describe('admin books actions', () => {
     it('カスタムパラメータで書籍一覧を取得する', async () => {
       prismaMock.book.findMany.mockResolvedValue(mockBooks)
 
-      const result = await getBooksWithMissingInfo(10, 'title', 'desc')
+      const result = await getBooksWithMissingInfo(10, 'description')
 
       expect(result.success).toBe(true)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          OR: [{ description: '' }, { imageUrl: null }],
+          description: '',
         },
         take: 10,
         orderBy: {
-          title: 'desc',
-        },
-        include: {
-          _count: {
-            select: {
-              registrationHistories: true,
-            },
-          },
+          createdAt: 'desc',
         },
       })
     })
 
-    it('registrationCountでソートする場合', async () => {
+    it('画像のみフィルタで書籍一覧を取得する', async () => {
       prismaMock.book.findMany.mockResolvedValue(mockBooks)
 
-      const result = await getBooksWithMissingInfo(20, 'registrationCount', 'desc')
+      const result = await getBooksWithMissingInfo(20, 'image')
 
       expect(result.success).toBe(true)
-      expect(result.books[0]._count.registrationHistories).toBe(5)
-      expect(result.books[1]._count.registrationHistories).toBe(3)
+      expect(result.books[0].title).toBe('書籍1')
+      expect(result.books[1].title).toBe('書籍2')
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
-          OR: [{ description: '' }, { imageUrl: null }],
+          imageUrl: null,
         },
         take: 20,
-        include: {
-          _count: {
-            select: {
-              registrationHistories: true,
-            },
-          },
+        orderBy: {
+          createdAt: 'desc',
         },
       })
     })

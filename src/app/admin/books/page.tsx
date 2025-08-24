@@ -27,9 +27,7 @@ type BookWithMissingInfo = {
   isbn: string
   description: string
   imageUrl: string | null
-  _count: {
-    registrationHistories: number
-  }
+  createdAt: Date
 }
 
 /**
@@ -38,27 +36,35 @@ type BookWithMissingInfo = {
 export default function UpdateBookInfoPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<UpdateResult | null>(null)
-  const [limit, setLimit] = useState(10)
+  const [limit, setLimit] = useState(50)
   const [filter, setFilter] = useState('both')
   const [createdAfter, setCreatedAfter] = useState('')
-  const [isbn, setIsbn] = useState('')
-  const [sortBy, setSortBy] = useState<'createdAt' | 'title' | 'isbn' | 'registrationCount'>(
-    'createdAt',
-  )
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [createdBefore, setCreatedBefore] = useState('')
   const [books, setBooks] = useState<BookWithMissingInfo[]>([])
   const [loadingBooks, setLoadingBooks] = useState(true)
   const [updatingBookId, setUpdatingBookId] = useState<number | null>(null)
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
 
   // 不足情報のある書籍一覧を読み込み
   const loadBooks = useCallback(async () => {
     setLoadingBooks(true)
-    const result = await getBooksWithMissingInfo(50, sortBy, sortOrder)
+    const result = await getBooksWithMissingInfo(
+      limit,
+      filter as 'description' | 'image' | 'both',
+      createdAfter || undefined,
+      createdBefore || undefined,
+    )
     if (result.success) {
-      setBooks(result.books)
+      // クライアントサイドでソート
+      const sortedBooks = [...result.books].sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime()
+        const dateB = new Date(b.createdAt).getTime()
+        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
+      })
+      setBooks(sortedBooks)
     }
     setLoadingBooks(false)
-  }, [sortBy, sortOrder])
+  }, [filter, limit, sortOrder, createdAfter, createdBefore])
 
   useEffect(() => {
     loadBooks()
@@ -73,16 +79,16 @@ export default function UpdateBookInfoPage() {
       const params = new URLSearchParams({
         limit: limit.toString(),
         filter,
-        sortBy,
-        sortOrder,
+        sortBy: 'createdAt',
+        sortOrder: 'desc',
       })
 
       if (createdAfter) {
         params.append('createdAfter', createdAfter)
       }
 
-      if (isbn.trim()) {
-        params.append('isbn', isbn.trim())
+      if (createdBefore) {
+        params.append('createdBefore', createdBefore)
       }
 
       const response = await fetch(`/api/books/update-missing-info?${params.toString()}`, {
@@ -144,7 +150,7 @@ export default function UpdateBookInfoPage() {
           APIから情報を取得して更新します。
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           <div>
             <label htmlFor="limit" className="block text-sm font-medium text-gray-700 mb-2">
               更新件数上限
@@ -153,20 +159,20 @@ export default function UpdateBookInfoPage() {
               type="number"
               id="limit"
               min="1"
-              max="20"
+              max="50"
               value={limit}
               onChange={(e) =>
-                setLimit(Math.min(20, Math.max(1, Number.parseInt(e.target.value, 10) || 1)))
+                setLimit(Math.min(50, Math.max(1, Number.parseInt(e.target.value, 10) || 1)))
               }
               className="input input-bordered w-full"
               disabled={isLoading}
             />
-            <span className="text-sm text-gray-500">（最大20件）</span>
+            <span className="text-sm text-gray-500">（最大50件）</span>
           </div>
 
           <div>
             <label htmlFor="filter" className="block text-sm font-medium text-gray-700 mb-2">
-              更新対象
+              絞り込み
             </label>
             <select
               id="filter"
@@ -175,15 +181,15 @@ export default function UpdateBookInfoPage() {
               className="select select-bordered w-full"
               disabled={isLoading}
             >
-              <option value="both">説明文と画像の両方</option>
-              <option value="description">説明文のみ</option>
-              <option value="image">画像のみ</option>
+              <option value="both">説明文・画像の両方なし</option>
+              <option value="description">説明文のみなし</option>
+              <option value="image">画像のみなし</option>
             </select>
           </div>
 
           <div>
             <label htmlFor="createdAfter" className="block text-sm font-medium text-gray-700 mb-2">
-              作成日以降（任意）
+              作成日（開始）
             </label>
             <input
               type="date"
@@ -196,59 +202,24 @@ export default function UpdateBookInfoPage() {
           </div>
 
           <div>
-            <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 mb-2">
-              ISBN指定（任意）
+            <label htmlFor="createdBefore" className="block text-sm font-medium text-gray-700 mb-2">
+              作成日（終了）
             </label>
             <input
-              type="text"
-              id="isbn"
-              value={isbn}
-              onChange={(e) => setIsbn(e.target.value)}
-              placeholder="9784567890123"
+              type="date"
+              id="createdBefore"
+              value={createdBefore}
+              onChange={(e) => setCreatedBefore(e.target.value)}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
-          </div>
-
-          <div>
-            <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700 mb-2">
-              並び順
-            </label>
-            <select
-              id="sortBy"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="select select-bordered w-full"
-              disabled={isLoading || loadingBooks}
-            >
-              <option value="createdAt">作成日</option>
-              <option value="title">タイトル</option>
-              <option value="isbn">ISBN</option>
-              <option value="registrationCount">登録数</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700 mb-2">
-              順序
-            </label>
-            <select
-              id="sortOrder"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
-              className="select select-bordered w-full"
-              disabled={isLoading || loadingBooks}
-            >
-              <option value="asc">昇順</option>
-              <option value="desc">降順</option>
-            </select>
           </div>
         </div>
 
         <div className="mb-4 p-3 bg-blue-50 rounded-lg">
           <p className="text-sm text-blue-800">
-            💡 <strong>重要:</strong> 更新処理は画面に表示されている順序で実行されます。
-            上限件数を10件に設定した場合、現在の並び順で先頭10件が更新対象となります。
+            💡 <strong>重要:</strong> 更新処理は作成日の新しい順で実行されます。
+            上限件数を50件に設定した場合、最新の50件が更新対象となります。
           </p>
         </div>
 
@@ -258,7 +229,7 @@ export default function UpdateBookInfoPage() {
           disabled={isLoading}
           className={`btn btn-primary ${isLoading ? 'loading' : ''}`}
         >
-          {isLoading ? '更新中...' : '書籍情報を更新'}
+          {isLoading ? '更新中...' : '表示中の書籍の情報を更新'}
         </button>
       </div>
 
@@ -357,7 +328,12 @@ export default function UpdateBookInfoPage() {
 
       {/* 不足情報のある書籍一覧 */}
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">不足情報のある書籍一覧</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          不足情報のある書籍一覧
+          {!loadingBooks && (
+            <span className="text-sm font-normal text-gray-600 ml-2">（{books.length}件）</span>
+          )}
+        </h3>
 
         {loadingBooks ? (
           <div className="flex justify-center items-center py-8">
@@ -377,7 +353,17 @@ export default function UpdateBookInfoPage() {
                   <th>ISBN</th>
                   <th>説明文</th>
                   <th>画像</th>
-                  <th>登録数</th>
+                  <th>
+                    <button
+                      type="button"
+                      onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+                      className="flex items-center space-x-1 hover:text-blue-600"
+                      disabled={loadingBooks}
+                    >
+                      <span>作成日</span>
+                      <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                    </button>
+                  </th>
                   <th>操作</th>
                 </tr>
               </thead>
@@ -401,7 +387,9 @@ export default function UpdateBookInfoPage() {
                         <span className="text-green-600">あり</span>
                       )}
                     </td>
-                    <td>{book._count.registrationHistories}</td>
+                    <td className="text-sm text-gray-600">
+                      {new Date(book.createdAt).toLocaleDateString('ja-JP')}
+                    </td>
                     <td>
                       <button
                         type="button"

@@ -40,7 +40,7 @@ describe('GET /api/books/update-missing-info', () => {
     vi.clearAllMocks()
   })
 
-  it('registrationCountでソートできる', async () => {
+  it('デフォルトフィルタで両方なしの書籍が処理される', async () => {
     const books = [
       {
         id: 1,
@@ -49,7 +49,6 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '1111111111111',
         imageUrl: null,
         createdAt: new Date(),
-        _count: { registrationHistories: 5 },
       },
       {
         id: 2,
@@ -58,14 +57,13 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '2222222222222',
         imageUrl: null,
         createdAt: new Date(),
-        _count: { registrationHistories: 2 },
       },
     ]
 
     prismaMock.book.findMany.mockResolvedValueOnce(books)
 
     const request = new NextRequest(
-      'http://localhost:3000/api/books/update-missing-info?limit=10&sortBy=registrationCount&sortOrder=desc',
+      'http://localhost:3000/api/books/update-missing-info?limit=10',
       {
         method: 'GET',
       },
@@ -73,22 +71,18 @@ describe('GET /api/books/update-missing-info', () => {
 
     const _response = await GET(request)
 
-    // registrationCountソートの場合は_countを含むクエリが実行される
     expect(prismaMock.book.findMany).toHaveBeenCalledWith({
       where: {
         AND: [{ OR: [{ description: '' }, { imageUrl: null }] }],
       },
-      include: {
-        _count: {
-          select: {
-            registrationHistories: true,
-          },
-        },
+      take: 10,
+      orderBy: {
+        createdAt: 'desc',
       },
     })
   })
 
-  it('クエリパラメータでフィルタリングできる - description のみ', async () => {
+  it('説明文フィルタで説明文なしの書籍のみが処理される', async () => {
     const book = {
       id: 1,
       title: 'Test Book',
@@ -110,7 +104,7 @@ describe('GET /api/books/update-missing-info', () => {
     })
 
     const request = new NextRequest(
-      'http://localhost:3000/api/books/update-missing-info?limit=10&filter=description&sortBy=title&sortOrder=desc',
+      'http://localhost:3000/api/books/update-missing-info?limit=10&filter=description',
       {
         method: 'GET',
       },
@@ -126,12 +120,12 @@ describe('GET /api/books/update-missing-info', () => {
       },
       take: 10,
       orderBy: {
-        title: 'desc',
+        createdAt: 'desc',
       },
     })
   })
 
-  it('クエリパラメータでフィルタリングできる - image のみ', async () => {
+  it('画像フィルタで画像なしの書籍のみが処理される', async () => {
     const book = {
       id: 1,
       title: 'Test Book',
@@ -158,7 +152,7 @@ describe('GET /api/books/update-missing-info', () => {
       },
       take: 10,
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     })
   })
@@ -184,7 +178,7 @@ describe('GET /api/books/update-missing-info', () => {
       },
       take: 10,
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     })
   })
@@ -207,12 +201,12 @@ describe('GET /api/books/update-missing-info', () => {
       },
       take: 10,
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     })
   })
 
-  it('最大件数が20件に制限される', async () => {
+  it('最大件数が50件に制限される', async () => {
     const request = new NextRequest(
       'http://localhost:3000/api/books/update-missing-info?limit=100',
       {
@@ -228,9 +222,9 @@ describe('GET /api/books/update-missing-info', () => {
       where: {
         AND: [{ OR: [{ description: '' }, { imageUrl: null }] }],
       },
-      take: 20, // 最大20件に制限
+      take: 50, // 最大50件に制限
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     })
   })
@@ -437,7 +431,7 @@ describe('GET /api/books/update-missing-info', () => {
       },
       take: 2,
       orderBy: {
-        createdAt: 'asc',
+        createdAt: 'desc',
       },
     })
   })
