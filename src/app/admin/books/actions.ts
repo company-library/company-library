@@ -90,60 +90,67 @@ export async function updateSingleBookInfo(bookId: number) {
 /**
  * 不足情報のある書籍一覧を取得するServer Action
  * @param limit 取得件数の上限
- * @param sortBy ソートフィールド
- * @param sortOrder ソート順序
- * @returns 書籍一覧
+ * @param filter フィルタ条件 ('description', 'image', 'both')
+ * @param createdAfter 作成日開始日
+ * @param createdBefore 作成日終了日
+ * @returns 書籍一覧（作成日の新しい順）
  */
 export async function getBooksWithMissingInfo(
-  limit = 20,
-  sortBy: 'createdAt' | 'title' | 'isbn' | 'registrationCount' = 'createdAt',
-  sortOrder: 'asc' | 'desc' = 'asc',
+  limit = 50,
+  filter: 'description' | 'image' | 'both' = 'both',
+  createdAfter?: string,
+  createdBefore?: string,
 ) {
   try {
-    // registrationCountでソートする場合は別のクエリが必要
-    if (sortBy === 'registrationCount') {
-      const books = await prisma.book.findMany({
-        where: {
-          OR: [{ description: '' }, { imageUrl: null }],
-        },
-        take: Math.min(limit, 100),
-        include: {
-          _count: {
-            select: {
-              registrationHistories: true,
-            },
-          },
-        },
-      })
+    // フィルタ条件を構築
+    const whereConditions: Array<Record<string, unknown>> = []
 
-      // メモリ上でソート
-      const sortedBooks = books.sort((a, b) => {
-        const aCount = a._count.registrationHistories
-        const bCount = b._count.registrationHistories
-        return sortOrder === 'asc' ? aCount - bCount : bCount - aCount
-      })
+    // フィルタタイプに応じた条件
+    if (filter === 'description') {
+      whereConditions.push({ description: '' })
+    } else if (filter === 'image') {
+      whereConditions.push({ imageUrl: null })
+    } else {
+      // both: 説明文が空 OR 画像URLがnull
+      whereConditions.push({ OR: [{ description: '' }, { imageUrl: null }] })
+    }
 
-      return {
-        success: true,
-        books: sortedBooks,
-        count: sortedBooks.length,
+    // 作成日フィルタ
+    const dateConditions: Record<string, Date> = {}
+    if (createdAfter) {
+      try {
+        const date = new Date(createdAfter)
+        if (!Number.isNaN(date.getTime())) {
+          dateConditions.gte = date
+        }
+      } catch {
+        // 無効な日付は無視
       }
+    }
+    if (createdBefore) {
+      try {
+        const date = new Date(createdBefore)
+        if (!Number.isNaN(date.getTime())) {
+          // 終了日は翌日の00:00:00を指定（その日の23:59:59まで含む）
+          const endDate = new Date(date)
+          endDate.setDate(endDate.getDate() + 1)
+          dateConditions.lt = endDate
+        }
+      } catch {
+        // 無効な日付は無視
+      }
+    }
+    if (Object.keys(dateConditions).length > 0) {
+      whereConditions.push({ createdAt: dateConditions })
     }
 
     const books = await prisma.book.findMany({
       where: {
-        OR: [{ description: '' }, { imageUrl: null }],
+        AND: whereConditions,
       },
       take: Math.min(limit, 100),
       orderBy: {
-        [sortBy]: sortOrder,
-      },
-      include: {
-        _count: {
-          select: {
-            registrationHistories: true,
-          },
-        },
+        createdAt: 'desc',
       },
     })
 

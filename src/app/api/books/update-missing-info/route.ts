@@ -29,12 +29,13 @@ type OpenBDResponse = Array<{
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
-    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '10', 10), 20) // 最大20件に変更
+    const limit = Math.min(Number.parseInt(searchParams.get('limit') || '20', 10), 50) // 最大50件に変更
     const filter = searchParams.get('filter') || 'both' // 'description', 'image', 'both'
     const createdAfter = searchParams.get('createdAfter')
-    const isbn = searchParams.get('isbn')
-    const sortBy = searchParams.get('sortBy') || 'createdAt' // 'createdAt', 'title', 'isbn', 'registrationCount'
-    const sortOrder = searchParams.get('sortOrder') || 'asc' // 'asc', 'desc'
+    const createdBefore = searchParams.get('createdBefore')
+    // 作成日の新しい順で固定
+    const sortBy = 'createdAt'
+    const sortOrder = 'desc'
 
     // フィルタ条件を構築
     const whereConditions: Array<Record<string, unknown>> = []
@@ -45,71 +46,49 @@ export async function GET(req: Request) {
     } else if (filter === 'image') {
       whereConditions.push({ imageUrl: null })
     } else {
+      // both: 説明文が空 OR 画像URLがnull
       whereConditions.push({ OR: [{ description: '' }, { imageUrl: null }] })
     }
 
     // 作成日フィルタ
+    const dateConditions: Record<string, Date> = {}
     if (createdAfter) {
       try {
         const date = new Date(createdAfter)
         if (!Number.isNaN(date.getTime())) {
-          whereConditions.push({ createdAt: { gte: date } })
+          dateConditions.gte = date
         }
       } catch {
         // 無効な日付は無視
       }
     }
-
-    // ISBN指定
-    if (isbn) {
-      whereConditions.push({ isbn })
+    if (createdBefore) {
+      try {
+        const date = new Date(createdBefore)
+        if (!Number.isNaN(date.getTime())) {
+          // 終了日は翌日の00:00:00を指定（その日の23:59:59まで含む）
+          const endDate = new Date(date)
+          endDate.setDate(endDate.getDate() + 1)
+          dateConditions.lt = endDate
+        }
+      } catch {
+        // 無効な日付は無視
+      }
+    }
+    if (Object.keys(dateConditions).length > 0) {
+      whereConditions.push({ createdAt: dateConditions })
     }
 
     // 説明文が空または画像URLがnullの書籍を取得（上限付き）
-    let booksToUpdate: Array<{
-      id: number
-      title: string
-      description: string
-      isbn: string
-      imageUrl: string | null
-      createdAt: Date
-      _count?: { registrationHistories: number }
-    }>
-
-    // registrationCountでソートする場合は特別な処理が必要
-    if (sortBy === 'registrationCount') {
-      const allBooks = await prisma.book.findMany({
-        where: {
-          AND: whereConditions,
-        },
-        include: {
-          _count: {
-            select: {
-              registrationHistories: true,
-            },
-          },
-        },
-      })
-
-      // メモリ上でソートしてlimit適用
-      const sortedBooks = allBooks.sort((a, b) => {
-        const aCount = a._count.registrationHistories
-        const bCount = b._count.registrationHistories
-        return sortOrder === 'asc' ? aCount - bCount : bCount - aCount
-      })
-
-      booksToUpdate = sortedBooks.slice(0, limit)
-    } else {
-      booksToUpdate = await prisma.book.findMany({
-        where: {
-          AND: whereConditions,
-        },
-        take: limit, // 最大20件まで
-        orderBy: {
-          [sortBy]: sortOrder,
-        },
-      })
-    }
+    const booksToUpdate = await prisma.book.findMany({
+      where: {
+        AND: whereConditions,
+      },
+      take: limit, // 最大50件まで
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+    })
 
     if (booksToUpdate.length === 0) {
       return NextResponse.json({
