@@ -49,6 +49,7 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '1111111111111',
         imageUrl: null,
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
         id: 2,
@@ -57,6 +58,7 @@ describe('GET /api/books/update-missing-info', () => {
         isbn: '2222222222222',
         imageUrl: null,
         createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ]
 
@@ -90,6 +92,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784567890123',
       imageUrl: 'https://existing-image.jpg',
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])
@@ -133,6 +136,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784567890123',
       imageUrl: null,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])
@@ -238,6 +242,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784123456789',
       imageUrl: null,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])
@@ -245,6 +250,7 @@ describe('GET /api/books/update-missing-info', () => {
       ...book,
       description: 'Updated test description from Google Books API',
       imageUrl: 'https://blob.vercel-storage.com/test-image.jpg',
+      updatedAt: new Date(),
     })
 
     // Mock API responses
@@ -285,6 +291,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784123456790',
       imageUrl: 'https://existing-image.jpg',
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])
@@ -328,6 +335,7 @@ describe('GET /api/books/update-missing-info', () => {
       isbn: '9784123456791',
       imageUrl: null,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     prismaMock.book.findMany.mockResolvedValueOnce([book])

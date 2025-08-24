@@ -17,6 +17,7 @@ describe('admin books actions', () => {
       isbn: '9784000000000',
       imageUrl: null,
       createdAt: new Date(),
+      updatedAt: new Date(),
     }
 
     const mockUpdatedBook = {
@@ -223,6 +224,7 @@ describe('admin books actions', () => {
         isbn: '1111111111111',
         imageUrl: null,
         createdAt: new Date('2023-01-01'),
+        updatedAt: new Date('2023-01-01'),
         _count: { registrationHistories: 5 },
       },
       {
@@ -232,6 +234,7 @@ describe('admin books actions', () => {
         isbn: '2222222222222',
         imageUrl: null,
         createdAt: new Date('2023-02-01'),
+        updatedAt: new Date('2023-02-01'),
         _count: { registrationHistories: 3 },
       },
     ]

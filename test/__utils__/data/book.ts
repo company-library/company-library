@@ -8,6 +8,7 @@ export const bookWithImage = {
   imageUrl:
     'https://example.com/books/content?id=QlmenQAACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
   createdAt: new Date('2023-07-22T06:12:23.527Z'),
+  updatedAt: new Date('2023-07-22T06:12:23.527Z'),
 }
 
 export const bookWithoutImage = {
@@ -17,6 +18,7 @@ export const bookWithoutImage = {
   isbn: '2222222222222',
   imageUrl: '',
   createdAt: new Date('2023-07-22T06:12:24.118Z'),
+  updatedAt: new Date('2023-07-22T06:12:24.118Z'),
 }
 
 const now = new Date()
