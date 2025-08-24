@@ -28,6 +28,7 @@ type BookWithMissingInfo = {
   description: string
   imageUrl: string | null
   createdAt: Date
+  updatedAt: Date | null
 }
 
 /**
