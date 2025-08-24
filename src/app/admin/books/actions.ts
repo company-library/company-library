@@ -2,7 +2,6 @@
 
 import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
-import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
 type GoogleBookResponse = {
   items?: Array<{
@@ -56,10 +55,7 @@ export async function updateSingleBookInfo(bookId: number) {
 
     // 画像URLがnullの場合のみ更新
     if (book.imageUrl === null && updatedInfo.imageUrl) {
-      const vercelBlobUrl = await downloadAndPutImage(updatedInfo.imageUrl, book.isbn)
-      if (vercelBlobUrl) {
-        updateData.imageUrl = vercelBlobUrl
-      }
+      updateData.imageUrl = updatedInfo.imageUrl
     }
 
     // 更新すべきデータがある場合のみDB更新
