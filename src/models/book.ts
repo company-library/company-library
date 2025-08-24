@@ -1,3 +1,3 @@
-import type { Book as PrismaBook } from '@prisma/client'
+import type { Book as PrismaBook } from '@/generated/prisma'
 
 export type Book = PrismaBook

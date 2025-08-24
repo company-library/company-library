@@ -1,3 +1,3 @@
-import type { ReturnHistory as PrismaReturnHistory } from '@prisma/client'
+import type { ReturnHistory as PrismaReturnHistory } from '@/generated/prisma'
 
 export type ReturnHistory = PrismaReturnHistory
