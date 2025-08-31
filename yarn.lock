@@ -1670,30 +1670,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.17.2":
-  version: 22.17.2
-  resolution: "@types/node@npm:22.17.2"
+"@types/node@npm:^22.18.0":
+  version: 22.18.0
+  resolution: "@types/node@npm:22.18.0"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/23cd13aa35da6322a6d66cf4b3a45dbd40764ba726ab8681960270156c3abba776dd8dc173250c467f708d40612ecd725755d7659b775b513904680d5205eaff
+  checksum: 10c0/02cce4493eee8408e66e76fcad164f33c0600ed0854ad08e5519a76a06402da5b589b278cf71bc975c9e014f2668bdf758bc3be7fed63bdbfd0900495372797c
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.1.7":
-  version: 19.1.7
-  resolution: "@types/react-dom@npm:19.1.7"
+"@types/react-dom@npm:19.1.9":
+  version: 19.1.9
+  resolution: "@types/react-dom@npm:19.1.9"
   peerDependencies:
     "@types/react": ^19.0.0
-  checksum: 10c0/8db5751c1567552fe4e1ece9f5823b682f2994ec8d30ed34ba0ef984e3c8ace1435f8be93d02f55c350147e78ac8c4dbcd8ed2c3b6a60f575bc5374f588c51c9
+  checksum: 10c0/34c8dda86c1590b3ef0e7ecd38f9663a66ba2dd69113ba74fb0adc36b83bbfb8c94c1487a2505282a5f7e5e000d2ebf36f4c0fd41b3b672f5178fd1d4f1f8f58
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.1.11":
-  version: 19.1.11
-  resolution: "@types/react@npm:19.1.11"
+"@types/react@npm:19.1.12":
+  version: 19.1.12
+  resolution: "@types/react@npm:19.1.12"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/639b225c2bbcd4b8a30e1ea7a73aec81ae5b952a4c432460b48c9881c9d12e76645c9032d24f15eefae9985a12d5cb26557fe10e9850b2da0fabfb0a1e2d16bd
+  checksum: 10c0/e35912b43da0caaab5252444bab87a31ca22950cde2822b3b3dc32e39c2d42dad1a4cf7b5dde9783aa2d007f0b2cba6ab9563fc6d2dbcaaa833b35178118767c
   languageName: node
   linkType: hard
 
@@ -2162,12 +2162,12 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.8.0"
     "@testing-library/react": "npm:^16.3.0"
     "@types/luxon": "npm:^3.7.1"
-    "@types/node": "npm:^22.17.2"
-    "@types/react": "npm:19.1.11"
-    "@types/react-dom": "npm:19.1.7"
+    "@types/node": "npm:^22.18.0"
+    "@types/react": "npm:19.1.12"
+    "@types/react-dom": "npm:19.1.9"
     "@vercel/blob": "npm:^1.1.1"
     "@vitejs/plugin-react-swc": "npm:^4.0.1"
-    daisyui: "npm:^5.0.50"
+    daisyui: "npm:^5.0.54"
     dotenv-cli: "npm:^10.0.0"
     graphql: "npm:^16.11.0"
     identity-obj-proxy: "npm:^3.0.0"
@@ -2181,12 +2181,12 @@ __metadata:
     react-dom: "npm:canary"
     swr: "npm:^2.3.6"
     tailwindcss: "npm:^4.1.12"
-    tsx: "npm:^4.20.4"
+    tsx: "npm:^4.20.5"
     typescript: "npm:^5.9.2"
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
     vitest-mock-extended: "npm:^3.1.0"
-    zod: "npm:^4.1.0"
+    zod: "npm:^4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -2246,10 +2246,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:^5.0.50":
-  version: 5.0.50
-  resolution: "daisyui@npm:5.0.50"
-  checksum: 10c0/6e752fb803c6e4a1e6b4a628a2d79cc0f2012e93e72f7aa03688ed51c7edd4bed3e370938dca6ee27670b71aff834e310dfd33baa9fa1dfb2502dbfc3f794842
+"daisyui@npm:^5.0.54":
+  version: 5.0.54
+  resolution: "daisyui@npm:5.0.54"
+  checksum: 10c0/dfd9d645bb83947579984041f47cbd2d3f3eb392ede677fb33cb93a376cf8660e1be88d526a3ddcdb02ecdd201ae07e83e1a76ba3f16f89dd6ef41cfb3a5deba
   languageName: node
   linkType: hard
 
@@ -4733,9 +4733,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.20.4":
-  version: 4.20.4
-  resolution: "tsx@npm:4.20.4"
+"tsx@npm:^4.20.5":
+  version: 4.20.5
+  resolution: "tsx@npm:4.20.5"
   dependencies:
     esbuild: "npm:~0.25.0"
     fsevents: "npm:~2.3.3"
@@ -4745,7 +4745,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/2deb24b0c689031962901f29fc3411bc9a3753780e9a39b8bf0233dba7fc59dc8f9732f6ebbfe16f498fc27b6adf1eeecfa46360d1161081aafffaaa26371998
+  checksum: 10c0/70f9bf746be69281312a369c712902dbf9bcbdd9db9184a4859eb4859c36ef0c5a6d79b935c1ec429158ee73fd6584089400ae8790345dae34c5b0222bdb94f3
   languageName: node
   linkType: hard
 
@@ -5133,9 +5133,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "zod@npm:4.1.0"
-  checksum: 10c0/b39bce830cf9864e33b00da2e3fee008e1abb96fff169936ba779648276b6a031d35ed5438d7659ac5d5e09b932d40dce6c255344184794d56f8bd22e501561b
+"zod@npm:^4.1.5":
+  version: 4.1.5
+  resolution: "zod@npm:4.1.5"
+  checksum: 10c0/7826fb931bc71d4d0fff2fbb72f1a1cf30a6672cf9dbe6933a216bbb60242ef1c3bdfbcd3c5b27e806235a35efaad7a4a9897ff4d3621452f9ea278bce6fd42a
   languageName: node
   linkType: hard
