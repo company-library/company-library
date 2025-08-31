@@ -7,10 +7,12 @@ import UpdateBookInfoPage from './page'
 vi.mock('./actions', () => ({
   getBooksWithMissingInfo: vi.fn(),
   updateSingleBookInfo: vi.fn(),
+  updateSelectedBooksInfo: vi.fn(),
 }))
 
 const mockGetBooksWithMissingInfo = actions.getBooksWithMissingInfo as ReturnType<typeof vi.fn>
 const mockUpdateSingleBookInfo = actions.updateSingleBookInfo as ReturnType<typeof vi.fn>
+const mockUpdateSelectedBooksInfo = actions.updateSelectedBooksInfo as ReturnType<typeof vi.fn>
 
 // fetch をモック
 global.fetch = vi.fn()
@@ -140,42 +142,33 @@ describe('UpdateBookInfoPage', () => {
     })
   })
 
-  it('一括更新時に更新日パラメータがAPIに渡される', async () => {
-    const mockResponse = {
-      message: '更新完了',
-      updatedCount: 1,
-      totalProcessed: 1,
+  it('表示中の書籍の情報を更新ボタンで表示中のbookIdsが渡される', async () => {
+    mockUpdateSelectedBooksInfo.mockResolvedValue({
+      success: true,
+      message: '2件の書籍情報を更新しました',
+      updatedCount: 2,
+      totalProcessed: 2,
       noUpdateCount: 0,
       errorCount: 0,
-      updatedIsbns: ['9784000000001'],
+      updatedIsbns: ['9784000000001', '9784000000002'],
       noUpdateIsbns: [],
       errorIsbns: [],
       results: [],
-    }
-
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: () => Promise.resolve(mockResponse),
     })
 
     render(<UpdateBookInfoPage />)
 
-    const updatedAfterInput = screen.getByLabelText('更新日（開始）')
-    const updatedBeforeInput = screen.getByLabelText('更新日（終了）')
-
-    fireEvent.change(updatedAfterInput, { target: { value: '2023-01-01' } })
-    fireEvent.change(updatedBeforeInput, { target: { value: '2023-12-31' } })
+    // 書籍一覧が読み込まれるのを待つ
+    await waitFor(() => {
+      expect(screen.getByText('テスト書籍1')).toBeInTheDocument()
+      expect(screen.getByText('テスト書籍2')).toBeInTheDocument()
+    })
 
     const updateButton = screen.getByText('表示中の書籍の情報を更新')
     fireEvent.click(updateButton)
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('updatedAfter=2023-01-01'), {
-        method: 'GET',
-      })
-      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('updatedBefore=2023-12-31'), {
-        method: 'GET',
-      })
+      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(expect.arrayContaining([1, 2]))
     })
   })
 
@@ -490,6 +483,74 @@ describe('UpdateBookInfoPage', () => {
 
     await waitFor(() => {
       expect(screen.getByText('すべての書籍に説明文と画像が設定されています')).toBeInTheDocument()
+    })
+  })
+
+  it('チェックボックスで書籍を選択して更新できる', async () => {
+    mockUpdateSelectedBooksInfo.mockResolvedValue({
+      success: true,
+      message: '1件の書籍情報を更新しました',
+      updatedCount: 1,
+      totalProcessed: 1,
+      noUpdateCount: 0,
+      errorCount: 0,
+      updatedIsbns: ['9784000000001'],
+      noUpdateIsbns: [],
+      errorIsbns: [],
+      results: [],
+    })
+
+    render(<UpdateBookInfoPage />)
+
+    await waitFor(() => {
+      // 最初の書籍のチェックボックスを選択
+      const checkboxes = screen.getAllByRole('checkbox')
+      fireEvent.click(checkboxes[1]) // 最初のチェックボックスは全選択用なので2番目を選択
+    })
+
+    await waitFor(() => {
+      // 選択した書籍の更新ボタンが表示されるまで待機
+      const updateSelectedButton = screen.getByText(/選択した.*件を更新/)
+      fireEvent.click(updateSelectedButton)
+    })
+
+    await waitFor(() => {
+      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(
+        expect.arrayContaining([expect.any(Number)]),
+      )
+    })
+  })
+
+  it('全選択チェックボックスで全書籍を選択できる', async () => {
+    mockUpdateSelectedBooksInfo.mockResolvedValue({
+      success: true,
+      message: '2件の書籍情報を更新しました',
+      updatedCount: 2,
+      totalProcessed: 2,
+      noUpdateCount: 0,
+      errorCount: 0,
+      updatedIsbns: ['9784000000001', '9784000000002'],
+      noUpdateIsbns: [],
+      errorIsbns: [],
+      results: [],
+    })
+
+    render(<UpdateBookInfoPage />)
+
+    await waitFor(() => {
+      // 全選択チェックボックスを選択
+      const selectAllCheckbox = screen.getAllByRole('checkbox')[0]
+      fireEvent.click(selectAllCheckbox)
+    })
+
+    await waitFor(() => {
+      // 全選択された書籍の更新ボタンをクリック
+      const updateSelectedButton = screen.getByText(/選択した.*件を更新/)
+      fireEvent.click(updateSelectedButton)
+    })
+
+    await waitFor(() => {
+      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(expect.arrayContaining([1, 2]))
     })
   })
 })

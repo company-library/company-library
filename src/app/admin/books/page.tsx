@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { getBooksWithMissingInfo, updateSingleBookInfo } from './actions'
+import { getBooksWithMissingInfo, updateSelectedBooksInfo, updateSingleBookInfo } from './actions'
 
 type UpdateResult = {
   message: string
@@ -48,6 +48,8 @@ export default function UpdateBookInfoPage() {
   const [updatingBookId, setUpdatingBookId] = useState<number | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt'>('createdAt')
+  const [selectedBookIds, setSelectedBookIds] = useState<number[]>([])
+  const [selectAll, setSelectAll] = useState(false)
 
   // 不足情報のある書籍一覧を読み込み
   const loadBooks = useCallback(async () => {
@@ -80,44 +82,31 @@ export default function UpdateBookInfoPage() {
     loadBooks()
   }, [loadBooks])
 
-  const handleUpdateBooks = async () => {
+  const handleUpdateBooks = async (bookIds: number[]) => {
     setIsLoading(true)
     setResult(null)
 
     try {
-      // クエリパラメータを構築
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-        filter,
-        sortBy: 'createdAt',
-        sortOrder: 'desc',
-      })
+      const data = await updateSelectedBooksInfo(bookIds)
 
-      if (createdAfter) {
-        params.append('createdAfter', createdAfter)
+      if (data.success) {
+        setResult({
+          message: data.message,
+          updatedCount: data.updatedCount ?? 0,
+          totalProcessed: data.totalProcessed ?? 0,
+          noUpdateCount: data.noUpdateCount ?? 0,
+          errorCount: data.errorCount ?? 0,
+          updatedIsbns: data.updatedIsbns ?? [],
+          noUpdateIsbns: data.noUpdateIsbns ?? [],
+          errorIsbns: data.errorIsbns ?? [],
+          results: data.results ?? [],
+        })
+      } else {
+        throw new Error(data.message)
       }
-
-      if (createdBefore) {
-        params.append('createdBefore', createdBefore)
-      }
-
-      if (updatedAfter) {
-        params.append('updatedAfter', updatedAfter)
-      }
-
-      if (updatedBefore) {
-        params.append('updatedBefore', updatedBefore)
-      }
-
-      const response = await fetch(`/api/books/update-missing-info?${params.toString()}`, {
-        method: 'GET',
-      })
-
-      const data: UpdateResult = await response.json()
-      setResult(data)
 
       // 成功した場合、書籍一覧を再読み込み
-      if (data.updatedCount > 0) {
+      if ((data.updatedCount ?? 0) > 0) {
         await loadBooks()
       }
     } catch (error) {
@@ -155,6 +144,35 @@ export default function UpdateBookInfoPage() {
     } finally {
       setUpdatingBookId(null)
     }
+  }
+
+  // チェックボックス関連のハンドラー
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAll(checked)
+    if (checked) {
+      setSelectedBookIds(books.map((book) => book.id))
+    } else {
+      setSelectedBookIds([])
+    }
+  }
+
+  const handleSelectBook = (bookId: number, checked: boolean) => {
+    if (checked) {
+      setSelectedBookIds((prev) => [...prev, bookId])
+    } else {
+      setSelectedBookIds((prev) => prev.filter((id) => id !== bookId))
+    }
+  }
+
+  // 選択された書籍の更新
+  const handleUpdateSelectedBooks = async () => {
+    if (selectedBookIds.length === 0) {
+      alert('更新する書籍を選択してください')
+      return
+    }
+    await handleUpdateBooks(selectedBookIds)
+    setSelectedBookIds([])
+    setSelectAll(false)
   }
 
   return (
@@ -271,7 +289,7 @@ export default function UpdateBookInfoPage() {
 
         <button
           type="button"
-          onClick={handleUpdateBooks}
+          onClick={() => handleUpdateBooks(books.map((book) => book.id))}
           disabled={isLoading}
           className={`btn btn-primary ${isLoading ? 'loading' : ''}`}
         >
@@ -375,12 +393,24 @@ export default function UpdateBookInfoPage() {
       {/* 不足情報のある書籍一覧 */}
       <div className="bg-white shadow-md rounded-lg p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">
-            不足情報のある書籍一覧
-            {!loadingBooks && (
-              <span className="text-sm font-normal text-gray-600 ml-2">（{books.length}件）</span>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-lg font-semibold">
+              不足情報のある書籍一覧
+              {!loadingBooks && (
+                <span className="text-sm font-normal text-gray-600 ml-2">（{books.length}件）</span>
+              )}
+            </h3>
+            {selectedBookIds.length > 0 && (
+              <button
+                type="button"
+                onClick={handleUpdateSelectedBooks}
+                disabled={isLoading}
+                className={`btn btn-secondary btn-sm ${isLoading ? 'loading' : ''}`}
+              >
+                選択した{selectedBookIds.length}件を更新
+              </button>
             )}
-          </h3>
+          </div>
           <div className="flex items-center text-sm text-gray-600 space-x-4">
             <div className="flex items-center space-x-1">
               <span>📋 ソート:</span>
@@ -414,6 +444,16 @@ export default function UpdateBookInfoPage() {
             <table className="table table-zebra w-full">
               <thead>
                 <tr>
+                  <th>
+                    <label className="cursor-pointer label">
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="checkbox checkbox-sm"
+                      />
+                    </label>
+                  </th>
                   <th>ID</th>
                   <th>タイトル</th>
                   <th>ISBN</th>
@@ -469,6 +509,16 @@ export default function UpdateBookInfoPage() {
               <tbody>
                 {books.map((book) => (
                   <tr key={book.id}>
+                    <td>
+                      <label className="cursor-pointer label">
+                        <input
+                          type="checkbox"
+                          checked={selectedBookIds.includes(book.id)}
+                          onChange={(e) => handleSelectBook(book.id, e.target.checked)}
+                          className="checkbox checkbox-sm"
+                        />
+                      </label>
+                    </td>
                     <td>{book.id}</td>
                     <td className="max-w-xs truncate">{book.title}</td>
                     <td>{book.isbn}</td>
