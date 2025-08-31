@@ -16,7 +16,7 @@ const mockUpdateSelectedBooksInfo = actions.updateSelectedBooksInfo as ReturnTyp
 
 // fetch をモック
 global.fetch = vi.fn()
-const mockFetch = fetch as ReturnType<typeof vi.fn>
+const _mockFetch = fetch as ReturnType<typeof vi.fn>
 
 describe('UpdateBookInfoPage', () => {
   const mockBooks = [
@@ -242,7 +242,10 @@ describe('UpdateBookInfoPage', () => {
       const updatedAtButtons = screen.getAllByText('更新日')
       const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
       if (tableHeaderButton?.closest('button')) {
-        fireEvent.click(tableHeaderButton.closest('button')!)
+        const button = tableHeaderButton.closest('button')
+        if (button) {
+          fireEvent.click(button)
+        }
       }
     })
 
@@ -262,7 +265,10 @@ describe('UpdateBookInfoPage', () => {
     const updatedAtButtons = screen.getAllByText('更新日')
     const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
     if (tableHeaderButton?.closest('button')) {
-      fireEvent.click(tableHeaderButton.closest('button')!)
+      const button = tableHeaderButton.closest('button')
+      if (button) {
+        fireEvent.click(button)
+      }
     }
 
     // 作成日をもう一度クリックして作成日ソートに戻す
@@ -367,7 +373,10 @@ describe('UpdateBookInfoPage', () => {
       const updatedAtButtons = screen.getAllByText('更新日')
       const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
       if (tableHeaderButton?.closest('button')) {
-        fireEvent.click(tableHeaderButton.closest('button')!)
+        const button = tableHeaderButton.closest('button')
+        if (button) {
+          fireEvent.click(button)
+        }
       }
     })
 
@@ -395,7 +404,10 @@ describe('UpdateBookInfoPage', () => {
     const updatedAtButtons = screen.getAllByText('更新日')
     const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
     if (tableHeaderButton?.closest('button')) {
-      fireEvent.click(tableHeaderButton.closest('button')!)
+      const button = tableHeaderButton.closest('button')
+      if (button) {
+        fireEvent.click(button)
+      }
     }
 
     await waitFor(() => {
@@ -435,7 +447,10 @@ describe('UpdateBookInfoPage', () => {
     const updatedAtButtons = screen.getAllByText('更新日')
     const tableHeaderButton = updatedAtButtons.find((el) => el.closest('button') !== null)
     if (tableHeaderButton?.closest('button')) {
-      fireEvent.click(tableHeaderButton.closest('button')!)
+      const button = tableHeaderButton.closest('button')
+      if (button) {
+        fireEvent.click(button)
+      }
     }
 
     await waitFor(() => {
