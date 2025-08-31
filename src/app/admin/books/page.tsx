@@ -102,7 +102,18 @@ export default function UpdateBookInfoPage() {
           results: data.results,
         })
       } else {
-        throw new Error(data.message)
+        setResult({
+          message: data.message || '更新に失敗しました',
+          updatedCount: 0,
+          totalProcessed: 0,
+          noUpdateCount: 0,
+          errorCount: 0,
+          updatedIsbns: [],
+          noUpdateIsbns: [],
+          errorIsbns: [],
+          results: [],
+        })
+        return
       }
 
       // 成功した場合、書籍一覧を再読み込み
