@@ -3,6 +3,7 @@
 import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
+import type { Book } from '@/models/book'
 
 type GoogleBookResponse = {
   items?: Array<{
