@@ -2,6 +2,7 @@
 
 import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
+import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
 type GoogleBookResponse = {
   items?: Array<{
@@ -23,66 +24,283 @@ type OpenBDResponse = Array<{
 } | null>
 
 /**
- * 特定の書籍の不足情報を更新するServer Action
- * @param bookId 更新対象の書籍ID
- * @returns 更新結果
+ * Google Books APIとOpenBD APIから書籍情報を取得する
  */
-export async function updateSingleBookInfo(bookId: number) {
+async function fetchBookInfo(isbn: string): Promise<{
+  description?: string
+  imageUrl?: string
+} | null> {
   try {
-    const book = await prisma.book.findUnique({
-      where: { id: bookId },
-    })
+    // Google Books APIから情報を取得
+    const googleResponse = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
+    const googleData: GoogleBookResponse = await googleResponse.json()
 
-    if (!book) {
-      throw new Error('書籍が見つかりません')
-    }
+    const description = googleData.items?.[0]?.volumeInfo?.description
+    let imageUrl = googleData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
 
-    const updatedInfo = await fetchBookInfo(book.isbn)
+    // OpenBD APIからも情報を取得（フォールバック）
+    if (!description || !imageUrl) {
+      try {
+        const openbdResponse = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
+        const openbdData: OpenBDResponse = await openbdResponse.json()
 
-    if (!updatedInfo) {
-      throw new Error('外部APIから書籍情報を取得できませんでした')
-    }
-
-    const updateData: {
-      description?: string
-      imageUrl?: string
-    } = {}
-
-    // 説明文が空の場合のみ更新
-    if (book.description === '' && updatedInfo.description) {
-      updateData.description = updatedInfo.description
-    }
-
-    // 画像URLがnullの場合のみ更新
-    if (book.imageUrl === null && updatedInfo.imageUrl) {
-      updateData.imageUrl = updatedInfo.imageUrl
-    }
-
-    // 更新すべきデータがある場合のみDB更新
-    if (Object.keys(updateData).length > 0) {
-      const updatedBook = await prisma.book.update({
-        where: { id: bookId },
-        data: updateData,
-      })
-
-      return {
-        success: true,
-        message: '書籍情報を更新しました',
-        updatedFields: Object.keys(updateData),
-        book: updatedBook,
+        if (!imageUrl && openbdData[0]?.summary?.cover) {
+          imageUrl = openbdData[0].summary.cover
+        }
+      } catch (openbdError) {
+        console.warn(`OpenBD API error for ISBN ${isbn}:`, openbdError)
       }
     }
+
+    return {
+      description: description || undefined,
+      imageUrl: imageUrl || undefined,
+    }
+  } catch (error) {
+    console.error(`書籍情報取得エラー (ISBN: ${isbn}):`, error)
+    return null
+  }
+}
+
+/**
+ * 書籍情報を更新するヘルパー関数
+ */
+async function updateBookInfo(book: {
+  id: number
+  isbn: string
+  description: string
+  imageUrl: string | null
+  title: string
+}) {
+  const updatedInfo = await fetchBookInfo(book.isbn)
+
+  if (!updatedInfo) {
+    return null
+  }
+
+  const updateData: {
+    description?: string
+    imageUrl?: string
+  } = {}
+
+  // 説明文が空の場合のみ更新
+  if (book.description === '' && updatedInfo.description) {
+    updateData.description = updatedInfo.description
+  }
+
+  // 画像URLがnullの場合のみ更新
+  if (book.imageUrl === null && updatedInfo.imageUrl) {
+    const vercelBlobUrl = await downloadAndPutImage(updatedInfo.imageUrl, book.isbn)
+    if (vercelBlobUrl) {
+      updateData.imageUrl = vercelBlobUrl
+    }
+  }
+
+  // 更新すべきデータがある場合のみDB更新
+  if (Object.keys(updateData).length > 0) {
+    const updatedBook = await prisma.book.update({
+      where: { id: book.id },
+      data: updateData,
+    })
+    return { updated: updateData, book: updatedBook }
+  }
+
+  return { updated: null, book }
+}
+
+/**
+ * 書籍の不足情報を更新する統合Server Action
+ * 単一書籍または複数書籍の更新に対応
+ */
+export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
+  try {
+    const booksToUpdate = await prisma.book.findMany({
+      where: {
+        id: {
+          in: bookIds,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    if (booksToUpdate.length === 0) {
+      return {
+        success: true,
+        message: '更新対象の書籍が見つかりませんでした',
+        updatedCount: 0,
+        totalProcessed: 0,
+        noUpdateCount: 0,
+        errorCount: 0,
+        updatedIsbns: [],
+        noUpdateIsbns: [],
+        errorIsbns: [],
+        results: [],
+        // 単一書籍用の互換性フィールド
+        updatedFields: [],
+        book: undefined,
+      }
+    }
+
+    // 単一書籍の場合の特別処理
+    if (bookIds && bookIds.length === 1) {
+      const book = booksToUpdate[0]
+      if (!book) {
+        return {
+          success: false,
+          message: '書籍が見つかりません',
+          updatedFields: [],
+        }
+      }
+
+      try {
+        const result = await updateBookInfo(book)
+        if (!result) {
+          return {
+            success: false,
+            message: '外部APIから書籍情報を取得できませんでした',
+            updatedFields: [],
+          }
+        }
+
+        return {
+          success: true,
+          message: result.updated ? '書籍情報を更新しました' : '更新する情報がありませんでした',
+          updatedFields: result.updated ? Object.keys(result.updated) : [],
+          book: result.book,
+          // 複数書籍用の互換性フィールド
+          updatedCount: result.updated ? 1 : 0,
+          totalProcessed: 1,
+          noUpdateCount: result.updated ? 0 : 1,
+          errorCount: 0,
+          updatedIsbns: result.updated ? [book.isbn] : [],
+          noUpdateIsbns: result.updated ? [] : [book.isbn],
+          errorIsbns: [],
+          results: [
+            {
+              id: book.id,
+              isbn: book.isbn,
+              title: book.title,
+              updated: result.updated || undefined,
+            },
+          ],
+        }
+      } catch (error) {
+        console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : '書籍情報の更新に失敗しました',
+          updatedFields: [],
+          // 複数書籍用の互換性フィールド
+          updatedCount: 0,
+          totalProcessed: 1,
+          noUpdateCount: 0,
+          errorCount: 1,
+          updatedIsbns: [],
+          noUpdateIsbns: [],
+          errorIsbns: [book.isbn],
+          results: [
+            {
+              id: book.id,
+              isbn: book.isbn,
+              title: book.title,
+              error: 'Update failed',
+            },
+          ],
+        }
+      }
+    }
+
+    // 複数書籍の処理
+    let updatedCount = 0
+    let noUpdateCount = 0
+    let errorCount = 0
+    const updatedIsbns: string[] = []
+    const noUpdateIsbns: string[] = []
+    const errorIsbns: string[] = []
+    const results = []
+
+    for (const book of booksToUpdate) {
+      try {
+        const result = await updateBookInfo(book)
+        if (result) {
+          if (result.updated) {
+            updatedCount++
+            updatedIsbns.push(book.isbn)
+            results.push({
+              id: book.id,
+              isbn: book.isbn,
+              title: book.title,
+              updated: result.updated,
+            })
+          } else {
+            noUpdateCount++
+            noUpdateIsbns.push(book.isbn)
+            results.push({
+              id: book.id,
+              isbn: book.isbn,
+              title: book.title,
+            })
+          }
+        } else {
+          noUpdateCount++
+          noUpdateIsbns.push(book.isbn)
+          results.push({
+            id: book.id,
+            isbn: book.isbn,
+            title: book.title,
+          })
+        }
+
+        // API rate limiting のため待機
+        if (booksToUpdate.length > 1) {
+          await new Promise((resolve) => setTimeout(resolve, 200))
+        }
+      } catch (error) {
+        console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
+        errorCount++
+        errorIsbns.push(book.isbn)
+        results.push({
+          id: book.id,
+          isbn: book.isbn,
+          title: book.title,
+          error: 'Update failed',
+        })
+      }
+    }
+
     return {
       success: true,
-      message: '更新する情報がありませんでした',
+      message: `${updatedCount}件の書籍情報を更新しました`,
+      updatedCount,
+      totalProcessed: booksToUpdate.length,
+      noUpdateCount,
+      errorCount,
+      updatedIsbns,
+      noUpdateIsbns,
+      errorIsbns,
+      results,
+      // 単一書籍用の互換性フィールド
       updatedFields: [],
-      book,
+      book: undefined,
     }
   } catch (error) {
     console.error('書籍情報更新エラー:', error)
     return {
       success: false,
       message: error instanceof Error ? error.message : '書籍情報の更新に失敗しました',
+      updatedCount: 0,
+      totalProcessed: 0,
+      noUpdateCount: 0,
+      errorCount: 0,
+      updatedIsbns: [],
+      noUpdateIsbns: [],
+      errorIsbns: [],
+      results: [],
+      // 単一書籍用の互換性フィールド
+      updatedFields: [],
+      book: undefined,
     }
   }
 }
@@ -204,40 +422,17 @@ export async function getBooksWithMissingInfo(
 }
 
 /**
- * Google Books APIとOpenBD APIから書籍情報を取得する
+ * 特定の書籍の不足情報を更新するServer Action
+ * @param bookId 更新対象の書籍ID
+ * @returns 更新結果
  */
-async function fetchBookInfo(isbn: string): Promise<{
-  description?: string
-  imageUrl?: string
-} | null> {
-  try {
-    // Google Books APIから情報を取得
-    const googleResponse = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
-    const googleData: GoogleBookResponse = await googleResponse.json()
+export async function updateSingleBookInfo(bookId: number) {
+  return updateBooksInfo({ bookIds: [bookId] })
+}
 
-    const description = googleData.items?.[0]?.volumeInfo?.description
-    let imageUrl = googleData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
-
-    // OpenBD APIからも情報を取得（フォールバック）
-    if (!description || !imageUrl) {
-      try {
-        const openbdResponse = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
-        const openbdData: OpenBDResponse = await openbdResponse.json()
-
-        if (!imageUrl && openbdData[0]?.summary?.cover) {
-          imageUrl = openbdData[0].summary.cover
-        }
-      } catch (openbdError) {
-        console.warn(`OpenBD API error for ISBN ${isbn}:`, openbdError)
-      }
-    }
-
-    return {
-      description: description || undefined,
-      imageUrl: imageUrl || undefined,
-    }
-  } catch (error) {
-    console.error(`書籍情報取得エラー (ISBN: ${isbn}):`, error)
-    return null
-  }
+/**
+ * 特定の書籍IDsの不足情報を更新するServer Action
+ */
+export async function updateSelectedBooksInfo(bookIds: number[]) {
+  return updateBooksInfo({ bookIds })
 }
