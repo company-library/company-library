@@ -91,22 +91,22 @@ export default function UpdateBookInfoPage() {
 
       if (data.success) {
         setResult({
-          message: data.message,
-          updatedCount: data.updatedCount ?? 0,
-          totalProcessed: data.totalProcessed ?? 0,
-          noUpdateCount: data.noUpdateCount ?? 0,
-          errorCount: data.errorCount ?? 0,
-          updatedIsbns: data.updatedIsbns ?? [],
-          noUpdateIsbns: data.noUpdateIsbns ?? [],
-          errorIsbns: data.errorIsbns ?? [],
-          results: data.results ?? [],
+          message: data.message || '',
+          updatedCount: data.updatedIsbns.length,
+          totalProcessed: data.updatedIsbns.length + data.noUpdateIsbns.length + data.errorIsbns.length,
+          noUpdateCount: data.noUpdateIsbns.length,
+          errorCount: data.errorIsbns.length,
+          updatedIsbns: data.updatedIsbns,
+          noUpdateIsbns: data.noUpdateIsbns,
+          errorIsbns: data.errorIsbns,
+          results: data.results,
         })
       } else {
         throw new Error(data.message)
       }
 
       // 成功した場合、書籍一覧を再読み込み
-      if ((data.updatedCount ?? 0) > 0) {
+      if (data.updatedIsbns.length > 0) {
         await loadBooks()
       }
     } catch (error) {

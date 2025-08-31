@@ -522,8 +522,7 @@ describe('admin books actions', () => {
       const result = await updateSelectedBooksInfo([1, 2])
 
       expect(result.success).toBe(true)
-      expect(result.updatedCount).toBe(2)
-      expect(result.totalProcessed).toBe(2)
+      expect(result.updatedIsbns.length).toBe(2)
       expect(prismaMock.book.findMany).toHaveBeenCalledWith({
         where: {
           id: {
@@ -543,7 +542,7 @@ describe('admin books actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.message).toBe('更新対象の書籍が見つかりませんでした')
-      expect(result.updatedCount).toBe(0)
+      expect(result.updatedIsbns.length).toBe(0)
     })
   })
 })

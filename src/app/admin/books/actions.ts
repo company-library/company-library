@@ -108,11 +108,32 @@ async function updateBookInfo(book: {
   return { updated: null, book }
 }
 
+type UpdateBooksInfoResult = {
+  success: boolean
+  message?: string
+  updatedIsbns: string[]
+  noUpdateIsbns: string[]
+  errorIsbns: string[]
+  results: Array<{
+    id: number
+    isbn: string
+    title: string
+    updated?: { description?: string; imageUrl?: string }
+    error?: string
+  }>
+  // 単一書籍用の互換性フィールド
+  updatedFields?: string[]
+}
+
 /**
  * 書籍の不足情報を更新する統合Server Action
  * 単一書籍または複数書籍の更新に対応
  */
-export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
+export async function updateBooksInfo({
+  bookIds,
+}: {
+  bookIds?: number[]
+}): Promise<UpdateBooksInfoResult> {
   try {
     const booksToUpdate = await prisma.book.findMany({
       where: {
@@ -129,17 +150,11 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
       return {
         success: true,
         message: '更新対象の書籍が見つかりませんでした',
-        updatedCount: 0,
-        totalProcessed: 0,
-        noUpdateCount: 0,
-        errorCount: 0,
         updatedIsbns: [],
         noUpdateIsbns: [],
         errorIsbns: [],
         results: [],
-        // 単一書籍用の互換性フィールド
         updatedFields: [],
-        book: undefined,
       }
     }
 
@@ -150,6 +165,10 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
         return {
           success: false,
           message: '書籍が見つかりません',
+          updatedIsbns: [],
+          noUpdateIsbns: [],
+          errorIsbns: [],
+          results: [],
           updatedFields: [],
         }
       }
@@ -160,6 +179,10 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
           return {
             success: false,
             message: '外部APIから書籍情報を取得できませんでした',
+            updatedIsbns: [],
+            noUpdateIsbns: [],
+            errorIsbns: [],
+            results: [],
             updatedFields: [],
           }
         }
@@ -167,13 +190,6 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
         return {
           success: true,
           message: result.updated ? '書籍情報を更新しました' : '更新する情報がありませんでした',
-          updatedFields: result.updated ? Object.keys(result.updated) : [],
-          book: result.book,
-          // 複数書籍用の互換性フィールド
-          updatedCount: result.updated ? 1 : 0,
-          totalProcessed: 1,
-          noUpdateCount: result.updated ? 0 : 1,
-          errorCount: 0,
           updatedIsbns: result.updated ? [book.isbn] : [],
           noUpdateIsbns: result.updated ? [] : [book.isbn],
           errorIsbns: [],
@@ -185,18 +201,13 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
               updated: result.updated || undefined,
             },
           ],
+          updatedFields: result.updated ? Object.keys(result.updated) : [],
         }
       } catch (error) {
         console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
         return {
           success: false,
           message: error instanceof Error ? error.message : '書籍情報の更新に失敗しました',
-          updatedFields: [],
-          // 複数書籍用の互換性フィールド
-          updatedCount: 0,
-          totalProcessed: 1,
-          noUpdateCount: 0,
-          errorCount: 1,
           updatedIsbns: [],
           noUpdateIsbns: [],
           errorIsbns: [book.isbn],
@@ -208,14 +219,12 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
               error: 'Update failed',
             },
           ],
+          updatedFields: [],
         }
       }
     }
 
     // 複数書籍の処理
-    let updatedCount = 0
-    let noUpdateCount = 0
-    let errorCount = 0
     const updatedIsbns: string[] = []
     const noUpdateIsbns: string[] = []
     const errorIsbns: string[] = []
@@ -226,7 +235,6 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
         const result = await updateBookInfo(book)
         if (result) {
           if (result.updated) {
-            updatedCount++
             updatedIsbns.push(book.isbn)
             results.push({
               id: book.id,
@@ -235,7 +243,6 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
               updated: result.updated,
             })
           } else {
-            noUpdateCount++
             noUpdateIsbns.push(book.isbn)
             results.push({
               id: book.id,
@@ -244,7 +251,6 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
             })
           }
         } else {
-          noUpdateCount++
           noUpdateIsbns.push(book.isbn)
           results.push({
             id: book.id,
@@ -259,7 +265,6 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
         }
       } catch (error) {
         console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
-        errorCount++
         errorIsbns.push(book.isbn)
         results.push({
           id: book.id,
@@ -272,37 +277,30 @@ export async function updateBooksInfo({ bookIds }: { bookIds?: number[] }) {
 
     return {
       success: true,
-      message: `${updatedCount}件の書籍情報を更新しました`,
-      updatedCount,
-      totalProcessed: booksToUpdate.length,
-      noUpdateCount,
-      errorCount,
+      message: `${updatedIsbns.length}件の書籍情報を更新しました`,
       updatedIsbns,
       noUpdateIsbns,
       errorIsbns,
       results,
-      // 単一書籍用の互換性フィールド
-      updatedFields: [],
-      book: undefined,
     }
   } catch (error) {
     console.error('書籍情報更新エラー:', error)
     return {
       success: false,
       message: error instanceof Error ? error.message : '書籍情報の更新に失敗しました',
-      updatedCount: 0,
-      totalProcessed: 0,
-      noUpdateCount: 0,
-      errorCount: 0,
       updatedIsbns: [],
       noUpdateIsbns: [],
       errorIsbns: [],
       results: [],
-      // 単一書籍用の互換性フィールド
-      updatedFields: [],
-      book: undefined,
     }
   }
+}
+
+type GetBooksWithMissingInfoResult = {
+  success: boolean
+  books: any[]
+  count: number
+  message?: string
 }
 
 /**
@@ -322,7 +320,7 @@ export async function getBooksWithMissingInfo(
   createdBefore?: string,
   updatedAfter?: string,
   updatedBefore?: string,
-) {
+): Promise<GetBooksWithMissingInfoResult> {
   try {
     // フィルタ条件を構築
     const whereConditions: Array<Record<string, unknown>> = []
@@ -426,13 +424,13 @@ export async function getBooksWithMissingInfo(
  * @param bookId 更新対象の書籍ID
  * @returns 更新結果
  */
-export async function updateSingleBookInfo(bookId: number) {
+export async function updateSingleBookInfo(bookId: number): Promise<UpdateBooksInfoResult> {
   return updateBooksInfo({ bookIds: [bookId] })
 }
 
 /**
  * 特定の書籍IDsの不足情報を更新するServer Action
  */
-export async function updateSelectedBooksInfo(bookIds: number[]) {
+export async function updateSelectedBooksInfo(bookIds: number[]): Promise<UpdateBooksInfoResult> {
   return updateBooksInfo({ bookIds })
 }
