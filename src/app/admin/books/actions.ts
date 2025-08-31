@@ -298,7 +298,7 @@ export async function updateBooksInfo({
 
 type GetBooksWithMissingInfoResult = {
   success: boolean
-  books: any[]
+  books: Book[]
   count: number
   message?: string
 }

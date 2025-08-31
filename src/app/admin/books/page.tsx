@@ -93,7 +93,8 @@ export default function UpdateBookInfoPage() {
         setResult({
           message: data.message || '',
           updatedCount: data.updatedIsbns.length,
-          totalProcessed: data.updatedIsbns.length + data.noUpdateIsbns.length + data.errorIsbns.length,
+          totalProcessed:
+            data.updatedIsbns.length + data.noUpdateIsbns.length + data.errorIsbns.length,
           noUpdateCount: data.noUpdateIsbns.length,
           errorCount: data.errorIsbns.length,
           updatedIsbns: data.updatedIsbns,
