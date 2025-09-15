@@ -24,7 +24,7 @@
     "@vercel/blob": "^1.1.1",
     "graphql": "^16.11.0",
     "luxon": "^3.7.2",
-    "next": "15.5.2",
+    "next": "15.5.3",
     "next-auth": "^4.24.11",
     "prisma": "^6.15.0",
     "react": "canary",
