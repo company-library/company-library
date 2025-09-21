@@ -27,86 +27,94 @@ type OpenBDResponse = Array<{
 /**
  * Google Books APIとOpenBD APIから書籍情報を取得する
  */
-async function fetchBookInfo(isbn: string): Promise<{
+export async function fetchBookInfo(isbn: string): Promise<{
   description?: string
   imageUrl?: string
 } | null> {
-  try {
-    // Google Books APIから情報を取得
-    const googleResponse = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
-    const googleData: GoogleBookResponse = await googleResponse.json()
+  // まずGoogle Books APIから情報を取得
+  const googleData = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
+    .then((response) => response.json())
+    .then((googleData: GoogleBookResponse) => ({
+      description: googleData.items?.[0]?.volumeInfo?.description,
+      imageUrl: googleData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail,
+    }))
+    .catch((googleError) => {
+      console.warn(`Google Books API error for ISBN ${isbn}:`, googleError)
+      return { description: undefined, imageUrl: undefined }
+    })
 
-    const description = googleData.items?.[0]?.volumeInfo?.description
-    let imageUrl = googleData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
-
-    // OpenBD APIからも情報を取得（フォールバック）
-    if (!description || !imageUrl) {
-      try {
-        const openbdResponse = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
-        const openbdData: OpenBDResponse = await openbdResponse.json()
-
-        if (!imageUrl && openbdData[0]?.summary?.cover) {
-          imageUrl = openbdData[0].summary.cover
-        }
-      } catch (openbdError) {
-        console.warn(`OpenBD API error for ISBN ${isbn}:`, openbdError)
-      }
-    }
-
+  // Google Books APIで十分な情報が取得できた場合はそのまま返す
+  if (googleData.description && googleData.imageUrl) {
     return {
-      description: description || undefined,
-      imageUrl: imageUrl || undefined,
+      description: googleData.description,
+      imageUrl: googleData.imageUrl,
     }
-  } catch (error) {
-    console.error(`書籍情報取得エラー (ISBN: ${isbn}):`, error)
+  }
+
+  // 不足している情報がある場合のみOpenBD APIを呼び出し
+  const openbdData = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
+    .then((response) => response.json())
+    .then((openbdData: OpenBDResponse) => ({
+      description: undefined, // OpenBDには詳細な説明文がないことが多い
+      imageUrl: openbdData[0]?.summary?.cover,
+    }))
+    .catch((openbdError) => {
+      console.warn(`OpenBD API error for ISBN ${isbn}:`, openbdError)
+      return { description: undefined, imageUrl: undefined }
+    })
+
+  // Google Booksのデータを優先し、不足分をOpenBDで補完
+  const description = googleData.description || openbdData.description
+  const imageUrl = googleData.imageUrl || openbdData.imageUrl
+
+  // 両方のAPIから何も取得できなかった場合
+  if (!description && !imageUrl) {
+    console.error(`書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN: ${isbn})`)
     return null
+  }
+
+  return {
+    description,
+    imageUrl,
   }
 }
 
 /**
  * 書籍情報を更新するヘルパー関数
  */
-async function updateBookInfo(book: {
-  id: number
-  isbn: string
-  description: string
-  imageUrl: string | null
-  title: string
-}) {
+export async function updateBookInfo(book: Book): Promise<{
+  updated: { description?: string; imageUrl?: string } | null
+  book: Book
+}> {
   const updatedInfo = await fetchBookInfo(book.isbn)
-
   if (!updatedInfo) {
-    return null
+    return { updated: null, book }
   }
 
-  const updateData: {
-    description?: string
-    imageUrl?: string
-  } = {}
+  const descriptionUpdate =
+    book.description === '' && updatedInfo.description
+      ? { description: updatedInfo.description }
+      : {}
 
-  // 説明文が空の場合のみ更新
-  if (book.description === '' && updatedInfo.description) {
-    updateData.description = updatedInfo.description
+  const imageUpdate =
+    !updatedInfo.imageUrl || book.imageUrl !== null
+      ? {}
+      : await downloadAndPutImage(updatedInfo.imageUrl, book.isbn).then((vercelBlobUrl) =>
+          vercelBlobUrl ? { imageUrl: vercelBlobUrl } : {},
+        )
+
+  const updateData = { ...descriptionUpdate, ...imageUpdate }
+
+  // 更新する情報がない場合はスキップ
+  if (Object.keys(updateData).length === 0) {
+    return { updated: null, book }
   }
 
-  // 画像URLがnullの場合のみ更新
-  if (book.imageUrl === null && updatedInfo.imageUrl) {
-    const vercelBlobUrl = await downloadAndPutImage(updatedInfo.imageUrl, book.isbn)
-    if (vercelBlobUrl) {
-      updateData.imageUrl = vercelBlobUrl
-    }
-  }
-
-  // 更新すべきデータがある場合のみDB更新
-  if (Object.keys(updateData).length > 0) {
-    const updatedBook = await prisma.book.update({
-      where: { id: book.id },
-      data: updateData,
-    })
-    return { updated: updateData, book: updatedBook }
-  }
-
-  return { updated: null, book }
+  const updatedBook = await prisma.book.update({
+    where: { id: book.id },
+    data: updateData,
+  })
+  return { updated: updateData, book: updatedBook }
 }
 
 type UpdateBooksInfoResult = {
