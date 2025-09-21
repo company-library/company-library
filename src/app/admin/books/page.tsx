@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { getBooksWithMissingInfo, updateSelectedBooksInfo, updateSingleBookInfo } from './actions'
 
@@ -369,7 +370,14 @@ export default function UpdateBookInfoPage() {
                     <tr key={item.id}>
                       <td>{item.id}</td>
                       <td>{item.isbn}</td>
-                      <td className="max-w-xs truncate">{item.title}</td>
+                      <td className="max-w-xs truncate">
+                        <Link
+                          href={`/books/${item.id}`}
+                          className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                        >
+                          {item.title}
+                        </Link>
+                      </td>
                       <td>
                         {item.updated && (
                           <ul className="text-sm">
@@ -532,7 +540,14 @@ export default function UpdateBookInfoPage() {
                       </label>
                     </td>
                     <td>{book.id}</td>
-                    <td className="max-w-xs truncate">{book.title}</td>
+                    <td className="max-w-xs truncate">
+                      <Link
+                        href={`/books/${book.id}`}
+                        className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                      >
+                        {book.title}
+                      </Link>
+                    </td>
                     <td>{book.isbn}</td>
                     <td>
                       {book.description === '' ? (

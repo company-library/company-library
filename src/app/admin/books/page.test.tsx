@@ -568,4 +568,98 @@ describe('UpdateBookInfoPage', () => {
       expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(expect.arrayContaining([1, 2]))
     })
   })
+
+  it('書籍一覧のタイトルがリンクとして表示される', async () => {
+    render(<UpdateBookInfoPage />)
+
+    await waitFor(() => {
+      // タイトルがリンクとして表示されることを確認
+      const titleLinks = screen.getAllByRole('link')
+      expect(titleLinks).toHaveLength(2) // 2つの書籍タイトルがリンクになっている
+
+      // 最初の書籍のリンクのhref属性を確認
+      const firstTitleLink = titleLinks.find((link) => link.textContent === 'テスト書籍1')
+      expect(firstTitleLink).toHaveAttribute('href', '/books/1')
+
+      // 2番目の書籍のリンクのhref属性を確認
+      const secondTitleLink = titleLinks.find((link) => link.textContent === 'テスト書籍2')
+      expect(secondTitleLink).toHaveAttribute('href', '/books/2')
+    })
+  })
+
+  it('タイトルリンクに適切なスタイルが適用されている', async () => {
+    render(<UpdateBookInfoPage />)
+
+    await waitFor(() => {
+      const titleLinks = screen.getAllByRole('link')
+      const firstTitleLink = titleLinks.find((link) => link.textContent === 'テスト書籍1')
+
+      // リンクに青色とカーソルポインターのクラスが適用されていることを確認
+      expect(firstTitleLink).toHaveClass(
+        'text-blue-600',
+        'hover:text-blue-800',
+        'hover:underline',
+        'cursor-pointer',
+      )
+    })
+  })
+
+  it('一括更新結果テーブルのタイトルもリンクとして表示される', async () => {
+    // 更新結果をモック
+    mockUpdateSelectedBooksInfo.mockResolvedValue({
+      success: true,
+      message: '2件の書籍情報を更新しました',
+      updatedCount: 1,
+      totalProcessed: 2,
+      noUpdateCount: 1,
+      errorCount: 0,
+      updatedIsbns: ['9784000000001'],
+      noUpdateIsbns: ['9784000000002'],
+      errorIsbns: [],
+      results: [
+        {
+          id: 1,
+          isbn: '9784000000001',
+          title: 'テスト書籍1',
+          updated: { description: '更新された説明' },
+        },
+        {
+          id: 2,
+          isbn: '9784000000002',
+          title: 'テスト書籍2',
+        },
+      ],
+    })
+
+    render(<UpdateBookInfoPage />)
+
+    // 書籍一覧が読み込まれるのを待つ
+    await waitFor(() => {
+      expect(screen.getByText('テスト書籍1')).toBeInTheDocument()
+    })
+
+    // 一括更新を実行
+    const updateButton = screen.getByText('表示中の書籍の情報を更新')
+    fireEvent.click(updateButton)
+
+    // 更新結果が表示されるのを待つ
+    await waitFor(() => {
+      expect(screen.getByText('一括更新結果')).toBeInTheDocument()
+    })
+
+    // 更新結果テーブル内のタイトルリンクを確認
+    await waitFor(() => {
+      const titleLinks = screen.getAllByRole('link')
+
+      // 更新結果テーブル内にもタイトルリンクがあることを確認
+      const resultTitleLinks = titleLinks.filter(
+        (link) => link.textContent === 'テスト書籍1' || link.textContent === 'テスト書籍2',
+      )
+      expect(resultTitleLinks.length).toBeGreaterThan(0)
+
+      // href属性を確認
+      const resultLink = resultTitleLinks.find((link) => link.textContent === 'テスト書籍1')
+      expect(resultLink).toHaveAttribute('href', '/books/1')
+    })
+  })
 })
