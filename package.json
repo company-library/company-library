@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.10.0",
+  "packageManager": "yarn@4.10.2",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -57,6 +57,6 @@
   },
   "volta": {
     "node": "22.19.0",
-    "yarn": "4.10.0"
+    "yarn": "4.10.2"
   }
 }
