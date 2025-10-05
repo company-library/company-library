@@ -39,7 +39,7 @@ export async function fetchBookInfo(isbn: string): Promise<{
       imageUrl: googleData.items?.[0]?.volumeInfo?.imageLinks?.thumbnail,
     }))
     .catch((googleError) => {
-      console.warn(`Google Books API error for ISBN ${isbn}:`, googleError)
+      console.warn('Google Books API error for ISBN', isbn, ':', googleError)
       return { description: undefined, imageUrl: undefined }
     })
 
@@ -59,7 +59,7 @@ export async function fetchBookInfo(isbn: string): Promise<{
       imageUrl: openbdData[0]?.summary?.cover,
     }))
     .catch((openbdError) => {
-      console.warn(`OpenBD API error for ISBN ${isbn}:`, openbdError)
+      console.warn('OpenBD API error for ISBN', isbn, ':', openbdError)
       return { description: undefined, imageUrl: undefined }
     })
 
@@ -69,7 +69,7 @@ export async function fetchBookInfo(isbn: string): Promise<{
 
   // 両方のAPIから何も取得できなかった場合
   if (!description && !imageUrl) {
-    console.error(`書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN: ${isbn})`)
+    console.error('書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN:', isbn, ')')
     return null
   }
 
@@ -77,44 +77,6 @@ export async function fetchBookInfo(isbn: string): Promise<{
     description,
     imageUrl,
   }
-}
-
-/**
- * 書籍情報を更新するヘルパー関数
- */
-export async function updateBookInfo(book: Book): Promise<{
-  updated: { description?: string; imageUrl?: string } | null
-  book: Book
-}> {
-  const updatedInfo = await fetchBookInfo(book.isbn)
-  if (!updatedInfo) {
-    return { updated: null, book }
-  }
-
-  const descriptionUpdate =
-    book.description === '' && updatedInfo.description
-      ? { description: updatedInfo.description }
-      : {}
-
-  const imageUpdate =
-    !updatedInfo.imageUrl || book.imageUrl !== null
-      ? {}
-      : await downloadAndPutImage(updatedInfo.imageUrl, book.isbn).then((vercelBlobUrl) =>
-          vercelBlobUrl ? { imageUrl: vercelBlobUrl } : {},
-        )
-
-  const updateData = { ...descriptionUpdate, ...imageUpdate }
-
-  // 更新する情報がない場合はスキップ
-  if (Object.keys(updateData).length === 0) {
-    return { updated: null, book }
-  }
-
-  const updatedBook = await prisma.book.update({
-    where: { id: book.id },
-    data: updateData,
-  })
-  return { updated: updateData, book: updatedBook }
 }
 
 type UpdateBooksInfoResult = {
@@ -135,8 +97,8 @@ type UpdateBooksInfoResult = {
 }
 
 /**
- * 書籍の不足情報を更新する統合Server Action
- * 単一書籍または複数書籍の更新に対応
+ * 書籍の不足情報を更新するServer Action
+ * 複数書籍の一括更新に対応
  */
 export async function updateBooksInfo({
   bookIds,
@@ -153,6 +115,13 @@ export async function updateBooksInfo({
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        _count: {
+          select: {
+            registrationHistories: true,
+          },
+        },
+      },
     })
 
     if (booksToUpdate.length === 0) {
@@ -167,97 +136,72 @@ export async function updateBooksInfo({
       }
     }
 
-    // 単一書籍の場合の特別処理
-    if (bookIds && bookIds.length === 1) {
-      const book = booksToUpdate[0]
-      if (!book) {
-        return {
-          success: false,
-          message: '書籍が見つかりません',
-          updatedIsbns: [],
-          noUpdateIsbns: [],
-          errorIsbns: [],
-          results: [],
-          updatedFields: [],
-        }
+    // 単一書籍用のupdatedFields計算用
+    const isSingleBook = booksToUpdate.length === 1
+
+    // 書籍情報を更新するヘルパー関数
+    const updateBookInfo = async (book: Book) => {
+      const updatedInfo = await fetchBookInfo(book.isbn)
+      if (!updatedInfo) {
+        return { updated: null, book }
       }
 
-      try {
-        const result = await updateBookInfo(book)
-        if (!result) {
-          return {
-            success: false,
-            message: '外部APIから書籍情報を取得できませんでした',
-            updatedIsbns: [],
-            noUpdateIsbns: [],
-            errorIsbns: [],
-            results: [],
-            updatedFields: [],
-          }
-        }
+      const descriptionUpdate =
+        book.description === '' && updatedInfo.description
+          ? { description: updatedInfo.description }
+          : {}
 
-        return {
-          success: true,
-          message: result.updated ? '書籍情報を更新しました' : '更新する情報がありませんでした',
-          updatedIsbns: result.updated ? [book.isbn] : [],
-          noUpdateIsbns: result.updated ? [] : [book.isbn],
-          errorIsbns: [],
-          results: [
-            {
-              id: book.id,
-              isbn: book.isbn,
-              title: book.title,
-              updated: result.updated || undefined,
-            },
-          ],
-          updatedFields: result.updated ? Object.keys(result.updated) : [],
-        }
-      } catch (error) {
-        console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
-        return {
-          success: false,
-          message: error instanceof Error ? error.message : '書籍情報の更新に失敗しました',
-          updatedIsbns: [],
-          noUpdateIsbns: [],
-          errorIsbns: [book.isbn],
-          results: [
-            {
-              id: book.id,
-              isbn: book.isbn,
-              title: book.title,
-              error: 'Update failed',
-            },
-          ],
-          updatedFields: [],
-        }
+      const imageUpdate =
+        !updatedInfo.imageUrl || book.imageUrl !== null
+          ? {}
+          : await downloadAndPutImage(updatedInfo.imageUrl, book.isbn).then((vercelBlobUrl) =>
+              vercelBlobUrl ? { imageUrl: vercelBlobUrl } : {},
+            )
+
+      const updateData = { ...descriptionUpdate, ...imageUpdate }
+
+      if (Object.keys(updateData).length === 0) {
+        return { updated: null, book }
       }
+
+      const updatedBook = await prisma.book.update({
+        where: { id: book.id },
+        data: updateData,
+      })
+      return { updated: updateData, book: updatedBook }
     }
 
     // 複数書籍の処理
     const updatedIsbns: string[] = []
     const noUpdateIsbns: string[] = []
     const errorIsbns: string[] = []
-    const results = []
+    const results: Array<{
+      id: number
+      isbn: string
+      title: string
+      updated?: { description?: string; imageUrl?: string }
+      error?: string
+    }> = []
+    const allUpdatedFields = new Set<string>()
 
-    for (const book of booksToUpdate) {
-      try {
-        const result = await updateBookInfo(book)
-        if (result) {
-          if (result.updated) {
-            updatedIsbns.push(book.isbn)
-            results.push({
-              id: book.id,
-              isbn: book.isbn,
-              title: book.title,
-              updated: result.updated,
-            })
-          } else {
-            noUpdateIsbns.push(book.isbn)
-            results.push({
-              id: book.id,
-              isbn: book.isbn,
-              title: book.title,
-            })
+    const processBook = async (book: Book) => {
+      const handleSuccess = (result: {
+        updated: { description?: string; imageUrl?: string } | null
+        book: Book
+      }) => {
+        if (result.updated) {
+          updatedIsbns.push(book.isbn)
+          results.push({
+            id: book.id,
+            isbn: book.isbn,
+            title: book.title,
+            updated: result.updated,
+          })
+          // 単一書籍の場合はupdatedFieldsを記録
+          if (isSingleBook) {
+            for (const field of Object.keys(result.updated)) {
+              allUpdatedFields.add(field)
+            }
           }
         } else {
           noUpdateIsbns.push(book.isbn)
@@ -267,12 +211,9 @@ export async function updateBooksInfo({
             title: book.title,
           })
         }
+      }
 
-        // API rate limiting のため待機
-        if (booksToUpdate.length > 1) {
-          await new Promise((resolve) => setTimeout(resolve, 200))
-        }
-      } catch (error) {
+      const handleError = (error: unknown) => {
         console.error(`書籍ID ${book.id} の更新中にエラーが発生:`, error)
         errorIsbns.push(book.isbn)
         results.push({
@@ -282,15 +223,36 @@ export async function updateBooksInfo({
           error: 'Update failed',
         })
       }
+
+      const addRateLimitDelay = () =>
+        booksToUpdate.length > 1
+          ? new Promise((resolve) => setTimeout(resolve, 200))
+          : Promise.resolve()
+
+      return updateBookInfo(book)
+        .then(handleSuccess)
+        .catch(handleError)
+        .then(() => addRateLimitDelay())
+        .then(() => undefined)
     }
+
+    await booksToUpdate.reduce(
+      (promise, book) => promise.then(() => processBook(book)),
+      Promise.resolve() as Promise<void>,
+    )
 
     return {
       success: true,
-      message: `${updatedIsbns.length}件の書籍情報を更新しました`,
+      message: isSingleBook
+        ? updatedIsbns.length > 0
+          ? '書籍情報を更新しました'
+          : '更新する情報がありませんでした'
+        : `${updatedIsbns.length}件の書籍情報を更新しました`,
       updatedIsbns,
       noUpdateIsbns,
       errorIsbns,
       results,
+      ...(isSingleBook && { updatedFields: Array.from(allUpdatedFields) }),
     }
   } catch (error) {
     console.error('書籍情報更新エラー:', error)
@@ -410,6 +372,13 @@ export async function getBooksWithMissingInfo(
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        _count: {
+          select: {
+            registrationHistories: true,
+          },
+        },
+      },
     })
 
     return {
@@ -426,20 +395,4 @@ export async function getBooksWithMissingInfo(
       count: 0,
     }
   }
-}
-
-/**
- * 特定の書籍の不足情報を更新するServer Action
- * @param bookId 更新対象の書籍ID
- * @returns 更新結果
- */
-export async function updateSingleBookInfo(bookId: number): Promise<UpdateBooksInfoResult> {
-  return updateBooksInfo({ bookIds: [bookId] })
-}
-
-/**
- * 特定の書籍IDsの不足情報を更新するServer Action
- */
-export async function updateSelectedBooksInfo(bookIds: number[]): Promise<UpdateBooksInfoResult> {
-  return updateBooksInfo({ bookIds })
 }

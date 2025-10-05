@@ -6,13 +6,11 @@ import UpdateBookInfoPage from './page'
 // actions モジュールをモック
 vi.mock('./actions', () => ({
   getBooksWithMissingInfo: vi.fn(),
-  updateSingleBookInfo: vi.fn(),
-  updateSelectedBooksInfo: vi.fn(),
+  updateBooksInfo: vi.fn(),
 }))
 
 const mockGetBooksWithMissingInfo = actions.getBooksWithMissingInfo as ReturnType<typeof vi.fn>
-const mockUpdateSingleBookInfo = actions.updateSingleBookInfo as ReturnType<typeof vi.fn>
-const mockUpdateSelectedBooksInfo = actions.updateSelectedBooksInfo as ReturnType<typeof vi.fn>
+const mockUpdateBooksInfo = actions.updateBooksInfo as ReturnType<typeof vi.fn>
 
 // fetch をモック
 global.fetch = vi.fn()
@@ -143,7 +141,7 @@ describe('UpdateBookInfoPage', () => {
   })
 
   it('表示中の書籍の情報を更新ボタンで表示中のbookIdsが渡される', async () => {
-    mockUpdateSelectedBooksInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: true,
       message: '2件の書籍情報を更新しました',
       updatedCount: 2,
@@ -168,12 +166,12 @@ describe('UpdateBookInfoPage', () => {
     fireEvent.click(updateButton)
 
     await waitFor(() => {
-      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(expect.arrayContaining([1, 2]))
+      expect(mockUpdateBooksInfo).toHaveBeenCalledWith({ bookIds: expect.arrayContaining([1, 2]) })
     })
   })
 
   it('個別更新が正常に動作する', async () => {
-    mockUpdateSingleBookInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: true,
       message: '書籍情報を更新しました',
       updatedFields: ['description'],
@@ -191,7 +189,7 @@ describe('UpdateBookInfoPage', () => {
 
     await waitFor(() => {
       // 最初の書籍のIDは1だが、テーブルの順序により2番目の書籍が最初に表示されることがある
-      expect(mockUpdateSingleBookInfo).toHaveBeenCalledWith(expect.any(Number))
+      expect(mockUpdateBooksInfo).toHaveBeenCalledWith({ bookIds: [expect.any(Number)] })
       expect(alertSpy).toHaveBeenCalledWith('書籍情報を更新しました')
     })
 
@@ -199,7 +197,7 @@ describe('UpdateBookInfoPage', () => {
   })
 
   it('個別更新でエラーが発生した場合', async () => {
-    mockUpdateSingleBookInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: false,
       message: '更新に失敗しました',
     })
@@ -215,7 +213,7 @@ describe('UpdateBookInfoPage', () => {
     })
 
     await waitFor(() => {
-      expect(mockUpdateSingleBookInfo).toHaveBeenCalledWith(expect.any(Number))
+      expect(mockUpdateBooksInfo).toHaveBeenCalledWith({ bookIds: [expect.any(Number)] })
       expect(alertSpy).toHaveBeenCalledWith('エラー: 更新に失敗しました')
     })
 
@@ -502,7 +500,7 @@ describe('UpdateBookInfoPage', () => {
   })
 
   it('チェックボックスで書籍を選択して更新できる', async () => {
-    mockUpdateSelectedBooksInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: true,
       message: '1件の書籍情報を更新しました',
       updatedCount: 1,
@@ -530,14 +528,14 @@ describe('UpdateBookInfoPage', () => {
     })
 
     await waitFor(() => {
-      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(
-        expect.arrayContaining([expect.any(Number)]),
-      )
+      expect(mockUpdateBooksInfo).toHaveBeenCalledWith({
+        bookIds: expect.arrayContaining([expect.any(Number)]),
+      })
     })
   })
 
   it('全選択チェックボックスで全書籍を選択できる', async () => {
-    mockUpdateSelectedBooksInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: true,
       message: '2件の書籍情報を更新しました',
       updatedCount: 2,
@@ -565,7 +563,7 @@ describe('UpdateBookInfoPage', () => {
     })
 
     await waitFor(() => {
-      expect(mockUpdateSelectedBooksInfo).toHaveBeenCalledWith(expect.arrayContaining([1, 2]))
+      expect(mockUpdateBooksInfo).toHaveBeenCalledWith({ bookIds: expect.arrayContaining([1, 2]) })
     })
   })
 
@@ -606,7 +604,7 @@ describe('UpdateBookInfoPage', () => {
 
   it('一括更新結果テーブルのタイトルもリンクとして表示される', async () => {
     // 更新結果をモック
-    mockUpdateSelectedBooksInfo.mockResolvedValue({
+    mockUpdateBooksInfo.mockResolvedValue({
       success: true,
       message: '2件の書籍情報を更新しました',
       updatedCount: 1,

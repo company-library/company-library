@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { getBooksWithMissingInfo, updateSelectedBooksInfo, updateSingleBookInfo } from './actions'
+import { getBooksWithMissingInfo, updateBooksInfo } from './actions'
 
 type UpdateResult = {
   message: string
@@ -88,7 +88,7 @@ export default function UpdateBookInfoPage() {
     setResult(null)
 
     try {
-      const data = await updateSelectedBooksInfo(bookIds)
+      const data = await updateBooksInfo({ bookIds })
 
       if (data.success) {
         setResult({
@@ -143,7 +143,7 @@ export default function UpdateBookInfoPage() {
   const handleUpdateSingleBook = async (bookId: number) => {
     setUpdatingBookId(bookId)
     try {
-      const result = await updateSingleBookInfo(bookId)
+      const result = await updateBooksInfo({ bookIds: [bookId] })
       if (result.success) {
         // 書籍一覧を再読み込み
         await loadBooks()

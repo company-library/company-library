@@ -1,12 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
-import {
-  fetchBookInfo,
-  getBooksWithMissingInfo,
-  updateBookInfo,
-  updateSelectedBooksInfo,
-  updateSingleBookInfo,
-} from './actions'
+import { fetchBookInfo, getBooksWithMissingInfo, updateBooksInfo } from './actions'
 
 vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
   downloadAndPutImage: vi.fn().mockResolvedValue('https://blob.vercel-storage.com/mock-image.jpg'),
@@ -128,7 +122,9 @@ describe('admin books actions', () => {
 
       expect(result).toBeNull()
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        `書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN: ${testIsbn})`,
+        '書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN:',
+        testIsbn,
+        ')',
       )
     })
 
@@ -157,7 +153,9 @@ describe('admin books actions', () => {
         imageUrl: 'https://openbd.example.com/cover.jpg',
       })
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        `Google Books API error for ISBN ${testIsbn}:`,
+        'Google Books API error for ISBN',
+        testIsbn,
+        ':',
         expect.any(Error),
       )
       expect(fetchMock).toHaveBeenCalledTimes(2)
@@ -177,370 +175,22 @@ describe('admin books actions', () => {
 
       expect(result).toBeNull()
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        `Google Books API error for ISBN ${testIsbn}:`,
+        'Google Books API error for ISBN',
+        testIsbn,
+        ':',
         expect.any(Error),
       )
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        `OpenBD API error for ISBN ${testIsbn}:`,
+        'OpenBD API error for ISBN',
+        testIsbn,
+        ':',
         expect.any(Error),
       )
       expect(fetchMock).toHaveBeenCalledTimes(2)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        `書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN: ${testIsbn})`,
-      )
-    })
-  })
-
-  describe('updateBookInfo', () => {
-    const mockBook = {
-      id: 1,
-      title: 'テスト書籍',
-      description: '',
-      isbn: '9784000000000',
-      imageUrl: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    describe('正常系', () => {
-      it('説明文のみ更新される場合', async () => {
-        const bookWithImage = { ...mockBook, imageUrl: 'existing-image.jpg' }
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '新しい説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        prismaMock.book.update.mockResolvedValue({
-          ...bookWithImage,
-          description: '新しい説明文',
-        })
-
-        const result = await updateBookInfo(bookWithImage)
-
-        expect(result.updated).toEqual({ description: '新しい説明文' })
-        expect(prismaMock.book.update).toHaveBeenCalledWith({
-          where: { id: 1 },
-          data: { description: '新しい説明文' },
-        })
-      })
-
-      it('画像URLのみ更新される場合', async () => {
-        const bookWithDescription = { ...mockBook, description: '既存の説明文' }
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        prismaMock.book.update.mockResolvedValue({
-          ...bookWithDescription,
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-
-        const result = await updateBookInfo(bookWithDescription)
-
-        expect(result.updated).toEqual({
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-        expect(prismaMock.book.update).toHaveBeenCalledWith({
-          where: { id: 1 },
-          data: { imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg' },
-        })
-      })
-
-      it('説明文と画像URLの両方が更新される場合', async () => {
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '新しい説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        prismaMock.book.update.mockResolvedValue({
-          ...mockBook,
-          description: '新しい説明文',
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-
-        const result = await updateBookInfo(mockBook)
-
-        expect(result.updated).toEqual({
-          description: '新しい説明文',
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-      })
-    })
-
-    it('外部APIから情報を取得できない場合はupdated: nullを返す', async () => {
-      fetchMock.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({}),
-      } as Response)
-
-      const result = await updateBookInfo(mockBook)
-
-      expect(result).toEqual({
-        updated: null,
-        book: mockBook,
-      })
-    })
-
-    it('更新する情報がない場合はupdated: nullを返す', async () => {
-      const bookWithAllInfo = {
-        ...mockBook,
-        description: '既存の説明文',
-        imageUrl: 'existing-image.jpg',
-      }
-      fetchMock.mockResolvedValue({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            items: [
-              {
-                volumeInfo: {
-                  description: '説明文',
-                  imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                },
-              },
-            ],
-          }),
-      } as Response)
-
-      const result = await updateBookInfo(bookWithAllInfo)
-
-      expect(result).toEqual({
-        updated: null,
-        book: bookWithAllInfo,
-      })
-      expect(prismaMock.book.update).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('updateSingleBookInfo', () => {
-    const mockBook = {
-      id: 1,
-      title: 'テスト書籍',
-      description: '',
-      isbn: '9784000000000',
-      imageUrl: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-
-    const mockUpdatedBook = {
-      ...mockBook,
-      description: '更新された説明文',
-      imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-    }
-
-    describe('正常系', () => {
-      it('説明文のみ更新される場合', async () => {
-        prismaMock.book.findMany.mockResolvedValue([
-          {
-            ...mockBook,
-            id: 1,
-            imageUrl: 'existing-image.jpg',
-          },
-        ])
-        prismaMock.book.update.mockResolvedValue({
-          ...mockBook,
-          id: 1,
-          description: '新しい説明文',
-        })
-
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '新しい説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        const result = await updateSingleBookInfo(1)
-        expect(result.success).toBe(true)
-        expect(result.message).toBe('書籍情報を更新しました')
-        expect(result.updatedFields).toEqual(['description'])
-      })
-
-      it('画像URLのみ更新される場合', async () => {
-        prismaMock.book.findMany.mockResolvedValue([
-          {
-            ...mockBook,
-            id: 2,
-            description: '既存の説明文',
-          },
-        ])
-        prismaMock.book.update.mockResolvedValue({
-          ...mockBook,
-          id: 2,
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        const result = await updateSingleBookInfo(2)
-        expect(result.success).toBe(true)
-        expect(result.updatedFields).toEqual(['imageUrl'])
-      })
-
-      it('説明文と画像URLの両方が更新される場合', async () => {
-        prismaMock.book.findMany.mockResolvedValue([{ ...mockBook, id: 3 }])
-        prismaMock.book.update.mockResolvedValue({
-          ...mockUpdatedBook,
-          id: 3,
-        })
-
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '新しい説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        const result = await updateSingleBookInfo(3)
-        expect(result.success).toBe(true)
-        expect(result.updatedFields).toContain('description')
-        expect(result.updatedFields).toContain('imageUrl')
-      })
-
-      it('更新する情報がない場合', async () => {
-        prismaMock.book.findMany.mockResolvedValue([
-          {
-            ...mockBook,
-            id: 4,
-            description: '既存の説明文',
-            imageUrl: 'existing-image.jpg',
-          },
-        ])
-
-        fetchMock.mockResolvedValue({
-          ok: true,
-          json: () =>
-            Promise.resolve({
-              items: [
-                {
-                  volumeInfo: {
-                    description: '説明文',
-                    imageLinks: { thumbnail: 'https://example.com/image.jpg' },
-                  },
-                },
-              ],
-            }),
-        } as Response)
-
-        const result = await updateSingleBookInfo(4)
-        expect(result.success).toBe(true)
-        expect(result.message).toBe('更新する情報がありませんでした')
-        expect(result.updatedFields).toEqual([])
-      })
-
-      it('OpenBD APIからフォールバック情報を取得する場合', async () => {
-        prismaMock.book.findMany.mockResolvedValue([{ ...mockBook, id: 5 }])
-        prismaMock.book.update.mockResolvedValue({
-          ...mockBook,
-          id: 5,
-          imageUrl: 'https://blob.vercel-storage.com/mock-image.jpg',
-        })
-
-        fetchMock
-          .mockResolvedValueOnce({
-            ok: true,
-            json: () => Promise.resolve({}),
-          } as Response)
-          .mockResolvedValueOnce({
-            ok: true,
-            json: () =>
-              Promise.resolve([
-                {
-                  summary: {
-                    title: 'OpenBDタイトル',
-                    cover: 'https://openbd.example.com/cover.jpg',
-                  },
-                },
-              ]),
-          } as Response)
-
-        const result = await updateSingleBookInfo(5)
-        expect(result.success).toBe(true)
-        expect(result.updatedFields).toEqual(['imageUrl'])
-      })
-    })
-
-    it('書籍が見つからない場合はエラーを返す', async () => {
-      prismaMock.book.findMany.mockResolvedValue([])
-
-      const result = await updateSingleBookInfo(999)
-
-      expect(result.success).toBe(true)
-      expect(result.message).toBe('更新対象の書籍が見つかりませんでした')
-    })
-
-    it('外部APIでエラーが発生した場合はエラーを返す', async () => {
-      prismaMock.book.findMany.mockResolvedValue([mockBook])
-      fetchMock.mockRejectedValue(new Error('Network error'))
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-      const result = await updateSingleBookInfo(1)
-
-      expect(result.success).toBe(true)
-      expect(result.message).toBe('更新する情報がありませんでした')
-      expect(consoleSpy).toHaveBeenCalledWith(
-        '書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN: 9784000000000)',
+        '書籍情報取得エラー: 両方のAPIから情報を取得できませんでした (ISBN:',
+        testIsbn,
+        ')',
       )
     })
   })
@@ -585,6 +235,13 @@ describe('admin books actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
+        },
       })
     })
 
@@ -601,6 +258,13 @@ describe('admin books actions', () => {
         take: 10,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
         },
       })
     })
@@ -620,6 +284,13 @@ describe('admin books actions', () => {
         take: 20,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
         },
       })
     })
@@ -658,6 +329,13 @@ describe('admin books actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
+        },
       })
     })
 
@@ -689,6 +367,13 @@ describe('admin books actions', () => {
         take: 50,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
         },
       })
     })
@@ -728,6 +413,13 @@ describe('admin books actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
+        },
       })
     })
 
@@ -751,6 +443,13 @@ describe('admin books actions', () => {
         take: 50,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
         },
       })
     })
@@ -839,7 +538,7 @@ describe('admin books actions', () => {
             }),
         } as Response)
 
-      const result = await updateSelectedBooksInfo([1, 2])
+      const result = await updateBooksInfo({ bookIds: [1, 2] })
 
       expect(result.success).toBe(true)
       expect(result.updatedIsbns.length).toBe(2)
@@ -852,13 +551,20 @@ describe('admin books actions', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          _count: {
+            select: {
+              registrationHistories: true,
+            },
+          },
+        },
       })
     })
 
     it('書籍が見つからない場合', async () => {
       prismaMock.book.findMany.mockResolvedValue([])
 
-      const result = await updateSelectedBooksInfo([999])
+      const result = await updateBooksInfo({ bookIds: [999] })
 
       expect(result.success).toBe(true)
       expect(result.message).toBe('更新対象の書籍が見つかりませんでした')
