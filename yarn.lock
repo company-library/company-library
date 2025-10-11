@@ -1686,30 +1686,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8":
-  version: 22.18.8
-  resolution: "@types/node@npm:22.18.8"
+"@types/node@npm:^22.18.10":
+  version: 22.18.10
+  resolution: "@types/node@npm:22.18.10"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/54473730e7417b923fec427f62ed3204259acbd8e450a7593bad8ae02a75effcfcc864b34bf02c108eeb9c04a404791687f42b801bafa5264a8761f4df9122fd
+  checksum: 10c0/37b34553f1953ab8fc25b7467d44701446400f62547adb62c842cebac091350985470aeed87acd60f5295778c370d9721d477310e643677a7eab03a8dc6ed74f
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.2.0":
-  version: 19.2.0
-  resolution: "@types/react-dom@npm:19.2.0"
+"@types/react-dom@npm:19.2.1":
+  version: 19.2.1
+  resolution: "@types/react-dom@npm:19.2.1"
   peerDependencies:
     "@types/react": ^19.2.0
-  checksum: 10c0/73ba326c8bc53e7bb597aa8e66ce4aabd79e501f744e1386278f0c63f1be6d78cca71a8269af3565206f296675116109a3ccbed4038409614fabf8405e54c6ef
+  checksum: 10c0/0dbbc5b7ecd74681bfac95a413133b26118a70b8840748277abafa47e5c7a037beae6a660e6a21fb53f5cbdb0b2d33e117ea7bbd976a888c298392a8a96bc68f
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.0":
-  version: 19.2.0
-  resolution: "@types/react@npm:19.2.0"
+"@types/react@npm:19.2.2":
+  version: 19.2.2
+  resolution: "@types/react@npm:19.2.2"
   dependencies:
     csstype: "npm:^3.0.2"
-  checksum: 10c0/a280e146df2abd3b06eaa2f5332dade9f7ebe916334a40699ee11139c5f22aeb49b5b78b6de8c55b53ef2fa94285e1bc2feaf4fbce6fe259a7de92dc1bf67b17
+  checksum: 10c0/f830b1204aca4634ce3c6cb3477b5d3d066b80a4dd832a4ee0069acb504b6debd2416548a43a11c1407c12bc60e2dc6cf362934a18fe75fe06a69c0a98cba8ab
   languageName: node
   linkType: hard
 
@@ -2187,12 +2187,12 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.9.1"
     "@testing-library/react": "npm:^16.3.0"
     "@types/luxon": "npm:^3.7.1"
-    "@types/node": "npm:^22.18.8"
-    "@types/react": "npm:19.2.0"
-    "@types/react-dom": "npm:19.2.0"
+    "@types/node": "npm:^22.18.10"
+    "@types/react": "npm:19.2.2"
+    "@types/react-dom": "npm:19.2.1"
     "@vercel/blob": "npm:^2.0.0"
     "@vitejs/plugin-react-swc": "npm:^4.1.0"
-    daisyui: "npm:^5.1.27"
+    daisyui: "npm:^5.2.2"
     dotenv-cli: "npm:^10.0.0"
     graphql: "npm:^16.11.0"
     identity-obj-proxy: "npm:^3.0.0"
@@ -2211,7 +2211,7 @@ __metadata:
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
     vitest-mock-extended: "npm:^3.1.0"
-    zod: "npm:^4.1.11"
+    zod: "npm:^4.1.12"
   languageName: unknown
   linkType: soft
 
@@ -2282,10 +2282,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:^5.1.27":
-  version: 5.1.27
-  resolution: "daisyui@npm:5.1.27"
-  checksum: 10c0/679c2dd53cb3a067d42aed946a86371e97ed8eb1e42c4cf52c0dc79582c65394e474282c243c23b231d56d1312d8c74435ba31246642ddf85b839e7f87387e06
+"daisyui@npm:^5.2.2":
+  version: 5.2.2
+  resolution: "daisyui@npm:5.2.2"
+  checksum: 10c0/f1c296a11b72e980a5a9c1cdbd6877554508d7a5d0fa5eb190482eb42d71ebebb994480dd3f6d162e112be4c1204608d1c609a59d71736064f95e89efc3c18a0
   languageName: node
   linkType: hard
 
@@ -5156,9 +5156,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.1.11":
-  version: 4.1.11
-  resolution: "zod@npm:4.1.11"
-  checksum: 10c0/ce6a4c4acfbf51d7dd0f2669c82f207d62a1f00264eef608994b94eb99d86a74c99f59b0dd3e61ef82909ee136631378b709e0908f0a02a2d5c21d0c497de5db
+"zod@npm:^4.1.12":
+  version: 4.1.12
+  resolution: "zod@npm:4.1.12"
+  checksum: 10c0/b64c1feb19e99d77075261eaf613e0b2be4dfcd3551eff65ad8b4f2a079b61e379854d066f7d447491fcf193f45babd8095551a9d47973d30b46b6d8e2c46774
   languageName: node
   linkType: hard
