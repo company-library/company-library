@@ -19,14 +19,14 @@
     "db:seed": "dotenv -e .env.development.local -- npx prisma db seed"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.3",
+    "@prisma/client": "^6.18.0",
     "@slack/webhook": "^7.0.6",
     "@vercel/blob": "^2.0.0",
     "graphql": "^16.11.0",
     "luxon": "^3.7.2",
     "next": "15.5.4",
     "next-auth": "^4.24.11",
-    "prisma": "^6.16.3",
+    "prisma": "^6.18.0",
     "react": "canary",
     "react-dom": "canary",
     "swr": "^2.3.6",
