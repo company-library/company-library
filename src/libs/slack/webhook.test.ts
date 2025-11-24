@@ -1,16 +1,22 @@
 import { notifySlack } from '@/libs/slack/webhook'
 
+const sendMock = vi.fn()
+
+vi.mock('@slack/webhook', () => ({
+  IncomingWebhook: class {
+    send = sendMock
+  },
+}))
+
 describe('notifySlack function', () => {
   vi.stubEnv('SLACK_WEBHOOK_URL', 'slack-webhook-url')
 
+  beforeEach(() => {
+    sendMock.mockClear()
+  })
+
   it('Slackのwebhookがキックされる', async () => {
     const expectedText = 'sample message'
-    const sendMock = vi.fn()
-    vi.spyOn(require('@slack/webhook'), 'IncomingWebhook').mockImplementation(() => {
-      return {
-        send: sendMock,
-      }
-    })
 
     await notifySlack(expectedText)
 
@@ -88,12 +94,6 @@ describe('notifySlack function', () => {
         ],
       },
     ]
-    const sendMock = vi.fn()
-    vi.spyOn(require('@slack/webhook'), 'IncomingWebhook').mockImplementation(() => {
-      return {
-        send: sendMock,
-      }
-    })
 
     await notifySlack(expectedText, expectedBlocks)
 
