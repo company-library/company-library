@@ -115,24 +115,23 @@ describe('authOptions', async () => {
         { inValidProperty: 'name', inValidToken: { name: undefined } },
         { inValidProperty: 'email', inValidToken: { email: undefined } },
         { inValidProperty: 'idToken', inValidToken: { idToken: undefined } },
-      ])(
-        'tokenに必要な値($inValidProperty)が設定されていなかった場合は、引数で渡されたsessionをそのまま返す',
-        async ({ inValidToken }) => {
-          const argSession = { ...defaultSession }
-          const argToken = {
-            ...defaultToken,
-            ...inValidToken,
-          }
+      ])('tokenに必要な値($inValidProperty)が設定されていなかった場合は、引数で渡されたsessionをそのまま返す', async ({
+        inValidToken,
+      }) => {
+        const argSession = { ...defaultSession }
+        const argToken = {
+          ...defaultToken,
+          ...inValidToken,
+        }
 
-          const session = authOptions.callbacks?.session
-          assert(!!session, 'session callback is not defined')
+        const session = authOptions.callbacks?.session
+        assert(!!session, 'session callback is not defined')
 
-          // @ts-expect-error
-          const result = await session({ session: argSession, token: argToken })
+        // @ts-expect-error
+        const result = await session({ session: argSession, token: argToken })
 
-          expect(result).toStrictEqual(defaultSession)
-        },
-      )
+        expect(result).toStrictEqual(defaultSession)
+      })
 
       it('ユーザー情報が存在する場合は、引数で渡されたsessionに、ユーザー情報とtokenのIDトークンをセットして返す', async () => {
         prismaMock.user.findUnique.mockResolvedValueOnce(user1)
