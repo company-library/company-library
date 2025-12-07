@@ -3,7 +3,20 @@ const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
   outputFileTracingIncludes: {
-    '/*': ['./src/generated/prisma/**/*'],
+    '/*': [
+      './src/generated/prisma/**/*',
+      './node_modules/@prisma/client/**/*.node',
+      './node_modules/.prisma/client/**/*.node',
+    ],
+  },
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/**/*': [
+        './src/generated/prisma/**/*',
+        './node_modules/@prisma/client/**/*.node',
+        './node_modules/.prisma/client/**/*.node',
+      ],
+    },
   },
   images: {
     remotePatterns: [
