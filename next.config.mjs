@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  outputFileTracingIncludes: {
+    '/*': ['./src/generated/prisma/**/*'],
+  },
   images: {
     remotePatterns: [
       { hostname: 'books.google.com' },
