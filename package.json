@@ -30,21 +30,21 @@
     "prisma": "^6.19.1",
     "react": "canary",
     "react-dom": "canary",
-    "swr": "^2.3.7",
-    "zod": "^4.1.13"
+    "swr": "^2.3.8",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
+    "@biomejs/biome": "2.3.10",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/react": "^16.3.1",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^22.19.2",
+    "@types/node": "^22.19.3",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react-swc": "^4.2.2",
-    "daisyui": "^5.5.13",
+    "daisyui": "^5.5.14",
     "dotenv-cli": "^11.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^27.3.0",
@@ -53,7 +53,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.15",
+    "vitest": "^4.0.16",
     "vitest-mock-extended": "^3.1.0"
   },
   "volta": {
