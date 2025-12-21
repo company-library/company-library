@@ -6,14 +6,15 @@
   "packageManager": "yarn@4.12.0",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "prebuild": "npm run db:generate",
+    "build": "next build",
     "start": "next start",
     "lint": "biome check src/ test/",
     "lint:fix": "biome check src/ test/ --write",
     "lint:ci": "biome ci src/ test/ --reporter=github",
     "test": "vitest",
     "typeCheck": "tsc --pretty --noEmit",
-    "db:generate": "npx prisma generate",
+    "db:generate": "dotenv -e .env.development.local -- npx prisma generate",
     "db:push": "dotenv -e .env.development.local -- npx prisma db push",
     "db:console": "dotenv -e .env.development.local -- npx prisma studio",
     "db:seed": "dotenv -e .env.development.local -- npx prisma db seed"
