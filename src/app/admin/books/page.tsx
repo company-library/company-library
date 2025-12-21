@@ -470,6 +470,7 @@ export default function UpdateBookInfoPage() {
                         type="checkbox"
                         checked={selectAll}
                         onChange={(e) => handleSelectAll(e.target.checked)}
+                        disabled={isLoading || loadingBooks}
                         className="checkbox checkbox-sm"
                       />
                     </label>
@@ -535,6 +536,7 @@ export default function UpdateBookInfoPage() {
                           type="checkbox"
                           checked={selectedBookIds.includes(book.id)}
                           onChange={(e) => handleSelectBook(book.id, e.target.checked)}
+                          disabled={isLoading || loadingBooks}
                           className="checkbox checkbox-sm"
                         />
                       </label>
@@ -573,7 +575,7 @@ export default function UpdateBookInfoPage() {
                       <button
                         type="button"
                         onClick={() => handleUpdateSingleBook(book.id)}
-                        disabled={updatingBookId === book.id}
+                        disabled={updatingBookId === book.id || isLoading || loadingBooks}
                         className={`btn btn-sm btn-primary ${
                           updatingBookId === book.id ? 'loading' : ''
                         }`}

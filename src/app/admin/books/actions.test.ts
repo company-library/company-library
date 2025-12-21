@@ -6,6 +6,12 @@ vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
   downloadAndPutImage: vi.fn().mockResolvedValue('https://blob.vercel-storage.com/mock-image.jpg'),
 }))
 
+vi.mock('next-auth', () => ({
+  getServerSession: vi.fn().mockResolvedValue({
+    user: { id: '1', name: 'Test User', email: 'test@example.com' },
+  }),
+}))
+
 describe('admin books actions', () => {
   const fetchMock = vi.fn()
   global.fetch = fetchMock

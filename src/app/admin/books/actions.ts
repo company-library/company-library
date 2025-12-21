@@ -1,5 +1,7 @@
 'use server'
 
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
@@ -105,6 +107,19 @@ export async function updateBooksInfo({
 }: {
   bookIds?: number[]
 }): Promise<UpdateBooksInfoResult> {
+  // 認証チェック
+  const session = await getServerSession(authOptions)
+  if (!session?.user) {
+    return {
+      success: false,
+      message: '認証が必要です',
+      updatedIsbns: [],
+      noUpdateIsbns: [],
+      errorIsbns: [],
+      results: [],
+    }
+  }
+
   try {
     const booksToUpdate = await prisma.book.findMany({
       where: {
@@ -226,7 +241,7 @@ export async function updateBooksInfo({
 
       const addRateLimitDelay = () =>
         booksToUpdate.length > 1
-          ? new Promise((resolve) => setTimeout(resolve, 200))
+          ? new Promise((resolve) => setTimeout(resolve, 1000))
           : Promise.resolve()
 
       return updateBookInfo(book)
@@ -275,6 +290,26 @@ type GetBooksWithMissingInfoResult = {
 }
 
 /**
+ * 日付文字列を検証してDateオブジェクトに変換
+ */
+function validateDate(dateStr: string | undefined): Date | undefined {
+  if (!dateStr) return undefined
+
+  try {
+    const date = new Date(dateStr)
+
+    // 無効な日付
+    if (Number.isNaN(date.getTime())) {
+      return undefined
+    }
+
+    return date
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * 不足情報のある書籍一覧を取得するServer Action
  * @param limit 取得件数の上限
  * @param filter フィルタ条件 ('description', 'image', 'both')
@@ -292,6 +327,17 @@ export async function getBooksWithMissingInfo(
   updatedAfter?: string,
   updatedBefore?: string,
 ): Promise<GetBooksWithMissingInfoResult> {
+  // 認証チェック
+  const session = await getServerSession(authOptions)
+  if (!session?.user) {
+    return {
+      success: false,
+      message: '認証が必要です',
+      books: [],
+      count: 0,
+    }
+  }
+
   try {
     // フィルタ条件を構築
     const whereConditions: Array<Record<string, unknown>> = []
@@ -307,58 +353,62 @@ export async function getBooksWithMissingInfo(
     }
 
     // 作成日フィルタ
-    const dateConditions: Record<string, Date> = {}
-    if (createdAfter) {
-      try {
-        const date = new Date(createdAfter)
-        if (!Number.isNaN(date.getTime())) {
-          dateConditions.gte = date
-        }
-      } catch {
-        // 無効な日付は無視
+    const validatedCreatedAfter = validateDate(createdAfter)
+    const validatedCreatedBefore = validateDate(createdBefore)
+
+    // 日付の妥当性チェック
+    if (
+      validatedCreatedAfter &&
+      validatedCreatedBefore &&
+      validatedCreatedAfter > validatedCreatedBefore
+    ) {
+      return {
+        success: false,
+        message: '作成日の開始日は終了日より前である必要があります',
+        books: [],
+        count: 0,
       }
     }
-    if (createdBefore) {
-      try {
-        const date = new Date(createdBefore)
-        if (!Number.isNaN(date.getTime())) {
-          // 終了日は翌日の00:00:00を指定（その日の23:59:59まで含む）
-          const endDate = new Date(date)
-          endDate.setDate(endDate.getDate() + 1)
-          dateConditions.lt = endDate
-        }
-      } catch {
-        // 無効な日付は無視
-      }
+
+    const dateConditions: Record<string, Date> = {}
+    if (validatedCreatedAfter) {
+      dateConditions.gte = validatedCreatedAfter
+    }
+    if (validatedCreatedBefore) {
+      const endDate = new Date(validatedCreatedBefore)
+      endDate.setDate(endDate.getDate() + 1)
+      dateConditions.lt = endDate
     }
     if (Object.keys(dateConditions).length > 0) {
       whereConditions.push({ createdAt: dateConditions })
     }
 
     // 更新日フィルタ
-    const updatedDateConditions: Record<string, Date> = {}
-    if (updatedAfter) {
-      try {
-        const date = new Date(updatedAfter)
-        if (!Number.isNaN(date.getTime())) {
-          updatedDateConditions.gte = date
-        }
-      } catch {
-        // 無効な日付は無視
+    const validatedUpdatedAfter = validateDate(updatedAfter)
+    const validatedUpdatedBefore = validateDate(updatedBefore)
+
+    // 日付の妥当性チェック
+    if (
+      validatedUpdatedAfter &&
+      validatedUpdatedBefore &&
+      validatedUpdatedAfter > validatedUpdatedBefore
+    ) {
+      return {
+        success: false,
+        message: '更新日の開始日は終了日より前である必要があります',
+        books: [],
+        count: 0,
       }
     }
-    if (updatedBefore) {
-      try {
-        const date = new Date(updatedBefore)
-        if (!Number.isNaN(date.getTime())) {
-          // 終了日は翌日の00:00:00を指定（その日の23:59:59まで含む）
-          const endDate = new Date(date)
-          endDate.setDate(endDate.getDate() + 1)
-          updatedDateConditions.lt = endDate
-        }
-      } catch {
-        // 無効な日付は無視
-      }
+
+    const updatedDateConditions: Record<string, Date> = {}
+    if (validatedUpdatedAfter) {
+      updatedDateConditions.gte = validatedUpdatedAfter
+    }
+    if (validatedUpdatedBefore) {
+      const endDate = new Date(validatedUpdatedBefore)
+      endDate.setDate(endDate.getDate() + 1)
+      updatedDateConditions.lt = endDate
     }
     if (Object.keys(updatedDateConditions).length > 0) {
       whereConditions.push({ updatedAt: updatedDateConditions })
