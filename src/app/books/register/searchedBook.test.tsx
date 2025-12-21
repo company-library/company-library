@@ -93,30 +93,31 @@ describe('searched book component', async () => {
       openbd: [{ summary: { title: bookTitle } }],
       expectedDescription: '',
     },
-  ])(
-    '登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する($testcase)',
-    ({ google, openbd, expectedDescription }) => {
-      swrMock
-        .mockReturnValueOnce({ data: google })
-        .mockReturnValueOnce({ data: openbd })
-        .mockReturnValueOnce({ data: { book: {} } })
+  ])('登録がない書籍の場合は書籍を新規登録するためのコンポーネントを表示する($testcase)', ({
+    google,
+    openbd,
+    expectedDescription,
+  }) => {
+    swrMock
+      .mockReturnValueOnce({ data: google })
+      .mockReturnValueOnce({ data: openbd })
+      .mockReturnValueOnce({ data: { book: {} } })
 
-      render(<SearchedBook isbn={isbn} userId={userId} />)
+    render(<SearchedBook isbn={isbn} userId={userId} />)
 
-      expect(screen.getByText('register book div component')).toBeInTheDocument()
-      expect(addRegisterBookDivMock).not.toBeCalled()
-      expect(registerBookDivMock).toBeCalledWith(
-        {
-          title: bookTitle,
-          description: expectedDescription,
-          isbn: isbn,
-          thumbnailUrl: undefined,
-          userId: userId,
-        },
-        undefined,
-      )
-    },
-  )
+    expect(screen.getByText('register book div component')).toBeInTheDocument()
+    expect(addRegisterBookDivMock).not.toBeCalled()
+    expect(registerBookDivMock).toBeCalledWith(
+      {
+        title: bookTitle,
+        description: expectedDescription,
+        isbn: isbn,
+        thumbnailUrl: undefined,
+        userId: userId,
+      },
+      undefined,
+    )
+  })
 
   it('存在しない書籍の場合は書籍が見つからなかった旨のメッセージを表示する', () => {
     swrMock

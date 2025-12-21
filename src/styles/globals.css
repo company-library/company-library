@@ -1,5 +1,4 @@
 @import "tailwindcss";
-/* biome-ignore lint/suspicious/noUnknownAtRules: daisyuiの利用のために必要 https://daisyui.com/docs/install/ */
 @plugin "daisyui";
 
 /*
