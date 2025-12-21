@@ -1,6 +1,10 @@
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@/generated/prisma/client'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPg({
+  connectionString: process.env.POSTGRES_PRISMA_URL,
+})
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   await prisma.$executeRawUnsafe(`TRUNCATE TABLE "return_histories" RESTART IDENTITY CASCADE;`)
