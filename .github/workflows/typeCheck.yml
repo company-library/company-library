@@ -6,6 +6,9 @@ on:
 permissions:
   contents: read
 
+env:
+  POSTGRES_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/postgres # Example connection string for a local Postgres instance
+
 jobs:
   typeCheck:
     runs-on: ubuntu-latest
