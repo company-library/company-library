@@ -1059,14 +1059,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/adapter-pg@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "@prisma/adapter-pg@npm:7.2.0"
+"@prisma/adapter-pg@npm:^7.3.0":
+  version: 7.3.0
+  resolution: "@prisma/adapter-pg@npm:7.3.0"
   dependencies:
-    "@prisma/driver-adapter-utils": "npm:7.2.0"
+    "@prisma/driver-adapter-utils": "npm:7.3.0"
     pg: "npm:^8.16.3"
     postgres-array: "npm:3.0.4"
-  checksum: 10c0/964962a24d3815de0b0bd3ee47dc99d10cbb657333a7cd7d4455d328933be0663aabd339fb809639a9f9c23fe238241d2de2e3180341c065308a8436443ff693
+  checksum: 10c0/bf262510dd4ee04581ebe6ceaa7ad3842bd79151ab893c10d15ed31f32aa4f18049dedb6a2963ece720f15a3f5106e73abc83d556c628db826a57416c3ba263c
   languageName: node
   linkType: hard
 
@@ -1104,19 +1104,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/debug@npm:7.2.0":
-  version: 7.2.0
-  resolution: "@prisma/debug@npm:7.2.0"
-  checksum: 10c0/eabdb738c2486abedb4abae510507166ee15dbe1d444bfc0b1406ed4c7145753ae17366cb2fef5ae70b0fa1a97de860ad69ddc3c43e3936722a9bce0aa375290
+"@prisma/debug@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@prisma/debug@npm:7.3.0"
+  checksum: 10c0/ec4b50c8fd2e5d2994f93714b39c11337a4bb3481436c801abca0cb053d2cc27b61bacd8864d0b08b52f2e7bc387e339dd616a89eb0bd0d91d6ca127b03b2afc
   languageName: node
   linkType: hard
 
-"@prisma/driver-adapter-utils@npm:7.2.0":
-  version: 7.2.0
-  resolution: "@prisma/driver-adapter-utils@npm:7.2.0"
+"@prisma/driver-adapter-utils@npm:7.3.0":
+  version: 7.3.0
+  resolution: "@prisma/driver-adapter-utils@npm:7.3.0"
   dependencies:
-    "@prisma/debug": "npm:7.2.0"
-  checksum: 10c0/2ecb54d66c4f98212ee42f2aa4995b1980a31468f1e144ad1e6046f7cc96155bb7eb5bfd421ea0937052dfb44bd4b2373ba1ab07f103a89746045e319d69463b
+    "@prisma/debug": "npm:7.3.0"
+  checksum: 10c0/c85367790863a6c964f372c46bbb1ce730218f38955a723e36387025d527da1a72ecec22cb274e43de53707696b3c9004eb9707c85d17b1b0635ebc1c7f136e3
   languageName: node
   linkType: hard
 
@@ -2208,7 +2208,7 @@ __metadata:
   resolution: "company-library@workspace:."
   dependencies:
     "@biomejs/biome": "npm:2.3.12"
-    "@prisma/adapter-pg": "npm:^7.2.0"
+    "@prisma/adapter-pg": "npm:^7.3.0"
     "@prisma/client": "npm:^6.19.2"
     "@slack/webhook": "npm:^7.0.6"
     "@tailwindcss/postcss": "npm:^4.1.18"
