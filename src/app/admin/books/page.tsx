@@ -38,46 +38,52 @@ type BookWithMissingInfo = {
 export default function UpdateBookInfoPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<UpdateResult | null>(null)
-  const [limit, setLimit] = useState(50)
-  const [filter, setFilter] = useState('both')
-  const [createdAfter, setCreatedAfter] = useState('')
-  const [createdBefore, setCreatedBefore] = useState('')
-  const [updatedAfter, setUpdatedAfter] = useState('')
-  const [updatedBefore, setUpdatedBefore] = useState('')
+  const [filters, setFilters] = useState({
+    limit: 50,
+    filter: 'both' as 'description' | 'image' | 'both',
+    createdAfter: '',
+    createdBefore: '',
+    updatedAfter: '',
+    updatedBefore: '',
+  })
   const [books, setBooks] = useState<BookWithMissingInfo[]>([])
   const [loadingBooks, setLoadingBooks] = useState(true)
   const [updatingBookId, setUpdatingBookId] = useState<number | null>(null)
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
-  const [sortBy, setSortBy] = useState<'createdAt' | 'updatedAt'>('createdAt')
+  const [sort, setSort] = useState({
+    by: 'createdAt' as 'createdAt' | 'updatedAt',
+    order: 'desc' as 'asc' | 'desc',
+  })
   const [selectedBookIds, setSelectedBookIds] = useState<number[]>([])
-  const [selectAll, setSelectAll] = useState(false)
+
+  // selectAllは派生状態
+  const selectAll = selectedBookIds.length === books.length && books.length > 0
 
   // 不足情報のある書籍一覧を読み込み
   const loadBooks = useCallback(async () => {
     setLoadingBooks(true)
     const result = await getBooksWithMissingInfo(
-      limit,
-      filter as 'description' | 'image' | 'both',
-      createdAfter || undefined,
-      createdBefore || undefined,
-      updatedAfter || undefined,
-      updatedBefore || undefined,
+      filters.limit,
+      filters.filter,
+      filters.createdAfter || undefined,
+      filters.createdBefore || undefined,
+      filters.updatedAfter || undefined,
+      filters.updatedBefore || undefined,
     )
     if (result.success) {
       // クライアントサイドでソート
       const sortedBooks = [...result.books].sort((a, b) => {
         const dateA = new Date(
-          sortBy === 'createdAt' ? a.createdAt : a.updatedAt || new Date(0),
+          sort.by === 'createdAt' ? a.createdAt : a.updatedAt || new Date(0),
         ).getTime()
         const dateB = new Date(
-          sortBy === 'createdAt' ? b.createdAt : b.updatedAt || new Date(0),
+          sort.by === 'createdAt' ? b.createdAt : b.updatedAt || new Date(0),
         ).getTime()
-        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB
+        return sort.order === 'desc' ? dateB - dateA : dateA - dateB
       })
       setBooks(sortedBooks)
     }
     setLoadingBooks(false)
-  }, [filter, limit, sortOrder, sortBy, createdAfter, createdBefore, updatedAfter, updatedBefore])
+  }, [filters, sort])
 
   useEffect(() => {
     loadBooks()
@@ -161,7 +167,6 @@ export default function UpdateBookInfoPage() {
 
   // チェックボックス関連のハンドラー
   const handleSelectAll = (checked: boolean) => {
-    setSelectAll(checked)
     if (checked) {
       setSelectedBookIds(books.map((book) => book.id))
     } else {
@@ -185,7 +190,6 @@ export default function UpdateBookInfoPage() {
     }
     await handleUpdateBooks(selectedBookIds)
     setSelectedBookIds([])
-    setSelectAll(false)
   }
 
   return (
@@ -209,9 +213,12 @@ export default function UpdateBookInfoPage() {
               id="limit"
               min="1"
               max="50"
-              value={limit}
+              value={filters.limit}
               onChange={(e) =>
-                setLimit(Math.min(50, Math.max(1, Number.parseInt(e.target.value, 10) || 1)))
+                setFilters({
+                  ...filters,
+                  limit: Math.min(50, Math.max(1, Number.parseInt(e.target.value, 10) || 1)),
+                })
               }
               className="input input-bordered w-full"
               disabled={isLoading}
@@ -225,8 +232,13 @@ export default function UpdateBookInfoPage() {
             </label>
             <select
               id="filter"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              value={filters.filter}
+              onChange={(e) =>
+                setFilters({
+                  ...filters,
+                  filter: e.target.value as 'description' | 'image' | 'both',
+                })
+              }
               className="select select-bordered w-full"
               disabled={isLoading}
             >
@@ -243,8 +255,8 @@ export default function UpdateBookInfoPage() {
             <input
               type="date"
               id="createdAfter"
-              value={createdAfter}
-              onChange={(e) => setCreatedAfter(e.target.value)}
+              value={filters.createdAfter}
+              onChange={(e) => setFilters({ ...filters, createdAfter: e.target.value })}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
@@ -257,8 +269,8 @@ export default function UpdateBookInfoPage() {
             <input
               type="date"
               id="createdBefore"
-              value={createdBefore}
-              onChange={(e) => setCreatedBefore(e.target.value)}
+              value={filters.createdBefore}
+              onChange={(e) => setFilters({ ...filters, createdBefore: e.target.value })}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
@@ -271,8 +283,8 @@ export default function UpdateBookInfoPage() {
             <input
               type="date"
               id="updatedAfter"
-              value={updatedAfter}
-              onChange={(e) => setUpdatedAfter(e.target.value)}
+              value={filters.updatedAfter}
+              onChange={(e) => setFilters({ ...filters, updatedAfter: e.target.value })}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
@@ -285,8 +297,8 @@ export default function UpdateBookInfoPage() {
             <input
               type="date"
               id="updatedBefore"
-              value={updatedBefore}
-              onChange={(e) => setUpdatedBefore(e.target.value)}
+              value={filters.updatedBefore}
+              onChange={(e) => setFilters({ ...filters, updatedBefore: e.target.value })}
               className="input input-bordered w-full"
               disabled={isLoading}
             />
@@ -435,14 +447,14 @@ export default function UpdateBookInfoPage() {
             <div className="flex items-center space-x-1">
               <span>📋 ソート:</span>
               <span
-                className={`px-2 py-1 rounded ${sortBy === 'createdAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
+                className={`px-2 py-1 rounded ${sort.by === 'createdAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
               >
-                作成日 {sortBy === 'createdAt' && (sortOrder === 'desc' ? '↓' : '↑')}
+                作成日 {sort.by === 'createdAt' && (sort.order === 'desc' ? '↓' : '↑')}
               </span>
               <span
-                className={`px-2 py-1 rounded ${sortBy === 'updatedAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
+                className={`px-2 py-1 rounded ${sort.by === 'updatedAt' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100'}`}
               >
-                更新日 {sortBy === 'updatedAt' && (sortOrder === 'desc' ? '↓' : '↑')}
+                更新日 {sort.by === 'updatedAt' && (sort.order === 'desc' ? '↓' : '↑')}
               </span>
             </div>
             <div className="text-xs text-gray-500">
@@ -484,21 +496,20 @@ export default function UpdateBookInfoPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (sortBy === 'createdAt') {
-                          setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+                        if (sort.by === 'createdAt') {
+                          setSort({ ...sort, order: sort.order === 'desc' ? 'asc' : 'desc' })
                         } else {
-                          setSortBy('createdAt')
-                          setSortOrder('desc')
+                          setSort({ by: 'createdAt', order: 'desc' })
                         }
                       }}
                       className={`flex items-center space-x-1 hover:text-blue-600 ${
-                        sortBy === 'createdAt' ? 'text-blue-600 font-semibold' : ''
+                        sort.by === 'createdAt' ? 'text-blue-600 font-semibold' : ''
                       }`}
                       disabled={loadingBooks}
                     >
                       <span>作成日</span>
-                      {sortBy === 'createdAt' && (
-                        <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                      {sort.by === 'createdAt' && (
+                        <span className="text-xs">{sort.order === 'desc' ? '↓' : '↑'}</span>
                       )}
                     </button>
                   </th>
@@ -506,21 +517,20 @@ export default function UpdateBookInfoPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (sortBy === 'updatedAt') {
-                          setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')
+                        if (sort.by === 'updatedAt') {
+                          setSort({ ...sort, order: sort.order === 'desc' ? 'asc' : 'desc' })
                         } else {
-                          setSortBy('updatedAt')
-                          setSortOrder('desc')
+                          setSort({ by: 'updatedAt', order: 'desc' })
                         }
                       }}
                       className={`flex items-center space-x-1 hover:text-blue-600 ${
-                        sortBy === 'updatedAt' ? 'text-blue-600 font-semibold' : ''
+                        sort.by === 'updatedAt' ? 'text-blue-600 font-semibold' : ''
                       }`}
                       disabled={loadingBooks}
                     >
                       <span>更新日</span>
-                      {sortBy === 'updatedAt' && (
-                        <span className="text-xs">{sortOrder === 'desc' ? '↓' : '↑'}</span>
+                      {sort.by === 'updatedAt' && (
+                        <span className="text-xs">{sort.order === 'desc' ? '↓' : '↑'}</span>
                       )}
                     </button>
                   </th>
