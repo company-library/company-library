@@ -6,6 +6,7 @@ import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 import type { Book } from '@/models/book'
+import { validateDate } from '@/utils/dateUtils'
 
 type GoogleBookResponse = {
   items?: Array<{
@@ -287,26 +288,6 @@ type GetBooksWithMissingInfoResult = {
   books: Book[]
   count: number
   message?: string
-}
-
-/**
- * 日付文字列を検証してDateオブジェクトに変換
- */
-function validateDate(dateStr: string | undefined): Date | undefined {
-  if (!dateStr) return undefined
-
-  try {
-    const date = new Date(dateStr)
-
-    // 無効な日付
-    if (Number.isNaN(date.getTime())) {
-      return undefined
-    }
-
-    return date
-  } catch {
-    return undefined
-  }
 }
 
 /**
