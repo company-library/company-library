@@ -1953,8 +1953,8 @@ __metadata:
     next-auth: "npm:^4.24.13"
     postcss: "npm:^8.5.6"
     prisma: "npm:^6.19.2"
-    react: "npm:19.0.0-rc-b57d2823-20240822"
-    react-dom: "npm:19.0.0-rc-b57d2823-20240822"
+    react: "npm:canary"
+    react-dom: "npm:canary"
     swr: "npm:^2.4.0"
     tailwindcss: "npm:^4.1.18"
     tsx: "npm:^4.21.0"
@@ -3602,7 +3602,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.0.0-rc-b57d2823-20240822":
+"react-dom@npm:canary":
   version: 19.0.0-rc-b57d2823-20240822
   resolution: "react-dom@npm:19.0.0-rc-b57d2823-20240822"
   dependencies:
@@ -3620,7 +3620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.0.0-rc-b57d2823-20240822":
+"react@npm:canary":
   version: 19.0.0-rc-b57d2823-20240822
   resolution: "react@npm:19.0.0-rc-b57d2823-20240822"
   checksum: 10c0/4c2dece815ae3edc36c147c589fb2be0a6088b3fdaa64993031ecdac6e7d5efe9a4cd4f57c5cee691a00ed961a56b750a56c6bcc6786e82ce3bfaacce3322246
