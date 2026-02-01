@@ -5,6 +5,7 @@ import BookDetail from '@/app/books/[id]/bookDetail'
 import BookDetailPageClient from '@/app/books/[id]/bookDetailPageClient'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import LendingList from '@/app/books/[id]/lendingList'
+import { getBookDetailPageData } from '@/app/books/[id]/pageLogic'
 import ReturnList from '@/app/books/[id]/returnList'
 import prisma from '@/libs/prisma/client'
 
@@ -43,16 +44,18 @@ export const generateMetadata = async (props: BookDetailPageParams) => {
 
 const BookDetailPage = async (props: BookDetailPageParams) => {
   const params = await props.params
-  const bookId = Number(params.id)
-  if (Number.isNaN(bookId)) {
-    return <div>不正な書籍です。</div>
-  }
-
   const session = await getServerSession(authOptions)
-  if (!session) {
+
+  const result = getBookDetailPageData(params, session)
+
+  if (result instanceof Error) {
+    if (result.message === '不正な書籍です') {
+      return <div>不正な書籍です。</div>
+    }
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
-  const userId = session.customUser.id
+
+  const { bookId, userId } = result
 
   return (
     <BookDetailPageClient
