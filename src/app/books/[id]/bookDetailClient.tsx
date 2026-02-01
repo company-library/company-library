@@ -6,15 +6,15 @@ import AddImpressionButton from '@/app/books/[id]/addImpressionButton'
 import LendButton from '@/app/books/[id]/lendButton'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
-type LocationStats = Map<
+type LocationStats = [
   number,
   {
     name: string
     order: number
     totalCount: number
     lendableCount: number
-  }
->
+  },
+][]
 
 type BookDetailClientProps = {
   bookId: number
@@ -56,7 +56,7 @@ const BookDetailClient: FC<BookDetailClientProps> = ({
         <h1 className="text-3xl font-bold">{title}</h1>
 
         <div className="mt-3">
-          {Array.from(locationStats.entries())
+          {locationStats
             .sort((a, b) => a[1].order - b[1].order)
             .map(([locationId, stats]) => {
               const isLocationLendable = !isLending && stats.lendableCount > 0

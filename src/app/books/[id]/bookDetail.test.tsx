@@ -19,7 +19,15 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('BookDetailClient component', () => {
-  const mockLocationStats = new Map([
+  const mockLocationStats: [
+    number,
+    {
+      name: string
+      order: number
+      totalCount: number
+      lendableCount: number
+    },
+  ][] = [
     [
       1,
       {
@@ -38,7 +46,7 @@ describe('BookDetailClient component', () => {
         lendableCount: 2,
       },
     ],
-  ])
+  ]
 
   const defaultProps = {
     bookId: 1,
@@ -106,11 +114,19 @@ describe('BookDetailClient component', () => {
   })
 
   it('場所がorderの昇順で表示される', () => {
-    const unorderedStats = new Map([
+    const unorderedStats: [
+      number,
+      {
+        name: string
+        order: number
+        totalCount: number
+        lendableCount: number
+      },
+    ][] = [
       [3, { name: '3階 会議室', order: 3, totalCount: 1, lendableCount: 1 }],
       [1, { name: '1階 エントランス', order: 1, totalCount: 1, lendableCount: 1 }],
       [2, { name: '2階 開発室', order: 2, totalCount: 1, lendableCount: 1 }],
-    ])
+    ]
 
     render(<BookDetailClient {...defaultProps} locationStats={unorderedStats} />)
 

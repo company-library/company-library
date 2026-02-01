@@ -117,7 +117,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
       userId={userId}
       title={bookDetail.title}
       imageUrl={bookDetail.imageUrl}
-      locationStats={locationStats}
+      locationStats={Array.from(locationStats.entries())}
       isLendable={isLendable}
       isLending={isLending}
       lendingHistoryId={lendingHistory ? lendingHistory.id : 0}
