@@ -1,22 +1,16 @@
 import { fireEvent, render, screen } from '@testing-library/react'
-import { Suspense } from 'react'
-import UserCard from '@/app/users/userCard'
+import UserCardClient from '@/app/users/userCardClient'
 import { user1 } from '../../../test/__utils__/data/user'
 
-describe.skip('UserCard component', async () => {
-  vi.mock('@/components/userAvatar', () => ({
-    default: () => <div data-testid="profileImage">userAvatar</div>,
-  }))
+vi.mock('@/components/userAvatar', () => ({
+  default: () => <div data-testid="profileImage">userAvatar</div>,
+}))
 
-  it('ユーザー情報が表示されていること', async () => {
-    render(
-      <Suspense>
-        <UserCard user={user1} />
-      </Suspense>,
-    )
+describe('UserCardClient component', () => {
+  it('ユーザー情報が表示されていること', () => {
+    render(<UserCardClient user={user1} readingBookCount={3} haveReadBookCount={4} />)
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText(user1.name)).toBeInTheDocument()
+    expect(screen.getByText(user1.name)).toBeInTheDocument()
     expect(screen.getByText(user1.email)).toBeInTheDocument()
     expect(screen.getByTestId('profileImage')).toBeInTheDocument()
     expect(screen.getByTestId('userProfileLink')).toHaveAttribute('href', `/users/${user1.id}`)
