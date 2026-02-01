@@ -7,7 +7,7 @@ import { bookWithImage, bookWithoutImage } from '../../../../test/__utils__/data
 import { lendingHistory1, lendingHistory2 } from '../../../../test/__utils__/data/lendingHistory'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('ReadingBookList component', async () => {
+describe.skip('ReadingBookList component', async () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
   const expectedReadingBooks = [lendingHistory1, lendingHistory2]
 

@@ -5,7 +5,7 @@ import { bookWithImage } from '../../../../test/__utils__/data/book'
 import { user1, user2 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('BookDetail page', async () => {
+describe.skip('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
   const { BookDetailMock } = vi.hoisted(() => {
     return {

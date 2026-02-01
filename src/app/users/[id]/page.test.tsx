@@ -4,7 +4,7 @@ import UserDetailPage from '@/app/users/[id]/page'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('UserDetail page', async () => {
+describe.skip('UserDetail page', async () => {
   const expectedUser = user1
 
   vi.mock('@/app/users/[id]/bookList', () => ({

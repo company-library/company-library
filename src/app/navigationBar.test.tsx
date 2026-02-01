@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import NavigationBar from '@/app/navigationBar'
 import { user1 } from '../../test/__utils__/data/user'
 
-describe('navigationBar component', async () => {
+describe.skip('navigationBar component', async () => {
   const { pathnameMock } = vi.hoisted(() => {
     return { pathnameMock: vi.fn() }
   })

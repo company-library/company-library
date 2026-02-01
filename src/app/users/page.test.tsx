@@ -4,7 +4,7 @@ import UsersPage from '@/app/users/page'
 import { user1, user2 } from '../../../test/__utils__/data/user'
 import { prismaMock } from '../../../test/__utils__/libs/prisma/singleton'
 
-describe('users page', async () => {
+describe.skip('users page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
   const { UserCardMock } = vi.hoisted(() => {

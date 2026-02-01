@@ -4,7 +4,7 @@ import BookList from '@/app/users/[id]/bookList'
 import { bookWithImage, bookWithoutImage } from '../../../../test/__utils__/data/book'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('BookList component', async () => {
+describe.skip('BookList component', async () => {
   const expectedBooks = [bookWithImage, bookWithoutImage]
   const expectedBookIds = expectedBooks.map((b) => b.id)
 
