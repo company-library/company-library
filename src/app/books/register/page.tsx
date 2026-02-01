@@ -1,8 +1,7 @@
 import type { Metadata, NextPage } from 'next'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
-import BookForm from '@/app/books/register/bookForm'
-import Headline from '@/components/common/headline'
+import RegisterPageClient from '@/app/books/register/registerPageClient'
 
 export const metadata: Metadata = {
   title: '本を登録 | company-library',
@@ -20,15 +19,7 @@ const RegisterPage: NextPage = async () => {
   }
   const userId = session.customUser.id
 
-  return (
-    <>
-      <Headline text="本を登録" />
-
-      <div>
-        <BookForm userId={userId} />
-      </div>
-    </>
-  )
+  return <RegisterPageClient userId={userId} />
 }
 
 export default RegisterPage
