@@ -1,47 +1,27 @@
 import { render, screen } from '@testing-library/react'
-import { Suspense } from 'react'
-import UsersPage from '@/app/users/page'
+import UsersClient from '@/app/users/usersClient'
 import { user1, user2 } from '../../../test/__utils__/data/user'
-import { prismaMock } from '../../../test/__utils__/libs/prisma/singleton'
 
-describe.skip('users page', async () => {
-  prismaMock.user.findMany.mockResolvedValue([user1, user2])
+const { UserCardClientMock } = vi.hoisted(() => {
+  return {
+    UserCardClientMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+  }
+})
+vi.mock('@/app/users/userCardClient', () => ({
+  default: (...args: unknown[]) => UserCardClientMock(...args),
+}))
 
-  const { UserCardMock } = vi.hoisted(() => {
-    return {
-      UserCardMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
-    }
-  })
-  vi.mock('@/app/users/userCard', () => ({
-    default: (...args: unknown[]) => UserCardMock(...args),
-  }))
+describe('UsersClient component', () => {
+  it('利用者一覧が表示される', () => {
+    const usersWithCounts = [
+      { user: user1, readingBookCount: 3, haveReadBookCount: 4 },
+      { user: user2, readingBookCount: 1, haveReadBookCount: 2 },
+    ]
 
-  it('利用者一覧が表示される', async () => {
-    render(
-      <Suspense>
-        <UsersPage />
-      </Suspense>,
-    )
+    render(<UsersClient usersWithCounts={usersWithCounts} />)
 
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByRole('heading')).toHaveTextContent('利用者一覧')
+    expect(screen.getByRole('heading')).toHaveTextContent('利用者一覧')
     expect(screen.getByText(user1.name)).toBeInTheDocument()
     expect(screen.getByText(user2.name)).toBeInTheDocument()
-  })
-
-  it('利用者一覧の読み込みに失敗した場合、「Error!」と表示される', async () => {
-    const expectErrorMsg = 'query has errored!'
-    console.error = vi.fn()
-    prismaMock.user.findMany.mockRejectedValue(expectErrorMsg)
-
-    render(
-      <Suspense>
-        <UsersPage />
-      </Suspense>,
-    )
-
-    // Suspenseの解決を待つために、最初のテスト項目のみawaitを使う
-    expect(await screen.findByText('Error!')).toBeInTheDocument()
-    expect(console.error).toBeCalledWith(expectErrorMsg)
   })
 })
