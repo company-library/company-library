@@ -44,7 +44,7 @@ describe('server actions', () => {
         imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         createdAt: now,
         updatedAt: null,
-      })
+      } as any)
       prismaMock.registrationHistory.create.mockResolvedValueOnce({
         id: 1,
         bookId: bookId,
@@ -128,7 +128,7 @@ describe('server actions', () => {
         imageUrl: null,
         createdAt: now,
         updatedAt: null,
-      })
+      } as any)
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 

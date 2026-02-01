@@ -7,7 +7,9 @@
       "Bash(yarn lint)",
       "Bash(yarn lint:*)",
       "Bash(yarn lint:fix:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(yarn build)",
+      "Bash(yarn install)"
     ],
     "deny": []
   }
