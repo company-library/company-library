@@ -1,5 +1,6 @@
 import BookList from '@/app/users/[id]/bookList'
 import ReadingBookList from '@/app/users/[id]/readingBookList'
+import UserPageClient from '@/app/users/[id]/userPageClient'
 import { readingHistories } from '@/hooks/server/readingHistories'
 import prisma from '@/libs/prisma/client'
 
@@ -56,21 +57,13 @@ const UserPage = async (props: UserPageProps) => {
 
   const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
   return (
-    <>
-      <h1 className="text-3xl">{user.name}さんの情報</h1>
-      <div className="mt-8">
-        <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
-        <div className="mt-2">
-          <ReadingBookList readingBooks={readingBooks} />
-        </div>
-      </div>
-      <div className="mt-6">
-        <h2 className="text-xl">今まで読んだ書籍({haveReadBooks.length}冊)</h2>
-        <div className="mt-2">
-          <BookList bookIds={haveReadBooks.map((b) => b.bookId)} />
-        </div>
-      </div>
-    </>
+    <UserPageClient
+      userName={user.name}
+      readingBooksCount={readingBooks.length}
+      haveReadBooksCount={haveReadBooks.length}
+      readingBookListSection={<ReadingBookList readingBooks={readingBooks} />}
+      bookListSection={<BookList bookIds={haveReadBooks.map((b) => b.bookId)} />}
+    />
   )
 }
 
