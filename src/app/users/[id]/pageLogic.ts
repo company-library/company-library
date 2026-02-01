@@ -6,9 +6,9 @@ import type { UserSummary } from '@/models/user'
  * UserPageのロジック
  * paramsからidを取得し、ユーザー情報を取得する
  */
-export const getUserPageData = async (
-  params: { id: string },
-): Promise<
+export const getUserPageData = async (params: {
+  id: string
+}): Promise<
   | {
       user: UserSummary
       readingBooksCount: number

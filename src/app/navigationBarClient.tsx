@@ -30,7 +30,10 @@ const NavigationBarClient: FC<NavigationBarClientProps> = ({ user }) => {
             <NavigationBarItem label="登録" href="/books/register" />
           </li>
           <li>
-            <NavigationBarItem label="マイページ" href={`/users/${user?.id || ''}`} />
+            <NavigationBarItem
+              label="マイページ"
+              href={user?.id ? `/users/${user.id}` : '/users'}
+            />
           </li>
           <li>
             <NavigationBarItem label="利用者一覧" href="/users" />
