@@ -1,9 +1,9 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import type { FC } from 'react'
 import NavigationBarItem from '@/app/navigationBarItem'
-import UserAvatar from '@/components/userAvatar'
 
 type NavigationBarClientProps = {
   user: {
@@ -11,9 +11,10 @@ type NavigationBarClientProps = {
     name: string
     email: string
   } | null
+  avatarUrl: string | undefined
 }
 
-const NavigationBarClient: FC<NavigationBarClientProps> = ({ user }) => {
+const NavigationBarClient: FC<NavigationBarClientProps> = ({ user, avatarUrl }) => {
   return (
     <div className="bg-gray-400 text-white">
       <nav className="navbar max-w-7xl mx-auto flex">
@@ -41,8 +42,16 @@ const NavigationBarClient: FC<NavigationBarClientProps> = ({ user }) => {
         </ul>
         <div className="pl-3 flex">
           {user && (
-            <div className="">
-              <UserAvatar user={user} size="sm" />
+            <div className="avatar">
+              <div className="w-8 h-8 rounded-full">
+                <Image
+                  src={avatarUrl || '/no_image.jpg'}
+                  alt={user.name}
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              </div>
             </div>
           )}
           <div className="my-auto pl-3 text-gray-200">{user?.name}</div>

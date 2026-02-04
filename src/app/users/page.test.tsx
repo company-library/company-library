@@ -14,8 +14,8 @@ vi.mock('@/app/users/userCardClient', () => ({
 describe('UsersClient component', () => {
   it('利用者一覧が表示される', () => {
     const usersWithCounts = [
-      { user: user1, readingBookCount: 3, haveReadBookCount: 4 },
-      { user: user2, readingBookCount: 1, haveReadBookCount: 2 },
+      { user: user1, readingBookCount: 3, haveReadBookCount: 4, avatarUrl: undefined },
+      { user: user2, readingBookCount: 1, haveReadBookCount: 2, avatarUrl: undefined },
     ]
 
     render(<UsersClient usersWithCounts={usersWithCounts} />)

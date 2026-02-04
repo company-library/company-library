@@ -9,13 +9,6 @@ vi.mock('next/navigation', () => ({
   usePathname: () => pathnameMock(),
 }))
 
-const { UserAvatarMock } = vi.hoisted(() => {
-  return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
-})
-vi.mock('@/components/userAvatar', () => ({
-  default: (...args: unknown[]) => UserAvatarMock(...args),
-}))
-
 describe('NavigationBarClient component', () => {
   const loggedInUser = {
     id: user1.id,
@@ -28,7 +21,7 @@ describe('NavigationBarClient component', () => {
   })
 
   it('ナビゲーション項目が表示される', () => {
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByText('company-library')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '書籍一覧' })).toBeInTheDocument()
@@ -43,7 +36,7 @@ describe('NavigationBarClient component', () => {
   })
 
   it('company-libraryをクリックすると書籍一覧画面へ遷移する', () => {
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByText('company-library')).toHaveAttribute('href', '/')
   })
@@ -51,7 +44,7 @@ describe('NavigationBarClient component', () => {
   it('pathが/の場合、書籍一覧ボタンのデザインが強調される', () => {
     pathnameMock.mockReturnValue('/')
 
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByRole('link', { name: '書籍一覧' })).toHaveClass('bg-gray-600')
   })
@@ -59,7 +52,7 @@ describe('NavigationBarClient component', () => {
   it('pathが/books/registerの場合、登録ボタンのデザインが強調される', () => {
     pathnameMock.mockReturnValue('/books/register')
 
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByRole('link', { name: '登録' })).toHaveClass('bg-gray-600')
   })
@@ -67,7 +60,7 @@ describe('NavigationBarClient component', () => {
   it('pathが/usersの場合、利用者一覧ボタンのデザインが強調される', () => {
     pathnameMock.mockReturnValue('/users')
 
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByRole('link', { name: '利用者一覧' })).toHaveClass('bg-gray-600')
   })
@@ -75,27 +68,22 @@ describe('NavigationBarClient component', () => {
   it('pathが/users/ログインユーザーのidの場合、マイページボタンのデザインが強調される', () => {
     pathnameMock.mockReturnValue(`/users/${loggedInUser.id}`)
 
-    const { rerender } = render(<NavigationBarClient user={loggedInUser} />)
+    const { rerender } = render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByRole('link', { name: 'マイページ' })).toHaveClass('bg-gray-600')
 
     // ログインユーザー以外のIDの場合強調されない
     pathnameMock.mockReturnValue(`/users/${loggedInUser.id + 1}`)
-    rerender(<NavigationBarClient user={loggedInUser} />)
+    rerender(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
     expect(screen.getByRole('link', { name: 'マイページ' })).not.toHaveClass('bg-gray-600')
   })
 
   it('ログインユーザーのアバターが表示される', () => {
-    render(<NavigationBarClient user={loggedInUser} />)
+    render(<NavigationBarClient user={loggedInUser} avatarUrl={undefined} />)
 
-    expect(screen.getByText('userAvatar')).toBeInTheDocument()
-    expect(UserAvatarMock).toHaveBeenLastCalledWith(
-      {
-        user: { id: loggedInUser.id, name: loggedInUser.name, email: loggedInUser.email },
-        size: 'sm',
-      },
-      undefined,
-    )
+    const avatar = screen.getByAltText(loggedInUser.name)
+    expect(avatar).toBeInTheDocument()
+    expect(avatar).toHaveAttribute('src', expect.stringContaining('no_image.jpg'))
   })
 })

@@ -1,4 +1,5 @@
 import { readingHistories } from '@/hooks/server/readingHistories'
+import { getAvatarUrl } from '@/libs/gravatar/getAvatarUrl'
 import prisma from '@/libs/prisma/client'
 import type { UserSummary } from '@/models/user'
 
@@ -6,6 +7,7 @@ type UserWithCounts = {
   user: UserSummary
   readingBookCount: number
   haveReadBookCount: number
+  avatarUrl: string | undefined
 }
 
 /**
@@ -24,14 +26,18 @@ export const getUsersPageData = async (): Promise<UserWithCounts[] | Error> => {
     return new Error('ユーザー一覧の取得に失敗しました')
   }
 
-  const usersWithCounts = users.map((user) => {
-    const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
-    return {
-      user,
-      readingBookCount: readingBooks.length,
-      haveReadBookCount: haveReadBooks.length,
-    }
-  })
+  const usersWithCounts = await Promise.all(
+    users.map(async (user) => {
+      const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
+      const avatarUrl = await getAvatarUrl(user.email)
+      return {
+        user,
+        readingBookCount: readingBooks.length,
+        haveReadBookCount: haveReadBooks.length,
+        avatarUrl,
+      }
+    }),
+  )
 
   return usersWithCounts
 }

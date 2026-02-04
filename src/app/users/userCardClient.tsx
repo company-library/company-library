@@ -1,17 +1,23 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import type { FC } from 'react'
-import UserAvatar from '@/components/userAvatar'
 import type { UserSummary } from '@/models/user'
 
 type UserCardClientProps = {
   user: UserSummary
   readingBookCount: number
   haveReadBookCount: number
+  avatarUrl: string | undefined
 }
 
-const UserCardClient: FC<UserCardClientProps> = ({ user, readingBookCount, haveReadBookCount }) => {
+const UserCardClient: FC<UserCardClientProps> = ({
+  user,
+  readingBookCount,
+  haveReadBookCount,
+  avatarUrl,
+}) => {
   return (
     <Link href={`/users/${user.id}`} data-testid="userProfileLink">
       <div className="cursor-pointer col-span-1 bg-white rounded-lg border shadow-sm divide-y divide-gray-200">
@@ -20,7 +26,17 @@ const UserCardClient: FC<UserCardClientProps> = ({ user, readingBookCount, haveR
             <p className="text-gray-900 text-sm font-medium truncate">{user.name}</p>
             <p className="mt-1 text-gray-500 text-sm truncate">{user.email}</p>
           </div>
-          <UserAvatar user={user} />
+          <div className="avatar">
+            <div className="w-12 h-12 rounded-full">
+              <Image
+                src={avatarUrl || '/no_image.jpg'}
+                alt={user.name}
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+            </div>
+          </div>
         </div>
         <div className="-mt-px flex divide-x divide-gray-200">
           <div className="py-3 w-0 flex-1 flex">
