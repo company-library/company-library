@@ -14,19 +14,19 @@ React 19への移行に伴い、async Client Componentのサポートが廃止�
 ## 影響を受けているファイル
 
 ### カテゴリA: ページコンポーネント（Server Component）
-- [ ] `src/app/users/[id]/page.test.tsx`
-- [ ] `src/app/users/page.test.tsx`
-- [ ] `src/app/books/[id]/page.test.tsx`
-- [ ] `src/app/books/register/page.test.tsx`
+- [x] `src/app/users/[id]/page.test.tsx`
+- [x] `src/app/users/page.test.tsx`
+- [x] `src/app/books/[id]/page.test.tsx`
+- [x] `src/app/books/register/page.test.tsx`
 
 ### カテゴリB: データ取得を含む子コンポーネント（Server Component）
-- [ ] `src/app/users/[id]/bookList.test.tsx`
-- [ ] `src/app/users/[id]/readingBookList.test.tsx`
-- [ ] `src/app/books/[id]/bookDetail.test.tsx`
+- [x] `src/app/users/[id]/bookList.test.tsx`
+- [x] `src/app/users/[id]/readingBookList.test.tsx`
+- [x] `src/app/books/[id]/bookDetail.test.tsx`
 
 ### カテゴリC: 認証を使用するコンポーネント（Server Component）
-- [ ] `src/app/navigationBar.test.tsx`
-- [ ] `src/app/users/userCard.test.tsx`
+- [x] `src/app/navigationBar.test.tsx`
+- [x] `src/app/users/userCard.test.tsx`
 
 ## 段階的な移行計画
 
@@ -39,20 +39,20 @@ React 19への移行に伴い、async Client Componentのサポートが廃止�
 - またはvitestの設定で除外
 
 **完了条件**:
-- [ ] すべてのテストがスキップされる
-- [ ] `yarn test`が成功する
-- [ ] コミット作成
+- [x] すべてのテストがスキップされる
+- [x] `yarn test`が成功する
+- [x] コミット作成
 
 ### フェーズ2: アーキテクチャ改善（中期対応）
 
 **目的**: コンポーネントの責務を分離し、テスト可能にする
 
 **対象コンポーネント**:
-1. [ ] `bookList.tsx` - 優先度: 高
-2. [ ] `readingBookList.tsx` - 優先度: 高
-3. [ ] `bookDetail.tsx` - 優先度: 高
-4. [ ] `navigationBar.tsx` - 優先度: 中
-5. [ ] `userCard.tsx` - 優先度: 中
+1. [x] `bookList.tsx` - 優先度: 高
+2. [x] `readingBookList.tsx` - 優先度: 高
+3. [x] `bookDetail.tsx` - 優先度: 高
+4. [x] `navigationBar.tsx` - 優先度: 中
+5. [x] `userCard.tsx` - 優先度: 中
 
 **実装パターン**:
 ```typescript
@@ -96,13 +96,20 @@ const BookListClient: FC<{ books: Book[] }> = ({ books }) => {
 
 ### 完了したタスク
 - [x] React 19.2.4へのアップデート
-- [x] 型チェックエラーの修正（`updatedAt`プロパティ追加）
+- [x] 型チェックエラーの修正（`updatedAt`プロパティ削除）
 - [x] 移行計画の作成
+- [x] フェーズ1: テストの一時スキップ
+- [x] フェーズ2: Server/Client Componentの分離
+  - [x] `bookList.tsx` → `bookListClient.tsx`
+  - [x] `readingBookList.tsx` → `readingBookListClient.tsx`
+  - [x] `bookDetail.tsx` → `bookDetailClient.tsx`
+  - [x] `navigationBar.tsx` → `navigationBarClient.tsx`
+  - [x] `userCard.tsx` → `userCardClient.tsx`
+- [x] Map型のシリアライズ問題の修正（`bookDetail` / `lendButton`）
+- [x] Client Component内のServer Component（UserAvatar）使用を修正
 
 ### 次のステップ
-1. フェーズ1を完了させる
-2. `bookList.tsx`から順にフェーズ2を実行
-3. 各コンポーネント完了後にコミット
+1. フェーズ3: E2Eテスト導入の検討
 
 ## 参考情報
 
