@@ -11,7 +11,8 @@
       "Bash(yarn build)",
       "Bash(yarn install)",
       "Bash(yarn lint:ci:*)",
-      "Bash(gh pr checks:*)"
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr view:*)"
     ],
     "deny": []
   }
