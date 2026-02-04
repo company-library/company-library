@@ -1,4 +1,5 @@
 import { addBook, registerBook } from '@/app/books/register/actions'
+import type { Book } from '@/generated/prisma/client'
 import { location1 } from '../../../../test/__utils__/data/location'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
@@ -43,7 +44,7 @@ describe('server actions', () => {
         isbn,
         imageUrl: 'https://example.com/books/1234567890123/internal/cover.jpg',
         createdAt: now,
-      })
+      } as Book)
       prismaMock.registrationHistory.create.mockResolvedValueOnce({
         id: 1,
         bookId: bookId,
@@ -126,7 +127,7 @@ describe('server actions', () => {
         isbn,
         imageUrl: null,
         createdAt: now,
-      })
+      } as Book)
       prismaMock.registrationHistory.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 

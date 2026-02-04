@@ -10,10 +10,13 @@ describe('LendButton component', () => {
   const today = DateTime.local().setZone('Asia/Tokyo')
   const initialDuDate = today.plus({ days: 7 }).toFormat(dateFormat)
 
-  const mockLocationStats = new Map([
+  const mockLocationStats: [
+    number,
+    { name: string; order: number; totalCount: number; lendableCount: number },
+  ][] = [
     [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
     [2, { name: '支社', order: 2, totalCount: 3, lendableCount: 2 }],
-  ])
+  ]
   const { lendBookActionMock, useActionStateMock } = vi.hoisted(() => {
     return {
       lendBookActionMock: vi.fn(),
@@ -206,11 +209,14 @@ describe('LendButton component', () => {
   })
 
   it('保管場所はorder順で表示される', async () => {
-    const mockLocationStatsWithDifferentOrder = new Map([
+    const mockLocationStatsWithDifferentOrder: [
+      number,
+      { name: string; order: number; totalCount: number; lendableCount: number },
+    ][] = [
       [3, { name: '支社B', order: 3, totalCount: 2, lendableCount: 1 }],
       [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
       [2, { name: '支社A', order: 2, totalCount: 3, lendableCount: 2 }],
-    ])
+    ]
 
     render(
       <LendButton

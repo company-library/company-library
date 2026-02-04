@@ -1,30 +1,18 @@
 import BookList from '@/app/users/[id]/bookList'
+import { getUserPageData } from '@/app/users/[id]/pageLogic'
 import ReadingBookList from '@/app/users/[id]/readingBookList'
-import { readingHistories } from '@/hooks/server/readingHistories'
-import prisma from '@/libs/prisma/client'
+import UserPageClient from '@/app/users/[id]/userPageClient'
 
 export const generateMetadata = async (props: UserPageProps) => {
   const params = await props.params
-  const id = Number(params.id)
-  if (Number.isNaN(id)) {
-    return { title: '利用者情報 | company-library' }
-  }
+  const result = await getUserPageData(params)
 
-  const user = await prisma.user
-    .findUnique({
-      where: { id },
-      select: { name: true },
-    })
-    .catch((e) => {
-      console.error(e)
-      return new Error('User fetch failed')
-    })
-  if (user instanceof Error || !user) {
+  if (result instanceof Error) {
     return { title: '利用者情報 | company-library' }
   }
 
   return {
-    title: `${user.name} | company-library`,
+    title: `${result.user.name} | company-library`,
   }
 }
 
@@ -36,41 +24,22 @@ type UserPageProps = {
 
 const UserPage = async (props: UserPageProps) => {
   const params = await props.params
-  const id = Number(params.id)
-  if (Number.isNaN(id)) {
+  const result = await getUserPageData(params)
+
+  if (result instanceof Error) {
     return <div>Error!</div>
   }
 
-  const user = await prisma.user
-    .findUnique({
-      where: { id },
-      include: { lendingHistories: { include: { returnHistory: true } } },
-    })
-    .catch((e) => {
-      console.error(e)
-      return new Error('User fetch failed')
-    })
-  if (user instanceof Error || !user) {
-    return <div>Error!</div>
-  }
+  const { user, readingBooksCount, haveReadBooksCount, readingBooks, haveReadBooks } = result
 
-  const { readingBooks, haveReadBooks } = readingHistories(user.lendingHistories)
   return (
-    <>
-      <h1 className="text-3xl">{user.name}さんの情報</h1>
-      <div className="mt-8">
-        <h2 className="text-xl">現在読んでいる書籍({readingBooks.length}冊)</h2>
-        <div className="mt-2">
-          <ReadingBookList readingBooks={readingBooks} />
-        </div>
-      </div>
-      <div className="mt-6">
-        <h2 className="text-xl">今まで読んだ書籍({haveReadBooks.length}冊)</h2>
-        <div className="mt-2">
-          <BookList bookIds={haveReadBooks.map((b) => b.bookId)} />
-        </div>
-      </div>
-    </>
+    <UserPageClient
+      userName={user.name}
+      readingBooksCount={readingBooksCount}
+      haveReadBooksCount={haveReadBooksCount}
+      readingBookListSection={<ReadingBookList readingBooks={readingBooks} />}
+      bookListSection={<BookList bookIds={haveReadBooks.map((b) => b.bookId)} />}
+    />
   )
 }
 

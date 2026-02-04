@@ -2,8 +2,10 @@ import { getServerSession } from 'next-auth'
 import { Suspense } from 'react'
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions'
 import BookDetail from '@/app/books/[id]/bookDetail'
+import BookDetailPageClient from '@/app/books/[id]/bookDetailPageClient'
 import ImpressionList from '@/app/books/[id]/impressionList'
 import LendingList from '@/app/books/[id]/lendingList'
+import { getBookDetailPageData } from '@/app/books/[id]/pageLogic'
 import ReturnList from '@/app/books/[id]/returnList'
 import prisma from '@/libs/prisma/client'
 
@@ -42,46 +44,42 @@ export const generateMetadata = async (props: BookDetailPageParams) => {
 
 const BookDetailPage = async (props: BookDetailPageParams) => {
   const params = await props.params
-  const bookId = Number(params.id)
-  if (Number.isNaN(bookId)) {
-    return <div>不正な書籍です。</div>
-  }
-
   const session = await getServerSession(authOptions)
-  if (!session) {
+
+  const result = getBookDetailPageData(params, session)
+
+  if (result instanceof Error) {
+    if (result.message === '不正な書籍です') {
+      return <div>不正な書籍です。</div>
+    }
     return <div>セッションが取得できませんでした。再読み込みしてみてください。</div>
   }
-  const userId = session.customUser.id
+
+  const { bookId, userId } = result
 
   return (
-    <div className="px-40">
-      <Suspense fallback={<div>Loading...</div>}>
-        <BookDetail bookId={bookId} userId={userId} />
-      </Suspense>
-
-      <div>
-        <div className="mt-10">
-          <h2 className="text-lg">借りているユーザー</h2>
-          <Suspense fallback={<div>Loading...</div>}>
-            <LendingList bookId={bookId} />
-          </Suspense>
-        </div>
-
-        <div className="mt-10">
-          <h2 className="text-lg">感想</h2>
-          <Suspense fallback={<div>Loading...</div>}>
-            <ImpressionList bookId={bookId} userId={userId} />
-          </Suspense>
-        </div>
-
-        <div className="mt-10">
-          <h2 className="text-lg">借りたユーザー</h2>
-          <Suspense fallback={<div>Loading...</div>}>
-            <ReturnList bookId={bookId} />
-          </Suspense>
-        </div>
-      </div>
-    </div>
+    <BookDetailPageClient
+      bookDetailSection={
+        <Suspense fallback={<div>Loading...</div>}>
+          <BookDetail bookId={bookId} userId={userId} />
+        </Suspense>
+      }
+      lendingListSection={
+        <Suspense fallback={<div>Loading...</div>}>
+          <LendingList bookId={bookId} />
+        </Suspense>
+      }
+      impressionListSection={
+        <Suspense fallback={<div>Loading...</div>}>
+          <ImpressionList bookId={bookId} userId={userId} />
+        </Suspense>
+      }
+      returnListSection={
+        <Suspense fallback={<div>Loading...</div>}>
+          <ReturnList bookId={bookId} />
+        </Suspense>
+      }
+    />
   )
 }
 
