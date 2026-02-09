@@ -10,10 +10,10 @@ export type LendButtonProps = {
   bookId: number
   userId: number
   disabled: boolean
-  locationStats: Map<
+  locationStats: [
     number,
-    { name: string; order: number; totalCount: number; lendableCount: number }
-  >
+    { name: string; order: number; totalCount: number; lendableCount: number },
+  ][]
 }
 
 const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationStats }) => {
@@ -30,7 +30,7 @@ const LendButton: FC<LendButtonProps> = ({ bookId, userId, disabled, locationSta
     error: null,
   })
 
-  const availableLocations = Array.from(locationStats.entries())
+  const availableLocations = locationStats
     .filter(([_, stats]) => stats.lendableCount > 0)
     .sort(([_, a], [__, b]) => a.order - b.order)
 
