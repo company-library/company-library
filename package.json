@@ -19,7 +19,7 @@
     "db:seed": "dotenv -e .env.development.local -- npx prisma db seed"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.4.1",
+    "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^6.19.2",
     "@slack/webhook": "^7.0.7",
     "@vercel/blob": "^2.3.0",
