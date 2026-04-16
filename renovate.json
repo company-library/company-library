@@ -6,6 +6,12 @@
   "schedule": "before 9am on Saturday",
   "timezone": "Asia/Tokyo",
   "rangeStrategy": "bump",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "automerge": true
+  },
+  "minimumReleaseAge": "3 days",
   "packageRules": [
     {
       "groupName": "all non-major dependencies",
