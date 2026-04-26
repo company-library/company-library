@@ -12,7 +12,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:18
+        image: postgres:17
         env:
           POSTGRES_PASSWORD: postgrespassword
           POSTGRES_DB: e2e_test
@@ -46,9 +46,11 @@ jobs:
       - uses: volta-cli/action@615a78f6c83e116339c53b94f3f82b4d6c0b7d18 # v5
 
       - name: 依存関係をインストール
-        # @playwright/test が yarn.lock に未追加のため --immutable を外す
-        # （yarn install が lock ファイルを更新してインストールする）
-        run: yarn install
+        run: yarn install --immutable
+
+      - name: Playwright をインストール
+        # @playwright/test は yarn.lock 管理外のため npm で直接インストール
+        run: npm install --no-save --no-package-lock @playwright/test@1.59.1
 
       - name: Prismaクライアントを生成
         run: yarn db:generate
