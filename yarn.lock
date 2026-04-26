@@ -2003,7 +2003,7 @@ __metadata:
     typescript: "npm:^5.9.3"
     vite-tsconfig-paths: "npm:^6.1.1"
     vitest: "npm:^4.1.5"
-    vitest-mock-extended: "npm:^3.1.1"
+    vitest-mock-extended: "npm:^4.0.0"
     zod: "npm:^4.3.6"
   languageName: unknown
   linkType: soft
@@ -4431,15 +4431,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-mock-extended@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "vitest-mock-extended@npm:3.1.1"
+"vitest-mock-extended@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "vitest-mock-extended@npm:4.0.0"
   dependencies:
     ts-essentials: "npm:>=10.0.0"
   peerDependencies:
     typescript: 3.x || 4.x || 5.x || 6.x
-    vitest: ">=3.0.0"
-  checksum: 10c0/cef557cc98ef2d2a7926d0bc1fdd6f2b89dca1a879a6397e9d8afd36a5e39ef4b931e430ca56de6b7cf2f71f725f2a2d858c9974e70aa5ddd6b1680994ef8048
+    vitest: ">=4.0.0"
+  checksum: 10c0/c0730f1996475a1e87ef23ea637844c48caee928be65c8f9a00b53dde19805eb8df56dfc8a88fe9896092096d88172c6a3aaaae27317c7aabdc3d9fa4d5e234b
   languageName: node
   linkType: hard
 
