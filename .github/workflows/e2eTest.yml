@@ -65,12 +65,8 @@ jobs:
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
 
-      - name: Playwright をインストール
-        # @playwright/test は yarn.lock 管理外のため、Prisma操作の後にnpmで追加
-        run: npm install --no-save --no-package-lock @playwright/test@1.59.1
-
       - name: Playwrightブラウザをインストール
-        run: npx playwright install --with-deps chromium
+        run: yarn playwright install --with-deps chromium
 
       - name: E2Eテストを実行
         run: yarn e2e
