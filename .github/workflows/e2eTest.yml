@@ -30,8 +30,9 @@ jobs:
       NEXTAUTH_URL: http://localhost:3000
       NEXT_PUBLIC_DEFAULT_PROVIDER: credentials
       # データベース（CI用ローカルPostgreSQL）
-      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@localhost:5432/e2e_test
-      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@localhost:5432/e2e_test
+      # 127.0.0.1を使用（localhostだとIPv6解決される場合がありservice containerに繋がらないため）
+      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@127.0.0.1:5432/e2e_test
+      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@127.0.0.1:5432/e2e_test
       # Azure AD（E2Eでは credentials プロバイダーを使用するため未使用だが起動エラー防止のため設定）
       AZURE_AD_TENANT_ID: dummy-tenant-id
       AZURE_AD_CLIENT_ID: dummy-client-id
@@ -50,6 +51,13 @@ jobs:
 
       - name: Prismaクライアントを生成
         run: yarn db:generate
+
+      - name: PostgreSQL接続を確認
+        run: |
+          echo "=== PostgreSQL container status ==="
+          docker ps --filter "ancestor=postgres:18" --format "table {{.ID}}\t{{.Status}}\t{{.Ports}}"
+          echo "=== PostgreSQL接続テスト (127.0.0.1経由) ==="
+          PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();'
 
       - name: データベーススキーマを適用
         run: yarn prisma db push --skip-generate
