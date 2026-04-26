@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.14.1",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
@@ -21,43 +21,43 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^6.19.2",
-    "@slack/webhook": "^7.0.8",
-    "@vercel/blob": "^2.3.1",
-    "graphql": "^16.13.1",
+    "@slack/webhook": "^7.0.9",
+    "@vercel/blob": "^2.3.3",
+    "graphql": "^16.13.2",
     "luxon": "^3.7.2",
     "next": "16.2.3",
-    "next-auth": "^4.24.13",
+    "next-auth": "^4.24.14",
     "prisma": "^6.19.2",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "swr": "^2.4.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.8",
-    "@tailwindcss/postcss": "^4.2.2",
+    "@biomejs/biome": "^2.4.13",
+    "@tailwindcss/postcss": "^4.2.4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^22.19.15",
+    "@types/node": "^22.19.17",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react-swc": "^4.3.0",
     "daisyui": "^5.5.19",
     "dotenv-cli": "^11.0.0",
     "identity-obj-proxy": "^3.0.0",
-    "jsdom": "^29.0.1",
+    "jsdom": "^29.0.2",
     "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.2",
+    "tailwindcss": "^4.2.4",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.0",
-    "vitest-mock-extended": "^3.1.0"
+    "vitest": "^4.1.5",
+    "vitest-mock-extended": "^3.1.1"
   },
   "volta": {
-    "node": "22.22.1",
-    "yarn": "4.13.0"
+    "node": "22.22.2",
+    "yarn": "4.14.1"
   }
 }
