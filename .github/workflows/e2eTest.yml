@@ -1,0 +1,82 @@
+name: e2eTest
+
+on:
+  pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: e2e_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # NextAuth
+      NEXTAUTH_SECRET: test-secret-for-e2e-testing-only
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_DEFAULT_PROVIDER: credentials
+      # データベース（CI用ローカルPostgreSQL）
+      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@localhost:5432/e2e_test
+      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@localhost:5432/e2e_test
+      # Azure AD（E2Eでは credentials プロバイダーを使用するため未使用だが起動エラー防止のため設定）
+      AZURE_AD_TENANT_ID: dummy-tenant-id
+      AZURE_AD_CLIENT_ID: dummy-client-id
+      AZURE_AD_CLIENT_SECRET: dummy-client-secret
+      AZURE_AD_B2C_TENANT_NAME: dummy
+      AZURE_AD_B2C_CLIENT_ID: dummy-b2c-client-id
+      AZURE_AD_B2C_CLIENT_SECRET: dummy-b2c-secret
+      AZURE_AD_B2C_PRIMARY_USER_FLOW: B2C_1_dummy
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: volta-cli/action@615a78f6c83e116339c53b94f3f82b4d6c0b7d18 # v5
+
+      - name: 依存関係をインストール
+        # @playwright/test が yarn.lock に未追加のため --immutable を外す
+        # （yarn install が lock ファイルを更新してインストールする）
+        run: yarn install
+
+      - name: Prismaクライアントを生成
+        run: yarn db:generate
+
+      - name: データベーススキーマを適用
+        run: npx prisma db push --skip-generate
+
+      - name: シードデータを投入
+        run: npx tsx prisma/seed.ts
+
+      - name: Playwrightブラウザをインストール
+        run: npx playwright install --with-deps chromium
+
+      - name: E2Eテストを実行
+        run: yarn e2e
+
+      - name: テストレポート（動画含む）をアップロード
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: テスト生ファイル（動画・トレース）をアップロード
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-test-results
+          path: test-results/
+          retention-days: 14
