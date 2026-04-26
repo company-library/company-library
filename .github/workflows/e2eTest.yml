@@ -10,20 +10,6 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_PASSWORD: postgrespassword
-          POSTGRES_DB: e2e_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     env:
       # NextAuth
       NEXTAUTH_SECRET: test-secret-for-e2e-testing-only
@@ -44,6 +30,19 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: volta-cli/action@615a78f6c83e116339c53b94f3f82b4d6c0b7d18 # v5
+
+      - name: PostgreSQLを起動
+        run: |
+          docker run -d \
+            --name postgres-e2e \
+            -e POSTGRES_PASSWORD=postgrespassword \
+            -e POSTGRES_DB=e2e_test \
+            -p 5432:5432 \
+            postgres:17
+          until docker exec postgres-e2e pg_isready -U postgres; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
       - name: 依存関係をインストール
         run: yarn install --immutable
