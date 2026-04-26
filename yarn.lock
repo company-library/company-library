@@ -1993,7 +1993,6 @@ __metadata:
     luxon: "npm:^3.7.2"
     next: "npm:16.2.3"
     next-auth: "npm:^4.24.14"
-    postcss: "npm:^8.5.10"
     prisma: "npm:^6.19.3"
     react: "npm:19.2.5"
     react-dom: "npm:19.2.5"
