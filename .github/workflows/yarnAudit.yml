@@ -1,0 +1,17 @@
+name: yarnAudit
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  yarnAudit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: volta-cli/action@5c175f92dea6f48441c436471e6479dbc192e194 # v4.2.1
+      - run: yarn install --immutable
+      - run: yarn npm audit --severity moderate
