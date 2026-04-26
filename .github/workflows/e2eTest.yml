@@ -58,9 +58,18 @@ jobs:
           docker ps --filter "ancestor=postgres:18" --format "table {{.ID}}\t{{.Status}}\t{{.Ports}}"
           echo "=== PostgreSQL接続テスト (127.0.0.1経由) ==="
           PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();'
+          echo "=== Prismaバージョン確認 ==="
+          yarn prisma --version
+          echo "=== 環境変数確認 ==="
+          echo "POSTGRES_PRISMA_URL=$POSTGRES_PRISMA_URL"
+          echo "POSTGRES_URL_NON_POOLING=$POSTGRES_URL_NON_POOLING"
 
       - name: データベーススキーマを適用
-        run: yarn prisma db push --skip-generate
+        run: |
+          set -x
+          yarn prisma db push --skip-generate 2>&1
+        env:
+          DEBUG: 'prisma:*'
 
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
