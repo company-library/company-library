@@ -52,22 +52,42 @@ jobs:
       - name: Prismaクライアントを生成
         run: yarn db:generate
 
-      - name: PostgreSQL接続を確認
+      - name: 診断情報を収集
         run: |
-          echo "=== PostgreSQL container status ==="
-          docker ps --filter "ancestor=postgres:18" --format "table {{.ID}}\t{{.Status}}\t{{.Ports}}"
-          echo "=== PostgreSQL接続テスト (127.0.0.1経由) ==="
-          PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();'
-          echo "=== Prismaバージョン確認 ==="
-          yarn prisma --version
-          echo "=== 環境変数確認 ==="
-          echo "POSTGRES_PRISMA_URL=$POSTGRES_PRISMA_URL"
-          echo "POSTGRES_URL_NON_POOLING=$POSTGRES_URL_NON_POOLING"
+          {
+            echo "## 診断情報"
+            echo ""
+            echo "### PostgreSQL container"
+            echo '```'
+            docker ps --filter "ancestor=postgres:18" --format "{{.ID}} {{.Status}} {{.Ports}}" 2>&1 || echo "docker ps failed"
+            echo '```'
+            echo "### PostgreSQL接続テスト"
+            echo '```'
+            PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();' 2>&1 || echo "psql failed"
+            echo '```'
+            echo "### Prismaバージョン"
+            echo '```'
+            yarn prisma --version 2>&1 || echo "prisma --version failed"
+            echo '```'
+            echo "### 環境変数"
+            echo '```'
+            echo "POSTGRES_PRISMA_URL=$POSTGRES_PRISMA_URL"
+            echo "POSTGRES_URL_NON_POOLING=$POSTGRES_URL_NON_POOLING"
+            echo '```'
+          } | tee -a $GITHUB_STEP_SUMMARY
 
       - name: データベーススキーマを適用
         run: |
-          set -x
-          yarn prisma db push --skip-generate 2>&1
+          {
+            echo "## prisma db push 出力"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+          set +e
+          yarn prisma db push --skip-generate 2>&1 | tee -a $GITHUB_STEP_SUMMARY
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "Exit code: $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+          exit $EXIT_CODE
         env:
           DEBUG: 'prisma:*'
 
