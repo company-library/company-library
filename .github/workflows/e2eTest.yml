@@ -57,15 +57,7 @@ jobs:
         run: PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();'
 
       - name: データベーススキーマを適用
-        run: |
-          set +e
-          OUTPUT=$(yarn prisma db push --skip-generate 2>&1)
-          EXIT_CODE=$?
-          echo "$OUTPUT"
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo "::error title=prisma db push failed::$(echo "$OUTPUT" | tr '\n' ' ' | cut -c1-1000)"
-          fi
-          exit $EXIT_CODE
+        run: yarn prisma db push
 
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
