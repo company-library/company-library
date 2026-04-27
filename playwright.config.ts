@@ -9,6 +9,7 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['list'],
+    ...(process.env.CI ? ([['github']] as const) : []),
   ],
   use: {
     baseURL: 'http://localhost:3000',

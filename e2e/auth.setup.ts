@@ -1,7 +1,7 @@
-import path from 'node:path'
 import { test as setup } from '@playwright/test'
 
-export const AUTH_FILE = path.join(import.meta.dirname, '.auth/user.json')
+// playwright.config.ts の testDir (./e2e) に対する相対パス
+export const AUTH_FILE = 'e2e/.auth/user.json'
 
 setup('認証セットアップ', async ({ page }) => {
   // NEXT_PUBLIC_DEFAULT_PROVIDER=credentials のとき、サインインページが
