@@ -53,3 +53,6 @@ yarn-error.log*
 
 # mise
 **/mise.local.toml
+
+# Claude Code
+.claude/settings.local.json
