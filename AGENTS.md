@@ -281,7 +281,7 @@ Pull Request 時に自動で以下のチェックが実行されます：
 | `codeql.yml` | CodeQL セキュリティスキャン |
 | `dependency-review.yml` | 依存関係の脆弱性チェック |
 
-**Node.js / Yarn のバージョンは mise で自動管理**（`.mise.toml` でNode.jsバージョンを固定、Yarnは `package.json` の `packageManager` フィールドで管理）
+**Node.js / Yarn のバージョンは mise で自動管理**（`mise.toml` でNode.jsおよびYarnのバージョンを固定）
 
 ### 外部依存関係
 - **認証**: Azure AD または Azure AD B2C が必須
