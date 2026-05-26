@@ -59,8 +59,4 @@
   "resolutions": {
     "@hono/node-server": "2.0.4"
   },
-  "volta": {
-    "node": "24.16.0",
-    "yarn": "4.15.0"
-  }
 }
