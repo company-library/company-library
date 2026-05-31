@@ -9,6 +9,8 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    # 万一ハングしてもジョブが無限に走り続けないように上限を設定
+    timeout-minutes: 25
 
     services:
       postgres:
@@ -67,7 +69,9 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-chromium-${{ hashFiles('**/package.json') }}
+          # yarn.lock を基準にする（**/package.json は node_modules 配下も
+          # 含んでしまいキー計算が不安定になるため避ける）
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: Playwrightブラウザをインストール
         if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -77,8 +81,25 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: yarn playwright install-deps chromium
 
+      # CIでは Playwright が webServer として yarn start を起動する。
+      # dev サーバーのオンデマンドコンパイルによる遅延・ハングを避けるため、
+      # 事前に本番ビルドを作成しておく。
+      - name: アプリを本番ビルド
+        run: yarn build
+
       - name: E2Eテストを実行
-        run: yarn e2e
+        run: |
+          set -o pipefail
+          yarn e2e 2>&1 | tee /tmp/e2e.log
+
+      # CI環境からログAPIにアクセスできない場合に備え、失敗時はログ末尾を
+      # アノテーションに出力して原因を把握できるようにする
+      - name: 失敗時のログをアノテーション出力
+        if: failure()
+        run: |
+          echo "::group::e2e log tail"
+          tail -n 150 /tmp/e2e.log || true
+          echo "::endgroup::"
 
       - name: テストレポート（動画含む）をアップロード
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
