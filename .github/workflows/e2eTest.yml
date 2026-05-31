@@ -84,8 +84,12 @@ jobs:
       # CIでは Playwright が webServer として yarn start を起動する。
       # dev サーバーのオンデマンドコンパイルによる遅延・ハングを避けるため、
       # 事前に本番ビルドを作成しておく。
+      # E2E_BUILD=true で standalone 出力を無効化し、next start が
+      # 通常の本番サーバーとして静的アセットを含め正しく配信できるようにする。
       - name: アプリを本番ビルド
         run: yarn build
+        env:
+          E2E_BUILD: 'true'
 
       - name: E2Eテストを実行
         run: |

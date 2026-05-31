@@ -8,8 +8,9 @@ export default defineConfig({
   workers: 1,
   // 1テストあたりの上限（個別アクションのハング防止の最終防衛線）
   timeout: 90 * 1000,
-  // 全テストの合計上限。万一ハングしてもジョブが無限に待ち続けないようにする
-  globalTimeout: 10 * 60 * 1000,
+  // 全テストの合計上限を3分に設定。万一ハングしてもジョブが
+  // 無限に待ち続けず、3分で確実に打ち切られるようにする。
+  globalTimeout: 3 * 60 * 1000,
   reporter: [
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['list'],
