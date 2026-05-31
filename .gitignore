@@ -26,8 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# local env files
-.env*.local
+# local files (ファイル名に .local を含むファイルは全て除外)
+**/*.local
+**/*.local.*
 
 # vercel
 .vercel
@@ -50,6 +51,3 @@ yarn-error.log*
 
 # Prisma
 **/generated/prisma
-
-# mise
-**/mise.local.toml
