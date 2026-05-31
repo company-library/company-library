@@ -37,12 +37,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // CIでは本番ビルド済みサーバー（yarn start）を使う。
-    // dev サーバー（yarn dev）はルート初回アクセス時にオンデマンドコンパイルが
-    // 走り、CI環境では各ルートのコンパイルに数十秒〜かかってテストがタイムアウト・
-    // ハングする原因になっていた。本番ビルドは事前コンパイル済みで高速かつ決定的。
-    // ローカルでは利便性のため yarn dev を使う。
-    command: process.env.CI ? 'yarn start' : 'yarn dev',
+    command: 'yarn dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
