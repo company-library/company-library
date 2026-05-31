@@ -11,21 +11,49 @@ const getAllowedHosts = (): string[] => {
     .filter((hostname): hostname is string => Boolean(hostname))
 }
 
+// プライベートIPアドレス・ループバック・リンクローカルのパターン（SSRF対策）
+const PRIVATE_IP_PATTERNS = [
+  /^localhost$/i,
+  /^127\./,
+  /^0\.0\.0\.0$/,
+  /^10\./,
+  /^172\.(1[6-9]|2[0-9]|3[01])\./,
+  /^192\.168\./,
+  /^169\.254\./,
+  /^::1$/,
+  /^fc[0-9a-f]{2}:/i,
+  /^fd[0-9a-f]{2}:/i,
+]
+
+const isPrivateIpOrLocalhost = (hostname: string): boolean => {
+  return PRIVATE_IP_PATTERNS.some((pattern) => pattern.test(hostname))
+}
+
 /**
- * URLが信頼できるホストからのものかを検証する
+ * URLを検証し、安全な場合は正規化されたURLオブジェクトを返す
+ * SSRF攻撃を防ぐため、HTTPSかつ許可されたホストのみを受け入れる
  * @param {string} url 検証するURL
- * @returns {boolean} 信頼できるホストの場合true
+ * @returns {URL | null} 有効なURLオブジェクト、無効な場合はnull
  */
-const isAllowedImageUrl = (url: string): boolean => {
+const validateImageUrl = (url: string): URL | null => {
   try {
     const parsedUrl = new URL(url)
+
+    // HTTPSのみ許可（fileやhttpなどのプロトコルを拒否）
+    if (parsedUrl.protocol !== 'https:') return null
+
     const hostname = parsedUrl.hostname
-    const allowedHosts = getAllowedHosts()
+
+    // プライベートIPアドレス・localhostを拒否（内部ネットワークへのアクセスを防止）
+    if (isPrivateIpOrLocalhost(hostname)) return null
 
     // セキュリティの観点で、現在の実装ではワイルドカード（*.example.org）はサポートしない
-    return allowedHosts.includes(hostname)
+    const allowedHosts = getAllowedHosts()
+    if (!allowedHosts.includes(hostname)) return null
+
+    return parsedUrl
   } catch {
-    return false
+    return null
   }
 }
 
@@ -43,13 +71,15 @@ export const downloadAndPutImage = async (
     return undefined
   }
 
-  // SSRF攻撃を防ぐため、信頼できるホストのみ許可
-  if (!isAllowedImageUrl(externalImageUrl)) {
+  // SSRF攻撃を防ぐため、検証済みのURLオブジェクトを取得
+  const validatedUrl = validateImageUrl(externalImageUrl)
+  if (!validatedUrl) {
     console.warn(`不正な画像URL: ${externalImageUrl}`)
     return undefined
   }
 
-  const imageFile = await fetch(externalImageUrl).then((res) => res.blob())
+  // 正規化された検証済みURLを使用してフェッチ（生の入力文字列を使わない）
+  const imageFile = await fetch(validatedUrl.href).then((res) => res.blob())
   const blob = await put(`cover/${isbn}.jpg`, imageFile, {
     access: 'public',
     contentType: 'image/jpeg',
