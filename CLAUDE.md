@@ -19,4 +19,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - 対応が完了したら、該当のレビューコメントにコメントで返信すること
 - コードの変更を伴う対応の場合は、返信にコミットハッシュを含めること
-- 対応済み、または対応不要と判断して返信したら、そのレビュースレッドを resolve すること
+- 返信後は、レビューアーにメンションして確認を求めること
+- レビュースレッドの resolve はレビューアーが行うこと
