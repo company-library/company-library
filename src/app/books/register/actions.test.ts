@@ -45,7 +45,7 @@ describe('server actions', () => {
             {
               volumeInfo: {
                 imageLinks: {
-                  thumbnail: `https://books.google.com/books/content?id=test&zoom=1`,
+                  thumbnail: 'https://books.google.com/books/content?id=test&zoom=1',
                 },
               },
             },
@@ -108,9 +108,9 @@ describe('server actions', () => {
       prismaMock.book.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-      await expect(
-        registerBook(title, description, isbn, locationId, userId),
-      ).rejects.toThrow('Book creation failed')
+      await expect(registerBook(title, description, isbn, locationId, userId)).rejects.toThrow(
+        'Book creation failed',
+      )
 
       expect(prismaMock.book.create).toBeCalledWith({
         data: {

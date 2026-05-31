@@ -22,14 +22,7 @@ describe('register book div component', async () => {
     const isbn = '1234567890123'
     const userId = user1.id
 
-    render(
-      <RegisterBookDiv
-        title={title}
-        description={description}
-        isbn={isbn}
-        userId={userId}
-      />,
-    )
+    render(<RegisterBookDiv title={title} description={description} isbn={isbn} userId={userId} />)
 
     expect(registerBookActionMock).not.toBeCalled()
 
@@ -41,13 +34,7 @@ describe('register book div component', async () => {
 
     await waitFor(() => {
       expect(registerBookActionMock).toBeCalledTimes(1)
-      expect(registerBookActionMock).toHaveBeenCalledWith(
-        title,
-        description,
-        isbn,
-        1,
-        userId,
-      )
+      expect(registerBookActionMock).toHaveBeenCalledWith(title, description, isbn, 1, userId)
     })
   })
 })
