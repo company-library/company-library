@@ -62,8 +62,20 @@ jobs:
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
 
+      - name: Playwrightブラウザキャッシュ
+        id: playwright-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('**/package.json') }}
+
       - name: Playwrightブラウザをインストール
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: yarn playwright install --with-deps chromium
+
+      - name: Playwright依存パッケージをインストール（キャッシュヒット時）
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: yarn playwright install-deps chromium
 
       - name: E2Eテストを実行
         run: yarn e2e
