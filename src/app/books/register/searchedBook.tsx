@@ -63,11 +63,17 @@ const SearchedBook: FC<SearchedBookProps> = ({ isbn, userId }) => {
       description: publicBook.description,
       imageUrl: publicBook.imageUrl,
     }
-    const { title, description } = publicBook
+    const { title, description, imageUrl: thumbnailUrl } = publicBook
     return (
       <>
         <FoundBookDiv book={book} />
-        <RegisterBookDiv title={title} description={description} isbn={isbn} userId={userId} />
+        <RegisterBookDiv
+          title={title}
+          description={description}
+          isbn={isbn}
+          thumbnailUrl={thumbnailUrl}
+          userId={userId}
+        />
       </>
     )
   }
