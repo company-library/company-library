@@ -23,12 +23,7 @@ type RegisterBookDivProps = {
  * @returns {JSX.Element}
  * @constructor
  */
-const RegisterBookDiv: FC<RegisterBookDivProps> = ({
-  title,
-  description,
-  isbn,
-  userId,
-}) => {
+const RegisterBookDiv: FC<RegisterBookDivProps> = ({ title, description, isbn, userId }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null)
 
   const { data: locationsData, error } = useSWR<{ locations: Location[] } | CustomError>(

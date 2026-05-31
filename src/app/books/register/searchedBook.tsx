@@ -67,12 +67,7 @@ const SearchedBook: FC<SearchedBookProps> = ({ isbn, userId }) => {
     return (
       <>
         <FoundBookDiv book={book} />
-        <RegisterBookDiv
-          title={title}
-          description={description}
-          isbn={isbn}
-          userId={userId}
-        />
+        <RegisterBookDiv title={title} description={description} isbn={isbn} userId={userId} />
       </>
     )
   }
