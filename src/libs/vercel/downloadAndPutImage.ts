@@ -15,7 +15,7 @@ const getAllowedHosts = (): string[] => {
 const PRIVATE_IP_PATTERNS = [
   /^localhost$/i,
   /^127\./,
-  /^0\.0\.0\.0$/,
+  /^0\./,
   /^10\./,
   /^172\.(1[6-9]|2[0-9]|3[01])\./,
   /^192\.168\./,
@@ -23,6 +23,7 @@ const PRIVATE_IP_PATTERNS = [
   /^::1$/,
   /^fc[0-9a-f]{2}:/i,
   /^fd[0-9a-f]{2}:/i,
+  /^fe[89ab][0-9a-f]:/i,
 ]
 
 const isPrivateIpOrLocalhost = (hostname: string): boolean => {
@@ -42,14 +43,15 @@ const validateImageUrl = (url: string): URL | null => {
     // HTTPSのみ許可（fileやhttpなどのプロトコルを拒否）
     if (parsedUrl.protocol !== 'https:') return null
 
-    const hostname = parsedUrl.hostname
+    // IPv6アドレスのブラケットを除去して正規化（例: "[::1]" → "::1"）
+    const cleanHostname = parsedUrl.hostname.replace(/^\[|\]$/g, '')
 
     // プライベートIPアドレス・localhostを拒否（内部ネットワークへのアクセスを防止）
-    if (isPrivateIpOrLocalhost(hostname)) return null
+    if (isPrivateIpOrLocalhost(cleanHostname)) return null
 
     // セキュリティの観点で、現在の実装ではワイルドカード（*.example.org）はサポートしない
     const allowedHosts = getAllowedHosts()
-    if (!allowedHosts.includes(hostname)) return null
+    if (!allowedHosts.includes(cleanHostname)) return null
 
     return parsedUrl
   } catch {

@@ -20,7 +20,6 @@ describe('register book div component', async () => {
     const title = 'testBook'
     const description = 'テスト書籍の概要'
     const isbn = '1234567890123'
-    const thumbnailUrl = 'https://example.com/test.jpg'
     const userId = user1.id
 
     render(
@@ -28,7 +27,6 @@ describe('register book div component', async () => {
         title={title}
         description={description}
         isbn={isbn}
-        thumbnailUrl={thumbnailUrl}
         userId={userId}
       />,
     )
@@ -47,7 +45,6 @@ describe('register book div component', async () => {
         title,
         description,
         isbn,
-        thumbnailUrl,
         1,
         userId,
       )

@@ -36,6 +36,23 @@ describe('server actions', () => {
       const now = new Date()
       const userId = user1.id
       const locationId = location1.id
+
+      // Google Books APIからサムネイルURLを返すようにモック
+      global.fetch = vi.fn().mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          items: [
+            {
+              volumeInfo: {
+                imageLinks: {
+                  thumbnail: `https://books.google.com/books/content?id=test&zoom=1`,
+                },
+              },
+            },
+          ],
+        }),
+      })
+
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
         title,
@@ -52,14 +69,7 @@ describe('server actions', () => {
         createdAt: new Date(),
       })
 
-      const result = await registerBook(
-        title,
-        description,
-        isbn,
-        `https://example.com/books/${isbn}/external/cover.jpg`,
-        locationId,
-        userId,
-      )
+      const result = await registerBook(title, description, isbn, locationId, userId)
 
       expect(result).toBeUndefined()
       expect(prismaMock.book.create).toBeCalledWith({
@@ -88,12 +98,18 @@ describe('server actions', () => {
       const userId = user1.id
       const locationId = location1.id
 
+      // サムネイルURLが取得できない場合のモック
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      })
+
       const error = new Error('error has occurred')
       prismaMock.book.create.mockRejectedValueOnce(error)
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(
-        registerBook(title, description, isbn, undefined, locationId, userId),
+        registerBook(title, description, isbn, locationId, userId),
       ).rejects.toThrow('Book creation failed')
 
       expect(prismaMock.book.create).toBeCalledWith({
@@ -118,6 +134,12 @@ describe('server actions', () => {
       const userId = user1.id
       const locationId = location1.id
 
+      // サムネイルURLが取得できない場合のモック
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({}),
+      })
+
       const error = new Error('error has occurred')
       prismaMock.book.create.mockResolvedValueOnce({
         id: bookId,
@@ -131,7 +153,7 @@ describe('server actions', () => {
       const errorMock = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       await expect(
-        registerBook('testBook', 'テスト書籍の概要', '1234567890123', undefined, 1, user1.id),
+        registerBook('testBook', 'テスト書籍の概要', '1234567890123', 1, user1.id),
       ).rejects.toThrow('Registration creation failed')
 
       expect(prismaMock.book.create).toBeCalledWith({
