@@ -10,7 +10,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     # 万一ハングしてもジョブが無限に走り続けないように上限を設定
-    timeout-minutes: 25
+    timeout-minutes: 3
 
     services:
       postgres:
