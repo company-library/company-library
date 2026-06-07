@@ -49,9 +49,26 @@ jobs:
       - name: 依存関係をインストール
         run: yarn install --immutable
 
+      # Playwrightのブラウザバイナリをキャッシュし、2回目以降はダウンロード自体をスキップする。
+      # キーは yarn.lock（= Playwrightバージョン）に紐づける。
+      - name: Playwrightブラウザのキャッシュ
+        id: playwright-cache
+        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}
+
       - name: Playwrightブラウザをインストール
-        # 使用するのは chromium プロジェクトのみのため、全ブラウザではなく chromium だけを入れる
-        run: yarn playwright install --with-deps chromium
+        # 使用するのは chromium プロジェクトのみのため、全ブラウザではなく chromium だけを入れる。
+        # ダウンロードが stall（無応答停止）することがあるため、timeout で打ち切りつつリトライする。
+        run: |
+          for i in 1 2 3; do
+            timeout 300 yarn playwright install --with-deps chromium && exit 0
+            echo "Playwrightのインストールが失敗またはタイムアウトしました。リトライ ${i}/3..."
+            sleep 5
+          done
+          echo "Playwrightのインストールに3回失敗しました" >&2
+          exit 1
 
       - name: Prismaクライアントを生成
         run: yarn db:generate
