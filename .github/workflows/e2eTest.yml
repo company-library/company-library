@@ -50,7 +50,8 @@ jobs:
         run: yarn install --immutable
 
       - name: Playwrightブラウザをインストール
-        run: yarn playwright install --with-deps
+        # 使用するのは chromium プロジェクトのみのため、全ブラウザではなく chromium だけを入れる
+        run: yarn playwright install --with-deps chromium
 
       - name: Prismaクライアントを生成
         run: yarn db:generate
