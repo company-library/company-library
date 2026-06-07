@@ -86,7 +86,7 @@ yarn test                   # テストの実行
 - **Zod v4** バリデーション（`import * as z from 'zod/v4'` の形式で使用）
 - **SWR v2** クライアントサイドデータフェッチ
 - **Luxon** 日時処理（JST表示対応）
-- **Volta** Node.jsバージョン管理（Node 22.22.0、Yarn 4.12.0）
+- **mise** Node.jsバージョン管理（Node 24.16.0、Yarn 4.15.0）
 
 ### 主要アーキテクチャパターン
 
@@ -281,7 +281,7 @@ Pull Request 時に自動で以下のチェックが実行されます：
 | `codeql.yml` | CodeQL セキュリティスキャン |
 | `dependency-review.yml` | 依存関係の脆弱性チェック |
 
-**Node.js / Yarn のバージョンは Volta で自動管理**（package.json の `volta` フィールドで固定）
+**Node.js / Yarn のバージョンは mise で自動管理**（`mise.toml` でNode.jsおよびYarnのバージョンを固定）
 
 ### 外部依存関係
 - **認証**: Azure AD または Azure AD B2C が必須
