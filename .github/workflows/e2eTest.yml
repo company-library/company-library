@@ -48,15 +48,17 @@ jobs:
           EOF
 
       - run: yarn db:generate
-      # @playwright/test は yarn.lock 管理外のため npm で個別インストールする
+      - run: yarn db:push
+      - run: yarn db:seed
+      - run: yarn build
+      # yarn の全スクリプト実行後に @playwright/test を npm でインストールする
+      # （先に npm install すると yarn のワークスペース解決が壊れるため順序が重要）
       - name: Install Playwright
         run: npm install @playwright/test
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-      - run: yarn db:push
-      - run: yarn db:seed
-      - run: yarn build
-      - run: yarn test:e2e
+      # yarn コマンドは npm install 後に動作しなくなるため npx で直接実行する
+      - run: npx playwright test
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
