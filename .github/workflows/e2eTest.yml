@@ -17,4 +17,4 @@ jobs:
         run: yarn install --immutable
 
       - name: ブラウザ
-        run: yarn playwright install
+        run: yarn run e2e:install

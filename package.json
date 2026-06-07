@@ -13,6 +13,7 @@
     "lint:ci": "biome ci src/ test/ --reporter=github",
     "test": "vitest",
     "typeCheck": "next typegen && tsc --pretty --noEmit",
+    "e2e:install": "playwright install --with-deps",
     "db:generate": "npx prisma generate",
     "db:push": "dotenv -e .env.development.local -- npx prisma db push",
     "db:console": "dotenv -e .env.development.local -- npx prisma studio",
