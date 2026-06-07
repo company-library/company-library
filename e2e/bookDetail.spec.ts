@@ -12,7 +12,7 @@ test.describe('書籍詳細', () => {
     await page.goto('/')
 
     // 「JavaScript 完全ガイド」のタイルをクリック
-    await page.getByText('JavaScript 完全ガイド').click()
+    await page.getByText('JavaScript 完全ガイド').first().click()
     await expect(page).toHaveURL(/\/books\/\d+/)
 
     // タイトル（h1）が表示される
@@ -21,7 +21,7 @@ test.describe('書籍詳細', () => {
 
   test('在庫情報と主要な見出し・ボタンが表示される', async ({ page }) => {
     await page.goto('/')
-    await page.getByText('JavaScript 完全ガイド').click()
+    await page.getByText('JavaScript 完全ガイド').first().click()
     await expect(page).toHaveURL(/\/books\/\d+/)
 
     // 在庫情報（「○冊貸し出し可能」「(所蔵数: ○冊)」）

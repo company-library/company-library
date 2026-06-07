@@ -15,7 +15,7 @@ test.describe('書籍一覧', () => {
     // 書籍タイルの画像（data-testid="bookImg"）が複数表示される
     const bookImages = page.getByTestId('bookImg')
     await expect(bookImages.first()).toBeVisible()
-    expect(await bookImages.count()).toBeGreaterThan(1)
+    await expect(bookImages.nth(1)).toBeVisible()
 
     // シードの代表的な書籍タイトルが表示される
     await expect(page.getByText('JavaScript 完全ガイド')).toBeVisible()
@@ -35,6 +35,8 @@ test.describe('書籍一覧', () => {
 
   test('保管場所フィルタで書籍を絞り込める', async ({ page }) => {
     // 「3階 会議室」を選択（シードでは React開発入門 が会議室に配置）
+    // 保管場所は /api/locations から非同期取得されるため、option が DOM にアタッチされるまで待機する
+    await expect(page.getByRole('option', { name: '3階 会議室' })).toBeAttached()
     await page.getByRole('combobox').selectOption({ label: '3階 会議室' })
 
     await expect(page.getByText('React開発入門')).toBeVisible()

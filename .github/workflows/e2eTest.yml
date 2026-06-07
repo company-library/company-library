@@ -48,6 +48,9 @@ jobs:
           EOF
 
       - run: yarn db:generate
+      # @playwright/test は yarn.lock 管理外のため npm で個別インストールする
+      - name: Install Playwright
+        run: npm install @playwright/test
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
       - run: yarn db:push
