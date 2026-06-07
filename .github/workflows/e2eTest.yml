@@ -14,7 +14,7 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     # 万一ハングしてもジョブが無限に走り続けないように上限を設定
-    timeout-minutes: 3
+    timeout-minutes: 30
 
     services:
       postgres:
@@ -68,22 +68,8 @@ jobs:
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
 
-      - name: Playwrightブラウザキャッシュ
-        id: playwright-cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.cache/ms-playwright
-          # yarn.lock を基準にする（**/package.json は node_modules 配下も
-          # 含んでしまいキー計算が不安定になるため避ける）
-          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
       - name: Playwrightブラウザをインストール
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: yarn playwright install --with-deps chromium
-
-      - name: Playwright依存パッケージをインストール（キャッシュヒット時）
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: yarn playwright install-deps chromium
 
       - name: E2Eテストを実行
         run: |
