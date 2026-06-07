@@ -19,7 +19,10 @@ const providers: NextAuthOptions['providers'] = [
   }),
 ]
 
-if (process.env.NODE_ENV !== 'production') {
+if (
+  process.env.NODE_ENV !== 'production' ||
+  process.env.NEXT_PUBLIC_DEFAULT_PROVIDER === 'credentials'
+) {
   providers.push(
     CredentialsProvider({
       name: 'Mock Login',
