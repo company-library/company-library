@@ -94,7 +94,7 @@ describe('BookDetail component', () => {
     expect(screen.getByAltText(book.title)).toBeInTheDocument()
     expect(screen.getByAltText(book.title)).toHaveAttribute(
       'src',
-      expect.stringContaining(encodeURIComponent('/no_image.jpg')),
+      '/no_image.jpg',
     )
   })
 

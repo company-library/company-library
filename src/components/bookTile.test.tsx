@@ -20,7 +20,7 @@ describe('book component', () => {
     expect(getByText(bookWithoutImage.title)).toBeInTheDocument()
     expect(getByTestId('bookImg')).toHaveAttribute(
       'src',
-      expect.stringContaining(encodeURIComponent('/no_image.jpg')),
+      '/no_image.jpg',
     )
     expect(getByTestId('bookImg')).toHaveAttribute('alt', bookWithoutImage.title)
   })
