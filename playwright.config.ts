@@ -42,8 +42,12 @@ export default defineConfig({
     },
   ],
   // ビルド済みのプロダクションサーバーを起動する（build は実行手順側で行う）
+  // CI では npm install @playwright/test の後に yarn が動作しなくなるため、
+  // standalone 出力を直接 node で起動して yarn への依存を避ける
   webServer: {
-    command: 'yarn start',
+    command: process.env.CI
+      ? 'node .next/standalone/server.js'
+      : 'yarn start',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

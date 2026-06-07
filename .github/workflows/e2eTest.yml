@@ -51,13 +51,18 @@ jobs:
       - run: yarn db:push
       - run: yarn db:seed
       - run: yarn build
-      # yarn の全スクリプト実行後に @playwright/test を npm でインストールする
-      # （先に npm install すると yarn のワークスペース解決が壊れるため順序が重要）
+      # standalone サーバーに必要な静的ファイルをコピーする（output: 'standalone' の場合に必要）
+      - name: Prepare standalone server assets
+        run: |
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+      # @playwright/test は yarn.lock 管理外のため npm で個別インストールする
+      # （yarn の全スクリプト実行後に行うことで yarn のワークスペース解決への影響を避ける）
       - name: Install Playwright
         run: npm install @playwright/test
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-      # yarn コマンドは npm install 後に動作しなくなるため npx で直接実行する
+      # webServer は node .next/standalone/server.js で起動（playwright.config.ts 参照）
       - run: npx playwright test
 
       - name: Upload Playwright report
