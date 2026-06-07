@@ -92,10 +92,7 @@ describe('BookDetail component', () => {
     })
 
     expect(screen.getByAltText(book.title)).toBeInTheDocument()
-    expect(screen.getByAltText(book.title)).toHaveAttribute(
-      'src',
-      '/no_image.jpg',
-    )
+    expect(screen.getByAltText(book.title)).toHaveAttribute('src', '/no_image.jpg')
   })
 
   it('貸し出し可能数は、場所ごとに正しい所蔵数が表示される', async () => {
