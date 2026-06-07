@@ -6,15 +6,13 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: e2e-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   e2e:
     runs-on: ubuntu-latest
-    # 万一ハングしてもジョブが無限に走り続けないように上限を設定
-    timeout-minutes: 3
+    # Playwrightブラウザが事前インストール済みのイメージを使用し、
+    # Chrome ダウンロードによる時間超過を回避する
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
 
     services:
       postgres:
@@ -22,8 +20,6 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgrespassword
           POSTGRES_DB: e2e_test
-        ports:
-          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -36,10 +32,9 @@ jobs:
       NEXTAUTH_URL: http://localhost:3000
       NEXT_PUBLIC_DEFAULT_PROVIDER: credentials
       # データベース（CI用ローカルPostgreSQL）
-      # 127.0.0.1 + sslmode=disable: localhostはIPv6解決の可能性あり、
-      # またDockerコンテナはSSL未設定のためPrismaのSSL試行を無効化する
-      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@127.0.0.1:5432/e2e_test?sslmode=disable
-      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@127.0.0.1:5432/e2e_test?sslmode=disable
+      # コンテナジョブではサービスにはサービス名（postgres）でアクセスする
+      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@postgres:5432/e2e_test?sslmode=disable
+      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@postgres:5432/e2e_test?sslmode=disable
       # Azure AD（E2Eでは credentials プロバイダーを使用するため未使用だが起動エラー防止のため設定）
       AZURE_AD_TENANT_ID: dummy-tenant-id
       AZURE_AD_CLIENT_ID: dummy-client-id
@@ -59,45 +54,14 @@ jobs:
       - name: Prismaクライアントを生成
         run: yarn db:generate
 
-      - name: PostgreSQL接続を確認
-        run: PGPASSWORD=postgrespassword psql -h 127.0.0.1 -U postgres -d e2e_test -c 'SELECT version();'
-
       - name: データベーススキーマを適用
         run: yarn prisma db push
 
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
 
-      - name: Playwrightブラウザキャッシュ
-        id: playwright-cache
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
-        with:
-          path: ~/.cache/ms-playwright
-          # yarn.lock を基準にする（**/package.json は node_modules 配下も
-          # 含んでしまいキー計算が不安定になるため避ける）
-          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-
-      - name: Playwrightブラウザをインストール
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: yarn playwright install --with-deps chromium
-
-      - name: Playwright依存パッケージをインストール（キャッシュヒット時）
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: yarn playwright install-deps chromium
-
       - name: E2Eテストを実行
-        run: |
-          set -o pipefail
-          yarn e2e 2>&1 | tee /tmp/e2e.log
-
-      # CI環境からログAPIにアクセスできない場合に備え、失敗時はログ末尾を
-      # アノテーションに出力して原因を把握できるようにする
-      - name: 失敗時のログをアノテーション出力
-        if: failure()
-        run: |
-          echo "::group::e2e log tail"
-          tail -n 150 /tmp/e2e.log || true
-          echo "::endgroup::"
+        run: yarn e2e
 
       - name: テストレポート（動画含む）をアップロード
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
