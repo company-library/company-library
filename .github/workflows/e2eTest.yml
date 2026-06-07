@@ -1,0 +1,64 @@
+name: e2eTest
+
+on:
+  pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  e2eTest:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgrespassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      POSTGRES_PRISMA_URL: postgresql://postgres:postgrespassword@localhost:5432/postgres
+      POSTGRES_URL_NON_POOLING: postgresql://postgres:postgrespassword@localhost:5432/postgres
+      NEXTAUTH_SECRET: e2e-dummy-secret-for-ci-only
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_DEFAULT_PROVIDER: credentials
+
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - run: yarn install --immutable
+
+      # db:push / db:seed は dotenv -e .env.development.local を前提とするため、
+      # CIでは環境変数から同等の .env.development.local を生成する
+      - name: Create .env.development.local
+        run: |
+          cat <<EOF > .env.development.local
+          POSTGRES_PRISMA_URL=${POSTGRES_PRISMA_URL}
+          POSTGRES_URL_NON_POOLING=${POSTGRES_URL_NON_POOLING}
+          NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+          NEXTAUTH_URL=${NEXTAUTH_URL}
+          NEXT_PUBLIC_DEFAULT_PROVIDER=${NEXT_PUBLIC_DEFAULT_PROVIDER}
+          EOF
+
+      - run: yarn db:generate
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - run: yarn db:push
+      - run: yarn db:seed
+      - run: yarn build
+      - run: yarn test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

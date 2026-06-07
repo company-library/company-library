@@ -49,6 +49,25 @@ yarn test                   # 全テストを実行
 yarn test src/app/books/    # 特定のテストディレクトリを実行
 ```
 
+### E2Eテスト（Playwright）
+閲覧系ユーザーフロー（ログイン→書籍一覧→検索→詳細→マイページ→利用者一覧）を実ブラウザで検証します。
+事前にPostgreSQLの起動・スキーマ反映・シード投入・ビルドが必要です。
+
+```bash
+docker compose up -d                          # PostgreSQLを起動
+# .env.development.local に NEXT_PUBLIC_DEFAULT_PROVIDER=credentials を設定（Mockログイン用）
+yarn db:generate && yarn db:push && yarn db:seed
+yarn build
+npx playwright install chromium               # 初回のみブラウザを取得
+yarn test:e2e                                 # E2Eテストを実行（webServerが yarn start を自動起動）
+yarn test:e2e:ui                              # UIモードで実行（デバッグ用）
+```
+
+- テストは `e2e/` ディレクトリに配置（`*.spec.ts`）
+- `e2e/auth.setup.ts` が開発用Mockログインでサインインし、セッションを `e2e/.auth/user.json` に保存
+- アサーションは `prisma/seed.ts` のシードデータに依存
+- CIでは `.github/workflows/e2eTest.yml` で自動実行（PostgreSQLサービス + seed + build + playwright）
+
 ## 開発ワークフロー
 
 ### コード変更後の必須チェック
