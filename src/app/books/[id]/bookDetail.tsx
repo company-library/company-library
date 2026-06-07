@@ -119,6 +119,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
       <div className="w-full lg:w-1/2">
         <Image
           src={bookDetail.imageUrl ? bookDetail.imageUrl : '/no_image.jpg'}
+          unoptimized={!bookDetail.imageUrl}
           alt={bookDetail.title}
           width={300}
           height={400}
