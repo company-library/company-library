@@ -63,7 +63,7 @@ jobs:
         # ダウンロードが stall（無応答停止）することがあるため、timeout で打ち切りつつリトライする。
         run: |
           for i in 1 2 3; do
-            timeout 300 yarn playwright install --with-deps chromium && exit 0
+            timeout 300 npx playwright install --with-deps chromium && exit 0
             echo "Playwrightのインストールが失敗またはタイムアウトしました。リトライ ${i}/3..."
             sleep 5
           done
