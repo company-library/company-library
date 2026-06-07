@@ -62,6 +62,10 @@ jobs:
       - name: シードデータを投入
         run: yarn tsx prisma/seed.ts
 
+      - name: アプリをビルド
+        # CIのE2Eは yarn start（本番サーバー）で起動するため事前ビルドが必要
+        run: yarn build
+
       - name: E2Eテストを実行
         run: yarn e2e
 

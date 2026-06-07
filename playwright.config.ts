@@ -37,7 +37,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'yarn dev',
+    // CIでは事前にビルドした本番サーバー（yarn start）を使う。開発サーバー（yarn dev）は
+    // 初回リクエスト時のルート逐次コンパイルが遅く、CIでテストがタイムアウトしてジョブが
+    // 止まって見えるため、CIでのみ本番ビルド方式に切り替える（ローカルは yarn dev のまま）。
+    command: process.env.CI ? 'yarn start' : 'yarn dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
