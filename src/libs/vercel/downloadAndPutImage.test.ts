@@ -69,4 +69,92 @@ describe('downloadAndPutImage function', () => {
     expect(putMock).not.toHaveBeenCalled()
     expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
   })
+
+  it('HTTPSでないURLは拒否される', async () => {
+    const externalImageUrl = 'http://example.net/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('プライベートIPアドレス（192.168.x.x）のURLは拒否される', async () => {
+    const externalImageUrl = 'https://192.168.1.1/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('ループバックアドレス（127.0.0.1）のURLは拒否される', async () => {
+    const externalImageUrl = 'https://127.0.0.1/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('リンクローカルアドレス（169.254.169.254）のURLは拒否される', async () => {
+    const externalImageUrl = 'https://169.254.169.254/latest/meta-data/'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('localhostのURLは拒否される', async () => {
+    const externalImageUrl = 'https://localhost/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('IPv6ループバックアドレス（[::1]）のURLはブラケット付きでも拒否される', async () => {
+    const externalImageUrl = 'https://[::1]/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('IPv6リンクローカルアドレス（[fe80::1]）のURLは拒否される', async () => {
+    const externalImageUrl = 'https://[fe80::1]/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
+
+  it('0.0.0.0/8範囲のIPアドレスのURLは拒否される', async () => {
+    const externalImageUrl = 'https://0.0.0.1/image.jpg'
+    const isbn = '1234567890'
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(`不正な画像URL: ${externalImageUrl}`)
+  })
 })
