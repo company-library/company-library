@@ -79,31 +79,29 @@ describe('UserAvatar component', async () => {
         size: 'lg',
         expectedWidth: 'w-16',
       },
-    ])('sizeプロップスが $size の場合、 widthが $expectedWidth であること', async ({
-      size,
-      expectedWidth,
-    }) => {
-      assert(size === 'sm' || size === 'md' || size === 'lg' || size === undefined)
-      getAvatarUrlMock.mockResolvedValue(avatarUrl)
+    ])(
+      'sizeプロップスが $size の場合、 widthが $expectedWidth であること',
+      async ({ size, expectedWidth }) => {
+        assert(size === 'sm' || size === 'md' || size === 'lg' || size === undefined)
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-      render(await UserAvatar({ user: user1, size }))
+        render(await UserAvatar({ user: user1, size }))
 
-      expect(screen.getByTestId('width')).toHaveClass(expectedWidth)
-    })
+        expect(screen.getByTestId('width')).toHaveClass(expectedWidth)
+      },
+    )
 
-    it.each([
-      { tooltip: undefined },
-      { tooltip: 'none' },
-    ])('tooltipプロップスが $tooltip の場合、 ツールチップが表示されないこと', async ({
-      tooltip,
-    }) => {
-      assert(tooltip === undefined || tooltip === 'none')
-      getAvatarUrlMock.mockResolvedValue(avatarUrl)
+    it.each([{ tooltip: undefined }, { tooltip: 'none' }])(
+      'tooltipプロップスが $tooltip の場合、 ツールチップが表示されないこと',
+      async ({ tooltip }) => {
+        assert(tooltip === undefined || tooltip === 'none')
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-      render(await UserAvatar({ user: user1, tooltip }))
+        render(await UserAvatar({ user: user1, tooltip }))
 
-      expect(screen.getByTestId('name-tooltip')).not.toHaveClass('tooltip')
-    })
+        expect(screen.getByTestId('name-tooltip')).not.toHaveClass('tooltip')
+      },
+    )
 
     it.each([
       {
@@ -122,17 +120,19 @@ describe('UserAvatar component', async () => {
         tooltip: 'right',
         expectedClasses: ['tooltip', 'tooltip-right'],
       },
-    ])('tooltipプロップスが $tooltip の場合、 ホバーさせるとツールチップでユーザー名が表示されること', async ({
-      tooltip,
-      expectedClasses,
-    }) => {
-      assert(tooltip === 'top' || tooltip === 'bottom' || tooltip === 'left' || tooltip === 'right')
-      getAvatarUrlMock.mockResolvedValue(avatarUrl)
+    ])(
+      'tooltipプロップスが $tooltip の場合、 ホバーさせるとツールチップでユーザー名が表示されること',
+      async ({ tooltip, expectedClasses }) => {
+        assert(
+          tooltip === 'top' || tooltip === 'bottom' || tooltip === 'left' || tooltip === 'right',
+        )
+        getAvatarUrlMock.mockResolvedValue(avatarUrl)
 
-      render(await UserAvatar({ user: user1, tooltip }))
+        render(await UserAvatar({ user: user1, tooltip }))
 
-      expect(screen.getByTestId('name-tooltip')).toHaveClass(...expectedClasses)
-      expect(screen.getByTestId('name-tooltip')).toHaveAttribute('data-tip', user1.name)
-    })
+        expect(screen.getByTestId('name-tooltip')).toHaveClass(...expectedClasses)
+        expect(screen.getByTestId('name-tooltip')).toHaveAttribute('data-tip', user1.name)
+      },
+    )
   })
 })
