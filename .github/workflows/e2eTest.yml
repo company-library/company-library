@@ -44,7 +44,7 @@ jobs:
       AZURE_AD_B2C_PRIMARY_USER_FLOW: B2C_1_dummy
 
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: jdx/mise-action@dba19683ed58901619b14f395a24841710cb4925 # v4.1.0
 
       - name: 依存関係をインストール
