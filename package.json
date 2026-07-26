@@ -54,7 +54,7 @@
     "dotenv-cli": "^11.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^29.1.1",
-    "postcss": "^8.5.18",
+    "postcss": "^8.5.19",
     "tailwindcss": "^4.3.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
