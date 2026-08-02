@@ -1,0 +1,33 @@
+name: Renovate
+
+on:
+  schedule:
+    # 毎日 UTC 22:00（JST 07:00）に実行し、renovate.json 側の schedule
+    # （毎週土曜9時前）に従って実際の更新PRが作成されるかを判定させる
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub Appのトークンを発行
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v5
+
+      - name: Self-hosted Renovateを実行
+        uses: renovatebot/github-action@v46.1.21
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          NODE_OPTIONS: --max-old-space-size=4096
+        with:
+          configurationFile: .github/renovate-config.json
+          token: '${{ steps.app-token.outputs.token }}'
