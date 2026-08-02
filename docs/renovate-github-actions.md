@@ -8,7 +8,8 @@ GitHub Actions（`.github/workflows/renovate.yml`）上でセルフホストし�
 ## 構成
 
 - `.github/workflows/renovate.yml` - Renovateを実行するワークフロー（毎日 UTC 22:00 / JST 07:00 に実行 + `workflow_dispatch` で手動実行可）
-- `renovate.json`（リポジトリルート） - Actionのグローバル設定（`platform`, `onboarding`, `requireConfig`）とリポジトリ固有の更新ルール（グルーピング、`schedule`（毎週土曜9時前）など）を1つのファイルにまとめて管理する。新規に別ファイルは作らず、既存のこのファイルをそのまま `configurationFile` として使う
+- `.github/renovate-config.json` - Actionの`configurationFile`として渡すグローバル設定（`platform`, `onboarding`, `requireConfig`）
+- `renovate.json`（リポジトリルート） - リポジトリ固有の更新ルール（グルーピング、`schedule`（毎週土曜9時前）など）。Renovateが自動検出するリポジトリ設定ファイルであり、グローバル設定とは別ファイルにする（同一ファイルにすると、`platform` などのグローバル専用オプションがリポジトリ設定としても読み込まれ、無視されたり設定エラーになったりする可能性があるため。[Renovate公式ドキュメント](https://docs.renovatebot.com/config-overview/)でもグローバル設定ファイルにはリポジトリ設定と異なるファイル名を使うことが推奨されている）
 
 `GITHUB_TOKEN` で作成・更新したPull Requestでも `pull_request` イベント自体は発生するが、`opened` / `synchronize` / `reopened`
 では再帰的なワークフロー実行を防ぐためワークフローの実行が承認待ち（Approval required）状態になり、CIが自動では走らない。
