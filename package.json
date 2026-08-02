@@ -26,7 +26,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
-    "@slack/webhook": "^7.2.0",
+    "@slack/webhook": "^8.0.0",
     "@vercel/blob": "^2.6.1",
     "graphql": "^17.0.2",
     "luxon": "^3.7.2",
