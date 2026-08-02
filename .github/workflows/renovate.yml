@@ -46,5 +46,5 @@ jobs:
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           NODE_OPTIONS: --max-old-space-size=4096
         with:
-          configurationFile: .github/renovate-config.json
+          configurationFile: renovate.json
           token: '${{ steps.app-token.outputs.token }}'
