@@ -26,7 +26,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
-    "@slack/webhook": "^7.2.0",
+    "@slack/webhook": "^8.0.0",
     "@vercel/blob": "^2.6.1",
     "graphql": "^17.0.2",
     "luxon": "^3.7.2",
@@ -60,7 +60,7 @@
     "typescript": "^7.0.2",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10",
-    "vitest-mock-extended": "^4.0.0"
+    "vitest-mock-extended": "^5.1.0"
   },
   "resolutions": {
     "@hono/node-server": "2.0.12"
