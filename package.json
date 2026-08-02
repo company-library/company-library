@@ -24,15 +24,15 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@slack/webhook": "^7.2.0",
     "@vercel/blob": "^2.6.1",
     "graphql": "^17.0.2",
     "luxon": "^3.7.2",
     "next": "16.2.12",
     "next-auth": "^4.24.15",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "swr": "^2.4.2",
