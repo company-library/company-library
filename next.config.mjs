@@ -17,6 +17,11 @@ const nextConfig = {
     ],
   },
   typedRoutes: true,
+  experimental: {
+    // TypeScript 7 (tsgo) は Next.js が利用する TypeScript Compiler API を
+    // 提供していないため、ビルド時の型チェックは TypeScript CLI 経由で実行する。
+    useTypeScriptCli: true,
+  },
 }
 
 export default nextConfig
