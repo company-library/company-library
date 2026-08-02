@@ -61,8 +61,5 @@
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.10",
     "vitest-mock-extended": "^5.1.0"
-  },
-  "resolutions": {
-    "@hono/node-server": "2.0.12"
   }
 }
