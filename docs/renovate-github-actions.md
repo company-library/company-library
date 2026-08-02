@@ -8,11 +8,12 @@ GitHub Actions（`.github/workflows/renovate.yml`）上でセルフホストし�
 ## 構成
 
 - `.github/workflows/renovate.yml` - Renovateを実行するワークフロー（毎日 UTC 22:00 / JST 07:00 に実行 + `workflow_dispatch` で手動実行可）
-- `.github/renovate-config.json` - Actionに渡すグローバル設定（`platform`, `onboarding` など）
-- `renovate.json`（リポジトリルート） - リポジトリ固有の更新ルール（グルーピング、`schedule`（毎週土曜9時前）など）。従来どおりこのファイルが実際の更新PR作成タイミングやルールを制御する
+- `renovate.json`（リポジトリルート） - Actionのグローバル設定（`platform`, `onboarding`, `requireConfig`）とリポジトリ固有の更新ルール（グルーピング、`schedule`（毎週土曜9時前）など）を1つのファイルにまとめて管理する。新規に別ファイルは作らず、既存のこのファイルをそのまま `configurationFile` として使う
 
 `GITHUB_TOKEN` はActionsが作成したPull Requestに対してCIワークフローをトリガーできないという制約があるため、
 認証には GitHub App のトークンを使用する（[`actions/create-github-app-token`](https://github.com/actions/create-github-app-token)）。
+
+なお、`.github/workflows/renovate.yml` 内で参照するサードパーティActionはすべてタグではなくコミットハッシュで固定している（タグの差し替えによるサプライチェーン攻撃対策）。
 
 ## 事前準備（手動作業・コード変更では実施できないもの）
 
