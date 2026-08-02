@@ -11,6 +11,17 @@ on:
     types: [edited]
   pull_request:
     types: [edited]
+  # デフォルトブランチ上でRenovateが管理する依存関係定義ファイルが更新されたときにも実行する
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+      - yarn.lock
+      - docker-compose.yml
+      - mise.toml
+      - .github/workflows/**
+      - renovate.json
 
 concurrency:
   group: renovate
@@ -29,6 +40,7 @@ jobs:
     if: >-
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
       (
         github.event_name == 'issues' &&
         github.event.issue.title == 'Dependency Dashboard' &&
