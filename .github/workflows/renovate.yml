@@ -7,6 +7,10 @@ on:
     - cron: '0 22 * * *'
   workflow_dispatch:
 
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -20,8 +24,21 @@ jobs:
         with:
           app-id: ${{ secrets.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+          # Renovate公式ドキュメント（https://docs.renovatebot.com/security-and-permissions/）の
+          # 権限マトリクスに合わせて、発行するトークンの権限をインストール権限全体ではなく必要最小限に絞る
+          permission-administration: read
+          permission-vulnerability-alerts: read
+          permission-metadata: read
+          permission-checks: write
+          permission-contents: write
+          permission-statuses: write
+          permission-issues: write
+          permission-pull-requests: write
+          permission-workflows: write
 
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
 
       - name: Self-hosted Renovateを実行
         uses: renovatebot/github-action@1a96852b0384df1837619d04c60b2d10d1f9ff08 # v46.1.21
