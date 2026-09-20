@@ -118,7 +118,7 @@ const BookDetail: FC<BookDetailProps> = async ({ bookId, userId }) => {
     <div className="flex flex-wrap">
       <div className="w-full lg:w-1/2">
         <Image
-          src={bookDetail.imageUrl ? bookDetail.imageUrl : '/no_image.jpg'}
+          src={bookDetail.imageUrl || '/no_image.jpg'}
           alt={bookDetail.title}
           width={300}
           height={400}
