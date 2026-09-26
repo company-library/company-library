@@ -2,22 +2,29 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import useSWR from 'swr'
 import type { Mock } from 'vitest'
 import BookList from '@/app/bookList'
-import fetcher from '@/libs/swr/fetcher'
 import { bookWithImage, bookWithoutImage } from '../../test/__utils__/data/book'
 import { location1, location2 } from '../../test/__utils__/data/location'
 
 vi.mock('swr')
 const swrMock = useSWR as Mock
 
+const { bookSearchQueryMock } = vi.hoisted(() => ({ bookSearchQueryMock: vi.fn() }))
+vi.mock('@/libs/trpc/client', () => ({
+  trpc: {
+    book: { search: { query: bookSearchQueryMock } },
+    location: { list: { query: vi.fn() } },
+  },
+}))
+
 describe('BookList page', () => {
   beforeEach(() => {
     swrMock.mockClear()
     // Default mock for books search and locations
-    swrMock.mockImplementation((url) => {
-      if (url === '/api/locations') {
-        return { data: { locations: [location1, location2] } }
+    swrMock.mockImplementation((key) => {
+      if (key === 'location.list') {
+        return { data: [location1, location2] }
       }
-      return { data: { books: [bookWithImage, bookWithoutImage] } }
+      return { data: [bookWithImage, bookWithoutImage] }
     })
   })
 
@@ -38,13 +45,13 @@ describe('BookList page', () => {
       target: { value: searchWord },
     })
 
-    expect(swrMock).toBeCalledWith(`/api/books/search?q=${searchWord}&locationId=`, fetcher)
+    expect(swrMock).toBeCalledWith(['book.search', searchWord, ''], expect.any(Function))
   })
 
   it('本の一覧の読み込み中は「Loading...」と表示される', () => {
-    swrMock.mockImplementation((url) => {
-      if (url === '/api/locations') {
-        return { data: { locations: [location1, location2] } }
+    swrMock.mockImplementation((key) => {
+      if (key === 'location.list') {
+        return { data: [location1, location2] }
       }
       return { data: undefined }
     })
@@ -68,7 +75,10 @@ describe('BookList page', () => {
 
     fireEvent.change(locationSelect, { target: { value: location1.id.toString() } })
 
-    expect(swrMock).toBeCalledWith(`/api/books/search?q=&locationId=${location1.id}`, fetcher)
+    expect(swrMock).toBeCalledWith(
+      ['book.search', '', location1.id.toString()],
+      expect.any(Function),
+    )
   })
 
   it('保管場所と検索キーワードの両方を指定して検索される', () => {
@@ -86,18 +96,30 @@ describe('BookList page', () => {
     })
 
     expect(swrMock).toBeCalledWith(
-      `/api/books/search?q=${searchWord}&locationId=${location1.id}`,
-      fetcher,
+      ['book.search', searchWord, location1.id.toString()],
+      expect.any(Function),
     )
+  })
+
+  it.each([
+    { testcase: '保管場所の指定なし', locationId: '', expectedLocationId: undefined },
+    { testcase: '保管場所の指定あり', locationId: '2', expectedLocationId: 2 },
+  ])('書籍検索のtRPCクエリが呼び出される($testcase)', ({ locationId, expectedLocationId }) => {
+    render(<BookList />)
+
+    const [, fetcher] = swrMock.mock.calls.find(([key]) => Array.isArray(key)) ?? []
+    fetcher(['book.search', 'testBook', locationId])
+
+    expect(bookSearchQueryMock).toBeCalledWith({ q: 'testBook', locationId: expectedLocationId })
   })
 
   it('保管場所データの取得に失敗した場合でも、空の配列として扱われる', () => {
     // Mock locations data with error
-    swrMock.mockImplementation((url) => {
-      if (url === '/api/locations') {
-        return { data: { errorCode: '500', message: 'Failed to fetch locations' } }
+    swrMock.mockImplementation((key) => {
+      if (key === 'location.list') {
+        return { data: undefined, error: new Error('Failed to fetch locations') }
       }
-      return { data: { books: [bookWithImage, bookWithoutImage] } }
+      return { data: [bookWithImage, bookWithoutImage] }
     })
 
     render(<BookList />)
@@ -111,27 +133,15 @@ describe('BookList page', () => {
     const expectErrorMsg = 'query has errored!'
     console.error = vi.fn()
 
-    swrMock.mockImplementation((url) => {
-      if (url === '/api/locations') {
-        return { data: { locations: [location1, location2] } }
+    swrMock.mockImplementation((key) => {
+      if (key === 'location.list') {
+        return { data: [location1, location2] }
       }
-      return { data: {}, error: expectErrorMsg }
+      return { data: undefined, error: expectErrorMsg }
     })
 
-    const { rerender } = render(<BookList />)
+    render(<BookList />)
     expect(screen.getByText('Error!')).toBeInTheDocument()
     expect(console.error).toBeCalledWith(expectErrorMsg)
-
-    swrMock.mockImplementation((url) => {
-      if (url === '/api/locations') {
-        return { data: { locations: [location1, location2] } }
-      }
-      return { data: { errorCode: '123', message: expectErrorMsg } }
-    })
-
-    rerender(<BookList />)
-    expect(screen.getByText('Error!')).toBeInTheDocument()
-    // errorがfalsyの場合は、console.errorが呼び出されない
-    expect(console.error).toBeCalledTimes(1)
   })
 })

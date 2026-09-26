@@ -34,19 +34,19 @@ describe('searched book component', async () => {
       testcase: 'Google Books',
       google: { items: [{ volumeInfo: { title: bookTitle } }] },
       openbd: [null],
-      registered: { book: {} },
+      registered: null,
     },
     {
       testcase: 'OpenBD',
       google: undefined,
       openbd: [{ summary: { title: bookTitle } }],
-      registered: { book: {} },
+      registered: null,
     },
     {
       testcase: '登録済書籍',
       google: undefined,
       openbd: [null],
-      registered: { book: companyBook },
+      registered: companyBook,
     },
   ])('$testcaseから取得した書籍情報が表示される', ({ google, openbd, registered }) => {
     swrMock
@@ -65,7 +65,7 @@ describe('searched book component', async () => {
     swrMock
       .mockReturnValueOnce({ data: undefined })
       .mockReturnValueOnce({ data: undefined })
-      .mockReturnValueOnce({ data: { book: companyBook } })
+      .mockReturnValueOnce({ data: companyBook })
 
     render(<SearchedBook isbn={isbn} userId={userId} />)
 
@@ -99,7 +99,7 @@ describe('searched book component', async () => {
       swrMock
         .mockReturnValueOnce({ data: google })
         .mockReturnValueOnce({ data: openbd })
-        .mockReturnValueOnce({ data: { book: {} } })
+        .mockReturnValueOnce({ data: null })
 
       render(<SearchedBook isbn={isbn} userId={userId} />)
 
@@ -122,7 +122,7 @@ describe('searched book component', async () => {
     swrMock
       .mockReturnValueOnce({ data: undefined })
       .mockReturnValueOnce({ data: [null] })
-      .mockReturnValueOnce({ data: { book: {} } })
+      .mockReturnValueOnce({ data: null })
 
     render(<SearchedBook isbn={isbn} userId={userId} />)
 

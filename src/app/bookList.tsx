@@ -3,23 +3,17 @@
 import { useState } from 'react'
 import useSWR from 'swr'
 import BookTile from '@/components/bookTile'
-import fetcher from '@/libs/swr/fetcher'
-import type { Book } from '@/models/book'
-import { type CustomError, isCustomError } from '@/models/errors'
-import type { Location } from '@/models/location'
+import { trpc } from '@/libs/trpc/client'
 
 const BookList = () => {
-  const { data: locationsData } = useSWR<{ locations: Location[] } | CustomError>(
-    '/api/locations',
-    fetcher,
-  )
-  const locations = isCustomError(locationsData) ? [] : locationsData?.locations || []
+  const { data: locations = [] } = useSWR('location.list', () => trpc.location.list.query())
 
   const [searchLocation, setSearchLocation] = useState('')
   const [searchKeyword, setSearchKeyword] = useState('')
-  const { data, error } = useSWR<{ books: Book[] } | CustomError>(
-    `/api/books/search?q=${searchKeyword}&locationId=${searchLocation}`,
-    fetcher,
+  const { data: books, error } = useSWR(
+    ['book.search', searchKeyword, searchLocation],
+    ([, q, locationId]) =>
+      trpc.book.search.query({ q, locationId: locationId ? Number(locationId) : undefined }),
   )
   if (error) {
     console.error(error)
@@ -52,12 +46,12 @@ const BookList = () => {
       </div>
 
       <div className="flex flex-wrap">
-        {!data ? (
-          <div>Loading...</div>
-        ) : error || isCustomError(data) ? (
+        {error ? (
           <div>Error!</div>
+        ) : !books ? (
+          <div>Loading...</div>
         ) : (
-          data.books.map((book) => {
+          books.map((book) => {
             return (
               <div key={book.id} className="mx-2.5 mt-10">
                 <BookTile book={book} />

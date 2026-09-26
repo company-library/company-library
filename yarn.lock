@@ -1786,6 +1786,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@trpc/client@npm:^11.19.0":
+  version: 11.19.0
+  resolution: "@trpc/client@npm:11.19.0"
+  peerDependencies:
+    "@trpc/server": 11.19.0
+    typescript: ">=5.7.2"
+  bin:
+    intent: bin/intent.js
+  checksum: 10c0/343aeb48bc71940049e2829a2b1e832c504a03e204e3f24a724d6f2248b3267a266029a38fdf0c2d1bdbf7b732e21bec75f264f06c1a278128cc5930ee5ffc08
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:^11.19.0":
+  version: 11.19.0
+  resolution: "@trpc/server@npm:11.19.0"
+  peerDependencies:
+    typescript: ">=5.7.2"
+  bin:
+    intent: bin/intent.js
+  checksum: 10c0/5f38ffdbbc308fb71bc1ea00bf58012c0c319ec2f94dc3bffc1c9f4f9811e15b87c30405c43e9c55d05a3c8d9de1de104323cea3029ada3b4da7150ba2815273
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.1":
   version: 0.10.1
   resolution: "@tybys/wasm-util@npm:0.10.1"
@@ -2659,6 +2682,8 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.1"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
+    "@trpc/client": "npm:^11.19.0"
+    "@trpc/server": "npm:^11.19.0"
     "@types/luxon": "npm:^3.7.5"
     "@types/node": "npm:^24.13.4"
     "@types/react": "npm:19.3.0"
@@ -2677,6 +2702,7 @@ __metadata:
     prisma: "npm:^7.10.0"
     react: "npm:19.3.0"
     react-dom: "npm:19.3.0"
+    superjson: "npm:^2.2.6"
     swr: "npm:^2.5.1"
     tailwindcss: "npm:^4.3.3"
     tsx: "npm:^4.23.13"
@@ -2713,6 +2739,13 @@ __metadata:
   version: 0.7.2
   resolution: "cookie@npm:0.7.2"
   checksum: 10c0/9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+  languageName: node
+  linkType: hard
+
+"copy-anything@npm:^4":
+  version: 4.1.1
+  resolution: "copy-anything@npm:4.1.1"
+  checksum: 10c0/12127518f68018949ceb98535fee440303d9663db9e62ded045a93ec874410c1015c678e09ddb3a3457eeb09663fda01ba2db30a610fb12b618d263aa9eec464
   languageName: node
   linkType: hard
 
@@ -5035,6 +5068,15 @@ __metadata:
     babel-plugin-macros:
       optional: true
   checksum: 10c0/ace50e7ea5ae5ae6a3b65a50994c51fca6ae7df9c7ecfd0104c36be0b4b3a9c5c1a2374d16e2a11e256d0b20be6d47256d768ecb4f91ab390f60752a075780f5
+  languageName: node
+  linkType: hard
+
+"superjson@npm:^2.2.6":
+  version: 2.2.6
+  resolution: "superjson@npm:2.2.6"
+  dependencies:
+    copy-anything: "npm:^4"
+  checksum: 10c0/b63587656cc27effd12c9e13a66da673a7a1b3e1af41f17820fd37f07a4f29503e1f58eae6bd229039331b475e1be6990336fa887654e6adc80684ae4eed7965
   languageName: node
   linkType: hard
 

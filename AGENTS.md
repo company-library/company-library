@@ -84,7 +84,8 @@ yarn test                   # テストの実行
 - **Vitest v4** テストフレームワーク
 - **Biome v2** リンター・フォーマッター
 - **Zod v4** バリデーション（`import * as z from 'zod/v4'` の形式で使用）
-- **SWR v2** クライアントサイドデータフェッチ
+- **tRPC v11** クライアント ↔ BFF 間の型安全なAPI（`superjson` でDate型などを転送）
+- **SWR v2** クライアントサイドデータフェッチ（tRPC の vanilla client を fetcher として使用）
 - **Luxon** 日時処理（JST表示対応）
 - **mise** Node.jsバージョン管理（Node 24.16.0、Yarn 4.15.0）
 
@@ -114,10 +115,20 @@ yarn test                   # テストの実行
 - DB操作は `.catch()` でエラーをキャッチし、Errorオブジェクトを返す（throw しない）
 - 複数DB操作は `prisma.$transaction()` で一貫性を保証
 
+#### BFF（tRPC）
+- クライアントコンポーネントが使うAPIは tRPC で提供（エンドポイント: `/api/trpc`）
+- 初期化・コンテキスト・procedure定義は `src/server/trpc/init.ts`
+  - `protectedProcedure` はセッション（`session.customUser`）がない場合 `UNAUTHORIZED` を返す（`/api` はミドルウェアの保護対象外のため）
+- ルーターは `src/server/trpc/routers/` に配置し、`_app.ts` の `appRouter` に集約
+  - `book.search` - タイトル・説明のキーワード検索（`locationId` でロケーション絞り込みも可能）
+  - `book.searchByIsbn` - ISBN検索（既存書籍の確認用）
+  - `location.list` - ロケーション一覧取得
+- 入力は Zod でバリデーション、DBエラーは `TRPCError`（`INTERNAL_SERVER_ERROR`）で返す
+- クライアントは `src/libs/trpc/client.ts` の `trpc` を SWR の fetcher として使用
+  - 例: `useSWR('location.list', () => trpc.location.list.query())`
+- テストは `createCaller({ session })` でprocedureを直接呼び出す
+
 #### APIルート
-- `GET /api/books/search` - タイトル・説明のキーワード検索（ロケーション絞り込みも可能）
-- `GET /api/books/searchByIsbn` - ISBN検索（既存書籍の確認用）
-- `GET /api/locations` - ロケーション一覧取得
 - `GET /api/cron/overdue` - 返却期限超過書籍のSlack通知（Vercel Cron Job）
 - `GET/POST /api/auth/[...nextauth]` - NextAuth.js ハンドラー
 - APIルートのエラーは `CustomError` 型（`{ errorCode: string, message: string }`）でJSON返却
@@ -142,11 +153,8 @@ yarn test                   # テストの実行
 │   ├── app/                        # Next.js App Routerページ
 │   │   ├── api/
 │   │   │   ├── auth/[...nextauth]/ # NextAuth.js ハンドラー・設定
-│   │   │   ├── books/
-│   │   │   │   ├── search/         # キーワード書籍検索API
-│   │   │   │   └── searchByIsbn/   # ISBN書籍検索API
 │   │   │   ├── cron/overdue/       # 返却期限超過通知Cron
-│   │   │   └── locations/          # ロケーション一覧API
+│   │   │   └── trpc/[trpc]/        # tRPC（BFF）ハンドラー
 │   │   ├── auth/signIn/            # サインインページ
 │   │   ├── books/
 │   │   │   ├── [id]/               # 書籍詳細ページ（貸出・返却・感想）
@@ -175,7 +183,8 @@ yarn test                   # テストの実行
 │   │   ├── next-auth/types/        # NextAuth.js 型定義拡張
 │   │   ├── prisma/client.ts        # グローバルPrismaクライアント
 │   │   ├── slack/webhook.ts        # Slack Webhook通知
-│   │   ├── swr/fetcher.ts          # SWR用フェッチャー
+│   │   ├── swr/fetcher.ts          # SWR用フェッチャー（外部API用）
+│   │   ├── trpc/client.ts          # tRPCクライアント
 │   │   └── vercel/                 # Vercel Blob画像アップロード（SSRF対策あり）
 │   ├── models/                     # 型定義（Prismaモデルの re-export）
 │   │   ├── book.ts
@@ -185,6 +194,7 @@ yarn test                   # テストの実行
 │   │   ├── returnHistory.ts
 │   │   └── user.ts
 │   ├── proxy.ts                    # NextAuth.js ミドルウェア（認証ガード）
+│   ├── server/trpc/                # tRPC（BFF）の初期化・ルーター
 │   └── utils/
 │       └── stringUtils.ts          # 文字列ユーティリティ
 ├── test/

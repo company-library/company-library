@@ -3,9 +3,7 @@
 import { type FC, useState } from 'react'
 import useSWR from 'swr'
 import { registerBook } from '@/app/books/register/actions'
-import fetcher from '@/libs/swr/fetcher'
-import { type CustomError, isCustomError } from '@/models/errors'
-import type { Location } from '@/models/location'
+import { trpc } from '@/libs/trpc/client'
 
 type RegisterBookDivProps = {
   title: string
@@ -34,16 +32,11 @@ const RegisterBookDiv: FC<RegisterBookDivProps> = ({
 }) => {
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null)
 
-  const { data: locationsData, error } = useSWR<{ locations: Location[] } | CustomError>(
-    '/api/locations',
-    fetcher,
-  )
+  const { data: locations = [], error } = useSWR('location.list', () => trpc.location.list.query())
 
-  if (error || isCustomError(locationsData)) {
+  if (error) {
     return <div>保管場所の取得に失敗しました</div>
   }
-
-  const locations = locationsData?.locations || []
 
   const handleSubmit = async (_formData: FormData) => {
     if (selectedLocationId === null) {

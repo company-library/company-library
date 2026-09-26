@@ -11,7 +11,7 @@ describe('register book div component', async () => {
   // SWRのモック
   vi.mock('swr', () => ({
     default: () => ({
-      data: { locations: [{ id: 1, name: 'テスト場所' }] },
+      data: [{ id: 1, name: 'テスト場所' }],
       error: null,
     }),
   }))

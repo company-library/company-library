@@ -46,7 +46,7 @@ test.describe('書籍ライフサイクル（登録 → 貸出 → 返却）', (
     await expect(page.getByText('E2Eテスト用書籍')).toBeVisible()
 
     // 保管場所を選択（1階 エントランス）
-    // /api/locations の初回コンパイル(devサーバ)に時間がかかる場合があるため
+    // /api/trpc の初回コンパイル(devサーバ)に時間がかかる場合があるため
     // 選択肢が読み込まれるまで明示的に待つ
     await expect(page.locator('#location-select option').nth(1)).toBeAttached({
       timeout: 60_000,

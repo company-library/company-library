@@ -7,8 +7,7 @@ import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import BookTile from '@/components/bookTile'
 import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import fetcher from '@/libs/swr/fetcher'
-import type { Book } from '@/models/book'
-import { type CustomError, isCustomError } from '@/models/errors'
+import { trpc } from '@/libs/trpc/client'
 
 type SearchedBookProps = {
   isbn: string
@@ -97,17 +96,13 @@ const FoundBookDiv = ({ book }: { book: { title: string; imageUrl?: string | nul
 
 /** 登録済みの書籍を取得する */
 const useCompanyBook = (isbn: string) => {
-  const { data: companyBookData, error } = useSWR<
-    | {
-        book: Book & { _count: { registrationHistories: number } }
-      }
-    | CustomError
-  >(`/api/books/searchByIsbn?isbn=${isbn}`, fetcher)
-  if (error || isCustomError(companyBookData)) {
+  const { data: companyBook, error } = useSWR(['book.searchByIsbn', isbn], ([, isbn]) =>
+    trpc.book.searchByIsbn.query({ isbn }),
+  )
+  if (error) {
     console.error(error)
     return null
   }
-  const companyBook = companyBookData?.book
 
   const exists = !!companyBook?._count && companyBook._count.registrationHistories >= 1
   if (!exists) {
