@@ -27,7 +27,7 @@ const Tile: FC<BookProps> = ({ book }) => {
     <div className="w-[300px] rounded-lg shadow-lg">
       <div className="h-[400px] overflow-hidden">
         <Image
-          src={book.imageUrl ? book.imageUrl : '/no_image.jpg'}
+          src={book.imageUrl || '/no_image.jpg'}
           alt={book.title}
           width={300}
           height={400}

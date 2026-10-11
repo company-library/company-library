@@ -34,6 +34,7 @@ describe('BookDetail component', () => {
   const bookDetail = {
     id: book.id,
     createdAt: book.createdAt,
+    updatedAt: null,
     title: book.title,
     description: book.description,
     isbn: book.isbn,
@@ -121,6 +122,7 @@ describe('BookDetail component', () => {
       _count: {
         reservations: 0,
       },
+      updatedAt: null,
     }
     prismaMock.book.findUnique.mockResolvedValue(mockBookDetail)
 
@@ -155,6 +157,7 @@ describe('BookDetail component', () => {
       _count: {
         reservations: 0,
       },
+      updatedAt: null,
     }
     prismaMock.book.findUnique.mockResolvedValue(mockBookAllLent)
 
@@ -185,6 +188,7 @@ describe('BookDetail component', () => {
       _count: {
         reservations: 0,
       },
+      updatedAt: null,
     }
     prismaMock.book.findUnique.mockResolvedValue(mockBookUserBorrowing)
 
@@ -212,6 +216,7 @@ describe('BookDetail component', () => {
       _count: {
         reservations: 0,
       },
+      updatedAt: null,
     }
     prismaMock.book.findUnique.mockResolvedValue(mockBookUserBorrowing)
 
@@ -275,6 +280,7 @@ describe('BookDetail component', () => {
       _count: {
         reservations: 0,
       },
+      updatedAt: null,
     }
     prismaMock.book.findUnique.mockResolvedValue(mockBookDetail)
 
