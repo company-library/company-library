@@ -2,19 +2,21 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import RegisterBookDiv from '@/app/books/register/registerBookDiv'
 import { user1 } from '../../../../test/__utils__/data/user'
 
-describe('register book div component', async () => {
-  const registerBookActionMock = vi.hoisted(() => vi.fn())
-  vi.mock('@/app/books/register/actions', () => ({
-    registerBook: registerBookActionMock,
-  }))
+const registerBookActionMock = vi.hoisted(() => vi.fn())
 
+vi.mock('@/app/books/register/actions', () => ({
+  registerBook: registerBookActionMock,
+}))
+
+vi.mock('swr', () => ({
+  default: () => ({
+    data: { locations: [{ id: 1, name: 'テスト場所' }] },
+    error: null,
+  }),
+}))
+
+describe('register book div component', async () => {
   // SWRのモック
-  vi.mock('swr', () => ({
-    default: () => ({
-      data: { locations: [{ id: 1, name: 'テスト場所' }] },
-      error: null,
-    }),
-  }))
 
   it('登録ボタンをクリックすると、server actionが実行される', async () => {
     const title = 'testBook'

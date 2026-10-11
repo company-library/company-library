@@ -4,17 +4,18 @@ import UsersPage from '@/app/users/page'
 import { user1, user2 } from '../../../test/__utils__/data/user'
 import { prismaMock } from '../../../test/__utils__/libs/prisma/singleton'
 
+const { UserCardMock } = vi.hoisted(() => {
+  return {
+    UserCardMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+  }
+})
+
+vi.mock('@/app/users/userCard', () => ({
+  default: (...args: unknown[]) => UserCardMock(...args),
+}))
+
 describe('users page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
-
-  const { UserCardMock } = vi.hoisted(() => {
-    return {
-      UserCardMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
-    }
-  })
-  vi.mock('@/app/users/userCard', () => ({
-    default: (...args: unknown[]) => UserCardMock(...args),
-  }))
 
   it('利用者一覧が表示される', async () => {
     await act(async () => {

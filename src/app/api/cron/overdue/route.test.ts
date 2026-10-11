@@ -11,17 +11,19 @@ import { lendingHistory1, lendingHistory2 } from '../../../../../test/__utils__/
 import { user1, user2 } from '../../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../../test/__utils__/libs/prisma/singleton'
 
+const { notifySlackMock } = vi.hoisted(() => ({
+  notifySlackMock: vi.fn(),
+}))
+
+vi.mock('@/libs/slack/webhook', () => ({
+  notifySlack: notifySlackMock,
+}))
+
 describe('overdue cron api', () => {
   vi.stubEnv('SLACK_WEBHOOK_URL', 'slackWebhookUrl')
   vi.stubEnv('CRON_SECRET', 'dXx6fUmotuR15zpqfQqc')
   vi.stubEnv('VERCEL_PROJECT_PRODUCTION_URL', 'localhost:3000')
 
-  const { notifySlackMock } = vi.hoisted(() => ({
-    notifySlackMock: vi.fn(),
-  }))
-  vi.mock('@/libs/slack/webhook', () => ({
-    notifySlack: notifySlackMock,
-  }))
   const consoleErrorSpy = vi.spyOn(console, 'error')
 
   const req = new Request('http://localhost:3000', {
