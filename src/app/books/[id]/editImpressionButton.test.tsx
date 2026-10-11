@@ -1,6 +1,21 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import EditImpressionButton from '@/app/books/[id]/editImpressionButton'
 
+const editImpressionMock = vi.hoisted(() => vi.fn())
+
+vi.mock(import('@/app/books/[id]/actions'), async (importOriginal) => ({
+  ...(await importOriginal()),
+  editImpression: editImpressionMock,
+}))
+
+const refreshMock = vi.hoisted(() => vi.fn())
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => {
+    return { refresh: refreshMock }
+  },
+}))
+
 describe('editImpressionButton component', () => {
   const impression = {
     id: 2,
@@ -9,19 +24,6 @@ describe('editImpressionButton component', () => {
     updatedAt: new Date('2022-11-01T10:00:00+09:00'),
     user: { id: 2, name: 'user02' },
   }
-
-  const editImpressionMock = vi.hoisted(() => vi.fn())
-  vi.mock(import('@/app/books/[id]/actions'), async (importOriginal) => ({
-    ...(await importOriginal()),
-    editImpression: editImpressionMock,
-  }))
-
-  const refreshMock = vi.hoisted(() => vi.fn())
-  vi.mock('next/navigation', () => ({
-    useRouter: () => {
-      return { refresh: refreshMock }
-    },
-  }))
 
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')

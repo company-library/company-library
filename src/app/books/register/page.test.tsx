@@ -3,24 +3,25 @@ import { Suspense } from 'react'
 import RegisterPage from '@/app/books/register/page'
 import { user1 } from '../../../../test/__utils__/data/user'
 
+const { getServerSessionMock } = vi.hoisted(() => {
+  return {
+    getServerSessionMock: vi.fn(),
+  }
+})
+
+vi.mock('next-auth', () => ({
+  getServerSession: () => getServerSessionMock(),
+}))
+
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
+  authOptions: {},
+}))
+
+vi.mock('@/app/books/register/bookForm', () => ({
+  default: () => <div>登録フォーム</div>,
+}))
+
 describe('register page', async () => {
-  const { getServerSessionMock } = vi.hoisted(() => {
-    return {
-      getServerSessionMock: vi.fn(),
-    }
-  })
-  vi.mock('next-auth', () => ({
-    getServerSession: () => getServerSessionMock(),
-  }))
-
-  vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-    authOptions: {},
-  }))
-
-  vi.mock('@/app/books/register/bookForm', () => ({
-    default: () => <div>登録フォーム</div>,
-  }))
-
   beforeEach(() => {
     getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
   })

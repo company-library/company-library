@@ -6,6 +6,27 @@ import type { LendButtonProps } from '@/app/books/[id]/lendButton'
 import { bookWithoutImage, lendableBook } from '../../../../test/__utils__/data/book'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
+vi.mock('@/app/books/[id]/lendButton', () => ({
+  default: (props: LendButtonProps) => {
+    return (
+      <button disabled={props.disabled} type="button">
+        借りる
+      </button>
+    )
+  },
+}))
+
+vi.mock('@/app/books/[id]/returnButton', () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: テスト用のモック関数の型なのでany型を許容する
+  default: (props: any) => {
+    return (
+      <button disabled={props.disabled} type="button">
+        返却する
+      </button>
+    )
+  },
+}))
+
 describe('BookDetail component', () => {
   const userId = 2
 
@@ -23,26 +44,6 @@ describe('BookDetail component', () => {
       reservations: book.reservations.length,
     },
   }
-  vi.mock('@/app/books/[id]/lendButton', () => ({
-    default: (props: LendButtonProps) => {
-      return (
-        <button disabled={props.disabled} type="button">
-          借りる
-        </button>
-      )
-    },
-  }))
-
-  vi.mock('@/app/books/[id]/returnButton', () => ({
-    // biome-ignore lint/suspicious/noExplicitAny: テスト用のモック関数の型なのでany型を許容する
-    default: (props: any) => {
-      return (
-        <button disabled={props.disabled} type="button">
-          返却する
-        </button>
-      )
-    },
-  }))
 
   beforeEach(() => {
     prismaMock.book.findUnique.mockResolvedValue(bookDetail)

@@ -3,32 +3,36 @@ import { Suspense } from 'react'
 import NavigationBar from '@/app/navigationBar'
 import { user1 } from '../../test/__utils__/data/user'
 
+const { pathnameMock } = vi.hoisted(() => {
+  return { pathnameMock: vi.fn() }
+})
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => pathnameMock(),
+}))
+
+const { getServerSessionMock } = vi.hoisted(() => {
+  return { getServerSessionMock: vi.fn() }
+})
+
+vi.mock('next-auth', () => ({
+  getServerSession: () => getServerSessionMock(),
+}))
+
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
+  authOptions: {},
+}))
+
+const { UserAvatarMock } = vi.hoisted(() => {
+  return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
+})
+
+vi.mock('@/components/userAvatar', () => ({
+  default: (...args: unknown[]) => UserAvatarMock(...args),
+}))
+
 describe('navigationBar component', async () => {
-  const { pathnameMock } = vi.hoisted(() => {
-    return { pathnameMock: vi.fn() }
-  })
-  vi.mock('next/navigation', () => ({
-    usePathname: () => pathnameMock(),
-  }))
-
   const loggedInUser = user1
-  const { getServerSessionMock } = vi.hoisted(() => {
-    return { getServerSessionMock: vi.fn() }
-  })
-  vi.mock('next-auth', () => ({
-    getServerSession: () => getServerSessionMock(),
-  }))
-
-  vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-    authOptions: {},
-  }))
-
-  const { UserAvatarMock } = vi.hoisted(() => {
-    return { UserAvatarMock: vi.fn().mockImplementation(() => <div>userAvatar</div>) }
-  })
-  vi.mock('@/components/userAvatar', () => ({
-    default: (...args: unknown[]) => UserAvatarMock(...args),
-  }))
 
   beforeEach(() => {
     pathnameMock.mockReturnValue({ push: vi.fn() })

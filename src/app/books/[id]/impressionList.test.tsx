@@ -4,19 +4,21 @@ import { lendableBook } from '../../../../test/__utils__/data/book'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('ImpressionList component', async () => {
-  const UserAvatarMock = vi.hoisted(() =>
-    vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
-  )
-  vi.mock('@/components/userAvatar', () => ({
-    default: (...args: unknown[]) => UserAvatarMock(...args),
-  }))
-  vi.mock(import('@/app/books/[id]/editImpressionButton'), () => ({
-    default: () => {
-      return <button type="button">感想を編集</button>
-    },
-  }))
+const UserAvatarMock = vi.hoisted(() =>
+  vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+)
 
+vi.mock('@/components/userAvatar', () => ({
+  default: (...args: unknown[]) => UserAvatarMock(...args),
+}))
+
+vi.mock(import('@/app/books/[id]/editImpressionButton'), () => ({
+  default: () => {
+    return <button type="button">感想を編集</button>
+  },
+}))
+
+describe('ImpressionList component', async () => {
   const prismaImpressionsMock = prismaMock.impression.findMany
   const expectedImpressions = [
     {
