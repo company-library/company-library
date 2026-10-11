@@ -3,16 +3,17 @@ import ReturnList from '@/app/books/[id]/returnList'
 import { lendableBook } from '../../../../test/__utils__/data/book'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('ReturnList Component', async () => {
-  const { UserAvatarMock } = vi.hoisted(() => {
-    return {
-      UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
-    }
-  })
-  vi.mock('@/components/userAvatar', () => ({
-    default: (...args: unknown[]) => UserAvatarMock(...args),
-  }))
+const { UserAvatarMock } = vi.hoisted(() => {
+  return {
+    UserAvatarMock: vi.fn().mockImplementation(({ user }) => <div>{user.name}</div>),
+  }
+})
 
+vi.mock('@/components/userAvatar', () => ({
+  default: (...args: unknown[]) => UserAvatarMock(...args),
+}))
+
+describe('ReturnList Component', async () => {
   const expectedReturnHistories = [
     {
       lendingHistoryId: 2,

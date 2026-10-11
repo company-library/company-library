@@ -3,30 +3,32 @@ import { location1 } from '../../../../test/__utils__/data/location'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
+const { redirectMock } = vi.hoisted(() => {
+  return { redirectMock: vi.fn() }
+})
+
+vi.mock('next/navigation', () => ({
+  redirect: redirectMock,
+}))
+
+const { notifySlackMock } = vi.hoisted(() => {
+  return { notifySlackMock: vi.fn() }
+})
+
+vi.mock('@/libs/slack/webhook', () => ({
+  notifySlack: notifySlackMock,
+}))
+
+vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
+  downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
+    if (imageUrl) {
+      return `https://example.com/books/${isbn}/internal/cover.jpg`
+    }
+    return undefined
+  },
+}))
+
 describe('server actions', () => {
-  const { redirectMock } = vi.hoisted(() => {
-    return { redirectMock: vi.fn() }
-  })
-  vi.mock('next/navigation', () => ({
-    redirect: redirectMock,
-  }))
-
-  const { notifySlackMock } = vi.hoisted(() => {
-    return { notifySlackMock: vi.fn() }
-  })
-  vi.mock('@/libs/slack/webhook', () => ({
-    notifySlack: notifySlackMock,
-  }))
-
-  vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
-    downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
-      if (imageUrl) {
-        return `https://example.com/books/${isbn}/internal/cover.jpg`
-      }
-      return undefined
-    },
-  }))
-
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
       const bookId = 1

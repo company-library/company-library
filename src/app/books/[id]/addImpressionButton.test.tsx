@@ -2,13 +2,14 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import AddImpressionButton from '@/app/books/[id]/addImpressionButton'
 import { book1 } from '../../../../test/__utils__/data/book'
 
-describe('AddImpressionButton component', () => {
-  const addImpressionMock = vi.hoisted(() => vi.fn())
-  vi.mock(import('@/app/books/[id]/actions'), async (importOriginal) => ({
-    ...(await importOriginal()),
-    addImpression: addImpressionMock,
-  }))
+const addImpressionMock = vi.hoisted(() => vi.fn())
 
+vi.mock(import('@/app/books/[id]/actions'), async (importOriginal) => ({
+  ...(await importOriginal()),
+  addImpression: addImpressionMock,
+}))
+
+describe('AddImpressionButton component', () => {
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
     modal[0].setAttribute('open', 'true')

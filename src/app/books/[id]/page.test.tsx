@@ -5,56 +5,62 @@ import { bookWithImage } from '../../../../test/__utils__/data/book'
 import { user1, user2 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
+const { BookDetailMock } = vi.hoisted(() => {
+  return {
+    BookDetailMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/bookDetail', () => ({
+  default: (...args: unknown[]) => BookDetailMock(...args),
+}))
+
+const { LendingListMock } = vi.hoisted(() => {
+  return {
+    LendingListMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/lendingList', () => ({
+  default: (...args: unknown[]) => LendingListMock(...args),
+}))
+
+const { ImpressionListMock } = vi.hoisted(() => {
+  return {
+    ImpressionListMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/impressionList', () => ({
+  default: (...args: unknown[]) => ImpressionListMock(...args),
+}))
+
+const { ReturnListMock } = vi.hoisted(() => {
+  return {
+    ReturnListMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/returnList', () => ({
+  default: (...args: unknown[]) => ReturnListMock(...args),
+}))
+
+const { getServerSessionMock } = vi.hoisted(() => {
+  return {
+    getServerSessionMock: vi.fn(),
+  }
+})
+
+vi.mock('next-auth', () => ({
+  getServerSession: () => getServerSessionMock(),
+}))
+
+vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
+  authOptions: {},
+}))
+
 describe('BookDetail page', async () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
-  const { BookDetailMock } = vi.hoisted(() => {
-    return {
-      BookDetailMock: vi.fn(),
-    }
-  })
-  vi.mock('@/app/books/[id]/bookDetail', () => ({
-    default: (...args: unknown[]) => BookDetailMock(...args),
-  }))
-
-  const { LendingListMock } = vi.hoisted(() => {
-    return {
-      LendingListMock: vi.fn(),
-    }
-  })
-  vi.mock('@/app/books/[id]/lendingList', () => ({
-    default: (...args: unknown[]) => LendingListMock(...args),
-  }))
-
-  const { ImpressionListMock } = vi.hoisted(() => {
-    return {
-      ImpressionListMock: vi.fn(),
-    }
-  })
-  vi.mock('@/app/books/[id]/impressionList', () => ({
-    default: (...args: unknown[]) => ImpressionListMock(...args),
-  }))
-
-  const { ReturnListMock } = vi.hoisted(() => {
-    return {
-      ReturnListMock: vi.fn(),
-    }
-  })
-  vi.mock('@/app/books/[id]/returnList', () => ({
-    default: (...args: unknown[]) => ReturnListMock(...args),
-  }))
-
-  const { getServerSessionMock } = vi.hoisted(() => {
-    return {
-      getServerSessionMock: vi.fn(),
-    }
-  })
-  vi.mock('next-auth', () => ({
-    getServerSession: () => getServerSessionMock(),
-  }))
-
-  vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
-    authOptions: {},
-  }))
 
   const book = bookWithImage
 
