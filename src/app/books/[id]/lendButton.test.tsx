@@ -2,6 +2,38 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { DateTime } from 'luxon'
 import LendButton from '@/app/books/[id]/lendButton'
 
+const { lendBookActionMock, useActionStateMock } = vi.hoisted(() => {
+  return {
+    lendBookActionMock: vi.fn(),
+    useActionStateMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/actions', () => ({
+  lendBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
+    lendBookActionMock(prevState, formData),
+}))
+
+const { refreshMock } = vi.hoisted(() => {
+  return {
+    refreshMock: vi.fn(),
+  }
+})
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => {
+    return { refresh: refreshMock }
+  },
+}))
+
+vi.mock('react', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('react')
+  return {
+    ...actual,
+    useActionState: useActionStateMock,
+  }
+})
+
 describe('LendButton component', () => {
   const bookId = 1
   const userId = 2
@@ -14,36 +46,6 @@ describe('LendButton component', () => {
     [1, { name: '本社', order: 1, totalCount: 5, lendableCount: 3 }],
     [2, { name: '支社', order: 2, totalCount: 3, lendableCount: 2 }],
   ])
-  const { lendBookActionMock, useActionStateMock } = vi.hoisted(() => {
-    return {
-      lendBookActionMock: vi.fn(),
-      useActionStateMock: vi.fn(),
-    }
-  })
-
-  vi.mock('@/app/books/[id]/actions', () => ({
-    lendBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
-      lendBookActionMock(prevState, formData),
-  }))
-
-  const { refreshMock } = vi.hoisted(() => {
-    return {
-      refreshMock: vi.fn(),
-    }
-  })
-  vi.mock('next/navigation', () => ({
-    useRouter: () => {
-      return { refresh: refreshMock }
-    },
-  }))
-
-  vi.mock('react', async (importOriginal) => {
-    const actual = (await importOriginal()) as typeof import('react')
-    return {
-      ...actual,
-      useActionState: useActionStateMock,
-    }
-  })
 
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')

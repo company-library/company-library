@@ -11,22 +11,33 @@ import { location1 } from '../../../../test/__utils__/data/location'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
-describe('server actions', () => {
-  const { redirectMock } = vi.hoisted(() => {
-    return { redirectMock: vi.fn() }
-  })
-  vi.mock('next/navigation', () => ({
-    redirect: () => redirectMock(),
-  }))
+const { redirectMock } = vi.hoisted(() => {
+  return { redirectMock: vi.fn() }
+})
 
+vi.mock('next/navigation', () => ({
+  redirect: () => redirectMock(),
+}))
+
+const { getServerSessionMock } = vi.hoisted(() => {
+  return { getServerSessionMock: vi.fn() }
+})
+
+vi.mock('next-auth', () => ({
+  getServerSession: () => getServerSessionMock(),
+}))
+
+const { revalidatePathMock } = vi.hoisted(() => {
+  return { revalidatePathMock: vi.fn() }
+})
+
+vi.mock('next/cache', () => ({
+  revalidatePath: revalidatePathMock,
+}))
+
+describe('server actions', () => {
   const consoleErrorSpy = vi.spyOn(console, 'error')
 
-  const { getServerSessionMock } = vi.hoisted(() => {
-    return { getServerSessionMock: vi.fn() }
-  })
-  vi.mock('next-auth', () => ({
-    getServerSession: () => getServerSessionMock(),
-  }))
   getServerSessionMock.mockResolvedValue({ customUser: { id: user1.id } })
 
   describe('lendBook function', () => {
@@ -390,13 +401,6 @@ describe('server actions', () => {
   })
 
   describe('addImpression function', () => {
-    const { revalidatePathMock } = vi.hoisted(() => {
-      return { revalidatePathMock: vi.fn() }
-    })
-    vi.mock('next/cache', () => ({
-      revalidatePath: revalidatePathMock,
-    }))
-
     it('感想の追加ができる', async () => {
       prismaMock.$transaction.mockImplementationOnce((callback) => callback(prismaMock))
       prismaMock.impression.create.mockResolvedValueOnce({

@@ -2,11 +2,11 @@ import { fireEvent, render } from '@testing-library/react'
 import BookForm from '@/app/books/register/bookForm'
 import { user1 } from '../../../../test/__utils__/data/user'
 
-describe('book form component', async () => {
-  vi.mock('@/app/books/register/searchedBook', () => ({
-    default: vi.fn().mockImplementation(() => <>searched book component</>),
-  }))
+vi.mock('@/app/books/register/searchedBook', () => ({
+  default: vi.fn().mockImplementation(() => <>searched book component</>),
+}))
 
+describe('book form component', async () => {
   it('13桁入力するとGoogleBookのコンポーネントが表示される', () => {
     const { getByText, queryByText, getByLabelText } = render(<BookForm userId={user1.id} />)
 

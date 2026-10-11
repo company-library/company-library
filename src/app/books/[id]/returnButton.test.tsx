@@ -1,37 +1,38 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ReturnButton from '@/app/books/[id]/returnButton'
 
+const { returnBookActionMock, useActionStateMock } = vi.hoisted(() => {
+  return {
+    returnBookActionMock: vi.fn(),
+    useActionStateMock: vi.fn(),
+  }
+})
+
+vi.mock('@/app/books/[id]/actions', () => ({
+  returnBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
+    returnBookActionMock(prevState, formData),
+}))
+
+const refreshMock = vi.hoisted(() => vi.fn())
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => {
+    return { refresh: refreshMock }
+  },
+}))
+
+vi.mock('react', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('react')
+  return {
+    ...actual,
+    useActionState: useActionStateMock,
+  }
+})
+
 describe('returnButton component', () => {
   const bookId = 1
   const userId = 2
   const lendingHistoryId = 10
-
-  const { returnBookActionMock, useActionStateMock } = vi.hoisted(() => {
-    return {
-      returnBookActionMock: vi.fn(),
-      useActionStateMock: vi.fn(),
-    }
-  })
-
-  vi.mock('@/app/books/[id]/actions', () => ({
-    returnBookAction: (prevState: { success: boolean; error: string | null }, formData: FormData) =>
-      returnBookActionMock(prevState, formData),
-  }))
-
-  const refreshMock = vi.hoisted(() => vi.fn())
-  vi.mock('next/navigation', () => ({
-    useRouter: () => {
-      return { refresh: refreshMock }
-    },
-  }))
-
-  vi.mock('react', async (importOriginal) => {
-    const actual = (await importOriginal()) as typeof import('react')
-    return {
-      ...actual,
-      useActionState: useActionStateMock,
-    }
-  })
 
   HTMLDialogElement.prototype.showModal = vi.fn().mockImplementation(() => {
     const modal = document.getElementsByClassName('modal')
