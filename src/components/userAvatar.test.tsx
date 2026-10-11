@@ -2,16 +2,17 @@ import { render, screen } from '@testing-library/react'
 import UserAvatar from '@/components/userAvatar'
 import { user1, user2 } from '../../test/__utils__/data/user'
 
-describe('UserAvatar component', async () => {
-  const { getAvatarUrlMock } = vi.hoisted(() => {
-    return {
-      getAvatarUrlMock: vi.fn(),
-    }
-  })
-  vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
-    getAvatarUrl: (email: string) => getAvatarUrlMock(email),
-  }))
+const { getAvatarUrlMock } = vi.hoisted(() => {
+  return {
+    getAvatarUrlMock: vi.fn(),
+  }
+})
 
+vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
+  getAvatarUrl: (email: string) => getAvatarUrlMock(email),
+}))
+
+describe('UserAvatar component', async () => {
   it('ユーザー画像が表示されること', async () => {
     getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
 

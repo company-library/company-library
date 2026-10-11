@@ -4,15 +4,16 @@ import UserDetailPage from '@/app/users/[id]/page'
 import { user1 } from '../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../test/__utils__/libs/prisma/singleton'
 
+vi.mock('@/app/users/[id]/bookList', () => ({
+  default: () => <div>BookList</div>,
+}))
+
+vi.mock('@/app/users/[id]/readingBookList', () => ({
+  default: () => <div>ReadingBookList</div>,
+}))
+
 describe('UserDetail page', async () => {
   const expectedUser = user1
-
-  vi.mock('@/app/users/[id]/bookList', () => ({
-    default: () => <div>BookList</div>,
-  }))
-  vi.mock('@/app/users/[id]/readingBookList', () => ({
-    default: () => <div>ReadingBookList</div>,
-  }))
 
   it('ユーザーの情報が表示される', async () => {
     prismaMock.user.findUnique.mockResolvedValue(expectedUser)

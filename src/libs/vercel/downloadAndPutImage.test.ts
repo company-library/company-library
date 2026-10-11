@@ -1,20 +1,22 @@
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
 
-describe('downloadAndPutImage function', () => {
-  const { putMock } = vi.hoisted(() => {
-    return { putMock: vi.fn() }
-  })
-  vi.mock('@vercel/blob', () => ({
-    put: (...args: unknown[]) => putMock(...args),
-  }))
-  vi.mock('../../../next.config.mjs', () => ({
-    default: {
-      images: {
-        remotePatterns: [{ hostname: '*.example.org' }, { hostname: 'example.net' }],
-      },
-    },
-  }))
+const { putMock } = vi.hoisted(() => {
+  return { putMock: vi.fn() }
+})
 
+vi.mock('@vercel/blob', () => ({
+  put: (...args: unknown[]) => putMock(...args),
+}))
+
+vi.mock('../../../next.config.mjs', () => ({
+  default: {
+    images: {
+      remotePatterns: [{ hostname: '*.example.org' }, { hostname: 'example.net' }],
+    },
+  },
+}))
+
+describe('downloadAndPutImage function', () => {
   const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
   beforeEach(() => {
