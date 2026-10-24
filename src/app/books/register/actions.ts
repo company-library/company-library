@@ -26,15 +26,19 @@ type OpenBDResponse = Array<{
 const fetchThumbnailUrl = async (isbn: string): Promise<string | undefined> => {
   try {
     const googleRes = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
-    const googleData: GoogleBooksResponse = await googleRes.json()
-    const thumbnail = googleData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
-    if (thumbnail) return thumbnail
+    if (googleRes.ok) {
+      const googleData: GoogleBooksResponse = await googleRes.json()
+      const thumbnail = googleData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
+      // Google Books APIはhttpのURLを返すため、HTTPS強制の検証を通るようにhttpsへ変換する
+      if (thumbnail) return thumbnail.replace(/^http:\/\//, 'https://')
+    }
   } catch {
     // フォールバックに進む
   }
 
   try {
     const openbdRes = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
+    if (!openbdRes.ok) return undefined
     const openbdData: OpenBDResponse = await openbdRes.json()
     return openbdData?.[0]?.summary?.cover ?? undefined
   } catch {

@@ -21,11 +21,15 @@ describe('downloadAndPutImage function', () => {
     putMock.mockResolvedValue({ url: 'https://example.com/cover/1234567890.jpg' })
   })
 
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('許可されたホストからの画像URLでファイルをアップロードした場合、URLを返す', async () => {
     const externalImageUrl = 'https://example.net/image.jpg'
     const isbn = '1234567890'
     const imageFile = new Blob()
-    global.fetch = vi.fn().mockResolvedValue({ blob: () => imageFile })
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, blob: () => imageFile }))
 
     const result = await downloadAndPutImage(externalImageUrl, isbn)
 
@@ -34,6 +38,20 @@ describe('downloadAndPutImage function', () => {
       access: 'public',
       contentType: 'image/jpeg',
     })
+  })
+
+  it('画像の取得に失敗した場合、アップロードせずにundefinedを返す', async () => {
+    const externalImageUrl = 'https://example.net/image.jpg'
+    const isbn = '1234567890'
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 404 }))
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      `画像の取得に失敗しました: ${externalImageUrl} (status: 404)`,
+    )
   })
 
   it('externalImageUrlがundefinedの場合、undefinedを返す', async () => {
