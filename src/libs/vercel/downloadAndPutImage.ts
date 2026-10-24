@@ -81,7 +81,12 @@ export const downloadAndPutImage = async (
   }
 
   // 正規化された検証済みURLを使用してフェッチ（生の入力文字列を使わない）
-  const imageFile = await fetch(validatedUrl.href).then((res) => res.blob())
+  const res = await fetch(validatedUrl.href)
+  if (!res.ok) {
+    console.warn(`画像の取得に失敗しました: ${validatedUrl.href} (status: ${res.status})`)
+    return undefined
+  }
+  const imageFile = await res.blob()
   const blob = await put(`cover/${isbn}.jpg`, imageFile, {
     access: 'public',
     contentType: 'image/jpeg',
