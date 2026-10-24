@@ -1,16 +1,52 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { GOOGLE_BOOK_SEARCH_QUERY, OPENBD_SEARCH_QUERY } from '@/constants'
 import prisma from '@/libs/prisma/client'
 import { notifySlack } from '@/libs/slack/webhook'
 import { downloadAndPutImage } from '@/libs/vercel/downloadAndPutImage'
+
+type GoogleBooksResponse = {
+  items?: Array<{
+    volumeInfo?: {
+      imageLinks?: {
+        thumbnail?: string
+      }
+    }
+  }>
+}
+
+type OpenBDResponse = Array<{
+  summary?: {
+    cover?: string
+  }
+} | null>
+
+/** ISBNを使ってサーバーサイドでサムネイルURLを取得する */
+const fetchThumbnailUrl = async (isbn: string): Promise<string | undefined> => {
+  try {
+    const googleRes = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
+    const googleData: GoogleBooksResponse = await googleRes.json()
+    const thumbnail = googleData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
+    if (thumbnail) return thumbnail
+  } catch {
+    // フォールバックに進む
+  }
+
+  try {
+    const openbdRes = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
+    const openbdData: OpenBDResponse = await openbdRes.json()
+    return openbdData?.[0]?.summary?.cover ?? undefined
+  } catch {
+    return undefined
+  }
+}
 
 /**
  * 書籍登録をするServer Action
  * @param {string} title
  * @param description
  * @param {string} isbn
- * @param {string | undefined} imageUrl
  * @param {number} locationId
  * @param {number} userId
  * @returns {Promise<void>}
@@ -19,10 +55,11 @@ export const registerBook = async (
   title: string,
   description: string,
   isbn: string,
-  imageUrl: string | undefined,
   locationId: number,
   userId: number,
 ): Promise<void> => {
+  // ユーザー提供URLを使わず、ISBNからサーバーサイドでサムネイルURLを取得（SSRF対策）
+  const imageUrl = await fetchThumbnailUrl(isbn)
   const vercelBlobUrl = await downloadAndPutImage(imageUrl, isbn)
 
   const book = await prisma.book
