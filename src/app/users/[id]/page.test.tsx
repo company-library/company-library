@@ -12,7 +12,7 @@ vi.mock('@/app/users/[id]/readingBookList', () => ({
   default: () => <div>ReadingBookList</div>,
 }))
 
-describe('UserDetail page', async () => {
+describe('UserDetail page', () => {
   const expectedUser = user1
 
   it('ユーザーの情報が表示される', async () => {

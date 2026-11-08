@@ -18,7 +18,7 @@ vi.mock(import('@/app/books/[id]/editImpressionButton'), () => ({
   },
 }))
 
-describe('ImpressionList component', async () => {
+describe('ImpressionList component', () => {
   const prismaImpressionsMock = prismaMock.impression.findMany
   const expectedImpressions = [
     {

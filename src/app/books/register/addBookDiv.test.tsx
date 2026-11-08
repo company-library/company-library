@@ -17,7 +17,7 @@ vi.mock('swr', () => ({
   }),
 }))
 
-describe('add book div component', async () => {
+describe('add book div component', () => {
   // SWRのモック
 
   it('追加ボタンをクリックすると、server actionが実行される', async () => {

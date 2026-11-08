@@ -2,18 +2,18 @@ import type { Provider, ProviderType } from 'next-auth/providers/index'
 import { user1, user2 } from '../../../../../test/__utils__/data/user'
 import { prismaMock } from '../../../../../test/__utils__/libs/prisma/singleton'
 
-describe('authOptions', async () => {
-  vi.stubEnv('AZURE_AD_TENANT_ID', 'tenantIdAAD')
-  vi.stubEnv('AZURE_AD_CLIENT_ID', 'clientIdAAD')
-  vi.stubEnv('AZURE_AD_CLIENT_SECRET', 'clientSecretAAD')
+vi.stubEnv('AZURE_AD_TENANT_ID', 'tenantIdAAD')
+vi.stubEnv('AZURE_AD_CLIENT_ID', 'clientIdAAD')
+vi.stubEnv('AZURE_AD_CLIENT_SECRET', 'clientSecretAAD')
 
-  vi.stubEnv('AZURE_AD_B2C_TENANT_NAME', 'tenantNameAADB2C')
-  vi.stubEnv('AZURE_AD_B2C_CLIENT_ID', 'clientIdAADB2C')
-  vi.stubEnv('AZURE_AD_B2C_CLIENT_SECRET', 'clientSecretAADB2C')
-  vi.stubEnv('AZURE_AD_B2C_PRIMARY_USER_FLOW', 'primaryUserFlowAADB2C')
+vi.stubEnv('AZURE_AD_B2C_TENANT_NAME', 'tenantNameAADB2C')
+vi.stubEnv('AZURE_AD_B2C_CLIENT_ID', 'clientIdAADB2C')
+vi.stubEnv('AZURE_AD_B2C_CLIENT_SECRET', 'clientSecretAADB2C')
+vi.stubEnv('AZURE_AD_B2C_PRIMARY_USER_FLOW', 'primaryUserFlowAADB2C')
 
-  const { authOptions } = await import('@/app/api/auth/[...nextauth]/authOptions')
+const { authOptions } = await import('@/app/api/auth/[...nextauth]/authOptions')
 
+describe('authOptions', () => {
   describe('AAD provider の確認', () => {
     it('Providerが作成されている', async () => {
       const providerAAD = authOptions.providers.find(
