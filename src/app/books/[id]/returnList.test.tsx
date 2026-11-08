@@ -13,7 +13,7 @@ vi.mock('@/components/userAvatar', () => ({
   default: (...args: unknown[]) => UserAvatarMock(...args),
 }))
 
-describe('ReturnList Component', async () => {
+describe('ReturnList Component', () => {
   const expectedReturnHistories = [
     {
       lendingHistoryId: 2,

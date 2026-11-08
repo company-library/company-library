@@ -24,7 +24,7 @@ vi.mock('@/app/books/register/registerBookDiv', () => ({
   default: registerBookDivMock,
 }))
 
-describe('searched book component', async () => {
+describe('searched book component', () => {
   const swrMock = useSWR as Mock
   const userId = user1.id
   const isbn = '1234567890123'

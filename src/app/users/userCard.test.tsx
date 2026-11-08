@@ -7,7 +7,7 @@ vi.mock('@/components/userAvatar', () => ({
   default: () => <div data-testid="profileImage">userAvatar</div>,
 }))
 
-describe('UserCard component', async () => {
+describe('UserCard component', () => {
   it('ユーザー情報が表示されていること', async () => {
     await act(async () => {
       render(

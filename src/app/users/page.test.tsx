@@ -14,7 +14,7 @@ vi.mock('@/app/users/userCard', () => ({
   default: (...args: unknown[]) => UserCardMock(...args),
 }))
 
-describe('users page', async () => {
+describe('users page', () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
   it('利用者一覧が表示される', async () => {

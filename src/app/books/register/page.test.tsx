@@ -21,7 +21,7 @@ vi.mock('@/app/books/register/bookForm', () => ({
   default: () => <div>登録フォーム</div>,
 }))
 
-describe('register page', async () => {
+describe('register page', () => {
   beforeEach(() => {
     getServerSessionMock.mockReturnValue({ customUser: { id: user1.id } })
   })

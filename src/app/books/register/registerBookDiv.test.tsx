@@ -15,7 +15,7 @@ vi.mock('swr', () => ({
   }),
 }))
 
-describe('register book div component', async () => {
+describe('register book div component', () => {
   // SWRのモック
 
   it('登録ボタンをクリックすると、server actionが実行される', async () => {
