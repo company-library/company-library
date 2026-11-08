@@ -22,20 +22,41 @@ type OpenBDResponse = Array<{
   }
 } | null>
 
-/** ISBNを使ってサーバーサイドでサムネイルURLを取得する */
+/** URLのプロトコルをhttpsに変換する（不正なURLの場合はundefinedを返す） */
+const toHttps = (url: string): string | undefined => {
+  try {
+    const parsedUrl = new URL(url)
+    if (parsedUrl.protocol === 'http:') parsedUrl.protocol = 'https:'
+    return parsedUrl.href
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * ISBNを使ってサーバーサイドでサムネイルURLを取得する
+ * Google Books APIでURLが取得できなかった場合のみOpenBDにフォールバックする
+ * （Googleで取得したURLの画像ダウンロードに失敗しても、OpenBDには進まない）
+ */
 const fetchThumbnailUrl = async (isbn: string): Promise<string | undefined> => {
   try {
     const googleRes = await fetch(`${GOOGLE_BOOK_SEARCH_QUERY}${isbn}`)
-    const googleData: GoogleBooksResponse = await googleRes.json()
-    const thumbnail = googleData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
-    if (thumbnail) return thumbnail
+    if (googleRes.ok) {
+      const googleData: GoogleBooksResponse = await googleRes.json()
+      const thumbnail = googleData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail
+      // Google Books APIはhttpのURLを返すため、HTTPS強制の検証を通るようにhttpsへ変換する
+      if (thumbnail) return toHttps(thumbnail)
+    }
   } catch {
     // フォールバックに進む
   }
 
   try {
     const openbdRes = await fetch(`${OPENBD_SEARCH_QUERY}${isbn}`)
+    if (!openbdRes.ok) return undefined
     const openbdData: OpenBDResponse = await openbdRes.json()
+    // TODO: OpenBDのカバー画像（cover.openbd.jp）はnext.config.mjsのremotePatternsに含まれていないため、
+    // 許可ホストに追加されるまではdownloadAndPutImageのURL検証で拒否され、画像は保存されない
     return openbdData?.[0]?.summary?.cover ?? undefined
   } catch {
     return undefined

@@ -18,14 +18,23 @@ describe('server actions', () => {
     notifySlack: notifySlackMock,
   }))
 
+  const { downloadAndPutImageMock } = vi.hoisted(() => {
+    return {
+      downloadAndPutImageMock: vi.fn(async (imageUrl: string | undefined, isbn: string) => {
+        if (imageUrl) {
+          return `https://example.com/books/${isbn}/internal/cover.jpg`
+        }
+        return undefined
+      }),
+    }
+  })
   vi.mock('@/libs/vercel/downloadAndPutImage', () => ({
-    downloadAndPutImage: async (imageUrl: string | undefined, isbn: string) => {
-      if (imageUrl) {
-        return `https://example.com/books/${isbn}/internal/cover.jpg`
-      }
-      return undefined
-    },
+    downloadAndPutImage: downloadAndPutImageMock,
   }))
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
 
   describe('registerBook function', () => {
     it('書籍と登録履歴の追加ができる', async () => {
@@ -52,25 +61,33 @@ describe('server actions', () => {
         createdAt: new Date(),
       })
 
-      // Google Books APIからサムネイルURLを返すようにモック
-      global.fetch = vi.fn().mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          items: [
-            {
-              volumeInfo: {
-                imageLinks: {
-                  thumbnail: 'https://books.google.com/books/content?id=test&zoom=1',
+      // Google Books APIからサムネイルURLを返すようにモック（実際のAPIと同様にhttpで返す）
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            items: [
+              {
+                volumeInfo: {
+                  imageLinks: {
+                    thumbnail: 'http://books.google.com/books/content?id=test&zoom=1',
+                  },
                 },
               },
-            },
-          ],
+            ],
+          }),
         }),
-      })
+      )
 
       const result = await registerBook(title, description, isbn, locationId, userId)
 
       expect(result).toBeUndefined()
+      // httpのサムネイルURLはhttpsに変換されて渡される
+      expect(downloadAndPutImageMock).toBeCalledWith(
+        'https://books.google.com/books/content?id=test&zoom=1',
+        isbn,
+      )
       expect(prismaMock.book.create).toBeCalledWith({
         data: {
           title,
@@ -98,10 +115,7 @@ describe('server actions', () => {
       const locationId = location1.id
 
       // サムネイルURLが取得できない場合のモック
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({}),
-      })
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }))
 
       const error = new Error('error has occurred')
       prismaMock.book.create.mockRejectedValueOnce(error)
@@ -134,10 +148,7 @@ describe('server actions', () => {
       const locationId = location1.id
 
       // サムネイルURLが取得できない場合のモック
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({}),
-      })
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }))
 
       const error = new Error('error has occurred')
       prismaMock.book.create.mockResolvedValueOnce({
@@ -172,6 +183,77 @@ describe('server actions', () => {
       })
       expect(errorMock).toBeCalledWith(error)
       expect(redirectMock).not.toBeCalled()
+    })
+  })
+
+  describe('registerBook function（サムネイルURLの取得）', () => {
+    const title = 'testBook'
+    const description = 'テスト書籍の概要'
+    const isbn = '1234567890123'
+
+    beforeEach(() => {
+      prismaMock.book.create.mockResolvedValue({
+        id: 1,
+        title,
+        description,
+        isbn,
+        imageUrl: null,
+        createdAt: new Date(),
+      })
+      prismaMock.registrationHistory.create.mockResolvedValue({
+        id: 1,
+        bookId: 1,
+        userId: user1.id,
+        locationId: location1.id,
+        createdAt: new Date(),
+      })
+    })
+
+    it('Google Books APIにサムネイルがない場合はOpenBDのカバー画像URLを使う', async () => {
+      const coverUrl = `https://cover.openbd.jp/${isbn}.jpg`
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn()
+          .mockResolvedValueOnce({ ok: true, json: async () => ({ items: [] }) })
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ summary: { cover: coverUrl } }],
+          }),
+      )
+
+      await registerBook(title, description, isbn, location1.id, user1.id)
+
+      expect(downloadAndPutImageMock).toBeCalledWith(coverUrl, isbn)
+    })
+
+    it('Google Books APIがエラーを返した場合はOpenBDのカバー画像URLを使う', async () => {
+      const coverUrl = `https://cover.openbd.jp/${isbn}.jpg`
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn()
+          .mockResolvedValueOnce({ ok: false, json: async () => ({}) })
+          .mockResolvedValueOnce({
+            ok: true,
+            json: async () => [{ summary: { cover: coverUrl } }],
+          }),
+      )
+
+      await registerBook(title, description, isbn, location1.id, user1.id)
+
+      expect(downloadAndPutImageMock).toBeCalledWith(coverUrl, isbn)
+    })
+
+    it('両方のAPIで取得に失敗した場合はサムネイルURLなしで登録する', async () => {
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network error')))
+
+      await registerBook(title, description, isbn, location1.id, user1.id)
+
+      expect(downloadAndPutImageMock).toBeCalledWith(undefined, isbn)
+      expect(prismaMock.book.create).toBeCalledWith({
+        data: { title, description, isbn, imageUrl: undefined },
+      })
     })
   })
 
