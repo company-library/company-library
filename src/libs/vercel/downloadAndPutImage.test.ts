@@ -29,11 +29,18 @@ describe('downloadAndPutImage function', () => {
     const externalImageUrl = 'https://example.net/image.jpg'
     const isbn = '1234567890'
     const imageFile = new Blob()
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, blob: () => imageFile }))
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      headers: new Headers({ 'content-type': 'image/jpeg' }),
+      blob: () => imageFile,
+    })
+    vi.stubGlobal('fetch', fetchMock)
 
     const result = await downloadAndPutImage(externalImageUrl, isbn)
 
     expect(result).toBe(`https://example.com/cover/${isbn}.jpg`)
+    // リダイレクトを拒否してフェッチする
+    expect(fetchMock).toBeCalledWith(externalImageUrl, { redirect: 'error' })
     expect(putMock).toBeCalledWith(`cover/${isbn}.jpg`, imageFile, {
       access: 'public',
       contentType: 'image/jpeg',
@@ -51,6 +58,43 @@ describe('downloadAndPutImage function', () => {
     expect(putMock).not.toHaveBeenCalled()
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       `画像の取得に失敗しました: ${externalImageUrl} (status: 404)`,
+    )
+  })
+
+  it('リダイレクトなどでフェッチが失敗した場合、アップロードせずにundefinedを返す', async () => {
+    const externalImageUrl = 'https://example.net/image.jpg'
+    const isbn = '1234567890'
+    const error = new TypeError('fetch failed')
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(error))
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      `画像の取得に失敗しました: ${externalImageUrl}`,
+      error,
+    )
+  })
+
+  it('レスポンスが画像でない場合、アップロードせずにundefinedを返す', async () => {
+    const externalImageUrl = 'https://example.net/image.jpg'
+    const isbn = '1234567890'
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        blob: () => new Blob(),
+      }),
+    )
+
+    const result = await downloadAndPutImage(externalImageUrl, isbn)
+
+    expect(result).toBeUndefined()
+    expect(putMock).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      `画像ではないレスポンスです: ${externalImageUrl} (content-type: text/html)`,
     )
   })
 

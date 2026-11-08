@@ -81,9 +81,21 @@ export const downloadAndPutImage = async (
   }
 
   // 正規化された検証済みURLを使用してフェッチ（生の入力文字列を使わない）
-  const res = await fetch(validatedUrl.href)
+  // リダイレクト先は検証されないため、リダイレクトは拒否する（SSRF対策）
+  const res = await fetch(validatedUrl.href, { redirect: 'error' }).catch((e) => {
+    console.warn(`画像の取得に失敗しました: ${validatedUrl.href}`, e)
+    return undefined
+  })
+  if (!res) {
+    return undefined
+  }
   if (!res.ok) {
     console.warn(`画像の取得に失敗しました: ${validatedUrl.href} (status: ${res.status})`)
+    return undefined
+  }
+  const contentType = res.headers.get('content-type')
+  if (!contentType?.startsWith('image/')) {
+    console.warn(`画像ではないレスポンスです: ${validatedUrl.href} (content-type: ${contentType})`)
     return undefined
   }
   const imageFile = await res.blob()
