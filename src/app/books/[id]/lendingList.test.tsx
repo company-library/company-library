@@ -14,7 +14,7 @@ vi.mock('@/components/userAvatar', () => ({
   default: (...args: unknown[]) => UserAvatarMock(...args),
 }))
 
-describe('LendingList Component', async () => {
+describe('LendingList Component', () => {
   const expectedLendingHistories = [
     {
       id: 2,

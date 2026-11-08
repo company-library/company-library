@@ -12,7 +12,7 @@ vi.mock('@/libs/gravatar/getAvatarUrl', () => ({
   getAvatarUrl: (email: string) => getAvatarUrlMock(email),
 }))
 
-describe('UserAvatar component', async () => {
+describe('UserAvatar component', () => {
   it('ユーザー画像が表示されること', async () => {
     getAvatarUrlMock.mockResolvedValue(user1.imageUrl)
 

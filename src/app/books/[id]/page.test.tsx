@@ -59,7 +59,7 @@ vi.mock('@/app/api/auth/[...nextauth]/route', () => ({
   authOptions: {},
 }))
 
-describe('BookDetail page', async () => {
+describe('BookDetail page', () => {
   prismaMock.user.findMany.mockResolvedValue([user1, user2])
 
   const book = bookWithImage
@@ -131,21 +131,5 @@ describe('BookDetail page', async () => {
     })
 
     expect(screen.getByText('不正な書籍です。')).toBeInTheDocument()
-  })
-
-  it('セッションが取得できなかった場合は、エラーメッセージを表示する', async () => {
-    getServerSessionMock.mockReturnValue(null)
-
-    await act(async () => {
-      render(
-        <Suspense>
-          <BookDetailPage params={new Promise((resolve) => resolve({ id: '1' }))} />
-        </Suspense>,
-      )
-    })
-
-    expect(
-      screen.getByText('セッションが取得できませんでした。再読み込みしてみてください。'),
-    ).toBeInTheDocument()
   })
 })

@@ -31,7 +31,7 @@ vi.mock('@/components/userAvatar', () => ({
   default: (...args: unknown[]) => UserAvatarMock(...args),
 }))
 
-describe('navigationBar component', async () => {
+describe('navigationBar component', () => {
   const loggedInUser = user1
 
   beforeEach(() => {
